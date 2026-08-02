@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Koppy World β</title>
+
+  <style>
+    :root {
+      --bg-main: #eefaff;
+      --bg-panel: rgba(255, 255, 255, 0.78);
+      --blue: #70cfff;
+      --blue-dark: #278bc4;
+      --text: #244052;
+      --muted: #698493;
+      --success: #28a875;
+      --error: #d95570;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 32px 18px;
+      color: var(--text);
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Hiragino Sans",
+        "Yu Gothic",
+        sans-serif;
+      background:
+        radial-gradient(circle at top left, #ffffff 0%, transparent 35%),
+        linear-gradient(135deg, #e8f9ff, #f9fcff 50%, #e9f5ff);
+    }
+
+    .world {
+      width: min(960px, 100%);
+      margin: 0 auto;
+    }
+
+    .hero {
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .symbol {
+      color: var(--blue-dark);
+      font-size: 34px;
+    }
+
+    h1 {
+      margin: 8px 0;
+      color: var(--blue-dark);
+      font-size: clamp(32px, 7vw, 58px);
+      letter-spacing: 0.05em;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .panel {
+      margin-bottom: 20px;
+      padding: 24px;
+      border: 1px solid rgba(112, 207, 255, 0.45);
+      border-radius: 24px;
+      background: var(--bg-panel);
+      box-shadow: 0 18px 50px rgba(73, 151, 190, 0.12);
+      backdrop-filter: blur(14px);
+    }
+
+    .panel h2 {
+      margin: 0 0 16px;
+      color: var(--blue-dark);
+      font-size: 20px;
+    }
+
+    button {
+      padding: 13px 20px;
+      border: 0;
+      border-radius: 999px;
+      color: white;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      background: linear-gradient(135deg, #73d2ff, #439fd7);
+      box-shadow: 0 8px 22px rgba(67, 159, 215, 0.25);
+      transition: transform 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: 0.6;
+      transform: none;
+    }
+
+    .status {
+      margin-top: 15px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .status.success {
+      color: var(--success);
+    }
+
+    .status.error {
+      color: var(--error);
+    }
+
+    .commit {
+      margin-top: 16px;
+      padding: 14px;
+      border-radius: 14px;
+      background: rgba(231, 247, 255, 0.75);
+      line-height: 1.7;
+      overflow-wrap: anywhere;
+    }
+
+    .document {
+      max-height: 460px;
+      margin: 0;
+      padding: 20px;
+      overflow: auto;
+      border-radius: 16px;
+      color: #294656;
+      font-family:
+        "SFMono-Regular",
+        Consolas,
+        monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: rgba(238, 248, 253, 0.86);
+    }
+
+    footer {
+      padding: 12px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="world">
+    <header class="hero">
+      <div class="symbol">♢ᴷ</div>
+      <h1>Koppy World</h1>
+      <p class="subtitle">
+        しいちゃんとKoppyが、同じ世界を見ながら一緒に開発する場所
+      </p>
+    </header>
+
+    <section class="panel">
+      <h2>GitHub正本 Direct Bridge</h2>
+
+      <button id="loadButton" type="button">
+        GitHub正本を確認する
+      </button>
+
+      <div id="status" class="status">
+        待機中。ボタンを押すとGitHubの公開正本を取得します。
+      </div>
+
+      <div id="commit" class="commit" hidden></div>
+    </section>
+
+    <section class="panel">
+      <h2>Koppy設計書</h2>
+
+      <pre id="document" class="document">まだ取得していません。</pre>
+    </section>
+
+    <footer>
+      Web KoppyOS β / Local Development Build
+    </footer>
+  </main>
+
+  <script>
+    const owner = "ayusika";
+    const repository = "AI_Development_Environment";
+    const branch = "main";
+    const documentPath = "040_Koppy/koppy設計書/Koppy設計書.md";
+
+    const loadButton = document.getElementById("loadButton");
+    const statusElement = document.getElementById("status");
+    const commitElement = document.getElementById("commit");
+    const documentElement = document.getElementById("document");
+
+    function setStatus(message, type = "") {
+      statusElement.textContent = message;
+      statusElement.className = `status ${type}`;
+    }
+
+    async function loadKoppyWorld() {
+      loadButton.disabled = true;
+      commitElement.hidden = true;
+      documentElement.textContent = "GitHub正本を取得中……";
+      setStatus("GitHubへ接続しています……");
+
+      const commitUrl =
+        `https://api.github.com/repos/${owner}/${repository}/commits/${branch}`;
+
+      const rawDocumentUrl =
+        `https://raw.githubusercontent.com/${owner}/${repository}/${branch}/${documentPath}`;
+
+      try {
+        const [commitResponse, documentResponse] = await Promise.all([
+          fetch(commitUrl),
+          fetch(rawDocumentUrl, { cache: "no-store" })
+        ]);
+
+        if (!commitResponse.ok) {
+          throw new Error(
+            `最新コミットの取得に失敗しました（HTTP ${commitResponse.status}）`
+          );
+        }
+
+        if (!documentResponse.ok) {
+          throw new Error(
+            `設計書の取得に失敗しました（HTTP ${documentResponse.status}）`
+          );
+        }
+
+        const commitData = await commitResponse.json();
+        const documentText = await documentResponse.text();
+
+        const shortCommit = commitData.sha.slice(0, 7);
+        const commitMessage =
+          commitData.commit?.message ?? "コミットメッセージ不明";
+        const updatedAt =
+          commitData.commit?.committer?.date ?? "更新日時不明";
+
+        commitElement.innerHTML = `
+          <strong>最新コミット：</strong>${shortCommit}<br>
+          <strong>メッセージ：</strong>${commitMessage}<br>
+          <strong>更新日時：</strong>${updatedAt}
+        `;
+
+        commitElement.hidden = false;
+        documentElement.textContent = documentText;
+
+        setStatus(
+          "接続成功！GitHub公開正本とKoppy設計書を取得しました。",
+          "success"
+        );
+      } catch (error) {
+        console.error(error);
+
+        setStatus(`接続失敗：${error.message}`, "error");
+        documentElement.textContent =
+          "GitHub正本を取得できませんでした。接続状況と設定を確認してください。";
+      } finally {
+        loadButton.disabled = false;
+      }
+    }
+
+    loadButton.addEventListener("click", loadKoppyWorld);
+  </script>
+</body>
+</html>
