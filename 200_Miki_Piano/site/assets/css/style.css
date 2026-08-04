@@ -1608,8 +1608,13 @@ a {
 
 .instagram-button {
   margin-top: 10px;
-  opacity: 0.55;
-  pointer-events: none;
+}
+
+.instagram-account {
+  margin-top: 14px;
+  color: var(--text-sub);
+  font-size: 0.9rem;
+  letter-spacing: 0.05em;
 }
 
 .needs-confirmation {
