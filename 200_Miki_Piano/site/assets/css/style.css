@@ -1653,3 +1653,140 @@ a {
     padding: 26px 20px;
   }
 }
+
+/* ========================================
+   CONTACT：スマホ表示の最終調整
+======================================== */
+
+@media (max-width: 600px) {
+  .contact .section-inner {
+    width: min(100% - 32px, 720px);
+  }
+
+  .contact-form-wrap {
+    width: 100%;
+    margin-top: 36px;
+    padding: 30px 20px;
+  }
+
+  .contact-form {
+    display: grid;
+    width: 100%;
+    gap: 24px;
+  }
+
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 8px;
+  }
+
+  .form-field label {
+    display: block;
+    width: 100%;
+  }
+
+  .form-field input,
+  .form-field select,
+  .form-field textarea {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    font-size: 16px;
+  }
+
+  .form-agreement {
+    width: 100%;
+    gap: 10px;
+    text-align: left;
+  }
+
+  .form-agreement span {
+    flex: 1;
+  }
+
+  .form-submit {
+    display: flex;
+    width: 100%;
+    min-height: 52px;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .instagram-contact {
+    width: 100%;
+    margin-top: 32px;
+    padding: 28px 20px;
+  }
+}
+
+/* Instagramは申込みより一段弱いサブボタン */
+.instagram-button {
+  display: inline-flex;
+  min-width: 220px;
+  min-height: 50px;
+  margin-top: 12px;
+  padding: 12px 24px;
+  align-items: center;
+  justify-content: center;
+  color: #496b5c;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.78);
+  border: 1px solid #6f927f;
+  border-radius: 999px;
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.instagram-button:hover {
+  color: #fff;
+  background: #597b6b;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 600px) {
+  .instagram-button {
+    width: 100%;
+  }
+}
+
+/* ========================================
+   CONTACT：PC・タブレット表示の修正
+======================================== */
+
+.contact-form-wrap {
+  width: min(100%, 720px);
+}
+
+.contact-form {
+  width: 100%;
+}
+
+.contact-form .form-field {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 9px;
+}
+
+.contact-form .form-field label {
+  display: block;
+  width: 100%;
+  text-align: left;
+}
+
+.contact-form .form-field input,
+.contact-form .form-field select,
+.contact-form .form-field textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.contact-form .form-agreement {
+  width: 100%;
+  text-align: left;
+}
