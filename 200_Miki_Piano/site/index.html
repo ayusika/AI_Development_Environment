@@ -437,27 +437,188 @@
       </div>
     </section>
 
-    <section id="contact" class="section contact">
-      <div class="section-inner">
+<section id="contact" class="section contact">
+  <div class="section-inner">
 
-        <p class="section-label">Contact</p>
+    <p class="section-label">Contact</p>
 
-        <<h2 class="section-title">
-            まずは無料体験<br>
-              レッスンから
-        </h2>
+    <h2 class="section-title">
+      まずは無料体験<br>
+      レッスンから
+    </h2>
 
-        <p class="section-text">
-            30分の体験レッスンを無料でご受講いただけます。<br>
-             レッスンについてのご質問やご相談も、お気軽にお問い合わせください。
-        </p>
-<!-- 要確認：申込みボタンのリンク先（フォーム・LINE・メールなど） -->
-        <a class="button button-primary" href="#">
-          無料体験レッスンを申し込む
-        </a>
+    <p class="section-text">
+      30分の体験レッスンを無料でご受講いただけます。<br>
+      レッスンについてのご質問やご相談も、お気軽にお問い合わせください。
+    </p>
 
-      </div>
-    </section>
+    <p class="contact-note">
+      体験レッスン後に、入会を強制することはありません。<br>
+      まずはお気軽に、ピアノを楽しむ時間をご体験ください。
+    </p>
+
+    <div class="contact-form-wrap">
+
+      <h3 class="contact-form-title">
+        メールフォームで申し込む
+      </h3>
+
+      <p class="contact-form-intro">
+        必要事項をご入力のうえ、送信してください。
+      </p>
+
+      <form
+        id="trial-form"
+        class="contact-form"
+        action="https://formsubmit.co/ajax/mikikdr221@yahoo.co.jp"
+        method="POST"
+      >
+
+        <input
+          type="hidden"
+          name="_subject"
+          value="【美輝 Miki Piano】無料体験レッスンのお申し込み"
+        >
+
+        <input
+          type="hidden"
+          name="_template"
+          value="table"
+        >
+
+        <input
+          type="hidden"
+          name="_captcha"
+          value="false"
+        >
+
+        <div class="form-field">
+          <label for="contact-name">
+            お名前
+            <span class="form-required">必須</span>
+          </label>
+
+          <input
+            id="contact-name"
+            name="お名前"
+            type="text"
+            autocomplete="name"
+            required
+          >
+        </div>
+
+        <div class="form-field">
+          <label for="contact-email">
+            メールアドレス
+            <span class="form-required">必須</span>
+          </label>
+
+          <input
+            id="contact-email"
+            name="メールアドレス"
+            type="email"
+            autocomplete="email"
+            required
+          >
+        </div>
+
+        <div class="form-field">
+          <label for="contact-purpose">
+            ご希望の内容
+            <span class="form-required">必須</span>
+          </label>
+
+          <select
+            id="contact-purpose"
+            name="ご希望の内容"
+            required
+          >
+            <option value="">選択してください</option>
+            <option value="無料体験レッスンを申し込みたい">
+              無料体験レッスンを申し込みたい
+            </option>
+            <option value="レッスンについて相談したい">
+              レッスンについて相談したい
+            </option>
+            <option value="その他のお問い合わせ">
+              その他のお問い合わせ
+            </option>
+          </select>
+        </div>
+
+        <div class="form-field">
+          <label for="contact-message">
+            ご質問・ご相談
+          </label>
+
+          <textarea
+            id="contact-message"
+            name="ご質問・ご相談"
+            rows="6"
+            placeholder="ご希望の曜日や時間帯、ご質問などがあればご記入ください。"
+          ></textarea>
+        </div>
+
+        <label class="form-agreement">
+          <input
+            id="contact-agreement"
+            name="確認事項"
+            type="checkbox"
+            value="入力内容と連絡先を確認しました"
+            required
+          >
+
+          <span>
+            入力内容とメールアドレスに間違いがないことを確認しました。
+          </span>
+        </label>
+
+        <button
+          id="contact-submit"
+          class="button button-primary form-submit"
+          type="submit"
+        >
+          この内容で送信する
+        </button>
+
+        <p
+          id="form-status"
+          class="form-status"
+          role="status"
+          aria-live="polite"
+        ></p>
+
+      </form>
+    </div>
+
+    <div class="instagram-contact">
+
+      <p class="instagram-contact-label">
+        Instagram
+      </p>
+
+      <h3>
+        InstagramのDMでもご相談いただけます
+      </h3>
+
+      <p>
+        体験レッスンについてのご質問など、DMからもお気軽にご連絡ください。
+      </p>
+
+      <span class="button button-secondary instagram-button">
+        Instagramを見る
+      </span>
+
+      <p>
+        <span class="needs-confirmation">
+          ▪️▪️要確認：Instagramを問い合わせ先として掲載するか・掲載URL▪️▪️
+        </span>
+      </p>
+
+    </div>
+
+  </div>
+</section>
 
   </main>
 

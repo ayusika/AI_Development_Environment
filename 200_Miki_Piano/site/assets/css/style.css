@@ -1438,3 +1438,213 @@ a {
     }
 }
 
+/* ========================================
+   CONTACT・無料体験レッスン申込みフォーム
+======================================== */
+
+.contact-note {
+  max-width: 680px;
+  margin: 24px auto 0;
+  padding: 18px 22px;
+  color: var(--text-main);
+  line-height: 1.9;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(123, 171, 149, 0.24);
+  border-radius: 16px;
+}
+
+.contact-form-wrap {
+  max-width: 720px;
+  margin: 48px auto 0;
+  padding: 42px 38px;
+  text-align: left;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(123, 171, 149, 0.22);
+  border-radius: 24px;
+  box-shadow: 0 16px 40px rgba(70, 101, 88, 0.08);
+}
+
+.contact-form-title {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+
+.contact-form-intro {
+  margin: 12px 0 32px;
+  text-align: center;
+  color: var(--text-sub);
+  line-height: 1.8;
+}
+
+.contact-form {
+  display: grid;
+  gap: 26px;
+}
+
+.form-field {
+  display: grid;
+  gap: 9px;
+}
+
+.form-field label {
+  font-weight: 500;
+  line-height: 1.6;
+}
+
+.form-required {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 2px 8px;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 500;
+  vertical-align: middle;
+  background: #b97878;
+  border-radius: 999px;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea {
+  width: 100%;
+  padding: 14px 16px;
+  color: var(--text-main);
+  font: inherit;
+  line-height: 1.6;
+  background: #fff;
+  border: 1px solid rgba(70, 101, 88, 0.24);
+  border-radius: 12px;
+  outline: none;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.form-field textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  border-color: #7bab95;
+  box-shadow: 0 0 0 4px rgba(123, 171, 149, 0.13);
+}
+
+.form-agreement {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  font-size: 0.92rem;
+  line-height: 1.7;
+  cursor: pointer;
+}
+
+.form-agreement input {
+  width: 18px;
+  height: 18px;
+  margin-top: 4px;
+  accent-color: #7bab95;
+  flex: 0 0 auto;
+}
+
+.form-submit {
+  justify-self: center;
+  min-width: min(100%, 280px);
+  border: 0;
+  cursor: pointer;
+}
+
+.form-submit:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.form-status {
+  min-height: 1.7em;
+  margin: 0;
+  text-align: center;
+  line-height: 1.7;
+}
+
+.form-status.is-success {
+  color: #287250;
+}
+
+.form-status.is-error {
+  color: #a74444;
+}
+
+.instagram-contact {
+  max-width: 720px;
+  margin: 30px auto 0;
+  padding: 32px 30px;
+  background: rgba(255, 255, 255, 0.58);
+  border: 1px solid rgba(123, 171, 149, 0.18);
+  border-radius: 20px;
+}
+
+.instagram-contact-label {
+  margin: 0 0 8px;
+  color: var(--text-sub);
+  font-size: 0.78rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.instagram-contact h3 {
+  margin: 0 0 14px;
+  font-size: 1.2rem;
+  font-weight: 500;
+}
+
+.instagram-contact p {
+  line-height: 1.8;
+}
+
+.instagram-button {
+  margin-top: 10px;
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.needs-confirmation {
+  display: inline-block;
+  margin-top: 14px;
+  padding: 8px 12px;
+  color: #695515;
+  font-size: 0.87rem;
+  line-height: 1.6;
+  background: #fff4b8;
+  border-radius: 8px;
+}
+
+/* CONTACT：スマホ表示 */
+@media (max-width: 600px) {
+  .contact-note {
+    padding: 16px 18px;
+  }
+
+  .contact-form-wrap {
+    margin-top: 36px;
+    padding: 30px 20px;
+    border-radius: 18px;
+  }
+
+  .contact-form {
+    gap: 22px;
+  }
+
+  .form-submit {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .instagram-contact {
+    padding: 26px 20px;
+  }
+}

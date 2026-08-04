@@ -51,3 +51,63 @@ if (menuButton && navigation) {
     }
   });
 }
+
+/* ========================================
+   無料体験レッスン申込みフォーム
+======================================== */
+
+const trialForm = document.querySelector("#trial-form");
+const formStatus = document.querySelector("#form-status");
+const contactSubmit = document.querySelector("#contact-submit");
+
+if (trialForm && formStatus && contactSubmit) {
+  trialForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (!trialForm.checkValidity()) {
+      trialForm.reportValidity();
+      return;
+    }
+
+    const originalButtonText = contactSubmit.textContent;
+
+    contactSubmit.disabled = true;
+    contactSubmit.textContent = "送信中です…";
+
+    formStatus.textContent = "お申し込み内容を送信しています。";
+    formStatus.classList.remove("is-success", "is-error");
+
+    try {
+      const formData = new FormData(trialForm);
+
+      const response = await fetch(trialForm.action, {
+        method: "POST",
+        body: formData,
+        headers: {
+          Accept: "application/json"
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error("送信に失敗しました");
+      }
+
+      formStatus.textContent =
+        "送信が完了しました。内容を確認後、メールでご連絡いたします。";
+
+      formStatus.classList.add("is-success");
+
+      trialForm.reset();
+    } catch (error) {
+      console.error("フォーム送信エラー:", error);
+
+      formStatus.textContent =
+        "送信できませんでした。時間をおいて、もう一度お試しください。";
+
+      formStatus.classList.add("is-error");
+    } finally {
+      contactSubmit.disabled = false;
+      contactSubmit.textContent = originalButtonText;
+    }
+  });
+}
