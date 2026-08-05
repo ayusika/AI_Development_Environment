@@ -406,39 +406,65 @@ a {
   max-width: 470px;
   aspect-ratio: 4 / 5;
   justify-self: end;
-  overflow: hidden;
-  border-radius: 48% 48% 20px 20px;
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.85),
-      rgba(214, 228, 219, 0.8)
-    );
-  box-shadow: 0 30px 70px rgba(65, 87, 77, 0.12);
+  isolation: isolate;
+  filter: drop-shadow(0 30px 35px rgba(65, 87, 77, 0.14));
+  animation: heroFloat 5.5s ease-in-out infinite;
 }
 
+/* 写真 */
+.hero-image {
+  position: relative;
+  z-index: 2;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: right 35%;
+  border-radius: 48% 48% 20px 20px;
+}
+
+/* 写真の後ろの大きな円 */
 .hero-visual::before {
   position: absolute;
-  top: 12%;
-  left: 12%;
-  width: 76%;
-  height: 76%;
-  border: 1px solid rgba(120, 149, 137, 0.24);
+  z-index: 1;
+  top: 7%;
+  left: -7%;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 1px solid rgba(120, 149, 137, 0.25);
   border-radius: 50%;
   content: "";
 }
 
+/* 右下の金色ライン */
 .hero-visual::after {
   position: absolute;
-  right: 12%;
+  z-index: 3;
+  right: -4%;
   bottom: 12%;
-  width: 38%;
+  width: 40%;
   height: 2px;
   background: var(--color-accent);
   content: "";
-  opacity: 0.7;
+  opacity: 0.78;
 }
 
+@keyframes heroFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-visual {
+    animation: none;
+  }
+}
 
 /* ---------- 教室について ---------- */
 
