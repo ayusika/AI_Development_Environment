@@ -1983,3 +1983,377 @@ a {
     font-size: 0.92rem;
   }
 }
+
+/* ========================================
+   PRIVACY POLICY
+======================================== */
+
+.policy-page {
+  background:
+    radial-gradient(
+      circle at 12% 10%,
+      rgba(192, 225, 216, 0.24),
+      transparent 30%
+    ),
+    linear-gradient(
+      180deg,
+      #f8fbfa 0%,
+      #ffffff 45%,
+      #f8faf8 100%
+    );
+}
+
+.policy-container {
+  width: min(100% - (var(--side-space) * 2), 880px);
+  margin: 0 auto;
+}
+
+.policy-hero {
+  padding: 160px 0 68px;
+  text-align: center;
+}
+
+.policy-title {
+  margin: 12px 0 22px;
+  color: var(--color-text);
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 5vw, 3.4rem);
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: 0.1em;
+}
+
+.policy-lead {
+  margin: 0;
+  color: var(--color-text-soft);
+  font-size: 0.96rem;
+  line-height: 2;
+  letter-spacing: 0.06em;
+}
+
+.policy-wave {
+  display: flex;
+  justify-content: center;
+  margin-top: 34px;
+}
+
+.policy-wave img {
+  width: 210px;
+  max-width: 62%;
+  opacity: 0.72;
+}
+
+.policy-content {
+  padding: 0 0 110px;
+}
+
+/* 安心メッセージ */
+
+.policy-assurance {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 22px;
+  align-items: start;
+  margin-bottom: 58px;
+  padding: 32px 36px;
+  border: 1px solid rgba(120, 149, 137, 0.2);
+  border-radius: 24px;
+  background: rgba(238, 244, 240, 0.88);
+  box-shadow: 0 16px 42px rgba(43, 61, 53, 0.06);
+}
+
+.policy-assurance-icon {
+  display: flex;
+  width: 52px;
+  height: 52px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.82);
+}
+
+.policy-assurance-icon svg {
+  width: 27px;
+  height: 27px;
+  fill: none;
+  stroke: var(--color-main-dark);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.policy-assurance h2 {
+  margin: 0 0 10px;
+  color: var(--color-main-dark);
+  font-family: var(--font-serif);
+  font-size: 1.18rem;
+  font-weight: 500;
+  line-height: 1.7;
+  letter-spacing: 0.07em;
+}
+
+.policy-assurance p {
+  margin: 0;
+  color: var(--color-text-soft);
+  font-size: 0.92rem;
+  line-height: 2;
+}
+
+/* 本文 */
+
+.policy-body {
+  padding: 52px 58px;
+  border: 1px solid var(--color-border);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow: 0 20px 55px var(--color-shadow);
+}
+
+.policy-introduction {
+  margin: 0 0 48px;
+  padding-bottom: 40px;
+  border-bottom: 1px solid var(--color-border);
+  color: var(--color-text);
+  font-family: var(--font-serif);
+  font-size: 1.04rem;
+  line-height: 2.1;
+  letter-spacing: 0.06em;
+}
+
+.policy-section + .policy-section {
+  margin-top: 48px;
+  padding-top: 46px;
+  border-top: 1px solid var(--color-border);
+}
+
+.policy-section h2 {
+  position: relative;
+  margin: 0 0 22px;
+  padding-left: 25px;
+  color: var(--color-main-dark);
+  font-family: var(--font-serif);
+  font-size: clamp(1.15rem, 3vw, 1.38rem);
+  font-weight: 500;
+  line-height: 1.7;
+  letter-spacing: 0.07em;
+}
+
+/* 小さなオリーブ葉 */
+
+.policy-section h2::before {
+  position: absolute;
+  top: 0.63em;
+  left: 0;
+  width: 13px;
+  height: 7px;
+  border-radius: 100% 0 100% 0;
+  background: #91aa9f;
+  content: "";
+  transform: rotate(-28deg);
+}
+
+.policy-section p {
+  margin: 0;
+  color: var(--color-text-soft);
+  font-size: 0.94rem;
+  line-height: 2.05;
+}
+
+.policy-section p + p {
+  margin-top: 16px;
+}
+
+.policy-section ul {
+  display: grid;
+  gap: 8px;
+  margin: 20px 0;
+  padding: 20px 24px 20px 46px;
+  border-radius: 14px;
+  color: var(--color-text-soft);
+  background: var(--color-bg-soft);
+}
+
+.policy-section li {
+  padding-left: 4px;
+  line-height: 1.85;
+}
+
+.policy-section li::marker {
+  color: var(--color-main);
+}
+
+.policy-external-link {
+  display: inline-flex;
+  gap: 9px;
+  align-items: center;
+  margin-top: 22px;
+  padding-bottom: 3px;
+  border-bottom: 1px solid rgba(83, 111, 100, 0.45);
+  color: var(--color-main-dark);
+  font-size: 0.88rem;
+  line-height: 1.7;
+  transition:
+    color var(--transition),
+    border-color var(--transition);
+}
+
+.policy-external-link:hover {
+  color: var(--color-main);
+  border-color: var(--color-main);
+}
+
+/* 最後のお問い合わせ案内 */
+
+.policy-contact-box {
+  margin-top: 44px;
+  padding: 42px 36px;
+  border: 1px solid rgba(120, 149, 137, 0.19);
+  border-radius: 24px;
+  text-align: center;
+  background:
+    linear-gradient(
+      135deg,
+      rgba(238, 244, 240, 0.95),
+      rgba(255, 255, 255, 0.92)
+    );
+}
+
+.policy-contact-label {
+  margin: 0 0 10px;
+  color: var(--color-main);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.policy-contact-box h2 {
+  margin: 0;
+  color: var(--color-main-dark);
+  font-family: var(--font-serif);
+  font-size: clamp(1.3rem, 3vw, 1.65rem);
+  font-weight: 500;
+  letter-spacing: 0.07em;
+}
+
+.policy-contact-box > p:not(.policy-contact-label) {
+  margin: 16px 0 26px;
+  color: var(--color-text-soft);
+  font-size: 0.92rem;
+  line-height: 2;
+}
+
+.policy-contact-box .button {
+  margin-top: 0;
+}
+
+.policy-information {
+  margin-top: 34px;
+  color: var(--color-text-soft);
+  font-size: 0.8rem;
+  line-height: 1.8;
+  text-align: right;
+}
+
+.policy-information p {
+  margin: 0;
+}
+
+.policy-back-link {
+  display: flex;
+  gap: 10px;
+  width: fit-content;
+  margin: 42px auto 0;
+  align-items: center;
+  color: var(--color-main-dark);
+  font-size: 0.88rem;
+  transition:
+    gap var(--transition),
+    color var(--transition);
+}
+
+.policy-back-link:hover {
+  gap: 15px;
+  color: var(--color-main);
+}
+
+/* キーボード操作時 */
+
+.policy-external-link:focus-visible,
+.policy-back-link:focus-visible {
+  outline: 2px solid var(--color-main);
+  outline-offset: 5px;
+}
+
+/* ========================================
+   PRIVACY POLICY：スマホ
+======================================== */
+
+@media (max-width: 720px) {
+  .policy-container {
+    width: min(100% - 36px, 880px);
+  }
+
+  .policy-hero {
+    padding-top: 125px;
+    padding-bottom: 52px;
+  }
+
+  .policy-title {
+    letter-spacing: 0.06em;
+  }
+
+  .policy-lead br {
+    display: none;
+  }
+
+  .policy-assurance {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 34px;
+    padding: 26px 22px;
+    border-radius: 19px;
+  }
+
+  .policy-assurance-icon {
+    width: 46px;
+    height: 46px;
+  }
+
+  .policy-body {
+    padding: 36px 22px;
+    border-radius: 20px;
+  }
+
+  .policy-introduction {
+    margin-bottom: 38px;
+    padding-bottom: 32px;
+  }
+
+  .policy-section + .policy-section {
+    margin-top: 38px;
+    padding-top: 36px;
+  }
+
+  .policy-section h2 {
+    padding-left: 23px;
+  }
+
+  .policy-section ul {
+    padding: 18px 18px 18px 40px;
+  }
+
+  .policy-contact-box {
+    margin-top: 34px;
+    padding: 34px 22px;
+    border-radius: 20px;
+  }
+
+  .policy-contact-box > p:not(.policy-contact-label) br {
+    display: none;
+  }
+
+  .policy-information {
+    text-align: left;
+  }
+}
