@@ -823,24 +823,187 @@ a {
 
 
 /* ---------- フッター ---------- */
+/* ========================================
+   FOOTER
+======================================== */
+
+.site-logo,
+.footer-logo {
+  display: inline-flex;
+  flex-direction: column;
+  line-height: 1.25;
+}
 
 .site-footer {
-  padding: 58px var(--side-space);
+  padding: 58px var(--side-space) 28px;
   color: rgba(255, 255, 255, 0.92);
   background: #33473f;
 }
 
 .footer-inner {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 30px;
+  gap: 60px;
   width: min(100%, var(--content-width));
   margin: 0 auto;
 }
 
+.footer-brand {
+  flex-shrink: 0;
+}
+
+.footer-logo {
+  color: #fff;
+  text-decoration: none;
+}
+
+.footer-logo .site-logo-main {
+  color: #fff;
+}
+
 .footer-logo .site-logo-sub {
   color: rgba(255, 255, 255, 0.6);
+}
+
+.footer-message {
+  margin: 20px 0 0;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 0.88rem;
+  line-height: 1.8;
+  letter-spacing: 0.04em;
+}
+
+.footer-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 26px;
+}
+
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 12px 28px;
+}
+
+.footer-nav a {
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.88rem;
+  text-decoration: none;
+  transition:
+    color 0.25s ease,
+    opacity 0.25s ease;
+}
+
+.footer-nav a:hover {
+  color: #fff;
+}
+
+.footer-instagram {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  text-decoration: none;
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.footer-instagram span {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+
+.footer-instagram:hover {
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: min(100%, var(--content-width));
+  margin: 42px auto 0;
+  padding-top: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.13);
+}
+
+.copyright {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+}
+
+.footer-policy {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 0.76rem;
+  text-decoration: none;
+}
+
+.footer-policy:hover {
+  color: #fff;
+}
+
+/* キーボード操作時 */
+.footer-logo:focus-visible,
+.footer-nav a:focus-visible,
+.footer-instagram:focus-visible,
+.footer-policy:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.9);
+  outline-offset: 5px;
+}
+
+/* ========================================
+   FOOTER：スマホ
+======================================== */
+
+@media (max-width: 700px) {
+  .site-footer {
+    padding-top: 46px;
+  }
+
+  .footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 38px;
+  }
+
+  .footer-links {
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .footer-nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 17px;
+  }
+
+  .footer-nav a {
+    display: inline-flex;
+    min-height: 30px;
+    align-items: center;
+  }
+
+  .footer-instagram {
+    align-items: flex-start;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 34px;
+  }
 }
 
 .copyright {
@@ -1789,4 +1952,34 @@ a {
 .contact-form .form-agreement {
   width: 100%;
   text-align: left;
+}
+/* Instagramボタン：スマホでの上書き対策 */
+@media (max-width: 600px) {
+  .instagram-contact .instagram-button {
+    display: flex;
+    width: 100%;
+    min-height: 52px;
+    margin: 18px 0 0;
+    padding: 12px 24px;
+    align-items: center;
+    justify-content: center;
+    color: #496b5c;
+    font-weight: 500;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.82);
+    border: 1px solid #6f927f;
+    border-radius: 999px;
+  }
+}
+
+.instagram-button {
+  text-align: center;
+  line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+  .instagram-contact .instagram-button {
+    padding-inline: 16px;
+    font-size: 0.92rem;
+  }
 }
