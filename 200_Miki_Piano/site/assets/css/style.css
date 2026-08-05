@@ -1315,6 +1315,27 @@ a {
     width: 100%;
     max-width: 360px;
   }
+    .story-photo {
+    margin: 42px auto;
+  }
+
+  .story-photo-young {
+    width: 88%;
+    max-width: 360px;
+    margin-top: 36px;
+    margin-bottom: 58px;
+  }
+
+  .story-photo-stage {
+    width: 100%;
+    margin-top: 34px;
+    margin-bottom: 38px;
+  }
+
+  .story-photo-stage img {
+    border-radius: 14px;
+    box-shadow: 0 8px 24px rgba(50, 75, 88, 0.09);
+  }
 }
 
 
@@ -2743,4 +2764,43 @@ a {
     padding: 46px 24px;
     border-radius: 24px;
   }
+}
+
+/* =========================
+   Story Photos
+========================= */
+
+.story-photo {
+  margin: 56px auto;
+  text-align: center;
+}
+
+.story-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin: 0 auto;
+}
+
+/* 若い頃・グランドピアノ */
+.story-photo-young {
+  max-width: 460px;
+  margin-top: 48px;
+  margin-bottom: 80px;
+}
+
+.story-photo-young img {
+  border-radius: 6px;
+}
+
+/* 若い頃・ステージ演奏 */
+.story-photo-stage {
+  max-width: 680px;
+  margin-top: 44px;
+  margin-bottom: 44px;
+}
+
+.story-photo-stage img {
+  border-radius: 18px;
+  box-shadow: 0 12px 32px rgba(50, 75, 88, 0.1);
 }
