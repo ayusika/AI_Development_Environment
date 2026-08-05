@@ -209,9 +209,10 @@ a {
   align-items: center;
   justify-content: space-between;
   width: min(100%, 1280px);
-  min-height: 84px;
+  height: 100px;
+  min-height: 0;
   margin: 0 auto;
-  padding: 12px var(--side-space);
+  padding: 6px var(--side-space);
 }
 
 .site-logo,
@@ -2360,4 +2361,34 @@ a {
 
 .policy-section ul {
   list-style: disc;
+}
+
+
+/* 正式ヘッダーロゴ */
+.site-logo {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  width: 320px;
+  height: 88px;
+  overflow: hidden;
+}
+
+.header-logo-image {
+  display: block;
+  width: 320px;
+  max-width: none;
+  height: auto;
+}
+
+/* スマホ */
+@media (max-width: 767px) {
+  .site-logo {
+    width: 240px;
+    height: 76px;
+  }
+
+  .header-logo-image {
+    width: 240px;
+  }
 }
