@@ -662,7 +662,68 @@ a {
   font-size: 14px;
 }
 
+/* ---------- こんな方におすすめ ---------- */
 
+.recommend {
+  text-align: center;
+  background: var(--color-bg-soft);
+}
+
+.recommend-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 18px;
+  max-width: 960px;
+  margin: 58px auto 0;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+}
+
+.recommend-list li {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 68px;
+  margin: 0;
+  padding: 17px 24px 17px 58px;
+  border: 1px solid rgba(120, 149, 137, 0.16);
+  border-radius: 14px;
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.82);
+  box-shadow: 0 14px 36px rgba(48, 75, 63, 0.06);
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+.recommend-list li::before {
+  position: absolute;
+  left: 25px;
+  width: 18px;
+  height: 9px;
+  border-bottom: 2px solid var(--color-main);
+  border-left: 2px solid var(--color-main);
+  content: "";
+  transform: translateY(-3px) rotate(-45deg);
+}
+
+.recommend-message {
+  max-width: 800px;
+  margin: 42px auto 0;
+  padding-top: 32px;
+  border-top: 1px solid rgba(120, 149, 137, 0.24);
+  color: var(--color-text-soft);
+  font-size: 15px;
+  line-height: 2;
+}
+
+.recommend-message p {
+  margin: 0;
+}
+
+.recommend-message p + p {
+  margin-top: 5px;
+}
 /* ---------- 講師紹介 ---------- */
 
 .teacher {
