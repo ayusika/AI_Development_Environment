@@ -2369,26 +2369,20 @@ a {
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  width: 320px;
-  height: 88px;
-  overflow: hidden;
+  line-height: 0;
 }
 
 .header-logo-image {
   display: block;
-  width: 320px;
-  max-width: none;
+  width: 230px;
+  max-width: 68vw;
   height: auto;
 }
 
-/* スマホ */
-@media (max-width: 767px) {
-  .site-logo {
-    width: 240px;
-    height: 76px;
-  }
-
+/* PC・タブレット */
+@media (min-width: 768px) {
   .header-logo-image {
-    width: 240px;
+    width: 300px;
+    max-width: none;
   }
 }
