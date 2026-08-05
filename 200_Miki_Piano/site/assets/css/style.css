@@ -2357,3 +2357,7 @@ a {
     text-align: left;
   }
 }
+
+.policy-section ul {
+  list-style: disc;
+}
