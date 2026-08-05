@@ -2694,9 +2694,12 @@ a {
 
     @media (max-width: 720px) {
       .story-hero {
-        padding: 126px 20px 72px;
+        padding: 96px 20px 32px;
       }
-
+     .story-wave {
+         margin-top: 26px;
+       }
+    }
       .story-lead {
         font-size: 14px;
         line-height: 1.9;
