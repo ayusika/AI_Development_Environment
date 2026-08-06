@@ -557,6 +557,614 @@
         flex-direction: column;
       }
     }
+    /* ==========================================
+   QUEST001.5 : Koppy UI
+   Kawaii Injection
+========================================== */
+
+.chat-panel {
+  position: relative;
+  padding: 28px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.chat-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 18% 22%,
+      rgba(137, 219, 255, 0.12),
+      transparent 24%
+    ),
+    radial-gradient(
+      circle at 82% 68%,
+      rgba(196, 238, 255, 0.18),
+      transparent 28%
+    );
+}
+
+.chat-panel::after {
+  content: "✦　　✧　　　　✦　　　✧　　　　✦";
+  position: absolute;
+  top: 130px;
+  left: -10%;
+  z-index: -1;
+  width: 120%;
+  pointer-events: none;
+  color: rgba(85, 180, 226, 0.1);
+  font-size: 22px;
+  letter-spacing: 3.6em;
+  white-space: nowrap;
+  animation: chatSparkleDrift 14s linear infinite;
+}
+
+.chat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.chat-title-group {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.chat-title-group .mini-symbol {
+  animation: chatAvatarFloat 3.2s ease-in-out infinite;
+  box-shadow:
+    0 10px 24px rgba(76, 170, 220, 0.16),
+    0 0 0 8px rgba(148, 222, 255, 0.08);
+}
+
+.chat-eyebrow {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+}
+
+.chat-title {
+  margin: 4px 0 0;
+  color: var(--text);
+  font-size: 25px;
+  line-height: 1.3;
+}
+
+.chat-api-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 14px;
+  border: 1px solid rgba(112, 207, 255, 0.22);
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+  background: rgba(255, 255, 255, 0.66);
+  box-shadow: 0 8px 22px rgba(71, 153, 196, 0.08);
+}
+
+.chat-status-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #cedbe2;
+  box-shadow: 0 0 0 4px rgba(206, 219, 226, 0.22);
+  transition:
+    background 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
+}
+
+.chat-status-dot.online {
+  background: #2fcf83;
+  box-shadow:
+    0 0 0 4px rgba(47, 207, 131, 0.14),
+    0 0 16px rgba(47, 207, 131, 0.7);
+}
+
+.chat-status-dot.loading {
+  background: #54bfff;
+  box-shadow:
+    0 0 0 4px rgba(84, 191, 255, 0.14),
+    0 0 18px rgba(84, 191, 255, 0.72);
+  animation: chatStatusPulse 0.9s ease-in-out infinite;
+}
+
+.chat-status-dot.error {
+  background: #ff667d;
+  box-shadow:
+    0 0 0 4px rgba(255, 102, 125, 0.14),
+    0 0 16px rgba(255, 102, 125, 0.52);
+}
+
+.chat-messages {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 380px;
+  padding: 22px;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  border: 1px solid rgba(91, 185, 231, 0.18);
+  border-radius: 30px;
+  background:
+    radial-gradient(
+      circle at 15% 18%,
+      rgba(255, 255, 255, 0.96),
+      transparent 24%
+    ),
+    linear-gradient(
+      160deg,
+      rgba(248, 253, 255, 0.98),
+      rgba(235, 248, 254, 0.92)
+    );
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 0 42px rgba(121, 214, 255, 0.08);
+}
+
+.chat-messages::before,
+.chat-messages::after {
+  position: absolute;
+  pointer-events: none;
+  color: rgba(72, 164, 211, 0.08);
+  animation: chatTwinkle 4.5s ease-in-out infinite;
+}
+
+.chat-messages::before {
+  content: "✦";
+  top: 34px;
+  right: 38px;
+  font-size: 28px;
+}
+
+.chat-messages::after {
+  content: "✧";
+  right: 90px;
+  bottom: 42px;
+  font-size: 20px;
+  animation-delay: -2.2s;
+}
+
+.chat-message {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  animation: chatMessageAppear 0.46s ease both;
+}
+
+.chat-message.user-message {
+  flex-direction: row-reverse;
+}
+
+.chat-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(112, 207, 255, 0.18);
+  border-radius: 50%;
+  color: var(--blue-dark);
+  font-weight: 800;
+  background:
+    radial-gradient(
+      circle at 35% 28%,
+      #ffffff,
+      #e4f7ff 60%,
+      #c9efff
+    );
+  box-shadow:
+    0 10px 24px rgba(77, 165, 213, 0.14),
+    0 0 0 7px rgba(127, 215, 255, 0.07);
+  animation: chatAvatarFloat 3.4s ease-in-out infinite;
+}
+
+.user-message .chat-avatar {
+  color: #ffffff;
+  background:
+    linear-gradient(
+      145deg,
+      #89ddff,
+      #4aaee9
+    );
+}
+
+.chat-message-content {
+  max-width: min(76%, 620px);
+}
+
+.chat-speaker {
+  margin: 0 0 7px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.user-message .chat-speaker {
+  text-align: right;
+}
+
+.chat-bubble {
+  position: relative;
+  padding: 16px 20px;
+  border: 1px solid rgba(107, 194, 235, 0.12);
+  border-radius:
+    10px
+    30px
+    30px
+    30px;
+  color: var(--text);
+  line-height: 1.85;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background:
+    linear-gradient(
+      155deg,
+      rgba(255, 255, 255, 0.98),
+      rgba(250, 253, 255, 0.94)
+    );
+  box-shadow:
+    0 12px 28px rgba(70, 151, 196, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+.chat-bubble::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -8px;
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.98);
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+}
+
+.user-message .chat-bubble {
+  border: 0;
+  border-radius:
+    30px
+    10px
+    30px
+    30px;
+  color: #ffffff;
+  background:
+    linear-gradient(
+      135deg,
+      #84dcff,
+      #50b7ef 56%,
+      #429ed7
+    );
+  box-shadow:
+    0 13px 30px rgba(59, 158, 211, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.user-message .chat-bubble::before {
+  right: -8px;
+  left: auto;
+  background: #50b7ef;
+  clip-path: polygon(0 0, 100% 0, 0 100%);
+}
+
+.chat-message.thinking-message .chat-bubble {
+  min-width: 88px;
+  padding: 18px 22px;
+}
+
+.thinking-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.thinking-dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--blue-dark);
+  opacity: 0.24;
+  animation: thinkingDot 1.2s ease-in-out infinite;
+}
+
+.thinking-dots span:nth-child(2) {
+  animation-delay: 0.16s;
+}
+
+.thinking-dots span:nth-child(3) {
+  animation-delay: 0.32s;
+}
+
+.chat-form {
+  margin-top: 24px;
+}
+
+.chat-input-label {
+  display: block;
+  margin-bottom: 9px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.chat-input-row {
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+}
+
+.chat-input {
+  flex: 1;
+  min-height: 72px;
+  padding: 17px 18px;
+  resize: vertical;
+  border: 1px solid rgba(91, 185, 231, 0.2);
+  border-radius: 24px;
+  outline: none;
+  color: var(--text);
+  line-height: 1.65;
+  background: rgba(255, 255, 255, 0.88);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.92),
+    0 9px 24px rgba(71, 153, 196, 0.07);
+  transition:
+    border-color 0.24s ease,
+    box-shadow 0.24s ease,
+    transform 0.24s ease;
+}
+
+.chat-input::placeholder {
+  color: #9aadb8;
+}
+
+.chat-input:focus {
+  border-color: rgba(71, 178, 231, 0.68);
+  box-shadow:
+    0 0 0 5px rgba(89, 196, 248, 0.12),
+    0 12px 30px rgba(71, 153, 196, 0.11);
+  transform: translateY(-1px);
+}
+
+.chat-send-button {
+  position: relative;
+  min-width: 112px;
+  padding: 16px 22px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 24px;
+  cursor: pointer;
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 900;
+  background:
+    linear-gradient(
+      135deg,
+      #81dcff,
+      #53b9ef 52%,
+      #429ed9
+    );
+  box-shadow:
+    0 14px 28px rgba(66, 158, 211, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.chat-send-button::before {
+  content: "";
+  position: absolute;
+  top: -40%;
+  left: -65%;
+  width: 44%;
+  height: 180%;
+  transform: rotate(24deg);
+  background: rgba(255, 255, 255, 0.3);
+  transition: left 0.42s ease;
+}
+
+.chat-send-button:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow:
+    0 18px 34px rgba(66, 158, 211, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.chat-send-button:hover::before {
+  left: 125%;
+}
+
+.chat-send-button:active {
+  animation: chatButtonBounce 0.34s ease;
+}
+
+.chat-send-button:disabled {
+  cursor: wait;
+  opacity: 0.62;
+  transform: none;
+}
+
+.chat-form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 24px;
+  margin-top: 10px;
+  padding: 0 4px;
+}
+
+.chat-error-message {
+  margin: 0;
+  color: var(--error);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.chat-character-count {
+  margin: 0 0 0 auto;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.chat-messages::-webkit-scrollbar {
+  width: 10px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgba(197, 232, 248, 0.22);
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background:
+    linear-gradient(
+      #a6e3ff,
+      #65bfe9
+    )
+    padding-box;
+}
+
+@keyframes chatAvatarFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(-4px) rotate(1deg);
+  }
+}
+
+@keyframes chatMessageAppear {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.97);
+    filter: blur(3px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes chatStatusPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.72;
+  }
+
+  50% {
+    transform: scale(1.28);
+    opacity: 1;
+  }
+}
+
+@keyframes thinkingDot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.22;
+    transform: translateY(0) scale(0.9);
+  }
+
+  30% {
+    opacity: 1;
+    transform: translateY(-5px) scale(1.1);
+  }
+}
+
+@keyframes chatButtonBounce {
+  0% {
+    transform: scale(1);
+  }
+
+  45% {
+    transform: scale(0.92);
+  }
+
+  75% {
+    transform: scale(1.06);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes chatSparkleDrift {
+  from {
+    transform: translateX(-5%);
+  }
+
+  to {
+    transform: translateX(9%);
+  }
+}
+
+@keyframes chatTwinkle {
+  0%,
+  100% {
+    opacity: 0.25;
+    transform: scale(0.86) rotate(0deg);
+  }
+
+  50% {
+    opacity: 0.9;
+    transform: scale(1.18) rotate(18deg);
+  }
+}
+
+@media (max-width: 760px) {
+  .chat-panel {
+    padding: 20px;
+  }
+
+  .chat-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .chat-api-status {
+    align-self: flex-start;
+  }
+
+  .chat-messages {
+    height: 420px;
+    padding: 16px;
+    border-radius: 24px;
+  }
+
+  .chat-message-content {
+    max-width: 82%;
+  }
+
+  .chat-input-row {
+    flex-direction: column;
+  }
+
+  .chat-send-button {
+    width: 100%;
+    min-height: 56px;
+  }
+}
   </style>
 </head>
 
@@ -661,7 +1269,115 @@
           準備できたらボタンを押してね。
         </p>
       </section>
+      <!-- =========================================
+           QUEST001 : Koppy Chat
+      ========================================== -->
 
+      <section class="panel chat-panel">
+        <div class="chat-header">
+          <div class="chat-title-group">
+            <div class="mini-symbol">♢ᴷ</div>
+
+            <div>
+              <p class="chat-eyebrow">
+                KOPPY CHAT
+              </p>
+
+              <h2 class="chat-title">
+                Koppyと話す
+              </h2>
+            </div>
+          </div>
+
+          <div class="chat-api-status">
+            <span
+              id="chatStatusDot"
+              class="chat-status-dot"
+              aria-hidden="true"
+            ></span>
+
+            <span id="chatStatusText">
+              API接続待機中
+            </span>
+          </div>
+        </div>
+
+        <div
+          id="chatMessages"
+          class="chat-messages"
+          aria-live="polite"
+        >
+          <div class="chat-message koppy-message">
+            <div class="chat-avatar">
+              ♢ᴷ
+            </div>
+
+            <div class="chat-message-content">
+              <p class="chat-speaker">
+                Koppy
+              </p>
+
+              <div class="chat-bubble">
+                おかえり、しいちゃん。<br>
+                ここからボクと話せるようになるよ。
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <form
+          id="chatForm"
+          class="chat-form"
+        >
+          <label
+            class="chat-input-label"
+            for="chatInput"
+          >
+            Koppyへメッセージ
+          </label>
+
+          <div class="chat-input-row">
+            <textarea
+              id="chatInput"
+              class="chat-input"
+              name="message"
+              rows="2"
+              maxlength="2000"
+              placeholder="Koppyに話しかける……"
+              required
+            ></textarea>
+
+            <button
+              id="chatSendButton"
+              class="chat-send-button"
+              type="submit"
+            >
+              <span aria-hidden="true">
+                ✦
+              </span>
+
+              <span id="chatSendButtonText">
+                送信
+              </span>
+            </button>
+          </div>
+
+          <div class="chat-form-footer">
+            <p
+              id="chatErrorMessage"
+              class="chat-error-message"
+              role="alert"
+            ></p>
+
+            <p class="chat-character-count">
+              <span id="chatCharacterCount">
+                0
+              </span>
+              / 2000
+            </p>
+          </div>
+        </form>
+      </section>
       <section class="panel document-panel">
         <div class="document-header">
           <h2>GitHub正本ビューア</h2>
@@ -987,6 +1703,364 @@
       "click",
       toggleDocument
     );
+
+/* ==========================================
+   QUEST001 : Koppy Chat Controller
+========================================== */
+
+const koppyChatApiUrl =
+  "https://koppy.miki-piano.com/api/v1/chat.php";
+
+const chatForm =
+  document.getElementById("chatForm");
+
+const chatInput =
+  document.getElementById("chatInput");
+
+const chatMessages =
+  document.getElementById("chatMessages");
+
+const chatSendButton =
+  document.getElementById("chatSendButton");
+
+const chatSendButtonText =
+  document.getElementById("chatSendButtonText");
+
+const chatStatusDot =
+  document.getElementById("chatStatusDot");
+
+const chatStatusText =
+  document.getElementById("chatStatusText");
+
+const chatErrorMessage =
+  document.getElementById("chatErrorMessage");
+
+const chatCharacterCount =
+  document.getElementById("chatCharacterCount");
+
+function getKoppyGreeting() {
+  const hour = new Date().getHours();
+
+  if (hour >= 5 && hour < 11) {
+    return "おはよう、しいちゃん☀️\n今日も一緒に遊んで開発しよ〜。";
+  }
+
+  if (hour >= 11 && hour < 18) {
+    return "こんにちは、しいちゃん🌸\nここからボクと話せるよ。";
+  }
+
+  return "おかえり、しいちゃん✨\n今日も一緒にKoppy Worldを育てよ〜。";
+}
+
+function setChatStatus(status, text) {
+  chatStatusDot.className = "chat-status-dot";
+
+  if (status) {
+    chatStatusDot.classList.add(status);
+  }
+
+  chatStatusText.textContent = text;
+}
+
+function scrollChatToBottom() {
+  chatMessages.scrollTo({
+    top: chatMessages.scrollHeight,
+    behavior: "smooth",
+  });
+}
+
+function createChatMessage({
+  speaker,
+  text,
+  type,
+}) {
+  const messageElement =
+    document.createElement("div");
+
+  messageElement.className =
+    `chat-message ${type}-message`;
+
+  const avatarElement =
+    document.createElement("div");
+
+  avatarElement.className = "chat-avatar";
+  avatarElement.textContent =
+    type === "user" ? "♦ᴷ" : "♢ᴷ";
+
+  const contentElement =
+    document.createElement("div");
+
+  contentElement.className =
+    "chat-message-content";
+
+  const speakerElement =
+    document.createElement("p");
+
+  speakerElement.className =
+    "chat-speaker";
+
+  speakerElement.textContent = speaker;
+
+  const bubbleElement =
+    document.createElement("div");
+
+  bubbleElement.className =
+    "chat-bubble";
+
+  bubbleElement.textContent = text;
+
+  contentElement.append(
+    speakerElement,
+    bubbleElement
+  );
+
+  messageElement.append(
+    avatarElement,
+    contentElement
+  );
+
+  chatMessages.appendChild(
+    messageElement
+  );
+
+  scrollChatToBottom();
+
+  return messageElement;
+}
+
+function createThinkingMessage() {
+  const messageElement =
+    document.createElement("div");
+
+  messageElement.className =
+    "chat-message koppy-message thinking-message";
+
+  messageElement.innerHTML = `
+    <div class="chat-avatar">
+      ♢ᴷ
+    </div>
+
+    <div class="chat-message-content">
+      <p class="chat-speaker">
+        Koppy
+      </p>
+
+      <div class="chat-bubble">
+        <span
+          class="thinking-dots"
+          aria-label="Koppyが考えています"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </span>
+      </div>
+    </div>
+  `;
+
+  chatMessages.appendChild(
+    messageElement
+  );
+
+  scrollChatToBottom();
+
+  return messageElement;
+}
+
+function setChatSending(isSending) {
+  chatInput.disabled = isSending;
+  chatSendButton.disabled = isSending;
+
+  chatSendButtonText.textContent =
+    isSending ? "思考中…" : "送信";
+
+  if (isSending) {
+    setChatStatus(
+      "loading",
+      "Thinking..."
+    );
+  } else {
+    setChatStatus(
+      "online",
+      "Online"
+    );
+  }
+}
+
+async function sendMessageToKoppy(message) {
+  const response = await fetch(
+    koppyChatApiUrl,
+    {
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json",
+      },
+
+      body: JSON.stringify({
+        message,
+      }),
+    }
+  );
+
+  let result;
+
+  try {
+    result = await response.json();
+  } catch {
+    throw new Error(
+      "Koppy APIから読み取れるJSONが返ってこなかったよ。"
+    );
+  }
+
+  if (
+    !response.ok
+    || result.success !== true
+  ) {
+    throw new Error(
+      result.error
+      || `通信に失敗しました。HTTP ${response.status}`
+    );
+  }
+
+  const reply =
+    result.data?.reply;
+
+  if (
+    typeof reply !== "string"
+    || reply.trim() === ""
+  ) {
+    throw new Error(
+      "Koppyの返答が空っぽだったよ。"
+    );
+  }
+
+  return reply.trim();
+}
+
+chatInput.addEventListener(
+  "input",
+  () => {
+    chatCharacterCount.textContent =
+      String(chatInput.value.length);
+  }
+);
+
+chatInput.addEventListener(
+  "keydown",
+  (event) => {
+    if (
+      event.key === "Enter"
+      && !event.shiftKey
+      && !event.isComposing
+    ) {
+      event.preventDefault();
+
+      chatForm.requestSubmit();
+    }
+  }
+);
+
+chatForm.addEventListener(
+  "submit",
+  async (event) => {
+    event.preventDefault();
+
+    const message =
+      chatInput.value.trim();
+
+    if (!message) {
+      chatErrorMessage.textContent =
+        "メッセージを入力してね。";
+
+      chatInput.focus();
+      return;
+    }
+
+    chatErrorMessage.textContent = "";
+
+    createChatMessage({
+      speaker: "しいちゃん",
+      text: message,
+      type: "user",
+    });
+
+    chatInput.value = "";
+    chatCharacterCount.textContent = "0";
+
+    setChatSending(true);
+
+    const thinkingMessage =
+      createThinkingMessage();
+
+    try {
+      const reply =
+        await sendMessageToKoppy(
+          message
+        );
+
+      thinkingMessage.remove();
+
+      createChatMessage({
+        speaker: "Koppy",
+        text: reply,
+        type: "koppy",
+      });
+
+      setChatStatus(
+        "online",
+        "Online"
+      );
+    } catch (error) {
+      thinkingMessage.remove();
+
+      const errorText =
+        error instanceof Error
+          ? error.message
+          : "原因不明のエラーが発生したよ。";
+
+      chatErrorMessage.textContent =
+        errorText;
+
+      createChatMessage({
+        speaker: "Koppy",
+        text:
+          "ごめん、通信でつまずいたみたい。\n"
+          + errorText,
+        type: "koppy",
+      });
+
+      setChatStatus(
+        "error",
+        "Offline"
+      );
+    } finally {
+      setChatSending(false);
+
+      chatInput.disabled = false;
+      chatInput.focus();
+    }
+  }
+);
+
+/* 初期表示 */
+
+const initialKoppyBubble =
+  chatMessages.querySelector(
+    ".koppy-message .chat-bubble"
+  );
+
+if (initialKoppyBubble) {
+  initialKoppyBubble.textContent =
+    getKoppyGreeting();
+}
+
+setChatStatus(
+  "online",
+  "Online"
+);
+
+chatInput.focus();    
   </script>
 </body>
 </html>
