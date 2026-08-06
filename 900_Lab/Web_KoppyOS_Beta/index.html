@@ -634,17 +634,17 @@
           </p>
         </article>
 
-        <article class="panel status-card">
-          <p class="status-label">CURRENT BRAIN</p>
+       <article class="panel status-card">
+  <p class="status-label">LAST UPDATE</p>
 
-          <p class="status-value">
-            Koppy設計書
-          </p>
+  <p id="updatedValue" class="status-value">
+    未取得
+  </p>
 
-          <p id="brainDetail" class="status-detail">
-            GitHub公開正本を参照します。
-          </p>
-        </article>
+  <p id="brainDetail" class="status-detail">
+    最新コミット日時を表示します。
+  </p>
+</article>
       </section>
 
       <section class="panel message-panel">
@@ -721,6 +721,9 @@
     const brainDetail =
       document.getElementById("brainDetail");
 
+      const updatedValue =
+      document.getElementById("updatedValue");
+      
     const statusMessage =
       document.getElementById("statusMessage");
 
@@ -761,8 +764,11 @@
       commitDetail.textContent =
         "最新コミットを探しています。";
 
+      updatedValue.textContent =
+      "確認中";
+
       brainDetail.textContent =
-        "Koppy設計書を取得しています。";
+      "最新コミット日時を取得しています。";
 
       documentElement.textContent =
         "GitHub正本を取得中……";
@@ -796,8 +802,11 @@
       commitDetail.textContent =
         commitMessage;
 
-      brainDetail.textContent =
-        `最終取得: ${formatDate(updatedAt)}`;
+      updatedValue.textContent =
+      formatDate(updatedAt);
+
+    brainDetail.textContent =
+       "GitHub上の最新コミット日時";
 
       documentElement.textContent =
         documentText;
@@ -829,8 +838,11 @@
       commitDetail.textContent =
         errorMessage;
 
+      updatedValue.textContent =
+      "取得失敗";
+
       brainDetail.textContent =
-        "設計書を取得できませんでした。";
+       "最新コミット日時を取得できませんでした。";
 
       documentElement.textContent =
         "GitHub正本を取得できませんでした。";
