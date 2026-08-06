@@ -1,44 +1,102 @@
 <?php
 
-header('Content-Type: application/json; charset=utf-8');
+declare(strict_types=1);
 
-$configPath = $_SERVER['DOCUMENT_ROOT'] . '/../../.koppy-private/config.php';
+require __DIR__ . '/bootstrap.php';
 
-try {
-    if (!file_exists($configPath)) {
-        throw new RuntimeException(
-            'config.php が見つかりません: ' . $configPath
-        );
-    }
+$requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
-    $config = require $configPath;
+/*
+|--------------------------------------------------------------------------
+| GET：チャットAPIの準備状態を確認
+|--------------------------------------------------------------------------
+*/
 
-    if (!is_array($config)) {
-        throw new RuntimeException(
-            'config.php の戻り値が配列ではありません。'
-        );
-    }
+if ($requestMethod === 'GET') {
+    respondSuccess([
+        'service' => 'Koppy Chat API',
+        'version' => 'v1',
+        'status' => 'ready',
+        'method' => 'POST',
+        'message' => 'Koppy Chat API is ready.',
+    ]);
+}
 
-    echo json_encode(
-        [
-            'success' => true,
-            'message' => 'chat endpoint ready',
-            'project' => $config['project_name'] ?? 'unknown',
-            'api_key_exists' => !empty($config['openai_api_key']),
-            'config_path' => $configPath,
-        ],
-        JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
-    );
+/*
+|--------------------------------------------------------------------------
+| POST以外は拒否
+|--------------------------------------------------------------------------
+*/
 
-} catch (Throwable $error) {
-    http_response_code(500);
-
-    echo json_encode(
-        [
-            'success' => false,
-            'error' => $error->getMessage(),
-            'config_path' => $configPath,
-        ],
-        JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
+if ($requestMethod !== 'POST') {
+    respondError(
+        'Method not allowed.',
+        405
     );
 }
+
+/*
+|--------------------------------------------------------------------------
+| JSONを受け取る
+|--------------------------------------------------------------------------
+*/
+
+$rawBody = file_get_contents('php://input');
+
+if ($rawBody === false || trim($rawBody) === '') {
+    respondError(
+        'Request body is empty.',
+        400
+    );
+}
+
+$payload = json_decode(
+    $rawBody,
+    true
+);
+
+if (!is_array($payload)) {
+    respondError(
+        'Invalid JSON body.',
+        400
+    );
+}
+
+$message = trim(
+    (string) ($payload['message'] ?? '')
+);
+
+if ($message === '') {
+    respondError(
+        'The message field is required.',
+        422
+    );
+}
+
+/*
+|--------------------------------------------------------------------------
+| OpenAI接続前の確認
+|--------------------------------------------------------------------------
+*/
+
+$apiKey = trim(
+    (string) ($config['openai_api_key'] ?? '')
+);
+
+if ($apiKey === '') {
+    respondError(
+        'OpenAI API key is not configured.',
+        503
+    );
+}
+
+/*
+|--------------------------------------------------------------------------
+| 次の工程でOpenAI APIを接続
+|--------------------------------------------------------------------------
+*/
+
+respondSuccess([
+    'message' => $message,
+    'reply' => 'OpenAI connection is not implemented yet.',
+]);

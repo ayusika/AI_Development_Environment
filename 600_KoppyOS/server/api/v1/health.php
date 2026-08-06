@@ -1,12 +1,13 @@
 <?php
 
-header('Content-Type: text/plain; charset=utf-8');
+declare(strict_types=1);
 
-echo "__DIR__\n";
-echo __DIR__;
+require __DIR__ . '/bootstrap.php';
 
-echo "\n\nDOCUMENT_ROOT\n";
-echo $_SERVER['DOCUMENT_ROOT'] ?? '未取得';
-
-echo "\n\nSCRIPT_FILENAME\n";
-echo $_SERVER['SCRIPT_FILENAME'] ?? '未取得';
+respondSuccess([
+    'service' => 'Koppy API',
+    'version' => 'v1',
+    'status' => 'alive',
+    'message' => 'Koppy API is alive!',
+    'time' => date('Y-m-d H:i:s'),
+]);
