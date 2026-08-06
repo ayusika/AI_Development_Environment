@@ -1,0 +1,50 @@
+name: Deploy Koppy World
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "900_Lab/Web_KoppyOS_Beta/**"
+      - ".github/workflows/deploy-koppy-world.yml"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "koppy-world-pages"
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Prepare Koppy World
+        run: |
+          mkdir -p public
+          cp 900_Lab/Web_KoppyOS_Beta/index.html public/index.html
+          touch public/.nojekyll
+
+      - name: Upload Koppy World artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: public
+
+      - name: Deploy Koppy World
+        id: deployment
+        uses: actions/deploy-pages@v4
