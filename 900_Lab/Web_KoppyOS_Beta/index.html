@@ -989,6 +989,105 @@
       text-align: center;
     }
 
+    /* AUTH GATE */
+
+    .auth-gate {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background:
+        radial-gradient(
+          circle at 50% 25%,
+          rgba(255, 255, 255, 0.96),
+          rgba(229, 247, 255, 0.96) 55%,
+          rgba(218, 241, 253, 0.98)
+        );
+      backdrop-filter: blur(18px);
+    }
+
+    .auth-gate-card {
+      width: min(520px, 100%);
+      padding: 42px 34px;
+      border: 1px solid rgba(112, 207, 255, 0.42);
+      border-radius: 30px;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow:
+        0 28px 80px rgba(52, 137, 180, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    .auth-gate-symbol {
+      display: grid;
+      place-items: center;
+      width: 76px;
+      height: 76px;
+      margin: 0 auto 20px;
+      border: 1px solid rgba(112, 207, 255, 0.5);
+      border-radius: 50%;
+      color: var(--blue-dark);
+      font-size: 30px;
+      font-weight: 900;
+      background: #f3fbff;
+      box-shadow:
+        0 0 36px rgba(71, 174, 224, 0.2);
+    }
+
+    .auth-gate-eyebrow {
+      margin: 0 0 8px;
+      color: var(--blue-dark);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+    }
+
+    .auth-gate-title {
+      margin: 0 0 12px;
+      font-size: clamp(28px, 6vw, 40px);
+      line-height: 1.35;
+    }
+
+    .auth-gate-copy {
+      margin: 0 auto 26px;
+      color: var(--muted);
+      line-height: 1.85;
+    }
+
+    .auth-login-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      min-width: 240px;
+      padding: 15px 24px;
+      border: 0;
+      border-radius: 999px;
+      color: #ffffff;
+      cursor: pointer;
+      font-weight: 900;
+      text-decoration: none;
+      background:
+        linear-gradient(
+          135deg,
+          #79d6ff,
+          #3f9fd7
+        );
+      box-shadow:
+        0 12px 30px rgba(58, 155, 210, 0.28);
+    }
+
+    .auth-checking {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .world.auth-pending {
+      visibility: hidden;
+    }
+
     @keyframes float {
       0%, 100% {
         transform: translateY(0);
