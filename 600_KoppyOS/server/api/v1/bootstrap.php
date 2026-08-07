@@ -4,53 +4,249 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/lib/response.php';
 
-header('Content-Type: application/json; charset=utf-8');
-header('Access-Control-Allow-Origin: https://ayusika.github.io');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header(
+    'Content-Type: application/json; charset=utf-8'
+);
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+header(
+    'Access-Control-Allow-Origin: https://ayusika.github.io'
+);
+
+header(
+    'Access-Control-Allow-Credentials: true'
+);
+
+header(
+    'Access-Control-Allow-Methods: GET, POST, OPTIONS'
+);
+
+header(
+    'Access-Control-Allow-Headers: Content-Type'
+);
+
+header(
+    'Vary: Origin'
+);
+
+if (
+    ($_SERVER['REQUEST_METHOD'] ?? '') === 'OPTIONS'
+) {
     http_response_code(204);
     exit;
 }
 
-date_default_timezone_set('Asia/Tokyo');
+date_default_timezone_set(
+    'Asia/Tokyo'
+);
+
+/*
+|--------------------------------------------------------------------------
+| Private Config
+|--------------------------------------------------------------------------
+*/
+
+$documentRoot =
+    $_SERVER['DOCUMENT_ROOT']
+    ?? '';
 
 $configPath =
-    ($_SERVER['DOCUMENT_ROOT'] ?? '')
+    $documentRoot
     . '/../../.koppy-private/config.php';
 
 if (
-    $configPath === '/../../.koppy-private/config.php'
-    || !file_exists($configPath)
+    $documentRoot === ''
+    || !file_exists(
+        $configPath
+    )
 ) {
-    http_response_code(500);
-
-    echo json_encode(
-        [
-            'success' => false,
-            'data' => null,
-            'error' => 'Koppy private config was not found.',
-        ],
-        JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
+    respondError(
+        'Koppy private config was not found.',
+        500
     );
-
-    exit;
 }
 
-$config = require $configPath;
+$config =
+    require $configPath;
 
 if (!is_array($config)) {
-    http_response_code(500);
+    respondError(
+        'Koppy private config is invalid.',
+        500
+    );
+}
 
-    echo json_encode(
-        [
-            'success' => false,
-            'data' => null,
-            'error' => 'Koppy private config is invalid.',
-        ],
-        JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
+/*
+|--------------------------------------------------------------------------
+| Authentication Config
+|--------------------------------------------------------------------------
+*/
+
+$authConfigPath =
+    $documentRoot
+    . '/../../.koppy-private/auth-config.php';
+
+if (!file_exists($authConfigPath)) {
+    respondError(
+        'Authentication configuration was not found.',
+        500
+    );
+}
+
+$authConfig =
+    require $authConfigPath;
+
+if (!is_array($authConfig)) {
+    respondError(
+        'Authentication configuration is invalid.',
+        500
+    );
+}
+
+$sessionConfig =
+    $authConfig['session']
+    ?? [];
+
+$sessionName =
+    trim(
+        (string) (
+            $sessionConfig['name']
+            ?? 'KOPPYSESSID'
+        )
     );
 
-    exit;
+if ($sessionName === '') {
+    $sessionName =
+        'KOPPYSESSID';
+}
+
+/*
+|--------------------------------------------------------------------------
+| Session
+|--------------------------------------------------------------------------
+*/
+
+session_name(
+    $sessionName
+);
+
+session_set_cookie_params([
+    'lifetime' =>
+        0,
+
+    'path' =>
+        '/',
+
+    'secure' =>
+        true,
+
+    'httponly' =>
+        true,
+
+    'samesite' =>
+        'None',
+]);
+
+session_start();
+
+/*
+|--------------------------------------------------------------------------
+| Idle Timeout
+|--------------------------------------------------------------------------
+*/
+
+$idleTimeoutSeconds =
+    (int) (
+        $sessionConfig['idle_timeout_seconds']
+        ?? 3600
+    );
+
+if ($idleTimeoutSeconds <= 0) {
+    $idleTimeoutSeconds =
+        3600;
+}
+
+$authenticated =
+    (
+        $_SESSION['authenticated']
+        ?? false
+    ) === true;
+
+$lastActivityAt =
+    (int) (
+        $_SESSION['last_activity_at']
+        ?? 0
+    );
+
+if (
+    $authenticated
+    && (
+        $lastActivityAt <= 0
+        || (
+            time() - $lastActivityAt
+        ) > $idleTimeoutSeconds
+    )
+) {
+    $_SESSION = [];
+
+    session_destroy();
+
+    $authenticated =
+        false;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Authentication Guard
+|--------------------------------------------------------------------------
+*/
+
+if (!$authenticated) {
+    respondError(
+        'Authentication required.',
+        401
+    );
+}
+
+$_SESSION['last_activity_at'] =
+    time();
+
+/*
+|--------------------------------------------------------------------------
+| Authorization Context
+|--------------------------------------------------------------------------
+*/
+
+$koppyAuth = [
+    'github_user_id' =>
+        (int) (
+            $_SESSION['github_user_id']
+            ?? 0
+        ),
+
+    'github_login' =>
+        (string) (
+            $_SESSION['github_login']
+            ?? ''
+        ),
+
+    'role' =>
+        (string) (
+            $_SESSION['role']
+            ?? ''
+        ),
+];
+
+if (
+    $koppyAuth['github_user_id'] <= 0
+    || $koppyAuth['github_login'] === ''
+    || $koppyAuth['role'] === ''
+) {
+    $_SESSION = [];
+
+    session_destroy();
+
+    respondError(
+        'Authentication session is invalid.',
+        401
+    );
 }
