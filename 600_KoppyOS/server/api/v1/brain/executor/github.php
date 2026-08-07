@@ -192,6 +192,12 @@ if (
     );
 }
 
+/*
+|--------------------------------------------------------------------------
+| Proposal values
+|--------------------------------------------------------------------------
+*/
+
 $targetPath =
     trim(
         (string) (
@@ -214,11 +220,24 @@ $content =
         ?? ''
     );
 
+$search =
+    (string) (
+        $proposal['search']
+        ?? ''
+    );
+
+$replaceWith =
+    (string) (
+        $proposal['replace_with']
+        ?? ''
+    );
+
 /*
 |--------------------------------------------------------------------------
 | TEMPORARY SAFETY LOCK
 |
-| 初回実験ではこのファイル以外を変更禁止。
+| まだWriter育成中なので、初回patch実験もテストファイル限定。
+| patch成功後に「編集可能領域Allowlist」へ進化させる。
 |--------------------------------------------------------------------------
 */
 
@@ -326,8 +345,11 @@ function githubRequest(
     }
 
     return [
-        'status' => $statusCode,
-        'data' => $data,
+        'status' =>
+            $statusCode,
+
+        'data' =>
+            $data,
     ];
 }
 
@@ -393,7 +415,10 @@ if ($fileExists) {
 
     $encodedExistingContent =
         str_replace(
-            ["\r", "\n"],
+            [
+                "\r",
+                "\n",
+            ],
             '',
             $encodedExistingContent
         );
@@ -421,8 +446,11 @@ if ($fileExists) {
 |--------------------------------------------------------------------------
 */
 
+$patchInfo = null;
+
 switch ($operation) {
     case 'create':
+
         if ($fileExists) {
             respondError(
                 'Target file already exists.',
@@ -436,9 +464,12 @@ switch ($operation) {
         break;
 
     case 'append':
+
         $newContent =
             $fileExists
-                ? rtrim($existingContent)
+                ? rtrim(
+                    $existingContent
+                )
                     . "\n\n"
                     . $content
                     . "\n"
@@ -447,6 +478,7 @@ switch ($operation) {
         break;
 
     case 'replace':
+
         if (!$fileExists) {
             respondError(
                 'Target file does not exist.',
@@ -459,11 +491,129 @@ switch ($operation) {
 
         break;
 
+    case 'patch':
+
+        /*
+        |--------------------------------------------------------------------------
+        | PATCH safety
+        |--------------------------------------------------------------------------
+        */
+
+        if (!$fileExists) {
+            respondError(
+                'Target file does not exist.',
+                404
+            );
+        }
+
+        if ($search === '') {
+            respondError(
+                'Patch search string is empty.',
+                422
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 完全一致数を確認
+        |--------------------------------------------------------------------------
+        |
+        | 0件:
+        |   想定していたコードとGitHub正本が違う。
+        |
+        | 2件以上:
+        |   どこを変更すべきか曖昧。
+        |
+        | 1件:
+        |   安全に置換可能。
+        |--------------------------------------------------------------------------
+        */
+
+        $matchCount =
+            substr_count(
+                $existingContent,
+                $search
+            );
+
+        if ($matchCount === 0) {
+            respondError(
+                'Patch target was not found. GitHub has not been modified.',
+                409
+            );
+        }
+
+        if ($matchCount > 1) {
+            respondError(
+                'Patch target matched multiple locations. GitHub has not been modified.',
+                409
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | 1件だけ置換
+        |--------------------------------------------------------------------------
+        */
+
+        $searchPosition =
+            strpos(
+                $existingContent,
+                $search
+            );
+
+        if ($searchPosition === false) {
+            respondError(
+                'Patch position could not be determined.',
+                500
+            );
+        }
+
+        $newContent =
+            substr_replace(
+                $existingContent,
+                $replaceWith,
+                $searchPosition,
+                strlen($search)
+            );
+
+        $patchInfo = [
+            'match_count' =>
+                $matchCount,
+
+            'search_length' =>
+                strlen($search),
+
+            'replacement_length' =>
+                strlen($replaceWith),
+        ];
+
+        break;
+
     default:
+
         respondError(
             'Unsupported operation.',
             422
         );
+}
+
+/*
+|--------------------------------------------------------------------------
+| No-op protection
+|--------------------------------------------------------------------------
+|
+| patchやreplaceの結果、内容が全く変化していない場合はCommitしない。
+|--------------------------------------------------------------------------
+*/
+
+if (
+    $fileExists
+    && $newContent === $existingContent
+) {
+    respondError(
+        'No changes detected. GitHub has not been modified.',
+        409
+    );
 }
 
 /*
@@ -537,7 +687,9 @@ $proposal['executed_at'] =
 
 $proposal['github'] = [
     'repository' =>
-        $owner . '/' . $repository,
+        $owner
+        . '/'
+        . $repository,
 
     'branch' =>
         $branch,
@@ -548,6 +700,11 @@ $proposal['github'] = [
     'commit_message' =>
         $commitMessage,
 ];
+
+if ($patchInfo !== null) {
+    $proposal['patch_result'] =
+        $patchInfo;
+}
 
 $updatedProposalJson =
     json_encode(
@@ -564,11 +721,19 @@ if ($updatedProposalJson === false) {
     );
 }
 
-file_put_contents(
-    $proposalPath,
-    $updatedProposalJson,
-    LOCK_EX
-);
+$result =
+    file_put_contents(
+        $proposalPath,
+        $updatedProposalJson,
+        LOCK_EX
+    );
+
+if ($result === false) {
+    respondError(
+        'GitHub was updated, but proposal state could not be saved.',
+        500
+    );
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -577,12 +742,17 @@ file_put_contents(
 */
 
 respondSuccess([
-    'proposal' => $proposal,
+    'proposal' =>
+        $proposal,
 
     'github' => [
-        'write_performed' => true,
+        'write_performed' =>
+            true,
+
         'repository' =>
-            $owner . '/' . $repository,
+            $owner
+            . '/'
+            . $repository,
 
         'branch' =>
             $branch,
@@ -590,7 +760,13 @@ respondSuccess([
         'target_path' =>
             $targetPath,
 
+        'operation' =>
+            $operation,
+
         'commit_sha' =>
             $commitSha,
+
+        'patch' =>
+            $patchInfo,
     ],
 ]);

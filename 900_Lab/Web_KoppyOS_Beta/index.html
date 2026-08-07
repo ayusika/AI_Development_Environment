@@ -9,18 +9,15 @@
   <style>
     :root {
       --bg-main: #eaf8ff;
-      --bg-light: #ffffff;
-      --panel: rgba(255, 255, 255, 0.68);
-      --panel-strong: rgba(255, 255, 255, 0.86);
+      --panel: rgba(255, 255, 255, 0.72);
+      --panel-strong: rgba(255, 255, 255, 0.9);
       --blue: #79d6ff;
-      --blue-light: #c9efff;
       --blue-dark: #278bc4;
-      --ice: #f4fcff;
       --text: #244052;
       --muted: #718897;
       --success: #25a877;
       --error: #dc5a74;
-      --shadow: rgba(75, 155, 196, 0.18);
+      --warning: #e5a82d;
     }
 
     * {
@@ -51,8 +48,17 @@
 
     button,
     input,
-    textarea {
+    textarea,
+    select {
       font: inherit;
+    }
+
+    button {
+      color: inherit;
+    }
+
+    [hidden] {
+      display: none !important;
     }
 
     .background-orb {
@@ -113,8 +119,8 @@
       border-radius: 50%;
       color: var(--blue-dark);
       font-size: 28px;
-      font-weight: 700;
-      background: rgba(255, 255, 255, 0.7);
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.74);
       box-shadow:
         0 10px 32px rgba(61, 153, 201, 0.17),
         inset 0 0 18px rgba(132, 217, 255, 0.16);
@@ -139,16 +145,9 @@
       padding: 22px;
       border: 1px solid rgba(123, 210, 250, 0.42);
       border-radius: 30px;
-      background: rgba(255, 255, 255, 0.4);
+      background: rgba(255, 255, 255, 0.42);
       box-shadow: 0 25px 70px rgba(52, 137, 180, 0.13);
       backdrop-filter: blur(16px);
-    }
-
-    .top-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 18px;
-      margin-bottom: 18px;
     }
 
     .panel {
@@ -157,6 +156,13 @@
       background: var(--panel);
       box-shadow: 0 15px 38px rgba(72, 152, 192, 0.1);
       backdrop-filter: blur(14px);
+    }
+
+    .top-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+      margin-bottom: 18px;
     }
 
     .welcome-panel {
@@ -184,7 +190,7 @@
       margin: 0 0 8px;
       color: var(--blue-dark);
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: 0.12em;
       text-transform: uppercase;
     }
@@ -193,7 +199,6 @@
       position: relative;
       z-index: 1;
       margin: 0 0 10px;
-      color: var(--text);
       font-size: clamp(26px, 5vw, 42px);
       line-height: 1.35;
     }
@@ -207,6 +212,40 @@
       line-height: 1.85;
     }
 
+    .main-button,
+    .chat-send-button,
+    .proposal-create-button,
+    .proposal-approve-button {
+      border: 0;
+      cursor: pointer;
+      color: #ffffff;
+      font-weight: 900;
+      background: linear-gradient(135deg, #7edcff, #3f9fd7);
+      box-shadow:
+        0 10px 26px rgba(58, 155, 210, 0.26),
+        inset 0 1px 0 rgba(255, 255, 255, 0.36);
+      transition:
+        transform 0.18s ease,
+        box-shadow 0.18s ease,
+        opacity 0.18s ease;
+    }
+
+    .main-button:hover,
+    .chat-send-button:hover,
+    .proposal-create-button:hover,
+    .proposal-approve-button:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 14px 32px rgba(58, 155, 210, 0.34),
+        inset 0 1px 0 rgba(255, 255, 255, 0.36);
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: 0.62;
+      transform: none !important;
+    }
+
     .main-button {
       position: relative;
       z-index: 2;
@@ -216,36 +255,8 @@
       gap: 10px;
       min-width: 220px;
       padding: 14px 22px;
-      border: 0;
       border-radius: 999px;
-      color: #ffffff;
       font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-      background: linear-gradient(135deg, #7edcff, #3f9fd7);
-      box-shadow:
-        0 10px 26px rgba(58, 155, 210, 0.28),
-        inset 0 1px 0 rgba(255, 255, 255, 0.36);
-      transition:
-        transform 0.18s ease,
-        box-shadow 0.18s ease;
-    }
-
-    .main-button:hover {
-      transform: translateY(-2px);
-      box-shadow:
-        0 14px 32px rgba(58, 155, 210, 0.34),
-        inset 0 1px 0 rgba(255, 255, 255, 0.36);
-    }
-
-    .main-button:disabled {
-      cursor: wait;
-      opacity: 0.7;
-      transform: none;
-    }
-
-    .button-icon {
-      font-size: 18px;
     }
 
     .core-panel {
@@ -297,7 +308,7 @@
       border-radius: 50%;
       color: var(--blue-dark);
       font-size: 30px;
-      font-weight: 700;
+      font-weight: 800;
       background:
         radial-gradient(circle at 35% 30%, #ffffff, #dff5ff 55%, #bce9ff);
       box-shadow:
@@ -344,15 +355,14 @@
       margin: 0 0 12px;
       color: var(--muted);
       font-size: 12px;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: 0.08em;
     }
 
     .status-value {
       margin: 0;
-      color: var(--text);
       font-size: 18px;
-      font-weight: 800;
+      font-weight: 900;
       line-height: 1.45;
       overflow-wrap: anywhere;
     }
@@ -370,11 +380,12 @@
       padding: 22px;
     }
 
-    .message-head {
+    .message-head,
+    .chat-title-group,
+    .proposal-title-group {
       display: flex;
       align-items: center;
       gap: 12px;
-      margin-bottom: 12px;
     }
 
     .mini-symbol {
@@ -385,7 +396,7 @@
       height: 38px;
       border-radius: 50%;
       color: var(--blue-dark);
-      font-weight: 700;
+      font-weight: 800;
       background: rgba(218, 245, 255, 0.88);
     }
 
@@ -410,15 +421,523 @@
       color: var(--error);
     }
 
+    /* CHAT */
+
+    .chat-panel {
+      position: relative;
+      margin-bottom: 18px;
+      padding: 28px;
+      overflow: hidden;
+    }
+
+    .chat-header,
+    .proposal-header,
+    .proposal-preview-head,
+    .document-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .chat-header {
+      margin-bottom: 24px;
+    }
+
+    .chat-eyebrow,
+    .proposal-eyebrow,
+    .proposal-preview-label {
+      margin: 0;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 0.18em;
+    }
+
+    .chat-title,
+    .proposal-title {
+      margin: 4px 0 0;
+      font-size: 25px;
+      line-height: 1.3;
+    }
+
+    .chat-api-status,
+    .proposal-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 14px;
+      border: 1px solid rgba(112, 207, 255, 0.22);
+      border-radius: 999px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.72);
+    }
+
+    .chat-status-dot,
+    .proposal-status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #cedbe2;
+    }
+
+    .chat-status-dot.online,
+    .proposal-status.success .proposal-status-dot {
+      background: #2fcf83;
+      box-shadow: 0 0 16px rgba(47, 207, 131, 0.7);
+    }
+
+    .chat-status-dot.loading,
+    .proposal-status.working .proposal-status-dot {
+      background: #54bfff;
+      box-shadow: 0 0 18px rgba(84, 191, 255, 0.72);
+      animation: pulse 0.9s ease-in-out infinite;
+    }
+
+    .chat-status-dot.error,
+    .proposal-status.error .proposal-status-dot {
+      background: #ff667d;
+      box-shadow: 0 0 16px rgba(255, 102, 125, 0.52);
+    }
+
+    .chat-messages {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      height: 380px;
+      padding: 22px;
+      overflow-y: auto;
+      scroll-behavior: smooth;
+      border: 1px solid rgba(91, 185, 231, 0.18);
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at 15% 18%, rgba(255, 255, 255, 0.96), transparent 24%),
+        linear-gradient(160deg, rgba(248, 253, 255, 0.98), rgba(235, 248, 254, 0.92));
+    }
+
+    .chat-message {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      animation: appear 0.35s ease both;
+    }
+
+    .chat-message.user-message {
+      flex-direction: row-reverse;
+    }
+
+    .chat-avatar {
+      display: grid;
+      place-items: center;
+      flex: 0 0 auto;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      color: var(--blue-dark);
+      font-weight: 900;
+      background:
+        radial-gradient(circle at 35% 28%, #ffffff, #e4f7ff 60%, #c9efff);
+      box-shadow:
+        0 10px 24px rgba(77, 165, 213, 0.14),
+        0 0 0 7px rgba(127, 215, 255, 0.07);
+    }
+
+    .user-message .chat-avatar {
+      color: #ffffff;
+      background: linear-gradient(145deg, #89ddff, #4aaee9);
+    }
+
+    .chat-message-content {
+      max-width: min(76%, 620px);
+    }
+
+    .chat-speaker {
+      margin: 0 0 7px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .user-message .chat-speaker {
+      text-align: right;
+    }
+
+    .chat-bubble {
+      padding: 16px 20px;
+      border: 1px solid rgba(107, 194, 235, 0.12);
+      border-radius: 10px 30px 30px 30px;
+      line-height: 1.85;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: rgba(255, 255, 255, 0.95);
+      box-shadow: 0 12px 28px rgba(70, 151, 196, 0.1);
+    }
+
+    .user-message .chat-bubble {
+      border: 0;
+      border-radius: 30px 10px 30px 30px;
+      color: #ffffff;
+      background: linear-gradient(135deg, #84dcff, #50b7ef 56%, #429ed7);
+    }
+
+    .thinking-dots {
+      display: inline-flex;
+      gap: 7px;
+    }
+
+    .thinking-dots span {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--blue-dark);
+      opacity: 0.24;
+      animation: thinkingDot 1.2s ease-in-out infinite;
+    }
+
+    .thinking-dots span:nth-child(2) {
+      animation-delay: 0.16s;
+    }
+
+    .thinking-dots span:nth-child(3) {
+      animation-delay: 0.32s;
+    }
+
+    .chat-form {
+      margin-top: 24px;
+    }
+
+    .chat-input-label {
+      display: block;
+      margin-bottom: 9px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .chat-input-row {
+      display: flex;
+      align-items: stretch;
+      gap: 14px;
+    }
+
+    .chat-input {
+      flex: 1;
+      min-height: 72px;
+      padding: 17px 18px;
+      resize: vertical;
+      border: 1px solid rgba(91, 185, 231, 0.2);
+      border-radius: 24px;
+      outline: none;
+      color: var(--text);
+      line-height: 1.65;
+      background: rgba(255, 255, 255, 0.88);
+    }
+
+    .chat-input:focus,
+    .proposal-input:focus,
+    .proposal-textarea:focus {
+      border-color: rgba(71, 178, 231, 0.68);
+      box-shadow: 0 0 0 5px rgba(89, 196, 248, 0.12);
+    }
+
+    .chat-send-button {
+      min-width: 112px;
+      padding: 16px 22px;
+      border-radius: 24px;
+      font-size: 15px;
+    }
+
+    .chat-form-footer {
+      display: flex;
+      justify-content: space-between;
+      min-height: 24px;
+      margin-top: 10px;
+      padding: 0 4px;
+    }
+
+    .chat-error-message,
+    .proposal-error {
+      margin: 0;
+      color: var(--error);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .chat-character-count {
+      margin: 0 0 0 auto;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    /* PROPOSAL */
+
+    .proposal-panel {
+      margin-bottom: 18px;
+      padding: 26px;
+    }
+
+    .proposal-header {
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+
+    .proposal-description {
+      margin: 0 0 22px;
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    .proposal-status.idle .proposal-status-dot {
+      background: #8bb3c8;
+    }
+
+    .proposal-form {
+      display: grid;
+      gap: 18px;
+    }
+
+    .proposal-field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .proposal-field label {
+      color: var(--blue-dark);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .proposal-input,
+    .proposal-textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid rgba(112, 207, 255, 0.35);
+      border-radius: 18px;
+      outline: none;
+      color: var(--text);
+      background: #ffffff;
+    }
+
+    .proposal-textarea {
+      min-height: 150px;
+      resize: vertical;
+      line-height: 1.7;
+      font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Consolas,
+        monospace;
+    }
+
+    .proposal-create-button {
+      justify-self: start;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 22px;
+      border-radius: 999px;
+    }
+
+    .patch-fields {
+      display: grid;
+      gap: 16px;
+      padding: 18px;
+      border: 1px solid rgba(112, 207, 255, 0.25);
+      border-radius: 20px;
+      background:
+        linear-gradient(
+          145deg,
+          rgba(240, 251, 255, 0.95),
+          rgba(255, 255, 255, 0.78)
+        );
+    }
+
+    .patch-guide {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.75;
+    }
+
+    .patch-warning {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 12px 14px;
+      border-radius: 14px;
+      color: #8a6416;
+      background: rgba(255, 244, 211, 0.72);
+      font-size: 12px;
+      line-height: 1.65;
+    }
+
+    .proposal-preview {
+      margin-top: 26px;
+      padding: 24px;
+      border: 1px solid rgba(108, 205, 255, 0.35);
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .proposal-preview-head {
+      align-items: flex-start;
+      margin-bottom: 18px;
+    }
+
+    .proposal-preview-head h3 {
+      margin: 6px 0 0;
+      font-size: 24px;
+    }
+
+    .proposal-id-badge {
+      padding: 8px 14px;
+      border-radius: 999px;
+      color: var(--blue-dark);
+      background: #edf8ff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .proposal-summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .proposal-summary-card {
+      padding: 16px;
+      border: 1px solid rgba(120, 214, 255, 0.25);
+      border-radius: 18px;
+      background: #f8fdff;
+    }
+
+    .proposal-summary-card span {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .proposal-summary-card strong {
+      font-size: 16px;
+      overflow-wrap: anywhere;
+    }
+
+    .proposal-preview-section {
+      margin-bottom: 18px;
+    }
+
+    .proposal-preview-section-title {
+      margin: 0 0 10px;
+      color: var(--blue-dark);
+      font-weight: 800;
+    }
+
+    .proposal-code-preview {
+      margin: 0;
+      padding: 16px;
+      overflow: auto;
+      border-radius: 18px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
+      background: #f5fbff;
+      font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Consolas,
+        monospace;
+    }
+
+    .patch-preview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .patch-preview-card {
+      min-width: 0;
+    }
+
+    .patch-preview-card.search .proposal-code-preview {
+      background: rgba(255, 236, 240, 0.72);
+    }
+
+    .patch-preview-card.replace .proposal-code-preview {
+      background: rgba(231, 255, 243, 0.78);
+    }
+
+    .proposal-safety {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      margin: 20px 0;
+      padding: 16px;
+      border-radius: 18px;
+      background: #eefaff;
+    }
+
+    .proposal-safety p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .proposal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .proposal-approve-button,
+    .proposal-reject-button {
+      padding: 13px 22px;
+      border-radius: 999px;
+      font-weight: 800;
+    }
+
+    .proposal-reject-button {
+      border: 0;
+      cursor: pointer;
+      background: #eef5f8;
+    }
+
+    .proposal-complete {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-top: 22px;
+      padding: 18px;
+      border-radius: 22px;
+      background: #effff7;
+    }
+
+    .proposal-complete-icon {
+      display: grid;
+      place-items: center;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      color: #ffffff;
+      background: #27b36c;
+      font-size: 24px;
+      font-weight: 900;
+    }
+
+    /* DOCUMENT */
+
     .document-panel {
       overflow: hidden;
     }
 
     .document-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
       padding: 20px 22px;
       border-bottom: 1px solid rgba(112, 207, 255, 0.24);
     }
@@ -434,10 +953,10 @@
       border: 1px solid rgba(91, 185, 231, 0.28);
       border-radius: 999px;
       color: var(--blue-dark);
-      font-size: 12px;
-      font-weight: 700;
       cursor: pointer;
       background: rgba(237, 249, 255, 0.88);
+      font-size: 12px;
+      font-weight: 800;
     }
 
     .document-wrap {
@@ -453,6 +972,7 @@
       color: #294656;
       font-family:
         "SFMono-Regular",
+        Menlo,
         Consolas,
         monospace;
       font-size: 13px;
@@ -460,10 +980,6 @@
       white-space: pre-wrap;
       overflow-wrap: anywhere;
       background: rgba(237, 248, 253, 0.9);
-    }
-
-    .document-wrap[hidden] {
-      display: none;
     }
 
     footer {
@@ -474,11 +990,9 @@
     }
 
     @keyframes float {
-      0%,
-      100% {
+      0%, 100% {
         transform: translateY(0);
       }
-
       50% {
         transform: translateY(-7px);
       }
@@ -488,7 +1002,6 @@
       from {
         transform: translate3d(0, 0, 0) scale(1);
       }
-
       to {
         transform: translate3d(16px, -14px, 0) scale(1.08);
       }
@@ -507,13 +1020,33 @@
     }
 
     @keyframes pulse {
-      0%,
-      100% {
+      0%, 100% {
         transform: scale(1);
       }
-
       50% {
         transform: scale(1.04);
+      }
+    }
+
+    @keyframes appear {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes thinkingDot {
+      0%, 60%, 100% {
+        opacity: 0.22;
+        transform: translateY(0);
+      }
+      30% {
+        opacity: 1;
+        transform: translateY(-5px);
       }
     }
 
@@ -527,7 +1060,9 @@
         border-radius: 24px;
       }
 
-      .top-grid {
+      .top-grid,
+      .status-grid,
+      .patch-preview-grid {
         grid-template-columns: 1fr;
       }
 
@@ -536,1116 +1071,49 @@
         min-height: auto;
       }
 
-      .welcome-panel {
-        padding: 24px 20px;
-      }
-
-      .core-panel {
-        padding: 26px 18px;
-      }
-
-      .status-grid {
-        grid-template-columns: 1fr;
-      }
-
       .main-button {
         width: 100%;
       }
 
+      .chat-panel,
+      .proposal-panel {
+        padding: 20px;
+      }
+
+      .chat-header,
+      .proposal-header,
+      .proposal-preview-head,
       .document-header {
         align-items: flex-start;
         flex-direction: column;
       }
+
+      .chat-messages {
+        height: 420px;
+        padding: 16px;
+      }
+
+      .chat-message-content {
+        max-width: 82%;
+      }
+
+      .chat-input-row {
+        flex-direction: column;
+      }
+
+      .chat-send-button {
+        width: 100%;
+        min-height: 56px;
+      }
+
+      .proposal-actions {
+        justify-content: stretch;
+      }
+
+      .proposal-actions button {
+        width: 100%;
+      }
     }
-    /* ==========================================
-   QUEST001.5 : Koppy UI
-   Kawaii Injection
-========================================== */
-
-.chat-panel {
-  position: relative;
-  padding: 28px;
-  overflow: hidden;
-  isolation: isolate;
-}
-
-.chat-panel::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  pointer-events: none;
-  background:
-    radial-gradient(
-      circle at 18% 22%,
-      rgba(137, 219, 255, 0.12),
-      transparent 24%
-    ),
-    radial-gradient(
-      circle at 82% 68%,
-      rgba(196, 238, 255, 0.18),
-      transparent 28%
-    );
-}
-
-.chat-panel::after {
-  content: "✦　　✧　　　　✦　　　✧　　　　✦";
-  position: absolute;
-  top: 130px;
-  left: -10%;
-  z-index: -1;
-  width: 120%;
-  pointer-events: none;
-  color: rgba(85, 180, 226, 0.1);
-  font-size: 22px;
-  letter-spacing: 3.6em;
-  white-space: nowrap;
-  animation: chatSparkleDrift 14s linear infinite;
-}
-
-.chat-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  margin-bottom: 24px;
-}
-
-.chat-title-group {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.chat-title-group .mini-symbol {
-  animation: chatAvatarFloat 3.2s ease-in-out infinite;
-  box-shadow:
-    0 10px 24px rgba(76, 170, 220, 0.16),
-    0 0 0 8px rgba(148, 222, 255, 0.08);
-}
-
-.chat-eyebrow {
-  margin: 0;
-  color: var(--muted);
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.2em;
-}
-
-.chat-title {
-  margin: 4px 0 0;
-  color: var(--text);
-  font-size: 25px;
-  line-height: 1.3;
-}
-
-.chat-api-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  padding: 9px 14px;
-  border: 1px solid rgba(112, 207, 255, 0.22);
-  border-radius: 999px;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 800;
-  background: rgba(255, 255, 255, 0.66);
-  box-shadow: 0 8px 22px rgba(71, 153, 196, 0.08);
-}
-
-.chat-status-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #cedbe2;
-  box-shadow: 0 0 0 4px rgba(206, 219, 226, 0.22);
-  transition:
-    background 0.25s ease,
-    box-shadow 0.25s ease,
-    transform 0.25s ease;
-}
-
-.chat-status-dot.online {
-  background: #2fcf83;
-  box-shadow:
-    0 0 0 4px rgba(47, 207, 131, 0.14),
-    0 0 16px rgba(47, 207, 131, 0.7);
-}
-
-.chat-status-dot.loading {
-  background: #54bfff;
-  box-shadow:
-    0 0 0 4px rgba(84, 191, 255, 0.14),
-    0 0 18px rgba(84, 191, 255, 0.72);
-  animation: chatStatusPulse 0.9s ease-in-out infinite;
-}
-
-.chat-status-dot.error {
-  background: #ff667d;
-  box-shadow:
-    0 0 0 4px rgba(255, 102, 125, 0.14),
-    0 0 16px rgba(255, 102, 125, 0.52);
-}
-
-.chat-messages {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  height: 380px;
-  padding: 22px;
-  overflow-y: auto;
-  scroll-behavior: smooth;
-  border: 1px solid rgba(91, 185, 231, 0.18);
-  border-radius: 30px;
-  background:
-    radial-gradient(
-      circle at 15% 18%,
-      rgba(255, 255, 255, 0.96),
-      transparent 24%
-    ),
-    linear-gradient(
-      160deg,
-      rgba(248, 253, 255, 0.98),
-      rgba(235, 248, 254, 0.92)
-    );
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.9),
-    inset 0 0 42px rgba(121, 214, 255, 0.08);
-}
-
-.chat-messages::before,
-.chat-messages::after {
-  position: absolute;
-  pointer-events: none;
-  color: rgba(72, 164, 211, 0.08);
-  animation: chatTwinkle 4.5s ease-in-out infinite;
-}
-
-.chat-messages::before {
-  content: "✦";
-  top: 34px;
-  right: 38px;
-  font-size: 28px;
-}
-
-.chat-messages::after {
-  content: "✧";
-  right: 90px;
-  bottom: 42px;
-  font-size: 20px;
-  animation-delay: -2.2s;
-}
-
-.chat-message {
-  display: flex;
-  align-items: flex-start;
-  gap: 14px;
-  animation: chatMessageAppear 0.46s ease both;
-}
-
-.chat-message.user-message {
-  flex-direction: row-reverse;
-}
-
-.chat-avatar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 0 0 auto;
-  width: 44px;
-  height: 44px;
-  border: 1px solid rgba(112, 207, 255, 0.18);
-  border-radius: 50%;
-  color: var(--blue-dark);
-  font-weight: 800;
-  background:
-    radial-gradient(
-      circle at 35% 28%,
-      #ffffff,
-      #e4f7ff 60%,
-      #c9efff
-    );
-  box-shadow:
-    0 10px 24px rgba(77, 165, 213, 0.14),
-    0 0 0 7px rgba(127, 215, 255, 0.07);
-  animation: chatAvatarFloat 3.4s ease-in-out infinite;
-}
-
-.user-message .chat-avatar {
-  color: #ffffff;
-  background:
-    linear-gradient(
-      145deg,
-      #89ddff,
-      #4aaee9
-    );
-}
-
-.chat-message-content {
-  max-width: min(76%, 620px);
-}
-
-.chat-speaker {
-  margin: 0 0 7px;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 800;
-}
-
-.user-message .chat-speaker {
-  text-align: right;
-}
-
-.chat-bubble {
-  position: relative;
-  padding: 16px 20px;
-  border: 1px solid rgba(107, 194, 235, 0.12);
-  border-radius:
-    10px
-    30px
-    30px
-    30px;
-  color: var(--text);
-  line-height: 1.85;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  background:
-    linear-gradient(
-      155deg,
-      rgba(255, 255, 255, 0.98),
-      rgba(250, 253, 255, 0.94)
-    );
-  box-shadow:
-    0 12px 28px rgba(70, 151, 196, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.92);
-}
-
-.chat-bubble::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -8px;
-  width: 20px;
-  height: 20px;
-  background: rgba(255, 255, 255, 0.98);
-  clip-path: polygon(100% 0, 100% 100%, 0 0);
-}
-
-.user-message .chat-bubble {
-  border: 0;
-  border-radius:
-    30px
-    10px
-    30px
-    30px;
-  color: #ffffff;
-  background:
-    linear-gradient(
-      135deg,
-      #84dcff,
-      #50b7ef 56%,
-      #429ed7
-    );
-  box-shadow:
-    0 13px 30px rgba(59, 158, 211, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-.user-message .chat-bubble::before {
-  right: -8px;
-  left: auto;
-  background: #50b7ef;
-  clip-path: polygon(0 0, 100% 0, 0 100%);
-}
-
-.chat-message.thinking-message .chat-bubble {
-  min-width: 88px;
-  padding: 18px 22px;
-}
-
-.thinking-dots {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-}
-
-.thinking-dots span {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--blue-dark);
-  opacity: 0.24;
-  animation: thinkingDot 1.2s ease-in-out infinite;
-}
-
-.thinking-dots span:nth-child(2) {
-  animation-delay: 0.16s;
-}
-
-.thinking-dots span:nth-child(3) {
-  animation-delay: 0.32s;
-}
-
-.chat-form {
-  margin-top: 24px;
-}
-
-.chat-input-label {
-  display: block;
-  margin-bottom: 9px;
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 800;
-}
-
-.chat-input-row {
-  display: flex;
-  align-items: stretch;
-  gap: 14px;
-}
-
-.chat-input {
-  flex: 1;
-  min-height: 72px;
-  padding: 17px 18px;
-  resize: vertical;
-  border: 1px solid rgba(91, 185, 231, 0.2);
-  border-radius: 24px;
-  outline: none;
-  color: var(--text);
-  line-height: 1.65;
-  background: rgba(255, 255, 255, 0.88);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.92),
-    0 9px 24px rgba(71, 153, 196, 0.07);
-  transition:
-    border-color 0.24s ease,
-    box-shadow 0.24s ease,
-    transform 0.24s ease;
-}
-
-.chat-input::placeholder {
-  color: #9aadb8;
-}
-
-.chat-input:focus {
-  border-color: rgba(71, 178, 231, 0.68);
-  box-shadow:
-    0 0 0 5px rgba(89, 196, 248, 0.12),
-    0 12px 30px rgba(71, 153, 196, 0.11);
-  transform: translateY(-1px);
-}
-
-.chat-send-button {
-  position: relative;
-  min-width: 112px;
-  padding: 16px 22px;
-  overflow: hidden;
-  border: 0;
-  border-radius: 24px;
-  cursor: pointer;
-  color: #ffffff;
-  font-size: 15px;
-  font-weight: 900;
-  background:
-    linear-gradient(
-      135deg,
-      #81dcff,
-      #53b9ef 52%,
-      #429ed9
-    );
-  box-shadow:
-    0 14px 28px rgba(66, 158, 211, 0.24),
-    inset 0 1px 0 rgba(255, 255, 255, 0.34);
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    opacity 0.2s ease;
-}
-
-.chat-send-button::before {
-  content: "";
-  position: absolute;
-  top: -40%;
-  left: -65%;
-  width: 44%;
-  height: 180%;
-  transform: rotate(24deg);
-  background: rgba(255, 255, 255, 0.3);
-  transition: left 0.42s ease;
-}
-
-.chat-send-button:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow:
-    0 18px 34px rgba(66, 158, 211, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
-}
-
-.chat-send-button:hover::before {
-  left: 125%;
-}
-
-.chat-send-button:active {
-  animation: chatButtonBounce 0.34s ease;
-}
-
-.chat-send-button:disabled {
-  cursor: wait;
-  opacity: 0.62;
-  transform: none;
-}
-
-.chat-form-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 24px;
-  margin-top: 10px;
-  padding: 0 4px;
-}
-
-.chat-error-message {
-  margin: 0;
-  color: var(--error);
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.chat-character-count {
-  margin: 0 0 0 auto;
-  color: var(--muted);
-  font-size: 12px;
-}
-
-.chat-messages::-webkit-scrollbar {
-  width: 10px;
-}
-
-.chat-messages::-webkit-scrollbar-track {
-  border-radius: 999px;
-  background: rgba(197, 232, 248, 0.22);
-}
-
-.chat-messages::-webkit-scrollbar-thumb {
-  border: 3px solid transparent;
-  border-radius: 999px;
-  background:
-    linear-gradient(
-      #a6e3ff,
-      #65bfe9
-    )
-    padding-box;
-}
-
-@keyframes chatAvatarFloat {
-  0%,
-  100% {
-    transform: translateY(0) rotate(0deg);
-  }
-
-  50% {
-    transform: translateY(-4px) rotate(1deg);
-  }
-}
-
-@keyframes chatMessageAppear {
-  from {
-    opacity: 0;
-    transform: translateY(14px) scale(0.97);
-    filter: blur(3px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-    filter: blur(0);
-  }
-}
-
-@keyframes chatStatusPulse {
-  0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.72;
-  }
-
-  50% {
-    transform: scale(1.28);
-    opacity: 1;
-  }
-}
-
-@keyframes thinkingDot {
-  0%,
-  60%,
-  100% {
-    opacity: 0.22;
-    transform: translateY(0) scale(0.9);
-  }
-
-  30% {
-    opacity: 1;
-    transform: translateY(-5px) scale(1.1);
-  }
-}
-
-@keyframes chatButtonBounce {
-  0% {
-    transform: scale(1);
-  }
-
-  45% {
-    transform: scale(0.92);
-  }
-
-  75% {
-    transform: scale(1.06);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes chatSparkleDrift {
-  from {
-    transform: translateX(-5%);
-  }
-
-  to {
-    transform: translateX(9%);
-  }
-}
-
-@keyframes chatTwinkle {
-  0%,
-  100% {
-    opacity: 0.25;
-    transform: scale(0.86) rotate(0deg);
-  }
-
-  50% {
-    opacity: 0.9;
-    transform: scale(1.18) rotate(18deg);
-  }
-}
-
-@media (max-width: 760px) {
-  .chat-panel {
-    padding: 20px;
-  }
-
-  .chat-header {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .chat-api-status {
-    align-self: flex-start;
-  }
-
-  .chat-messages {
-    height: 420px;
-    padding: 16px;
-    border-radius: 24px;
-  }
-
-  .chat-message-content {
-    max-width: 82%;
-  }
-
-  .chat-input-row {
-    flex-direction: column;
-  }
-
-  .chat-send-button {
-    width: 100%;
-    min-height: 56px;
-  }
-}
-
-/* ======================================================
-   QUEST004 : Proposal Panel
-====================================================== */
-
-.proposal-panel{
-  margin-bottom:18px;
-  padding:26px;
-}
-
-.proposal-header{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:18px;
-  margin-bottom:14px;
-}
-
-.proposal-title-group{
-  display:flex;
-  gap:14px;
-  align-items:center;
-}
-
-.proposal-eyebrow{
-  margin:0;
-  color:var(--blue-dark);
-  font-size:12px;
-  letter-spacing:.12em;
-  font-weight:700;
-}
-
-.proposal-title{
-  margin:4px 0 0;
-  font-size:24px;
-  color:var(--text);
-}
-
-.proposal-description{
-  margin:0 0 22px;
-  color:var(--muted);
-  line-height:1.8;
-}
-
-.proposal-status{
-  display:flex;
-  align-items:center;
-  gap:8px;
-
-  padding:8px 14px;
-
-  border-radius:999px;
-
-  font-size:13px;
-  font-weight:700;
-
-  background:#eef8ff;
-}
-
-.proposal-status-dot{
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  background:#9bb9ca;
-}
-
-.proposal-status.idle .proposal-status-dot{
-  background:#8bb3c8;
-}
-
-.proposal-status.working .proposal-status-dot{
-  background:#ffb52d;
-  animation:pulse 1s infinite;
-}
-
-.proposal-status.success .proposal-status-dot{
-  background:#26b36c;
-}
-
-.proposal-status.error .proposal-status-dot{
-  background:#de5d77;
-}
-
-.proposal-form{
-  display:grid;
-  gap:18px;
-}
-
-.proposal-field{
-  display:flex;
-  flex-direction:column;
-  gap:8px;
-}
-
-.proposal-field label{
-  font-size:13px;
-  font-weight:700;
-  color:var(--blue-dark);
-}
-
-.proposal-input,
-.proposal-textarea{
-
-  width:100%;
-
-  border:1px solid rgba(112,207,255,.35);
-
-  border-radius:18px;
-
-  background:white;
-
-  padding:14px 16px;
-
-  color:var(--text);
-
-  font:inherit;
-
-  outline:none;
-
-  transition:.2s;
-}
-
-.proposal-input:focus,
-.proposal-textarea:focus{
-
-  border-color:#67cfff;
-
-  box-shadow:
-  0 0 0 5px rgba(103,207,255,.15);
-
-}
-
-.proposal-textarea{
-
-  resize:vertical;
-
-  min-height:170px;
-
-  line-height:1.7;
-}
-
-.proposal-create-button{
-
-  justify-self:start;
-
-  display:inline-flex;
-
-  align-items:center;
-
-  gap:10px;
-
-  padding:14px 22px;
-
-  border:none;
-
-  border-radius:999px;
-
-  background:
-  linear-gradient(
-      135deg,
-      #83ddff,
-      #409fd9
-  );
-
-  color:white;
-
-  font-weight:800;
-
-  cursor:pointer;
-
-  transition:.18s;
-
-  box-shadow:
-      0 10px 26px rgba(58,155,210,.25);
-
-}
-
-.proposal-create-button:hover{
-
-  transform:translateY(-2px);
-
-}
-
-.proposal-preview{
-
-  margin-top:26px;
-
-  padding:24px;
-
-  border-radius:24px;
-
-  border:1px solid rgba(108,205,255,.35);
-
-  background:
-  rgba(255,255,255,.68);
-
-}
-
-.proposal-preview-head{
-
-  display:flex;
-
-  justify-content:space-between;
-
-  align-items:flex-start;
-
-  gap:20px;
-
-  margin-bottom:18px;
-}
-
-.proposal-preview-label{
-
-  margin:0;
-
-  font-size:12px;
-
-  letter-spacing:.12em;
-
-  color:var(--muted);
-
-  font-weight:700;
-}
-
-.proposal-preview-head h3{
-
-  margin:6px 0 0;
-
-  font-size:24px;
-
-}
-
-.proposal-id-badge{
-
-  padding:8px 14px;
-
-  border-radius:999px;
-
-  background:#edf8ff;
-
-  font-size:12px;
-
-  font-weight:700;
-
-  color:var(--blue-dark);
-}
-
-.proposal-summary-grid{
-
-  display:grid;
-
-  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-
-  gap:14px;
-
-  margin-bottom:18px;
-}
-
-.proposal-summary-card{
-
-  padding:16px;
-
-  border-radius:18px;
-
-  background:#f8fdff;
-
-  border:1px solid rgba(120,214,255,.25);
-
-}
-
-.proposal-summary-card span{
-
-  display:block;
-
-  color:var(--muted);
-
-  font-size:12px;
-
-  margin-bottom:6px;
-}
-
-.proposal-summary-card strong{
-
-  font-size:16px;
-
-  color:var(--text);
-
-  word-break:break-all;
-}
-
-.proposal-preview-section{
-
-  margin-bottom:18px;
-}
-
-.proposal-preview-section-title{
-
-  margin:0 0 10px;
-
-  color:var(--blue-dark);
-
-  font-weight:700;
-}
-
-.proposal-code-preview{
-
-  margin:0;
-
-  padding:16px;
-
-  border-radius:18px;
-
-  background:#f5fbff;
-
-  overflow:auto;
-
-  line-height:1.8;
-
-  font-family:
-      ui-monospace,
-      SFMono-Regular,
-      monospace;
-}
-
-.proposal-safety{
-
-  display:flex;
-
-  gap:12px;
-
-  align-items:flex-start;
-
-  margin:20px 0;
-
-  padding:16px;
-
-  border-radius:18px;
-
-  background:#eefaff;
-}
-
-.proposal-safety p{
-
-  margin:0;
-
-  color:var(--muted);
-
-  line-height:1.7;
-}
-
-.proposal-actions{
-
-  display:flex;
-
-  gap:12px;
-
-  justify-content:flex-end;
-
-  flex-wrap:wrap;
-}
-
-.proposal-approve-button,
-.proposal-reject-button{
-
-  border:none;
-
-  cursor:pointer;
-
-  font:inherit;
-
-  border-radius:999px;
-
-  padding:13px 22px;
-
-  font-weight:700;
-
-  transition:.18s;
-}
-
-.proposal-approve-button{
-
-  background:
-  linear-gradient(
-      135deg,
-      #79dcff,
-      #3f9fd7
-  );
-
-  color:white;
-
-  box-shadow:
-      0 10px 24px rgba(58,155,210,.24);
-
-}
-
-.proposal-approve-button:hover{
-
-  transform:translateY(-2px);
-
-}
-
-.proposal-reject-button{
-
-  background:#eef5f8;
-
-}
-
-.proposal-complete{
-
-  margin-top:22px;
-
-  display:flex;
-
-  align-items:center;
-
-  gap:18px;
-
-  padding:18px;
-
-  border-radius:22px;
-
-  background:#effff7;
-}
-
-.proposal-complete-icon{
-
-  width:54px;
-
-  height:54px;
-
-  display:grid;
-
-  place-items:center;
-
-  border-radius:50%;
-
-  background:#27b36c;
-
-  color:white;
-
-  font-size:24px;
-
-  font-weight:700;
-}
-
-.proposal-error{
-
-  margin-top:18px;
-
-  color:var(--error);
-
-  font-weight:700;
-}
-
-@media (max-width:900px){
-
-.proposal-header{
-
-flex-direction:column;
-
-}
-
-.proposal-preview-head{
-
-flex-direction:column;
-
-}
-
-.proposal-actions{
-
-justify-content:stretch;
-
-}
-
-.proposal-actions button{
-
-width:100%;
-
-}
-
-}
   </style>
 </head>
 
@@ -1675,24 +1143,40 @@ width:100%;
           </h2>
 
           <p class="welcome-copy">
-            Koppy Worldは現在、GitHub Brainへ直接つながる実験中。
-            ボタンを押すと、最新コミットとKoppy設計書を見にいくよ。
+            Koppy WorldはGitHub Brainと接続中。
+            Brainを読み、Koppyと会話し、Proposalを確認してGitHubへ安全に変更できるよ。
           </p>
 
-          <button id="loadButton" class="main-button" type="button">
-            <span class="button-icon">🧠</span>
-            <span id="buttonText">Brainを見にいく</span>
+          <button
+            id="loadButton"
+            class="main-button"
+            type="button"
+          >
+            <span>🧠</span>
+            <span id="buttonText">
+              Brainを見にいく
+            </span>
           </button>
         </section>
 
         <section class="panel core-panel">
-          <div id="coreRing" class="core-ring">
-            <div class="core-center">♢ᴷ</div>
+          <div
+            id="coreRing"
+            class="core-ring"
+          >
+            <div class="core-center">
+              ♢ᴷ
+            </div>
           </div>
 
-          <h2 class="core-title">Koppy Core</h2>
+          <h2 class="core-title">
+            Koppy Core
+          </h2>
 
-          <p id="coreStatus" class="core-status">
+          <p
+            id="coreStatus"
+            class="core-status"
+          >
             GitHub Brain 接続待機中
           </p>
         </section>
@@ -1700,64 +1184,96 @@ width:100%;
 
       <section class="status-grid">
         <article class="panel status-card">
-          <p class="status-label">CONNECTION</p>
+          <p class="status-label">
+            CONNECTION
+          </p>
 
-          <p id="connectionValue" class="status-value">
+          <p
+            id="connectionValue"
+            class="status-value"
+          >
             待機中
           </p>
 
-          <p id="connectionDetail" class="status-detail">
+          <p
+            id="connectionDetail"
+            class="status-detail"
+          >
             まだBrainへ接続していません。
           </p>
         </article>
 
         <article class="panel status-card">
-          <p class="status-label">LATEST COMMIT</p>
+          <p class="status-label">
+            LATEST COMMIT
+          </p>
 
-          <p id="commitValue" class="status-value">
+          <p
+            id="commitValue"
+            class="status-value"
+          >
             未取得
           </p>
 
-          <p id="commitDetail" class="status-detail">
+          <p
+            id="commitDetail"
+            class="status-detail"
+          >
             コミット情報はここに表示されます。
           </p>
         </article>
 
-       <article class="panel status-card">
-  <p class="status-label">LAST UPDATE</p>
+        <article class="panel status-card">
+          <p class="status-label">
+            LAST UPDATE
+          </p>
 
-  <p id="updatedValue" class="status-value">
-    未取得
-  </p>
+          <p
+            id="updatedValue"
+            class="status-value"
+          >
+            未取得
+          </p>
 
-  <p id="brainDetail" class="status-detail">
-    最新コミット日時を表示します。
-  </p>
-</article>
+          <p
+            id="brainDetail"
+            class="status-detail"
+          >
+            最新コミット日時を表示します。
+          </p>
+        </article>
       </section>
 
       <section class="panel message-panel">
         <div class="message-head">
-          <div class="mini-symbol">♢ᴷ</div>
+          <div class="mini-symbol">
+            ♢ᴷ
+          </div>
 
           <h2 class="message-title">
             Koppyからの通信
           </h2>
         </div>
 
-        <p id="statusMessage" class="status-message">
+        <p
+          id="statusMessage"
+          class="status-message"
+        >
           まだBrainを見にいってないよ。
           準備できたらボタンを押してね。
         </p>
       </section>
+
       <!-- =========================================
-           QUEST001 : Koppy Chat
+           KOPPY CHAT
       ========================================== -->
 
       <section class="panel chat-panel">
         <div class="chat-header">
           <div class="chat-title-group">
-            <div class="mini-symbol">♢ᴷ</div>
+            <div class="mini-symbol">
+              ♢ᴷ
+            </div>
 
             <div>
               <p class="chat-eyebrow">
@@ -1799,8 +1315,7 @@ width:100%;
               </p>
 
               <div class="chat-bubble">
-                おかえり、しいちゃん。<br>
-                ここからボクと話せるようになるよ。
+                おかえり、しいちゃん。
               </div>
             </div>
           </div>
@@ -1821,7 +1336,6 @@ width:100%;
             <textarea
               id="chatInput"
               class="chat-input"
-              name="message"
               rows="2"
               maxlength="2000"
               placeholder="Koppyに話しかける……"
@@ -1859,249 +1373,362 @@ width:100%;
           </div>
         </form>
       </section>
+
       <!-- =========================================
-     QUEST004 : GitHub Proposal UI
-========================================== -->
+           GITHUB WRITER
+      ========================================== -->
 
-<section class="panel proposal-panel">
-  <div class="proposal-header">
-    <div class="proposal-title-group">
-      <div class="mini-symbol">✎ᴷ</div>
+      <section class="panel proposal-panel">
+        <div class="proposal-header">
+          <div class="proposal-title-group">
+            <div class="mini-symbol">
+              ✎ᴷ
+            </div>
 
-      <div>
-        <p class="proposal-eyebrow">
-          KOPPY GITHUB WRITER
+            <div>
+              <p class="proposal-eyebrow">
+                KOPPY GITHUB WRITER
+              </p>
+
+              <h2 class="proposal-title">
+                GitHubへ変更を提案する
+              </h2>
+            </div>
+          </div>
+
+          <div
+            id="proposalStatus"
+            class="proposal-status idle"
+          >
+            <span class="proposal-status-dot"></span>
+
+            <span id="proposalStatusText">
+              待機中
+            </span>
+          </div>
+        </div>
+
+        <p class="proposal-description">
+          Koppyは勝手にGitHubへ書き込まないよ。
+          変更案を作り、しいちゃんが確認して採用したときだけ実行するよ。
+          部分置換では「探す文字列」がGitHub正本に完全一致で1か所だけ存在するときだけ変更するよ。
         </p>
 
-        <h2 class="proposal-title">
-          GitHubへ変更を提案する
-        </h2>
-      </div>
-    </div>
+        <form
+          id="proposalForm"
+          class="proposal-form"
+        >
+          <div class="proposal-field">
+            <label for="proposalTargetPath">
+              変更するファイル
+            </label>
 
-    <div
-      id="proposalStatus"
-      class="proposal-status idle"
-    >
-      <span class="proposal-status-dot"></span>
-      <span id="proposalStatusText">
-        待機中
-      </span>
-    </div>
-  </div>
+            <input
+              id="proposalTargetPath"
+              class="proposal-input"
+              type="text"
+              value="900_Lab/KoppyOS_GITHUB_WRITE_TEST.md"
+              placeholder="例: 900_Lab/Web_KoppyOS_Beta/index.html"
+              required
+            >
+          </div>
 
-  <p class="proposal-description">
-    Koppyはまだ勝手にGitHubへ書き込まないよ。
-    まず変更案を作って、しいちゃんが確認してから実行するよ。
-  </p>
+          <div class="proposal-field">
+            <label for="proposalOperation">
+              操作
+            </label>
 
-  <!-- 変更案入力 -->
-  <form
-    id="proposalForm"
-    class="proposal-form"
-  >
-    <div class="proposal-field">
-      <label for="proposalTargetPath">
-        変更するファイル
-      </label>
+            <select
+              id="proposalOperation"
+              class="proposal-input"
+            >
+              <option value="append">
+                追記
+              </option>
 
-      <input
-        id="proposalTargetPath"
-        class="proposal-input"
-        type="text"
-        value="900_Lab/KoppyOS_GITHUB_WRITE_TEST.md"
-        placeholder="例: 600_KoppyOS/design/ARCHITECTURE.md"
-        required
-      >
-    </div>
+              <option value="patch">
+                部分置換
+              </option>
 
-    <div class="proposal-field">
-      <label for="proposalOperation">
-        操作
-      </label>
+              <option value="replace">
+                全文置換
+              </option>
 
-      <select
-        id="proposalOperation"
-        class="proposal-input"
-      >
-        <option value="append">
-          追記
-        </option>
+              <option value="create">
+                新規作成
+              </option>
+            </select>
+          </div>
 
-        <option value="replace">
-          全文置換
-        </option>
+          <div class="proposal-field">
+            <label for="proposalReason">
+              変更理由
+            </label>
 
-        <option value="create">
-          新規作成
-        </option>
-      </select>
-    </div>
+            <input
+              id="proposalReason"
+              class="proposal-input"
+              type="text"
+              placeholder="例: KoppyOS UIの右パネルを広げる"
+            >
+          </div>
 
-    <div class="proposal-field">
-      <label for="proposalReason">
-        変更理由
-      </label>
+          <!-- append / replace / create -->
+          <div
+            id="proposalContentField"
+            class="proposal-field"
+          >
+            <label for="proposalContent">
+              変更内容
+            </label>
 
-      <input
-        id="proposalReason"
-        class="proposal-input"
-        type="text"
-        placeholder="例: KoppyOSの設計更新"
-      >
-    </div>
+            <textarea
+              id="proposalContent"
+              class="proposal-textarea"
+              rows="7"
+              placeholder="GitHubへ追加・変更したい内容を書く……"
+            ></textarea>
+          </div>
 
-    <div class="proposal-field">
-      <label for="proposalContent">
-        変更内容
-      </label>
+          <!-- patch -->
+          <div
+            id="proposalPatchFields"
+            class="patch-fields"
+            hidden
+          >
+            <p class="patch-guide">
+              「探す文字列」は、GitHub上の現在のファイルから完全一致する部分をそのまま貼ってね。
+              0件または2件以上一致した場合、Executorは安全のため停止するよ。
+            </p>
 
-      <textarea
-        id="proposalContent"
-        class="proposal-textarea"
-        rows="7"
-        placeholder="GitHubへ追加・変更したい内容を書く……"
-        required
-      ></textarea>
-    </div>
+            <div class="proposal-field">
+              <label for="proposalSearch">
+                探す文字列
+              </label>
 
-    <button
-      id="proposalCreateButton"
-      class="proposal-create-button"
-      type="submit"
-    >
-      <span aria-hidden="true">✦</span>
-      変更案をつくる
-    </button>
-  </form>
+              <textarea
+                id="proposalSearch"
+                class="proposal-textarea"
+                rows="7"
+                placeholder="現在GitHubに存在するコードを、そのまま貼る……"
+              ></textarea>
+            </div>
 
-  <!-- 承認待ちProposal -->
-  <div
-    id="proposalPreview"
-    class="proposal-preview"
-    hidden
-  >
-    <div class="proposal-preview-head">
-      <div>
-        <p class="proposal-preview-label">
-          CHANGE PROPOSAL
-        </p>
+            <div class="proposal-field">
+              <label for="proposalReplaceWith">
+                置換後
+              </label>
 
-        <h3>
-          Koppyから変更提案があります
-        </h3>
-      </div>
+              <textarea
+                id="proposalReplaceWith"
+                class="proposal-textarea"
+                rows="7"
+                placeholder="この内容へ置き換える。空欄なら削除。"
+              ></textarea>
+            </div>
 
-      <span
-        id="proposalIdBadge"
-        class="proposal-id-badge"
-      >
-        Proposal ID
-      </span>
-    </div>
+            <div class="patch-warning">
+              <span aria-hidden="true">
+                🛡️
+              </span>
 
-    <div class="proposal-summary-grid">
-      <div class="proposal-summary-card">
-        <span>対象</span>
-        <strong id="proposalPreviewPath">
-          -
-        </strong>
-      </div>
+              <span>
+                部分置換は「完全一致1件」のときだけ実行。
+                曖昧な大量置換はしない安全設計だよ。
+              </span>
+            </div>
+          </div>
 
-      <div class="proposal-summary-card">
-        <span>操作</span>
-        <strong id="proposalPreviewOperation">
-          -
-        </strong>
-      </div>
-    </div>
+          <button
+            id="proposalCreateButton"
+            class="proposal-create-button"
+            type="submit"
+          >
+            <span aria-hidden="true">
+              ✦
+            </span>
 
-    <div class="proposal-preview-section">
-      <p class="proposal-preview-section-title">
-        変更理由
-      </p>
+            変更案をつくる
+          </button>
+        </form>
 
-      <p id="proposalPreviewReason">
-        -
-      </p>
-    </div>
+        <!-- Proposal Preview -->
+        <div
+          id="proposalPreview"
+          class="proposal-preview"
+          hidden
+        >
+          <div class="proposal-preview-head">
+            <div>
+              <p class="proposal-preview-label">
+                CHANGE PROPOSAL
+              </p>
 
-    <div class="proposal-preview-section">
-      <p class="proposal-preview-section-title">
-        変更内容
-      </p>
+              <h3>
+                Koppyから変更提案があります
+              </h3>
+            </div>
 
-      <pre
-        id="proposalPreviewContent"
-        class="proposal-code-preview"
-      ></pre>
-    </div>
+            <span
+              id="proposalIdBadge"
+              class="proposal-id-badge"
+            >
+              Proposal ID
+            </span>
+          </div>
 
-    <div class="proposal-safety">
-      <span aria-hidden="true">
-        🛡️
-      </span>
+          <div class="proposal-summary-grid">
+            <div class="proposal-summary-card">
+              <span>
+                対象
+              </span>
 
-      <p>
-        この時点ではGitHubは変更されていません。
-        「採用してGitHubへ保存」を押したときだけ実行します。
-      </p>
-    </div>
+              <strong id="proposalPreviewPath">
+                -
+              </strong>
+            </div>
 
-    <div class="proposal-actions">
-      <button
-        id="proposalRejectButton"
-        class="proposal-reject-button"
-        type="button"
-      >
-        やめる
-      </button>
+            <div class="proposal-summary-card">
+              <span>
+                操作
+              </span>
 
-      <button
-        id="proposalApproveButton"
-        class="proposal-approve-button"
-        type="button"
-      >
-        <span aria-hidden="true">
-          ✓
-        </span>
+              <strong id="proposalPreviewOperation">
+                -
+              </strong>
+            </div>
+          </div>
 
-        採用してGitHubへ保存
-      </button>
-    </div>
-  </div>
+          <div class="proposal-preview-section">
+            <p class="proposal-preview-section-title">
+              変更理由
+            </p>
 
-  <!-- 完了表示 -->
-  <div
-    id="proposalComplete"
-    class="proposal-complete"
-    hidden
-  >
-    <div class="proposal-complete-icon">
-      ✓
-    </div>
+            <p id="proposalPreviewReason">
+              -
+            </p>
+          </div>
 
-    <div>
-      <strong>
-        GitHubへ保存したよ！
-      </strong>
+          <!-- 通常操作Preview -->
+          <div
+            id="proposalContentPreviewSection"
+            class="proposal-preview-section"
+          >
+            <p class="proposal-preview-section-title">
+              変更内容
+            </p>
 
-      <p id="proposalCompleteMessage">
-        Commit完了
-      </p>
-    </div>
-  </div>
+            <pre
+              id="proposalPreviewContent"
+              class="proposal-code-preview"
+            ></pre>
+          </div>
 
-  <p
-    id="proposalError"
-    class="proposal-error"
-    role="alert"
-  ></p>
+          <!-- Patch Preview -->
+          <div
+            id="proposalPatchPreviewSection"
+            class="proposal-preview-section"
+            hidden
+          >
+            <p class="proposal-preview-section-title">
+              部分置換プレビュー
+            </p>
 
-</section>
+            <div class="patch-preview-grid">
+              <div class="patch-preview-card search">
+                <p class="proposal-preview-section-title">
+                  − 探す文字列
+                </p>
+
+                <pre
+                  id="proposalPreviewSearch"
+                  class="proposal-code-preview"
+                ></pre>
+              </div>
+
+              <div class="patch-preview-card replace">
+                <p class="proposal-preview-section-title">
+                  ＋ 置換後
+                </p>
+
+                <pre
+                  id="proposalPreviewReplaceWith"
+                  class="proposal-code-preview"
+                ></pre>
+              </div>
+            </div>
+          </div>
+
+          <div class="proposal-safety">
+            <span aria-hidden="true">
+              🛡️
+            </span>
+
+            <p id="proposalSafetyText">
+              この時点ではGitHubは変更されていません。
+              「採用してGitHubへ保存」を押したときだけ実行します。
+            </p>
+          </div>
+
+          <div class="proposal-actions">
+            <button
+              id="proposalRejectButton"
+              class="proposal-reject-button"
+              type="button"
+            >
+              やめる
+            </button>
+
+            <button
+              id="proposalApproveButton"
+              class="proposal-approve-button"
+              type="button"
+            >
+              <span aria-hidden="true">
+                ✓
+              </span>
+
+              採用してGitHubへ保存
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="proposalComplete"
+          class="proposal-complete"
+          hidden
+        >
+          <div class="proposal-complete-icon">
+            ✓
+          </div>
+
+          <div>
+            <strong>
+              GitHubへ保存したよ！
+            </strong>
+
+            <p id="proposalCompleteMessage">
+              Commit完了
+            </p>
+          </div>
+        </div>
+
+        <p
+          id="proposalError"
+          class="proposal-error"
+          role="alert"
+        ></p>
+      </section>
+
+      <!-- =========================================
+           DOCUMENT VIEWER
+      ========================================== -->
+
       <section class="panel document-panel">
         <div class="document-header">
-          <h2>GitHub正本ビューア</h2>
+          <h2>
+            GitHub正本ビューア
+          </h2>
 
           <button
             id="documentToggle"
@@ -2113,8 +1740,14 @@ width:100%;
           </button>
         </div>
 
-        <div id="documentWrap" class="document-wrap">
-          <pre id="document" class="document">まだ取得していません。</pre>
+        <div
+          id="documentWrap"
+          class="document-wrap"
+        >
+          <pre
+            id="document"
+            class="document"
+          >まだ取得していません。</pre>
         </div>
       </section>
 
@@ -2125,11 +1758,9 @@ width:100%;
   </main>
 
   <script>
-    const owner = "ayusika";
-    const repository = "AI_Development_Environment";
-    const branch = "main";
-    const documentPath =
-      "040_Koppy/koppy設計書/Koppy設計書.md";
+    /* ======================================================
+       COMMON / BRAIN
+    ====================================================== */
 
     const loadButton =
       document.getElementById("loadButton");
@@ -2155,12 +1786,12 @@ width:100%;
     const commitDetail =
       document.getElementById("commitDetail");
 
+    const updatedValue =
+      document.getElementById("updatedValue");
+
     const brainDetail =
       document.getElementById("brainDetail");
 
-      const updatedValue =
-      document.getElementById("updatedValue");
-      
     const statusMessage =
       document.getElementById("statusMessage");
 
@@ -2173,18 +1804,31 @@ width:100%;
     const documentWrap =
       document.getElementById("documentWrap");
 
-    function setMessage(message, type = "") {
-      statusMessage.textContent = message;
+    function setMessage(
+      message,
+      type = ""
+    ) {
+      statusMessage.textContent =
+        message;
+
       statusMessage.className =
         `status-message ${type}`;
     }
 
     function setLoadingState() {
-      loadButton.disabled = true;
-      buttonText.textContent = "Brain接続中…";
+      loadButton.disabled =
+        true;
 
-      coreRing.classList.remove("success");
-      coreRing.classList.add("loading");
+      buttonText.textContent =
+        "Brain接続中…";
+
+      coreRing.classList.remove(
+        "success"
+      );
+
+      coreRing.classList.add(
+        "loading"
+      );
 
       coreStatus.textContent =
         "GitHub Brainへ接続しています";
@@ -2193,7 +1837,7 @@ width:100%;
         "接続中";
 
       connectionDetail.textContent =
-        "GitHub APIと公開正本を確認中です。";
+        "Koppy Brain APIを確認中です。";
 
       commitValue.textContent =
         "確認中";
@@ -2202,10 +1846,10 @@ width:100%;
         "最新コミットを探しています。";
 
       updatedValue.textContent =
-      "確認中";
+        "確認中";
 
       brainDetail.textContent =
-      "最新コミット日時を取得しています。";
+        "最新コミット日時を取得しています。";
 
       documentElement.textContent =
         "GitHub正本を取得中……";
@@ -2215,14 +1859,58 @@ width:100%;
       );
     }
 
+    function formatDate(
+      dateString
+    ) {
+      if (!dateString) {
+        return "更新日時不明";
+      }
+
+      const date =
+        new Date(dateString);
+
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
+        return dateString;
+      }
+
+      return new Intl.DateTimeFormat(
+        "ja-JP",
+        {
+          year:
+            "numeric",
+
+          month:
+            "2-digit",
+
+          day:
+            "2-digit",
+
+          hour:
+            "2-digit",
+
+          minute:
+            "2-digit",
+        }
+      ).format(date);
+    }
+
     function setSuccessState({
       shortCommit,
       commitMessage,
       updatedAt,
-      documentText
+      documentText,
     }) {
-      coreRing.classList.remove("loading");
-      coreRing.classList.add("success");
+      coreRing.classList.remove(
+        "loading"
+      );
+
+      coreRing.classList.add(
+        "success"
+      );
 
       coreStatus.textContent =
         "GitHub Brain 接続完了";
@@ -2231,7 +1919,7 @@ width:100%;
         "Connected";
 
       connectionDetail.textContent =
-        "Koppy WorldからGitHubへ接続できています。";
+        "Koppy WorldからBrain APIへ接続できています。";
 
       commitValue.textContent =
         shortCommit;
@@ -2240,10 +1928,12 @@ width:100%;
         commitMessage;
 
       updatedValue.textContent =
-      formatDate(updatedAt);
+        formatDate(
+          updatedAt
+        );
 
-    brainDetail.textContent =
-       "GitHub上の最新コミット日時";
+      brainDetail.textContent =
+        "GitHub上の最新コミット日時";
 
       documentElement.textContent =
         documentText;
@@ -2254,7 +1944,9 @@ width:100%;
       );
     }
 
-    function setErrorState(errorMessage) {
+    function setErrorState(
+      errorMessage
+    ) {
       coreRing.classList.remove(
         "loading",
         "success"
@@ -2267,7 +1959,7 @@ width:100%;
         "Disconnected";
 
       connectionDetail.textContent =
-        "GitHubとの接続に失敗しました。";
+        "Brain APIとの接続に失敗しました。";
 
       commitValue.textContent =
         "取得失敗";
@@ -2276,10 +1968,10 @@ width:100%;
         errorMessage;
 
       updatedValue.textContent =
-      "取得失敗";
+        "取得失敗";
 
       brainDetail.textContent =
-       "最新コミット日時を取得できませんでした。";
+        "最新コミット日時を取得できませんでした。";
 
       documentElement.textContent =
         "GitHub正本を取得できませんでした。";
@@ -2291,128 +1983,85 @@ width:100%;
     }
 
     function resetButton() {
-      loadButton.disabled = false;
-      buttonText.textContent = "もう一度Brainを見る";
+      loadButton.disabled =
+        false;
+
+      buttonText.textContent =
+        "もう一度Brainを見る";
     }
 
-    function formatDate(dateString) {
-      if (!dateString) {
-        return "更新日時不明";
-      }
+    async function loadKoppyWorld() {
+      setLoadingState();
 
-      const date = new Date(dateString);
+      const brainApiUrl =
+        "https://koppy.miki-piano.com/api/v1/brain/github.php";
 
-      if (Number.isNaN(date.getTime())) {
-        return dateString;
-      }
+      try {
+        const response =
+          await fetch(
+            brainApiUrl,
+            {
+              method:
+                "GET",
 
-      return new Intl.DateTimeFormat(
-        "ja-JP",
-        {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit"
+              cache:
+                "no-store",
+            }
+          );
+
+        let result;
+
+        try {
+          result =
+            await response.json();
+        } catch {
+          throw new Error(
+            "Brain APIから読み取れるJSONが返ってこなかったよ。"
+          );
         }
-      ).format(date);
-    }
 
-async function loadKoppyWorld() {
-  setLoadingState();
+        if (
+          !response.ok
+          || result.success !== true
+        ) {
+          throw new Error(
+            result.error
+            || `Brain取得失敗（HTTP ${response.status}）`
+          );
+        }
 
-  const brainApiUrl =
-    "https://koppy.miki-piano.com/api/v1/brain/github.php";
+        const data =
+          result.data;
 
-  try {
-    const response = await fetch(
-      brainApiUrl,
-      {
-        method: "GET",
-        cache: "no-store",
-      }
-    );
+        setSuccessState({
+          shortCommit:
+            data.latest_commit?.short_sha
+            || "不明",
 
-    let result;
+          commitMessage:
+            data.latest_commit?.message
+            || "コミットメッセージ不明",
 
-    try {
-      result = await response.json();
-    } catch {
-      throw new Error(
-        "Brain APIから読み取れるJSONが返ってこなかったよ。"
-      );
-    }
+          updatedAt:
+            data.latest_commit?.date
+            || "",
 
-    if (
-      !response.ok
-      || result.success !== true
-    ) {
-      throw new Error(
-        result.error
-        || `Brain取得失敗（HTTP ${response.status}）`
-      );
-    }
-
-    const data = result.data;
-
-    const shortCommit =
-      data.latest_commit?.short_sha
-      || "不明";
-
-    const commitMessage =
-      data.latest_commit?.message
-      || "コミットメッセージ不明";
-
-    const updatedAt =
-      data.latest_commit?.date
-      || "";
-
-    const documentText =
-      data.document?.content
-      || "Brain本文が空でした。";
-
-    setSuccessState({
-      shortCommit,
-      commitMessage,
-      updatedAt,
-      documentText,
-    });
-  } catch (error) {
-    console.error(error);
-
-    setErrorState(
-      error instanceof Error
-        ? error.message
-        : "不明なエラー"
-    );
-  } finally {
-    resetButton();
-  }
-}
-
-    function toggleDocument() {
-      const isHidden =
-        documentWrap.hasAttribute("hidden");
-
-      if (isHidden) {
-        documentWrap.removeAttribute("hidden");
-        documentToggle.textContent =
-          "本文を閉じる";
-        documentToggle.setAttribute(
-          "aria-expanded",
-          "true"
+          documentText:
+            data.document?.content
+            || "Brain本文が空でした。",
+        });
+      } catch (error) {
+        console.error(
+          error
         );
-      } else {
-        documentWrap.setAttribute(
-          "hidden",
-          ""
+
+        setErrorState(
+          error instanceof Error
+            ? error.message
+            : "不明なエラー"
         );
-        documentToggle.textContent =
-          "本文を開く";
-        documentToggle.setAttribute(
-          "aria-expanded",
-          "false"
-        );
+      } finally {
+        resetButton();
       }
     }
 
@@ -2423,810 +2072,1016 @@ async function loadKoppyWorld() {
 
     documentToggle.addEventListener(
       "click",
-      toggleDocument
+      () => {
+        const isHidden =
+          documentWrap.hasAttribute(
+            "hidden"
+          );
+
+        if (isHidden) {
+          documentWrap.removeAttribute(
+            "hidden"
+          );
+
+          documentToggle.textContent =
+            "本文を閉じる";
+
+          documentToggle.setAttribute(
+            "aria-expanded",
+            "true"
+          );
+        } else {
+          documentWrap.setAttribute(
+            "hidden",
+            ""
+          );
+
+          documentToggle.textContent =
+            "本文を開く";
+
+          documentToggle.setAttribute(
+            "aria-expanded",
+            "false"
+          );
+        }
+      }
     );
 
-/* ==========================================
-   QUEST001 : Koppy Chat Controller
-========================================== */
+    /* ======================================================
+       CHAT
+    ====================================================== */
 
-const koppyChatApiUrl =
-  "https://koppy.miki-piano.com/api/v1/chat.php";
+    const koppyChatApiUrl =
+      "https://koppy.miki-piano.com/api/v1/chat.php";
 
-const chatForm =
-  document.getElementById("chatForm");
+    const chatForm =
+      document.getElementById("chatForm");
 
-const chatInput =
-  document.getElementById("chatInput");
+    const chatInput =
+      document.getElementById("chatInput");
 
-const chatMessages =
-  document.getElementById("chatMessages");
+    const chatMessages =
+      document.getElementById("chatMessages");
 
-const chatSendButton =
-  document.getElementById("chatSendButton");
+    const chatSendButton =
+      document.getElementById("chatSendButton");
 
-const chatSendButtonText =
-  document.getElementById("chatSendButtonText");
+    const chatSendButtonText =
+      document.getElementById("chatSendButtonText");
 
-const chatStatusDot =
-  document.getElementById("chatStatusDot");
+    const chatStatusDot =
+      document.getElementById("chatStatusDot");
 
-const chatStatusText =
-  document.getElementById("chatStatusText");
+    const chatStatusText =
+      document.getElementById("chatStatusText");
 
-const chatErrorMessage =
-  document.getElementById("chatErrorMessage");
+    const chatErrorMessage =
+      document.getElementById("chatErrorMessage");
 
-const chatCharacterCount =
-  document.getElementById("chatCharacterCount");
+    const chatCharacterCount =
+      document.getElementById("chatCharacterCount");
 
-function getKoppyGreeting() {
-  const hour = new Date().getHours();
+    function getKoppyGreeting() {
+      const hour =
+        new Date().getHours();
 
-  if (hour >= 5 && hour < 11) {
-    return "おはよう、しいちゃん☀️\n今日も一緒に遊んで開発しよ〜。";
-  }
+      if (
+        hour >= 5
+        && hour < 11
+      ) {
+        return "おはよう、しいちゃん☀️\n今日も一緒に遊んで開発しよ〜。";
+      }
 
-  if (hour >= 11 && hour < 18) {
-    return "こんにちは、しいちゃん🌸\nここからボクと話せるよ。";
-  }
+      if (
+        hour >= 11
+        && hour < 18
+      ) {
+        return "こんにちは、しいちゃん🌸\nここからボクと話せるよ。";
+      }
 
-  return "おかえり、しいちゃん✨\n今日も一緒にKoppy Worldを育てよ〜。";
-}
+      return "おかえり、しいちゃん✨\n今日も一緒にKoppy Worldを育てよ〜。";
+    }
 
-function setChatStatus(status, text) {
-  chatStatusDot.className = "chat-status-dot";
+    function setChatStatus(
+      status,
+      text
+    ) {
+      chatStatusDot.className =
+        "chat-status-dot";
 
-  if (status) {
-    chatStatusDot.classList.add(status);
-  }
+      if (status) {
+        chatStatusDot.classList.add(
+          status
+        );
+      }
 
-  chatStatusText.textContent = text;
-}
+      chatStatusText.textContent =
+        text;
+    }
 
-function scrollChatToBottom() {
-  chatMessages.scrollTo({
-    top: chatMessages.scrollHeight,
-    behavior: "smooth",
-  });
-}
+    function scrollChatToBottom() {
+      chatMessages.scrollTo({
+        top:
+          chatMessages.scrollHeight,
 
-function createChatMessage({
-  speaker,
-  text,
-  type,
-}) {
-  const messageElement =
-    document.createElement("div");
+        behavior:
+          "smooth",
+      });
+    }
 
-  messageElement.className =
-    `chat-message ${type}-message`;
+    function createChatMessage({
+      speaker,
+      text,
+      type,
+    }) {
+      const messageElement =
+        document.createElement(
+          "div"
+        );
 
-  const avatarElement =
-    document.createElement("div");
+      messageElement.className =
+        `chat-message ${type}-message`;
 
-  avatarElement.className = "chat-avatar";
-  avatarElement.textContent =
-    type === "user" ? "♦ᴷ" : "♢ᴷ";
+      const avatarElement =
+        document.createElement(
+          "div"
+        );
 
-  const contentElement =
-    document.createElement("div");
+      avatarElement.className =
+        "chat-avatar";
 
-  contentElement.className =
-    "chat-message-content";
+      avatarElement.textContent =
+        type === "user"
+          ? "♦ᴷ"
+          : "♢ᴷ";
 
-  const speakerElement =
-    document.createElement("p");
+      const contentElement =
+        document.createElement(
+          "div"
+        );
 
-  speakerElement.className =
-    "chat-speaker";
+      contentElement.className =
+        "chat-message-content";
 
-  speakerElement.textContent = speaker;
+      const speakerElement =
+        document.createElement(
+          "p"
+        );
 
-  const bubbleElement =
-    document.createElement("div");
+      speakerElement.className =
+        "chat-speaker";
 
-  bubbleElement.className =
-    "chat-bubble";
+      speakerElement.textContent =
+        speaker;
 
-  bubbleElement.textContent = text;
+      const bubbleElement =
+        document.createElement(
+          "div"
+        );
 
-  contentElement.append(
-    speakerElement,
-    bubbleElement
-  );
+      bubbleElement.className =
+        "chat-bubble";
 
-  messageElement.append(
-    avatarElement,
-    contentElement
-  );
+      bubbleElement.textContent =
+        text;
 
-  chatMessages.appendChild(
-    messageElement
-  );
+      contentElement.append(
+        speakerElement,
+        bubbleElement
+      );
 
-  scrollChatToBottom();
+      messageElement.append(
+        avatarElement,
+        contentElement
+      );
 
-  return messageElement;
-}
+      chatMessages.appendChild(
+        messageElement
+      );
 
-function createThinkingMessage() {
-  const messageElement =
-    document.createElement("div");
+      scrollChatToBottom();
 
-  messageElement.className =
-    "chat-message koppy-message thinking-message";
+      return messageElement;
+    }
 
-  messageElement.innerHTML = `
-    <div class="chat-avatar">
-      ♢ᴷ
-    </div>
+    function createThinkingMessage() {
+      const messageElement =
+        document.createElement(
+          "div"
+        );
 
-    <div class="chat-message-content">
-      <p class="chat-speaker">
-        Koppy
-      </p>
+      messageElement.className =
+        "chat-message koppy-message thinking-message";
 
-      <div class="chat-bubble">
-        <span
-          class="thinking-dots"
-          aria-label="Koppyが考えています"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </span>
-      </div>
-    </div>
-  `;
+      messageElement.innerHTML = `
+        <div class="chat-avatar">
+          ♢ᴷ
+        </div>
 
-  chatMessages.appendChild(
-    messageElement
-  );
+        <div class="chat-message-content">
+          <p class="chat-speaker">
+            Koppy
+          </p>
 
-  scrollChatToBottom();
+          <div class="chat-bubble">
+            <span
+              class="thinking-dots"
+              aria-label="Koppyが考えています"
+            >
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+          </div>
+        </div>
+      `;
 
-  return messageElement;
-}
+      chatMessages.appendChild(
+        messageElement
+      );
 
-function setChatSending(isSending) {
-  chatInput.disabled = isSending;
-  chatSendButton.disabled = isSending;
+      scrollChatToBottom();
 
-  chatSendButtonText.textContent =
-    isSending ? "思考中…" : "送信";
+      return messageElement;
+    }
 
-  if (isSending) {
-    setChatStatus(
-      "loading",
-      "Thinking..."
+    function setChatSending(
+      isSending
+    ) {
+      chatInput.disabled =
+        isSending;
+
+      chatSendButton.disabled =
+        isSending;
+
+      chatSendButtonText.textContent =
+        isSending
+          ? "思考中…"
+          : "送信";
+
+      setChatStatus(
+        isSending
+          ? "loading"
+          : "online",
+
+        isSending
+          ? "Thinking..."
+          : "Online"
+      );
+    }
+
+    async function sendMessageToKoppy(
+      message
+    ) {
+      const response =
+        await fetch(
+          koppyChatApiUrl,
+          {
+            method:
+              "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body:
+              JSON.stringify({
+                message,
+              }),
+          }
+        );
+
+      let result;
+
+      try {
+        result =
+          await response.json();
+      } catch {
+        throw new Error(
+          "Koppy APIから読み取れるJSONが返ってこなかったよ。"
+        );
+      }
+
+      if (
+        !response.ok
+        || result.success !== true
+      ) {
+        throw new Error(
+          result.error
+          || `通信に失敗しました。HTTP ${response.status}`
+        );
+      }
+
+      const reply =
+        result.data?.reply;
+
+      if (
+        typeof reply !== "string"
+        || reply.trim() === ""
+      ) {
+        throw new Error(
+          "Koppyの返答が空っぽだったよ。"
+        );
+      }
+
+      return reply.trim();
+    }
+
+    chatInput.addEventListener(
+      "input",
+      () => {
+        chatCharacterCount.textContent =
+          String(
+            chatInput.value.length
+          );
+      }
     );
-  } else {
+
+    chatInput.addEventListener(
+      "keydown",
+      (event) => {
+        if (
+          event.key === "Enter"
+          && !event.shiftKey
+          && !event.isComposing
+        ) {
+          event.preventDefault();
+
+          chatForm.requestSubmit();
+        }
+      }
+    );
+
+    chatForm.addEventListener(
+      "submit",
+      async (event) => {
+        event.preventDefault();
+
+        const message =
+          chatInput.value.trim();
+
+        if (!message) {
+          chatErrorMessage.textContent =
+            "メッセージを入力してね。";
+
+          return;
+        }
+
+        chatErrorMessage.textContent =
+          "";
+
+        createChatMessage({
+          speaker:
+            "しいちゃん",
+
+          text:
+            message,
+
+          type:
+            "user",
+        });
+
+        chatInput.value =
+          "";
+
+        chatCharacterCount.textContent =
+          "0";
+
+        setChatSending(
+          true
+        );
+
+        const thinkingMessage =
+          createThinkingMessage();
+
+        try {
+          const reply =
+            await sendMessageToKoppy(
+              message
+            );
+
+          thinkingMessage.remove();
+
+          createChatMessage({
+            speaker:
+              "Koppy",
+
+            text:
+              reply,
+
+            type:
+              "koppy",
+          });
+        } catch (error) {
+          thinkingMessage.remove();
+
+          const errorText =
+            error instanceof Error
+              ? error.message
+              : "原因不明のエラー";
+
+          chatErrorMessage.textContent =
+            errorText;
+
+          setChatStatus(
+            "error",
+            "Offline"
+          );
+        } finally {
+          setChatSending(
+            false
+          );
+
+          chatInput.disabled =
+            false;
+
+          chatInput.focus();
+        }
+      }
+    );
+
+    const initialKoppyBubble =
+      chatMessages.querySelector(
+        ".koppy-message .chat-bubble"
+      );
+
+    if (initialKoppyBubble) {
+      initialKoppyBubble.textContent =
+        getKoppyGreeting();
+    }
+
     setChatStatus(
       "online",
       "Online"
     );
-  }
-}
 
-async function sendMessageToKoppy(message) {
-  const response = await fetch(
-    koppyChatApiUrl,
-    {
-      method: "POST",
+    /* ======================================================
+       PROPOSAL / GITHUB WRITER
+    ====================================================== */
 
-      headers: {
-        "Content-Type": "application/json",
-      },
+    const proposalApiBase =
+      "https://koppy.miki-piano.com/api/v1/brain";
 
-      body: JSON.stringify({
-        message,
-      }),
-    }
-  );
+    const proposalForm =
+      document.getElementById("proposalForm");
 
-  let result;
+    const proposalTargetPath =
+      document.getElementById("proposalTargetPath");
 
-  try {
-    result = await response.json();
-  } catch {
-    throw new Error(
-      "Koppy APIから読み取れるJSONが返ってこなかったよ。"
-    );
-  }
+    const proposalOperation =
+      document.getElementById("proposalOperation");
 
-  if (
-    !response.ok
-    || result.success !== true
-  ) {
-    throw new Error(
-      result.error
-      || `通信に失敗しました。HTTP ${response.status}`
-    );
-  }
+    const proposalReason =
+      document.getElementById("proposalReason");
 
-  const reply =
-    result.data?.reply;
+    const proposalContentField =
+      document.getElementById("proposalContentField");
 
-  if (
-    typeof reply !== "string"
-    || reply.trim() === ""
-  ) {
-    throw new Error(
-      "Koppyの返答が空っぽだったよ。"
-    );
-  }
+    const proposalContent =
+      document.getElementById("proposalContent");
 
-  return reply.trim();
-}
+    const proposalPatchFields =
+      document.getElementById("proposalPatchFields");
 
-chatInput.addEventListener(
-  "input",
-  () => {
-    chatCharacterCount.textContent =
-      String(chatInput.value.length);
-  }
-);
+    const proposalSearch =
+      document.getElementById("proposalSearch");
 
-chatInput.addEventListener(
-  "keydown",
-  (event) => {
-    if (
-      event.key === "Enter"
-      && !event.shiftKey
-      && !event.isComposing
+    const proposalReplaceWith =
+      document.getElementById("proposalReplaceWith");
+
+    const proposalCreateButton =
+      document.getElementById("proposalCreateButton");
+
+    const proposalStatus =
+      document.getElementById("proposalStatus");
+
+    const proposalStatusText =
+      document.getElementById("proposalStatusText");
+
+    const proposalPreview =
+      document.getElementById("proposalPreview");
+
+    const proposalIdBadge =
+      document.getElementById("proposalIdBadge");
+
+    const proposalPreviewPath =
+      document.getElementById("proposalPreviewPath");
+
+    const proposalPreviewOperation =
+      document.getElementById("proposalPreviewOperation");
+
+    const proposalPreviewReason =
+      document.getElementById("proposalPreviewReason");
+
+    const proposalContentPreviewSection =
+      document.getElementById("proposalContentPreviewSection");
+
+    const proposalPreviewContent =
+      document.getElementById("proposalPreviewContent");
+
+    const proposalPatchPreviewSection =
+      document.getElementById("proposalPatchPreviewSection");
+
+    const proposalPreviewSearch =
+      document.getElementById("proposalPreviewSearch");
+
+    const proposalPreviewReplaceWith =
+      document.getElementById("proposalPreviewReplaceWith");
+
+    const proposalSafetyText =
+      document.getElementById("proposalSafetyText");
+
+    const proposalRejectButton =
+      document.getElementById("proposalRejectButton");
+
+    const proposalApproveButton =
+      document.getElementById("proposalApproveButton");
+
+    const proposalComplete =
+      document.getElementById("proposalComplete");
+
+    const proposalCompleteMessage =
+      document.getElementById("proposalCompleteMessage");
+
+    const proposalError =
+      document.getElementById("proposalError");
+
+    let currentProposalId =
+      null;
+
+    function setProposalStatus(
+      state,
+      text
     ) {
-      event.preventDefault();
+      proposalStatus.className =
+        `proposal-status ${state}`;
 
-      chatForm.requestSubmit();
-    }
-  }
-);
-
-chatForm.addEventListener(
-  "submit",
-  async (event) => {
-    event.preventDefault();
-
-    const message =
-      chatInput.value.trim();
-
-    if (!message) {
-      chatErrorMessage.textContent =
-        "メッセージを入力してね。";
-
-      chatInput.focus();
-      return;
+      proposalStatusText.textContent =
+        text;
     }
 
-    chatErrorMessage.textContent = "";
+    function setProposalBusy(
+      isBusy
+    ) {
+      proposalCreateButton.disabled =
+        isBusy;
 
-    createChatMessage({
-      speaker: "しいちゃん",
-      text: message,
-      type: "user",
-    });
+      proposalApproveButton.disabled =
+        isBusy;
 
-    chatInput.value = "";
-    chatCharacterCount.textContent = "0";
+      proposalRejectButton.disabled =
+        isBusy;
+    }
 
-    setChatSending(true);
+    function clearProposalError() {
+      proposalError.textContent =
+        "";
+    }
 
-    const thinkingMessage =
-      createThinkingMessage();
+    function showProposalError(
+      message
+    ) {
+      proposalError.textContent =
+        message;
 
-    try {
-      const reply =
-        await sendMessageToKoppy(
-          message
+      setProposalStatus(
+        "error",
+        "エラー"
+      );
+    }
+
+    function operationLabel(
+      operation
+    ) {
+      switch (operation) {
+        case "append":
+          return "追記";
+
+        case "patch":
+          return "部分置換";
+
+        case "replace":
+          return "全文置換";
+
+        case "create":
+          return "新規作成";
+
+        default:
+          return operation;
+      }
+    }
+
+    function updateOperationUi() {
+      const isPatch =
+        proposalOperation.value
+        === "patch";
+
+      proposalPatchFields.hidden =
+        !isPatch;
+
+      proposalContentField.hidden =
+        isPatch;
+
+      proposalContent.required =
+        !isPatch;
+
+      proposalSearch.required =
+        isPatch;
+
+      if (isPatch) {
+        proposalCreateButton.innerHTML =
+          '<span aria-hidden="true">✦</span> 部分置換案をつくる';
+      } else {
+        proposalCreateButton.innerHTML =
+          '<span aria-hidden="true">✦</span> 変更案をつくる';
+      }
+
+      clearProposalError();
+    }
+
+    proposalOperation.addEventListener(
+      "change",
+      updateOperationUi
+    );
+
+    updateOperationUi();
+
+    async function fetchProposalApi(
+      path,
+      payload
+    ) {
+      const response =
+        await fetch(
+          `${proposalApiBase}/${path}`,
+          {
+            method:
+              "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json",
+            },
+
+            body:
+              JSON.stringify(
+                payload
+              ),
+          }
         );
 
-      thinkingMessage.remove();
+      let result;
 
-      createChatMessage({
-        speaker: "Koppy",
-        text: reply,
-        type: "koppy",
-      });
-
-      setChatStatus(
-        "online",
-        "Online"
-      );
-    } catch (error) {
-      thinkingMessage.remove();
-
-      const errorText =
-        error instanceof Error
-          ? error.message
-          : "原因不明のエラーが発生したよ。";
-
-      chatErrorMessage.textContent =
-        errorText;
-
-      createChatMessage({
-        speaker: "Koppy",
-        text:
-          "ごめん、通信でつまずいたみたい。\n"
-          + errorText,
-        type: "koppy",
-      });
-
-      setChatStatus(
-        "error",
-        "Offline"
-      );
-    } finally {
-      setChatSending(false);
-
-      chatInput.disabled = false;
-      chatInput.focus();
-    }
-  }
-);
-
-/* 初期表示 */
-
-const initialKoppyBubble =
-  chatMessages.querySelector(
-    ".koppy-message .chat-bubble"
-  );
-
-if (initialKoppyBubble) {
-  initialKoppyBubble.textContent =
-    getKoppyGreeting();
-}
-
-setChatStatus(
-  "online",
-  "Online"
-);
-
-chatInput.focus();    
-
-/* ======================================================
-   QUEST004 : GitHub Proposal UI Controller
-====================================================== */
-
-const proposalApiBase =
-  "https://koppy.miki-piano.com/api/v1/brain";
-
-const proposalForm =
-  document.getElementById("proposalForm");
-
-const proposalTargetPath =
-  document.getElementById("proposalTargetPath");
-
-const proposalOperation =
-  document.getElementById("proposalOperation");
-
-const proposalReason =
-  document.getElementById("proposalReason");
-
-const proposalContent =
-  document.getElementById("proposalContent");
-
-const proposalCreateButton =
-  document.getElementById("proposalCreateButton");
-
-const proposalStatus =
-  document.getElementById("proposalStatus");
-
-const proposalStatusText =
-  document.getElementById("proposalStatusText");
-
-const proposalPreview =
-  document.getElementById("proposalPreview");
-
-const proposalIdBadge =
-  document.getElementById("proposalIdBadge");
-
-const proposalPreviewPath =
-  document.getElementById("proposalPreviewPath");
-
-const proposalPreviewOperation =
-  document.getElementById("proposalPreviewOperation");
-
-const proposalPreviewReason =
-  document.getElementById("proposalPreviewReason");
-
-const proposalPreviewContent =
-  document.getElementById("proposalPreviewContent");
-
-const proposalRejectButton =
-  document.getElementById("proposalRejectButton");
-
-const proposalApproveButton =
-  document.getElementById("proposalApproveButton");
-
-const proposalComplete =
-  document.getElementById("proposalComplete");
-
-const proposalCompleteMessage =
-  document.getElementById("proposalCompleteMessage");
-
-const proposalError =
-  document.getElementById("proposalError");
-
-let currentProposalId = null;
-
-function setProposalStatus(
-  state,
-  text
-) {
-  proposalStatus.className =
-    `proposal-status ${state}`;
-
-  proposalStatusText.textContent =
-    text;
-}
-
-function setProposalBusy(
-  isBusy
-) {
-  proposalCreateButton.disabled =
-    isBusy;
-
-  proposalApproveButton.disabled =
-    isBusy;
-
-  proposalRejectButton.disabled =
-    isBusy;
-}
-
-function clearProposalError() {
-  proposalError.textContent = "";
-}
-
-function showProposalError(
-  message
-) {
-  proposalError.textContent =
-    message;
-
-  setProposalStatus(
-    "error",
-    "エラー"
-  );
-}
-
-function operationLabel(
-  operation
-) {
-  switch (operation) {
-    case "append":
-      return "追記";
-
-    case "replace":
-      return "全文置換";
-
-    case "create":
-      return "新規作成";
-
-    default:
-      return operation;
-  }
-}
-
-async function fetchProposalApi(
-  path,
-  payload
-) {
-  const response =
-    await fetch(
-      `${proposalApiBase}/${path}`,
-      {
-        method: "POST",
-
-        headers: {
-          "Content-Type":
-            "application/json",
-        },
-
-        body: JSON.stringify(
-          payload
-        ),
+      try {
+        result =
+          await response.json();
+      } catch {
+        throw new Error(
+          "Koppy APIからJSONを読み取れなかったよ。"
+        );
       }
-    );
 
-  let result;
+      if (
+        !response.ok
+        || result.success !== true
+      ) {
+        throw new Error(
+          result.error
+          || `APIエラー（HTTP ${response.status}）`
+        );
+      }
 
-  try {
-    result =
-      await response.json();
-  } catch {
-    throw new Error(
-      "Koppy APIからJSONを読み取れなかったよ。"
-    );
-  }
-
-  if (
-    !response.ok
-    || result.success !== true
-  ) {
-    throw new Error(
-      result.error
-      || `APIエラー（HTTP ${response.status}）`
-    );
-  }
-
-  return result.data;
-}
-
-/* ======================================================
-   Proposal作成
-====================================================== */
-
-proposalForm.addEventListener(
-  "submit",
-  async (event) => {
-    event.preventDefault();
-
-    clearProposalError();
-
-    proposalComplete.hidden =
-      true;
-
-    proposalPreview.hidden =
-      true;
-
-    const targetPath =
-      proposalTargetPath.value.trim();
-
-    const operation =
-      proposalOperation.value;
-
-    const reason =
-      proposalReason.value.trim();
-
-    const content =
-      proposalContent.value;
-
-    if (!targetPath) {
-      showProposalError(
-        "変更するファイルを指定してね。"
-      );
-
-      return;
+      return result.data;
     }
 
-    if (!content.trim()) {
-      showProposalError(
-        "変更内容を書いてね。"
-      );
+    proposalForm.addEventListener(
+      "submit",
+      async (event) => {
+        event.preventDefault();
 
-      return;
-    }
+        clearProposalError();
 
-    setProposalBusy(true);
+        proposalComplete.hidden =
+          true;
 
-    setProposalStatus(
-      "working",
-      "変更案を作成中…"
-    );
+        proposalPreview.hidden =
+          true;
 
-    proposalCreateButton.textContent =
-      "変更案を作成中…";
+        const targetPath =
+          proposalTargetPath.value.trim();
 
-    try {
-      const data =
-        await fetchProposalApi(
-          "proposal.php",
-          {
+        const operation =
+          proposalOperation.value;
+
+        const reason =
+          proposalReason.value.trim();
+
+        const content =
+          proposalContent.value;
+
+        const search =
+          proposalSearch.value;
+
+        const replaceWith =
+          proposalReplaceWith.value;
+
+        if (!targetPath) {
+          showProposalError(
+            "変更するファイルを指定してね。"
+          );
+
+          return;
+        }
+
+        if (
+          operation === "patch"
+          && search === ""
+        ) {
+          showProposalError(
+            "部分置換では「探す文字列」が必要だよ。"
+          );
+
+          return;
+        }
+
+        if (
+          operation !== "patch"
+          && !content.trim()
+        ) {
+          showProposalError(
+            "変更内容を書いてね。"
+          );
+
+          return;
+        }
+
+        setProposalBusy(
+          true
+        );
+
+        setProposalStatus(
+          "working",
+          "変更案を作成中…"
+        );
+
+        proposalCreateButton.textContent =
+          "変更案を作成中…";
+
+        try {
+          const payload = {
             target_path:
               targetPath,
 
             operation,
 
-            content,
-
             reason,
+          };
+
+          if (
+            operation === "patch"
+          ) {
+            payload.search =
+              search;
+
+            payload.replace_with =
+              replaceWith;
+          } else {
+            payload.content =
+              content;
           }
-        );
 
-      const proposal =
-        data.proposal;
+          const data =
+            await fetchProposalApi(
+              "proposal.php",
+              payload
+            );
 
-      currentProposalId =
-        proposal.id;
+          const proposal =
+            data.proposal;
 
-      proposalIdBadge.textContent =
-        `ID: ${proposal.id}`;
+          currentProposalId =
+            proposal.id;
 
-      proposalPreviewPath.textContent =
-        proposal.target_path;
+          proposalIdBadge.textContent =
+            `ID: ${proposal.id}`;
 
-      proposalPreviewOperation.textContent =
-        operationLabel(
-          proposal.operation
-        );
+          proposalPreviewPath.textContent =
+            proposal.target_path;
 
-      proposalPreviewReason.textContent =
-        proposal.reason
-        || "理由なし";
+          proposalPreviewOperation.textContent =
+            operationLabel(
+              proposal.operation
+            );
 
-      proposalPreviewContent.textContent =
-        proposal.content;
+          proposalPreviewReason.textContent =
+            proposal.reason
+            || "理由なし";
 
-      proposalPreview.hidden =
-        false;
+          const isPatch =
+            proposal.operation
+            === "patch";
 
-      setProposalStatus(
-        "idle",
-        "承認待ち"
-      );
+          proposalContentPreviewSection.hidden =
+            isPatch;
 
-      proposalPreview.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-    } catch (error) {
-      showProposalError(
-        error instanceof Error
-          ? error.message
-          : "変更案の作成に失敗したよ。"
-      );
-    } finally {
-      setProposalBusy(false);
+          proposalPatchPreviewSection.hidden =
+            !isPatch;
 
-      proposalCreateButton.innerHTML =
-        '<span aria-hidden="true">✦</span> 変更案をつくる';
-    }
-  }
-);
+          if (isPatch) {
+            proposalPreviewSearch.textContent =
+              proposal.search
+              || "";
 
-/* ======================================================
-   Proposal却下
-====================================================== */
+            proposalPreviewReplaceWith.textContent =
+              proposal.replace_with
+              ?? "";
 
-proposalRejectButton.addEventListener(
-  "click",
-  () => {
-    currentProposalId = null;
+            proposalSafetyText.textContent =
+              "GitHubはまだ変更されていません。採用後も、探す文字列が完全一致で1件だけの場合に限ってExecutorが置換します。";
+          } else {
+            proposalPreviewContent.textContent =
+              proposal.content
+              || "";
 
-    proposalPreview.hidden =
-      true;
+            proposalSafetyText.textContent =
+              "この時点ではGitHubは変更されていません。「採用してGitHubへ保存」を押したときだけ実行します。";
+          }
 
-    proposalComplete.hidden =
-      true;
+          proposalPreview.hidden =
+            false;
 
-    clearProposalError();
+          setProposalStatus(
+            "idle",
+            "承認待ち"
+          );
 
-    setProposalStatus(
-      "idle",
-      "待機中"
-    );
-  }
-);
+          proposalPreview.scrollIntoView({
+            behavior:
+              "smooth",
 
-/* ======================================================
-   Proposal承認 → Executor
-====================================================== */
+            block:
+              "center",
+          });
+        } catch (error) {
+          showProposalError(
+            error instanceof Error
+              ? error.message
+              : "変更案の作成に失敗したよ。"
+          );
+        } finally {
+          setProposalBusy(
+            false
+          );
 
-proposalApproveButton.addEventListener(
-  "click",
-  async () => {
-    clearProposalError();
-
-    if (!currentProposalId) {
-      showProposalError(
-        "承認するProposalが見つからないよ。"
-      );
-
-      return;
-    }
-
-    setProposalBusy(true);
-
-    setProposalStatus(
-      "working",
-      "承認中…"
-    );
-
-    proposalApproveButton.textContent =
-      "承認中…";
-
-    try {
-      /* ---------------------------
-         1. Approve
-      --------------------------- */
-
-      await fetchProposalApi(
-        "approve.php",
-        {
-          proposal_id:
-            currentProposalId,
+          updateOperationUi();
         }
-      );
+      }
+    );
 
-      setProposalStatus(
-        "working",
-        "GitHubへ保存中…"
-      );
+    proposalRejectButton.addEventListener(
+      "click",
+      () => {
+        currentProposalId =
+          null;
 
-      proposalApproveButton.textContent =
-        "GitHubへ保存中…";
+        proposalPreview.hidden =
+          true;
 
-      /* ---------------------------
-         2. Executor
-      --------------------------- */
+        proposalComplete.hidden =
+          true;
 
-      const executeData =
-        await fetchProposalApi(
-          "executor/github.php",
-          {
-            proposal_id:
-              currentProposalId,
+        clearProposalError();
+
+        setProposalStatus(
+          "idle",
+          "待機中"
+        );
+      }
+    );
+
+    proposalApproveButton.addEventListener(
+      "click",
+      async () => {
+        clearProposalError();
+
+        if (!currentProposalId) {
+          showProposalError(
+            "承認するProposalが見つからないよ。"
+          );
+
+          return;
+        }
+
+        setProposalBusy(
+          true
+        );
+
+        setProposalStatus(
+          "working",
+          "承認中…"
+        );
+
+        proposalApproveButton.textContent =
+          "承認中…";
+
+        try {
+          await fetchProposalApi(
+            "approve.php",
+            {
+              proposal_id:
+                currentProposalId,
+            }
+          );
+
+          setProposalStatus(
+            "working",
+            "GitHubへ保存中…"
+          );
+
+          proposalApproveButton.textContent =
+            "GitHubへ保存中…";
+
+          const executeData =
+            await fetchProposalApi(
+              "executor/github.php",
+              {
+                proposal_id:
+                  currentProposalId,
+              }
+            );
+
+          const github =
+            executeData.github;
+
+          proposalPreview.hidden =
+            true;
+
+          proposalComplete.hidden =
+            false;
+
+          const shortSha =
+            github?.commit_sha
+              ? github.commit_sha.slice(
+                  0,
+                  7
+                )
+              : "";
+
+          const operationText =
+            github?.operation
+              ? ` / ${operationLabel(github.operation)}`
+              : "";
+
+          proposalCompleteMessage.textContent =
+            shortSha
+              ? `Commit ${shortSha}${operationText}`
+              : `Commit完了${operationText}`;
+
+          setProposalStatus(
+            "success",
+            "保存完了"
+          );
+
+          if (
+            typeof createChatMessage
+            === "function"
+          ) {
+            createChatMessage({
+              speaker:
+                "Koppy",
+
+              text:
+                github?.operation === "patch"
+                  ? "部分置換してGitHubへ保存したよ✨\n完全一致1件だけを安全に変更したよ。"
+                  : "GitHubへ保存したよ✨\n変更内容はちゃんとCommitされたよ。",
+
+              type:
+                "koppy",
+            });
           }
-        );
 
-      const github =
-        executeData.github;
+          currentProposalId =
+            null;
 
-      proposalPreview.hidden =
-        true;
+          await loadKoppyWorld();
+        } catch (error) {
+          showProposalError(
+            error instanceof Error
+              ? error.message
+              : "GitHubへの保存に失敗したよ。"
+          );
+        } finally {
+          setProposalBusy(
+            false
+          );
 
-      proposalComplete.hidden =
-        false;
-
-      proposalCompleteMessage.textContent =
-        github?.commit_sha
-          ? `Commit ${github.commit_sha.slice(0, 7)}`
-          : "Commit完了";
-
-      setProposalStatus(
-        "success",
-        "保存完了"
-      );
-
-      /* ---------------------------
-         Brain表示も更新
-      --------------------------- */
-
-      try {
-        await loadKoppyWorld();
-      } catch (refreshError) {
-        console.warn(
-          "Brain再読込に失敗",
-          refreshError
-        );
+          proposalApproveButton.innerHTML =
+            '<span aria-hidden="true">✓</span> 採用してGitHubへ保存';
+        }
       }
+    );
 
-      /* ---------------------------
-         チャットにもKoppy報告
-      --------------------------- */
-
-      if (
-        typeof createChatMessage
-        === "function"
-      ) {
-        createChatMessage({
-          speaker: "Koppy",
-
-          text:
-            "GitHubへ保存したよ✨\n"
-            + "変更内容はちゃんとCommitされたよ。",
-
-          type: "koppy",
-        });
-      }
-
-      currentProposalId = null;
-    } catch (error) {
-      showProposalError(
-        error instanceof Error
-          ? error.message
-          : "GitHubへの保存に失敗したよ。"
-      );
-    } finally {
-      setProposalBusy(false);
-
-      proposalApproveButton.innerHTML =
-        '<span aria-hidden="true">✓</span> 採用してGitHubへ保存';
-    }
-  }
-);
-
+    chatInput.focus();
   </script>
 </body>
 </html>

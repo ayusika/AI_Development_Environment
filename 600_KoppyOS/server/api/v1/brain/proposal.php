@@ -40,6 +40,12 @@ if (!is_array($payload)) {
     );
 }
 
+/*
+|--------------------------------------------------------------------------
+| Request values
+|--------------------------------------------------------------------------
+*/
+
 $targetPath =
     trim(
         (string) (
@@ -70,6 +76,40 @@ $reason =
         )
     );
 
+/*
+|--------------------------------------------------------------------------
+| PATCH専用
+|--------------------------------------------------------------------------
+|
+| search:
+|   既存ファイル内で探す文字列
+|
+| replace_with:
+|   searchと置き換える新しい文字列
+|
+| replace_with は空文字も許可する。
+| これにより「文字列の削除」も可能。
+|--------------------------------------------------------------------------
+*/
+
+$search =
+    (string) (
+        $payload['search']
+        ?? ''
+    );
+
+$replaceWith =
+    (string) (
+        $payload['replace_with']
+        ?? ''
+    );
+
+/*
+|--------------------------------------------------------------------------
+| Validation
+|--------------------------------------------------------------------------
+*/
+
 if ($targetPath === '') {
     respondError(
         'target_path is required.',
@@ -78,9 +118,18 @@ if ($targetPath === '') {
 }
 
 if (
-    str_starts_with($targetPath, '/')
-    || str_contains($targetPath, '..')
-    || str_contains($targetPath, "\0")
+    str_starts_with(
+        $targetPath,
+        '/'
+    )
+    || str_contains(
+        $targetPath,
+        '..'
+    )
+    || str_contains(
+        $targetPath,
+        "\0"
+    )
 ) {
     respondError(
         'Invalid target_path.',
@@ -92,6 +141,7 @@ $allowedOperations = [
     'append',
     'replace',
     'create',
+    'patch',
 ];
 
 if (
@@ -102,14 +152,41 @@ if (
     )
 ) {
     respondError(
-        'operation must be append, replace, or create.',
+        'operation must be append, replace, create, or patch.',
         422
     );
 }
 
-if (trim($content) === '') {
+/*
+|--------------------------------------------------------------------------
+| Operation別Validation
+|--------------------------------------------------------------------------
+*/
+
+if (
+    in_array(
+        $operation,
+        [
+            'append',
+            'replace',
+            'create',
+        ],
+        true
+    )
+    && trim($content) === ''
+) {
     respondError(
         'content is required.',
+        422
+    );
+}
+
+if (
+    $operation === 'patch'
+    && $search === ''
+) {
+    respondError(
+        'search is required for patch operation.',
         422
     );
 }
@@ -130,9 +207,15 @@ $proposalSeed =
     . '|'
     . $content
     . '|'
+    . $search
+    . '|'
+    . $replaceWith
+    . '|'
     . $createdAt
     . '|'
-    . bin2hex(random_bytes(8));
+    . bin2hex(
+        random_bytes(8)
+    );
 
 $proposalId =
     substr(
@@ -145,14 +228,44 @@ $proposalId =
     );
 
 $proposal = [
-    'id' => $proposalId,
-    'status' => 'awaiting_approval',
-    'target_path' => $targetPath,
-    'operation' => $operation,
-    'content' => $content,
-    'reason' => $reason,
-    'created_at' => $createdAt,
-    'approved_at' => null,
+    'id' =>
+        $proposalId,
+
+    'status' =>
+        'awaiting_approval',
+
+    'target_path' =>
+        $targetPath,
+
+    'operation' =>
+        $operation,
+
+    'content' =>
+        $operation === 'patch'
+            ? null
+            : $content,
+
+    'search' =>
+        $operation === 'patch'
+            ? $search
+            : null,
+
+    'replace_with' =>
+        $operation === 'patch'
+            ? $replaceWith
+            : null,
+
+    'reason' =>
+        $reason,
+
+    'created_at' =>
+        $createdAt,
+
+    'approved_at' =>
+        null,
+
+    'executed_at' =>
+        null,
 ];
 
 /*
@@ -162,7 +275,8 @@ $proposal = [
 */
 
 $documentRoot =
-    $_SERVER['DOCUMENT_ROOT'] ?? '';
+    $_SERVER['DOCUMENT_ROOT']
+    ?? '';
 
 if ($documentRoot === '') {
     respondError(
@@ -224,12 +338,23 @@ if ($result === false) {
     );
 }
 
+/*
+|--------------------------------------------------------------------------
+| Response
+|--------------------------------------------------------------------------
+*/
+
 respondSuccess([
-    'proposal' => $proposal,
+    'proposal' =>
+        $proposal,
 
     'safety' => [
-        'proposal_saved' => true,
-        'github_write_performed' => false,
+        'proposal_saved' =>
+            true,
+
+        'github_write_performed' =>
+            false,
+
         'message' =>
             'Proposal saved. GitHub has not been modified.',
     ],
