@@ -1221,7 +1221,63 @@
   <div class="background-orb orb-two"></div>
   <div class="background-orb orb-three"></div>
 
-  <main class="world">
+  <!-- =========================================
+       AUTH GATE
+  ========================================== -->
+
+  <section
+    id="authGate"
+    class="auth-gate"
+    aria-live="polite"
+  >
+    <div class="auth-gate-card">
+      <div class="auth-gate-symbol">
+        ♢ᴷ
+      </div>
+
+      <p class="auth-gate-eyebrow">
+        KOPPY WORLD AUTH
+      </p>
+
+      <h1 class="auth-gate-title">
+        Koppy World
+      </h1>
+
+      <p
+        id="authGateMessage"
+        class="auth-gate-copy"
+      >
+        しいちゃん専用Worldへの接続を確認してるよ。
+      </p>
+
+      <p
+        id="authChecking"
+        class="auth-checking"
+      >
+        GitHub認証Sessionを確認中……
+      </p>
+
+      <a
+        id="authLoginButton"
+        class="auth-login-button"
+        href="https://koppy.miki-piano.com/api/v1/auth/login.php"
+        hidden
+      >
+        <span aria-hidden="true">
+          🔐
+        </span>
+
+        <span>
+          GitHubでログイン
+        </span>
+      </a>
+    </div>
+  </section>
+
+  <main
+    id="koppyWorld"
+    class="world auth-pending"
+  >
     <header class="hero">
       <div class="brand-symbol">♢ᴷ</div>
 
