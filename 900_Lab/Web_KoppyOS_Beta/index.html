@@ -1165,6 +1165,487 @@
     min-height: 56px;
   }
 }
+
+/* ======================================================
+   QUEST004 : Proposal Panel
+====================================================== */
+
+.proposal-panel{
+  margin-bottom:18px;
+  padding:26px;
+}
+
+.proposal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:18px;
+  margin-bottom:14px;
+}
+
+.proposal-title-group{
+  display:flex;
+  gap:14px;
+  align-items:center;
+}
+
+.proposal-eyebrow{
+  margin:0;
+  color:var(--blue-dark);
+  font-size:12px;
+  letter-spacing:.12em;
+  font-weight:700;
+}
+
+.proposal-title{
+  margin:4px 0 0;
+  font-size:24px;
+  color:var(--text);
+}
+
+.proposal-description{
+  margin:0 0 22px;
+  color:var(--muted);
+  line-height:1.8;
+}
+
+.proposal-status{
+  display:flex;
+  align-items:center;
+  gap:8px;
+
+  padding:8px 14px;
+
+  border-radius:999px;
+
+  font-size:13px;
+  font-weight:700;
+
+  background:#eef8ff;
+}
+
+.proposal-status-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#9bb9ca;
+}
+
+.proposal-status.idle .proposal-status-dot{
+  background:#8bb3c8;
+}
+
+.proposal-status.working .proposal-status-dot{
+  background:#ffb52d;
+  animation:pulse 1s infinite;
+}
+
+.proposal-status.success .proposal-status-dot{
+  background:#26b36c;
+}
+
+.proposal-status.error .proposal-status-dot{
+  background:#de5d77;
+}
+
+.proposal-form{
+  display:grid;
+  gap:18px;
+}
+
+.proposal-field{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.proposal-field label{
+  font-size:13px;
+  font-weight:700;
+  color:var(--blue-dark);
+}
+
+.proposal-input,
+.proposal-textarea{
+
+  width:100%;
+
+  border:1px solid rgba(112,207,255,.35);
+
+  border-radius:18px;
+
+  background:white;
+
+  padding:14px 16px;
+
+  color:var(--text);
+
+  font:inherit;
+
+  outline:none;
+
+  transition:.2s;
+}
+
+.proposal-input:focus,
+.proposal-textarea:focus{
+
+  border-color:#67cfff;
+
+  box-shadow:
+  0 0 0 5px rgba(103,207,255,.15);
+
+}
+
+.proposal-textarea{
+
+  resize:vertical;
+
+  min-height:170px;
+
+  line-height:1.7;
+}
+
+.proposal-create-button{
+
+  justify-self:start;
+
+  display:inline-flex;
+
+  align-items:center;
+
+  gap:10px;
+
+  padding:14px 22px;
+
+  border:none;
+
+  border-radius:999px;
+
+  background:
+  linear-gradient(
+      135deg,
+      #83ddff,
+      #409fd9
+  );
+
+  color:white;
+
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:.18s;
+
+  box-shadow:
+      0 10px 26px rgba(58,155,210,.25);
+
+}
+
+.proposal-create-button:hover{
+
+  transform:translateY(-2px);
+
+}
+
+.proposal-preview{
+
+  margin-top:26px;
+
+  padding:24px;
+
+  border-radius:24px;
+
+  border:1px solid rgba(108,205,255,.35);
+
+  background:
+  rgba(255,255,255,.68);
+
+}
+
+.proposal-preview-head{
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:flex-start;
+
+  gap:20px;
+
+  margin-bottom:18px;
+}
+
+.proposal-preview-label{
+
+  margin:0;
+
+  font-size:12px;
+
+  letter-spacing:.12em;
+
+  color:var(--muted);
+
+  font-weight:700;
+}
+
+.proposal-preview-head h3{
+
+  margin:6px 0 0;
+
+  font-size:24px;
+
+}
+
+.proposal-id-badge{
+
+  padding:8px 14px;
+
+  border-radius:999px;
+
+  background:#edf8ff;
+
+  font-size:12px;
+
+  font-weight:700;
+
+  color:var(--blue-dark);
+}
+
+.proposal-summary-grid{
+
+  display:grid;
+
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+
+  gap:14px;
+
+  margin-bottom:18px;
+}
+
+.proposal-summary-card{
+
+  padding:16px;
+
+  border-radius:18px;
+
+  background:#f8fdff;
+
+  border:1px solid rgba(120,214,255,.25);
+
+}
+
+.proposal-summary-card span{
+
+  display:block;
+
+  color:var(--muted);
+
+  font-size:12px;
+
+  margin-bottom:6px;
+}
+
+.proposal-summary-card strong{
+
+  font-size:16px;
+
+  color:var(--text);
+
+  word-break:break-all;
+}
+
+.proposal-preview-section{
+
+  margin-bottom:18px;
+}
+
+.proposal-preview-section-title{
+
+  margin:0 0 10px;
+
+  color:var(--blue-dark);
+
+  font-weight:700;
+}
+
+.proposal-code-preview{
+
+  margin:0;
+
+  padding:16px;
+
+  border-radius:18px;
+
+  background:#f5fbff;
+
+  overflow:auto;
+
+  line-height:1.8;
+
+  font-family:
+      ui-monospace,
+      SFMono-Regular,
+      monospace;
+}
+
+.proposal-safety{
+
+  display:flex;
+
+  gap:12px;
+
+  align-items:flex-start;
+
+  margin:20px 0;
+
+  padding:16px;
+
+  border-radius:18px;
+
+  background:#eefaff;
+}
+
+.proposal-safety p{
+
+  margin:0;
+
+  color:var(--muted);
+
+  line-height:1.7;
+}
+
+.proposal-actions{
+
+  display:flex;
+
+  gap:12px;
+
+  justify-content:flex-end;
+
+  flex-wrap:wrap;
+}
+
+.proposal-approve-button,
+.proposal-reject-button{
+
+  border:none;
+
+  cursor:pointer;
+
+  font:inherit;
+
+  border-radius:999px;
+
+  padding:13px 22px;
+
+  font-weight:700;
+
+  transition:.18s;
+}
+
+.proposal-approve-button{
+
+  background:
+  linear-gradient(
+      135deg,
+      #79dcff,
+      #3f9fd7
+  );
+
+  color:white;
+
+  box-shadow:
+      0 10px 24px rgba(58,155,210,.24);
+
+}
+
+.proposal-approve-button:hover{
+
+  transform:translateY(-2px);
+
+}
+
+.proposal-reject-button{
+
+  background:#eef5f8;
+
+}
+
+.proposal-complete{
+
+  margin-top:22px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:18px;
+
+  padding:18px;
+
+  border-radius:22px;
+
+  background:#effff7;
+}
+
+.proposal-complete-icon{
+
+  width:54px;
+
+  height:54px;
+
+  display:grid;
+
+  place-items:center;
+
+  border-radius:50%;
+
+  background:#27b36c;
+
+  color:white;
+
+  font-size:24px;
+
+  font-weight:700;
+}
+
+.proposal-error{
+
+  margin-top:18px;
+
+  color:var(--error);
+
+  font-weight:700;
+}
+
+@media (max-width:900px){
+
+.proposal-header{
+
+flex-direction:column;
+
+}
+
+.proposal-preview-head{
+
+flex-direction:column;
+
+}
+
+.proposal-actions{
+
+justify-content:stretch;
+
+}
+
+.proposal-actions button{
+
+width:100%;
+
+}
+
+}
   </style>
 </head>
 
@@ -1378,6 +1859,246 @@
           </div>
         </form>
       </section>
+      <!-- =========================================
+     QUEST004 : GitHub Proposal UI
+========================================== -->
+
+<section class="panel proposal-panel">
+  <div class="proposal-header">
+    <div class="proposal-title-group">
+      <div class="mini-symbol">✎ᴷ</div>
+
+      <div>
+        <p class="proposal-eyebrow">
+          KOPPY GITHUB WRITER
+        </p>
+
+        <h2 class="proposal-title">
+          GitHubへ変更を提案する
+        </h2>
+      </div>
+    </div>
+
+    <div
+      id="proposalStatus"
+      class="proposal-status idle"
+    >
+      <span class="proposal-status-dot"></span>
+      <span id="proposalStatusText">
+        待機中
+      </span>
+    </div>
+  </div>
+
+  <p class="proposal-description">
+    Koppyはまだ勝手にGitHubへ書き込まないよ。
+    まず変更案を作って、しいちゃんが確認してから実行するよ。
+  </p>
+
+  <!-- 変更案入力 -->
+  <form
+    id="proposalForm"
+    class="proposal-form"
+  >
+    <div class="proposal-field">
+      <label for="proposalTargetPath">
+        変更するファイル
+      </label>
+
+      <input
+        id="proposalTargetPath"
+        class="proposal-input"
+        type="text"
+        value="900_Lab/KoppyOS_GITHUB_WRITE_TEST.md"
+        placeholder="例: 600_KoppyOS/design/ARCHITECTURE.md"
+        required
+      >
+    </div>
+
+    <div class="proposal-field">
+      <label for="proposalOperation">
+        操作
+      </label>
+
+      <select
+        id="proposalOperation"
+        class="proposal-input"
+      >
+        <option value="append">
+          追記
+        </option>
+
+        <option value="replace">
+          全文置換
+        </option>
+
+        <option value="create">
+          新規作成
+        </option>
+      </select>
+    </div>
+
+    <div class="proposal-field">
+      <label for="proposalReason">
+        変更理由
+      </label>
+
+      <input
+        id="proposalReason"
+        class="proposal-input"
+        type="text"
+        placeholder="例: KoppyOSの設計更新"
+      >
+    </div>
+
+    <div class="proposal-field">
+      <label for="proposalContent">
+        変更内容
+      </label>
+
+      <textarea
+        id="proposalContent"
+        class="proposal-textarea"
+        rows="7"
+        placeholder="GitHubへ追加・変更したい内容を書く……"
+        required
+      ></textarea>
+    </div>
+
+    <button
+      id="proposalCreateButton"
+      class="proposal-create-button"
+      type="submit"
+    >
+      <span aria-hidden="true">✦</span>
+      変更案をつくる
+    </button>
+  </form>
+
+  <!-- 承認待ちProposal -->
+  <div
+    id="proposalPreview"
+    class="proposal-preview"
+    hidden
+  >
+    <div class="proposal-preview-head">
+      <div>
+        <p class="proposal-preview-label">
+          CHANGE PROPOSAL
+        </p>
+
+        <h3>
+          Koppyから変更提案があります
+        </h3>
+      </div>
+
+      <span
+        id="proposalIdBadge"
+        class="proposal-id-badge"
+      >
+        Proposal ID
+      </span>
+    </div>
+
+    <div class="proposal-summary-grid">
+      <div class="proposal-summary-card">
+        <span>対象</span>
+        <strong id="proposalPreviewPath">
+          -
+        </strong>
+      </div>
+
+      <div class="proposal-summary-card">
+        <span>操作</span>
+        <strong id="proposalPreviewOperation">
+          -
+        </strong>
+      </div>
+    </div>
+
+    <div class="proposal-preview-section">
+      <p class="proposal-preview-section-title">
+        変更理由
+      </p>
+
+      <p id="proposalPreviewReason">
+        -
+      </p>
+    </div>
+
+    <div class="proposal-preview-section">
+      <p class="proposal-preview-section-title">
+        変更内容
+      </p>
+
+      <pre
+        id="proposalPreviewContent"
+        class="proposal-code-preview"
+      ></pre>
+    </div>
+
+    <div class="proposal-safety">
+      <span aria-hidden="true">
+        🛡️
+      </span>
+
+      <p>
+        この時点ではGitHubは変更されていません。
+        「採用してGitHubへ保存」を押したときだけ実行します。
+      </p>
+    </div>
+
+    <div class="proposal-actions">
+      <button
+        id="proposalRejectButton"
+        class="proposal-reject-button"
+        type="button"
+      >
+        やめる
+      </button>
+
+      <button
+        id="proposalApproveButton"
+        class="proposal-approve-button"
+        type="button"
+      >
+        <span aria-hidden="true">
+          ✓
+        </span>
+
+        採用してGitHubへ保存
+      </button>
+    </div>
+  </div>
+
+  <!-- 完了表示 -->
+  <div
+    id="proposalComplete"
+    class="proposal-complete"
+    hidden
+  >
+    <div class="proposal-complete-icon">
+      ✓
+    </div>
+
+    <div>
+      <strong>
+        GitHubへ保存したよ！
+      </strong>
+
+      <p id="proposalCompleteMessage">
+        Commit完了
+      </p>
+    </div>
+  </div>
+
+  <p
+    id="proposalError"
+    class="proposal-error"
+    role="alert"
+  ></p>
+
+</section>
       <section class="panel document-panel">
         <div class="document-header">
           <h2>GitHub正本ビューア</h2>
@@ -2062,6 +2783,450 @@ setChatStatus(
 );
 
 chatInput.focus();    
+
+/* ======================================================
+   QUEST004 : GitHub Proposal UI Controller
+====================================================== */
+
+const proposalApiBase =
+  "https://koppy.miki-piano.com/api/v1/brain";
+
+const proposalForm =
+  document.getElementById("proposalForm");
+
+const proposalTargetPath =
+  document.getElementById("proposalTargetPath");
+
+const proposalOperation =
+  document.getElementById("proposalOperation");
+
+const proposalReason =
+  document.getElementById("proposalReason");
+
+const proposalContent =
+  document.getElementById("proposalContent");
+
+const proposalCreateButton =
+  document.getElementById("proposalCreateButton");
+
+const proposalStatus =
+  document.getElementById("proposalStatus");
+
+const proposalStatusText =
+  document.getElementById("proposalStatusText");
+
+const proposalPreview =
+  document.getElementById("proposalPreview");
+
+const proposalIdBadge =
+  document.getElementById("proposalIdBadge");
+
+const proposalPreviewPath =
+  document.getElementById("proposalPreviewPath");
+
+const proposalPreviewOperation =
+  document.getElementById("proposalPreviewOperation");
+
+const proposalPreviewReason =
+  document.getElementById("proposalPreviewReason");
+
+const proposalPreviewContent =
+  document.getElementById("proposalPreviewContent");
+
+const proposalRejectButton =
+  document.getElementById("proposalRejectButton");
+
+const proposalApproveButton =
+  document.getElementById("proposalApproveButton");
+
+const proposalComplete =
+  document.getElementById("proposalComplete");
+
+const proposalCompleteMessage =
+  document.getElementById("proposalCompleteMessage");
+
+const proposalError =
+  document.getElementById("proposalError");
+
+let currentProposalId = null;
+
+function setProposalStatus(
+  state,
+  text
+) {
+  proposalStatus.className =
+    `proposal-status ${state}`;
+
+  proposalStatusText.textContent =
+    text;
+}
+
+function setProposalBusy(
+  isBusy
+) {
+  proposalCreateButton.disabled =
+    isBusy;
+
+  proposalApproveButton.disabled =
+    isBusy;
+
+  proposalRejectButton.disabled =
+    isBusy;
+}
+
+function clearProposalError() {
+  proposalError.textContent = "";
+}
+
+function showProposalError(
+  message
+) {
+  proposalError.textContent =
+    message;
+
+  setProposalStatus(
+    "error",
+    "エラー"
+  );
+}
+
+function operationLabel(
+  operation
+) {
+  switch (operation) {
+    case "append":
+      return "追記";
+
+    case "replace":
+      return "全文置換";
+
+    case "create":
+      return "新規作成";
+
+    default:
+      return operation;
+  }
+}
+
+async function fetchProposalApi(
+  path,
+  payload
+) {
+  const response =
+    await fetch(
+      `${proposalApiBase}/${path}`,
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+
+        body: JSON.stringify(
+          payload
+        ),
+      }
+    );
+
+  let result;
+
+  try {
+    result =
+      await response.json();
+  } catch {
+    throw new Error(
+      "Koppy APIからJSONを読み取れなかったよ。"
+    );
+  }
+
+  if (
+    !response.ok
+    || result.success !== true
+  ) {
+    throw new Error(
+      result.error
+      || `APIエラー（HTTP ${response.status}）`
+    );
+  }
+
+  return result.data;
+}
+
+/* ======================================================
+   Proposal作成
+====================================================== */
+
+proposalForm.addEventListener(
+  "submit",
+  async (event) => {
+    event.preventDefault();
+
+    clearProposalError();
+
+    proposalComplete.hidden =
+      true;
+
+    proposalPreview.hidden =
+      true;
+
+    const targetPath =
+      proposalTargetPath.value.trim();
+
+    const operation =
+      proposalOperation.value;
+
+    const reason =
+      proposalReason.value.trim();
+
+    const content =
+      proposalContent.value;
+
+    if (!targetPath) {
+      showProposalError(
+        "変更するファイルを指定してね。"
+      );
+
+      return;
+    }
+
+    if (!content.trim()) {
+      showProposalError(
+        "変更内容を書いてね。"
+      );
+
+      return;
+    }
+
+    setProposalBusy(true);
+
+    setProposalStatus(
+      "working",
+      "変更案を作成中…"
+    );
+
+    proposalCreateButton.textContent =
+      "変更案を作成中…";
+
+    try {
+      const data =
+        await fetchProposalApi(
+          "proposal.php",
+          {
+            target_path:
+              targetPath,
+
+            operation,
+
+            content,
+
+            reason,
+          }
+        );
+
+      const proposal =
+        data.proposal;
+
+      currentProposalId =
+        proposal.id;
+
+      proposalIdBadge.textContent =
+        `ID: ${proposal.id}`;
+
+      proposalPreviewPath.textContent =
+        proposal.target_path;
+
+      proposalPreviewOperation.textContent =
+        operationLabel(
+          proposal.operation
+        );
+
+      proposalPreviewReason.textContent =
+        proposal.reason
+        || "理由なし";
+
+      proposalPreviewContent.textContent =
+        proposal.content;
+
+      proposalPreview.hidden =
+        false;
+
+      setProposalStatus(
+        "idle",
+        "承認待ち"
+      );
+
+      proposalPreview.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    } catch (error) {
+      showProposalError(
+        error instanceof Error
+          ? error.message
+          : "変更案の作成に失敗したよ。"
+      );
+    } finally {
+      setProposalBusy(false);
+
+      proposalCreateButton.innerHTML =
+        '<span aria-hidden="true">✦</span> 変更案をつくる';
+    }
+  }
+);
+
+/* ======================================================
+   Proposal却下
+====================================================== */
+
+proposalRejectButton.addEventListener(
+  "click",
+  () => {
+    currentProposalId = null;
+
+    proposalPreview.hidden =
+      true;
+
+    proposalComplete.hidden =
+      true;
+
+    clearProposalError();
+
+    setProposalStatus(
+      "idle",
+      "待機中"
+    );
+  }
+);
+
+/* ======================================================
+   Proposal承認 → Executor
+====================================================== */
+
+proposalApproveButton.addEventListener(
+  "click",
+  async () => {
+    clearProposalError();
+
+    if (!currentProposalId) {
+      showProposalError(
+        "承認するProposalが見つからないよ。"
+      );
+
+      return;
+    }
+
+    setProposalBusy(true);
+
+    setProposalStatus(
+      "working",
+      "承認中…"
+    );
+
+    proposalApproveButton.textContent =
+      "承認中…";
+
+    try {
+      /* ---------------------------
+         1. Approve
+      --------------------------- */
+
+      await fetchProposalApi(
+        "approve.php",
+        {
+          proposal_id:
+            currentProposalId,
+        }
+      );
+
+      setProposalStatus(
+        "working",
+        "GitHubへ保存中…"
+      );
+
+      proposalApproveButton.textContent =
+        "GitHubへ保存中…";
+
+      /* ---------------------------
+         2. Executor
+      --------------------------- */
+
+      const executeData =
+        await fetchProposalApi(
+          "executor/github.php",
+          {
+            proposal_id:
+              currentProposalId,
+          }
+        );
+
+      const github =
+        executeData.github;
+
+      proposalPreview.hidden =
+        true;
+
+      proposalComplete.hidden =
+        false;
+
+      proposalCompleteMessage.textContent =
+        github?.commit_sha
+          ? `Commit ${github.commit_sha.slice(0, 7)}`
+          : "Commit完了";
+
+      setProposalStatus(
+        "success",
+        "保存完了"
+      );
+
+      /* ---------------------------
+         Brain表示も更新
+      --------------------------- */
+
+      try {
+        await loadKoppyWorld();
+      } catch (refreshError) {
+        console.warn(
+          "Brain再読込に失敗",
+          refreshError
+        );
+      }
+
+      /* ---------------------------
+         チャットにもKoppy報告
+      --------------------------- */
+
+      if (
+        typeof createChatMessage
+        === "function"
+      ) {
+        createChatMessage({
+          speaker: "Koppy",
+
+          text:
+            "GitHubへ保存したよ✨\n"
+            + "変更内容はちゃんとCommitされたよ。",
+
+          type: "koppy",
+        });
+      }
+
+      currentProposalId = null;
+    } catch (error) {
+      showProposalError(
+        error instanceof Error
+          ? error.message
+          : "GitHubへの保存に失敗したよ。"
+      );
+    } finally {
+      setProposalBusy(false);
+
+      proposalApproveButton.innerHTML =
+        '<span aria-hidden="true">✓</span> 採用してGitHubへ保存';
+    }
+  }
+);
+
   </script>
 </body>
 </html>
