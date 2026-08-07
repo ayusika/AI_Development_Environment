@@ -682,3 +682,65 @@ v1運用開始
 ・GitHub Brain接続
 ・Memory接続
 ・KoppyOS UI統合
+
+## Koppy World GitHub Writer / Safe Write Architecture
+
+### 2026-08-07 実装確認
+
+Koppy WorldからGitHubへ、安全な承認付き書き込みを行う経路が動作した。
+
+書き込みフロー：
+
+Koppy World UI
+→ Proposal作成
+→ ユーザーによる内容確認
+→ 採用
+→ Executor
+→ Write Allowlist検証
+→ GitHub API
+→ Commit
+
+### 安全原則
+
+KoppyはGitHubへ直接・無条件には書き込まない。
+
+変更はまずProposalとして作成し、ユーザーが内容を確認して採用した場合のみExecutorが実行する。
+
+Executorは承認済みProposalのみを受け付け、さらにWrite Allowlistによって書き込み可能領域を制限する。
+
+現在の書き込み許可領域：
+
+- `600_KoppyOS/`
+- `900_Lab/`
+
+Allowlist外への書き込みは、Proposalが作成・承認されていてもExecutor側で拒否する。
+
+また、許可領域内でも秘密情報を含む可能性がある保護ファイルへの書き込みは禁止する。
+
+### 部分置換
+
+部分置換では、現在のGitHub本文に対して「探す文字列」が完全一致で1件だけ存在する場合のみ変更を実行する。
+
+- 0件一致：停止
+- 1件一致：実行可能
+- 2件以上一致：停止
+
+これにより、曖昧な位置への誤置換を防止する。
+
+### 動作確認
+
+2026-08-07、以下の実動作を確認した。
+
+- Allowlist外 `000_HOME/` への新規作成 → Executorが拒否
+- Allowlist内 `900_Lab/` への新規作成 → GitHub Commit成功
+- Koppy World UIからProposal作成・承認・実行・結果表示まで完走
+
+これにより、Koppy WorldからGitHubを更新するための最初の安全なWrite経路が成立した。
+
+### 設計上の意味
+
+この機能により、Koppy WorldはGitHub上のKoppyOS設計・実験領域を、ユーザー承認のもとで更新できるようになった。
+
+今後はVS CodeやTerminalを毎回介さず、Koppy World自身のUIからKoppyOSの開発・改善を進められる範囲を拡張していく。
+
+これは「AIを使う環境」から「AIと一緒に開発する環境」へ進むための基盤機能である。
