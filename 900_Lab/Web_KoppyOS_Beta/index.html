@@ -1597,76 +1597,77 @@
       ).format(date);
     }
 
-    async function loadKoppyWorld() {
-      setLoadingState();
+async function loadKoppyWorld() {
+  setLoadingState();
 
-      const commitUrl =
-        `https://api.github.com/repos/${owner}/${repository}/commits/${branch}`;
+  const brainApiUrl =
+    "https://koppy.miki-piano.com/api/v1/brain/github.php";
 
-      const rawDocumentUrl =
-        `https://raw.githubusercontent.com/${owner}/${repository}/${branch}/${documentPath}`;
-
-      try {
-        const [
-          commitResponse,
-          documentResponse
-        ] = await Promise.all([
-          fetch(commitUrl, {
-            cache: "no-store"
-          }),
-
-          fetch(rawDocumentUrl, {
-            cache: "no-store"
-          })
-        ]);
-
-        if (!commitResponse.ok) {
-          throw new Error(
-            `最新コミット取得失敗（HTTP ${commitResponse.status}）`
-          );
-        }
-
-        if (!documentResponse.ok) {
-          throw new Error(
-            `設計書取得失敗（HTTP ${documentResponse.status}）`
-          );
-        }
-
-        const commitData =
-          await commitResponse.json();
-
-        const documentText =
-          await documentResponse.text();
-
-        const shortCommit =
-          commitData.sha.slice(0, 7);
-
-        const commitMessage =
-          commitData.commit?.message ??
-          "コミットメッセージ不明";
-
-        const updatedAt =
-          commitData.commit?.committer?.date ??
-          "";
-
-        setSuccessState({
-          shortCommit,
-          commitMessage,
-          updatedAt,
-          documentText
-        });
-      } catch (error) {
-        console.error(error);
-
-        setErrorState(
-          error instanceof Error
-            ? error.message
-            : "不明なエラー"
-        );
-      } finally {
-        resetButton();
+  try {
+    const response = await fetch(
+      brainApiUrl,
+      {
+        method: "GET",
+        cache: "no-store",
       }
+    );
+
+    let result;
+
+    try {
+      result = await response.json();
+    } catch {
+      throw new Error(
+        "Brain APIから読み取れるJSONが返ってこなかったよ。"
+      );
     }
+
+    if (
+      !response.ok
+      || result.success !== true
+    ) {
+      throw new Error(
+        result.error
+        || `Brain取得失敗（HTTP ${response.status}）`
+      );
+    }
+
+    const data = result.data;
+
+    const shortCommit =
+      data.latest_commit?.short_sha
+      || "不明";
+
+    const commitMessage =
+      data.latest_commit?.message
+      || "コミットメッセージ不明";
+
+    const updatedAt =
+      data.latest_commit?.date
+      || "";
+
+    const documentText =
+      data.document?.content
+      || "Brain本文が空でした。";
+
+    setSuccessState({
+      shortCommit,
+      commitMessage,
+      updatedAt,
+      documentText,
+    });
+  } catch (error) {
+    console.error(error);
+
+    setErrorState(
+      error instanceof Error
+        ? error.message
+        : "不明なエラー"
+    );
+  } finally {
+    resetButton();
+  }
+}
 
     function toggleDocument() {
       const isHidden =
