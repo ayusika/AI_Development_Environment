@@ -234,19 +234,120 @@ $replaceWith =
 
 /*
 |--------------------------------------------------------------------------
-| TEMPORARY SAFETY LOCK
+| WRITE ALLOWLIST
+|--------------------------------------------------------------------------
 |
-| まだWriter育成中なので、初回patch実験もテストファイル限定。
-| patch成功後に「編集可能領域Allowlist」へ進化させる。
+| KoppyOSがGitHubへ書き込める領域を限定する。
+|
+| 現在許可:
+|
+| 600_KoppyOS/
+| 900_Lab/
+|
+| Allowlist外はProposalが承認済みでもExecutorが拒否する。
 |--------------------------------------------------------------------------
 */
 
-$allowedTestPath =
-    '900_Lab/KoppyOS_GITHUB_WRITE_TEST.md';
+/*
+|--------------------------------------------------------------------------
+| Path safety
+|--------------------------------------------------------------------------
+*/
 
-if ($targetPath !== $allowedTestPath) {
+if (
+    $targetPath === ''
+    || str_starts_with(
+        $targetPath,
+        '/'
+    )
+    || str_contains(
+        $targetPath,
+        '..'
+    )
+    || str_contains(
+        $targetPath,
+        "\\"
+    )
+    || str_contains(
+        $targetPath,
+        "\0"
+    )
+) {
     respondError(
-        'Executor is currently locked to the GitHub write test file.',
+        'Invalid target path.',
+        403
+    );
+}
+
+/*
+|--------------------------------------------------------------------------
+| Allowed roots
+|--------------------------------------------------------------------------
+*/
+
+$allowedRoots = [
+    '600_KoppyOS/',
+    '900_Lab/',
+];
+
+$isAllowedPath =
+    false;
+
+foreach (
+    $allowedRoots as $allowedRoot
+) {
+    if (
+        str_starts_with(
+            $targetPath,
+            $allowedRoot
+        )
+    ) {
+        $isAllowedPath =
+            true;
+
+        break;
+    }
+}
+
+if (!$isAllowedPath) {
+    respondError(
+        'Target path is outside the KoppyOS write allowlist.',
+        403
+    );
+}
+
+/*
+|--------------------------------------------------------------------------
+| Protected filenames
+|--------------------------------------------------------------------------
+|
+| Allowlist内部でも秘密情報を置きそうなファイル名は書き込み禁止。
+|--------------------------------------------------------------------------
+*/
+
+$targetBasename =
+    basename(
+        $targetPath
+    );
+
+$protectedBasenames = [
+    '.env',
+    '.env.local',
+    '.env.production',
+    'config.php',
+    'credentials.json',
+    'secrets.json',
+];
+
+if (
+    in_array(
+        $targetBasename,
+        $protectedBasenames,
+        true
+    )
+) {
+    respondError(
+        'Target file is protected from KoppyOS writes.',
         403
     );
 }
