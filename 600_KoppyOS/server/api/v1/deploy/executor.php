@@ -748,27 +748,50 @@ if (
             $syntaxExitCode
         );
 
-        $syntaxCheck = [
-            'performed' =>
-                true,
+        $syntaxMessage =
+            implode(
+                "\n",
+                $syntaxOutput
+            );
 
-            'passed' =>
-                $syntaxExitCode === 0,
+        if ($syntaxExitCode === 0) {
+            $syntaxCheck = [
+                'performed' =>
+                    true,
 
-            'message' =>
-                implode(
-                    "\n",
-                    $syntaxOutput
+                'passed' =>
+                    true,
+
+                'message' =>
+                    $syntaxMessage,
+            ];
+        } elseif (
+            str_contains(
+                strtolower(
+                    $syntaxMessage
                 ),
-        ];
+                'permission denied'
+            )
+        ) {
+            $syntaxCheck = [
+                'performed' =>
+                    false,
 
-        if ($syntaxExitCode !== 0) {
+                'passed' =>
+                    null,
+
+                'message' =>
+                    'PHP syntax check unavailable on this server: '
+                    . $syntaxMessage,
+            ];
+        } else {
             @unlink(
                 $tempPath
             );
 
             respondError(
-                'PHP syntax verification failed.',
+                'PHP syntax verification failed: '
+                . $syntaxMessage,
                 422
             );
         }
