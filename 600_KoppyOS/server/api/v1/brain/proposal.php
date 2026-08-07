@@ -42,6 +42,67 @@ if (!is_array($payload)) {
 
 /*
 |--------------------------------------------------------------------------
+| Payload decoding
+|--------------------------------------------------------------------------
+|
+| Writer Payload Transport v2
+|
+| content / search / replace_with は、
+| Browser側からBase64で送信できる。
+|
+| Base64はTransport用途のみ。
+| Proposal内部では元のUTF-8文字列へ戻して保存する。
+|--------------------------------------------------------------------------
+*/
+
+function decodeTransportValue(
+    array $payload,
+    string $valueKey,
+    string $encodingKey
+): string {
+    $rawValue =
+        (string) (
+            $payload[$valueKey]
+            ?? ''
+        );
+
+    $encoding =
+        trim(
+            (string) (
+                $payload[$encodingKey]
+                ?? ''
+            )
+        );
+
+    if ($encoding === '') {
+        return $rawValue;
+    }
+
+    if ($encoding !== 'base64') {
+        respondError(
+            'Unsupported payload encoding.',
+            400
+        );
+    }
+
+    $decodedValue =
+        base64_decode(
+            $rawValue,
+            true
+        );
+
+    if ($decodedValue === false) {
+        respondError(
+            'Invalid Base64 payload.',
+            400
+        );
+    }
+
+    return $decodedValue;
+}
+
+/*
+|--------------------------------------------------------------------------
 | Request values
 |--------------------------------------------------------------------------
 */
@@ -63,9 +124,10 @@ $operation =
     );
 
 $content =
-    (string) (
-        $payload['content']
-        ?? ''
+    decodeTransportValue(
+        $payload,
+        'content',
+        'content_encoding'
     );
 
 $reason =
@@ -93,15 +155,17 @@ $reason =
 */
 
 $search =
-    (string) (
-        $payload['search']
-        ?? ''
+    decodeTransportValue(
+        $payload,
+        'search',
+        'search_encoding'
     );
 
 $replaceWith =
-    (string) (
-        $payload['replace_with']
-        ?? ''
+    decodeTransportValue(
+        $payload,
+        'replace_with',
+        'replace_with_encoding'
     );
 
 /*

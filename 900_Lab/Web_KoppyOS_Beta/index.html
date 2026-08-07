@@ -2707,6 +2707,43 @@
 
     updateOperationUi();
 
+function encodeUtf8Base64(
+  value
+) {
+  const bytes =
+    new TextEncoder().encode(
+      value
+    );
+
+  let binary =
+    "";
+
+  const chunkSize =
+    0x8000;
+
+  for (
+    let offset = 0;
+    offset < bytes.length;
+    offset += chunkSize
+  ) {
+    const chunk =
+      bytes.subarray(
+        offset,
+        offset + chunkSize
+      );
+
+    binary +=
+      String.fromCharCode(
+        ...chunk
+      );
+  }
+
+  return btoa(
+    binary
+  );
+}
+
+
     async function fetchProposalApi(
       path,
       payload
@@ -2837,18 +2874,34 @@
             reason,
           };
 
-          if (
-            operation === "patch"
-          ) {
-            payload.search =
-              search;
+if (
+  operation === "patch"
+) {
+  payload.search =
+    encodeUtf8Base64(
+      search
+    );
 
-            payload.replace_with =
-              replaceWith;
-          } else {
-            payload.content =
-              content;
-          }
+  payload.search_encoding =
+    "base64";
+
+  payload.replace_with =
+    encodeUtf8Base64(
+      replaceWith
+    );
+
+  payload.replace_with_encoding =
+    "base64";
+} else {
+  payload.content =
+    encodeUtf8Base64(
+      content
+    );
+
+  payload.content_encoding =
+    "base64";
+}
+
 
           const data =
             await fetchProposalApi(
