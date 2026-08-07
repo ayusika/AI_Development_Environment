@@ -1,0 +1,56 @@
+name: Deploy Koppy World to Lolipop
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "900_Lab/Web_KoppyOS_Beta/index.html"
+      - ".github/workflows/deploy-koppy-world-lolipop.yml"
+
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: koppy-world-lolipop
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install sshpass
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sshpass
+
+      - name: Deploy Koppy World
+        env:
+          SSH_HOST: ${{ secrets.LOLIPOP_SSH_HOST }}
+          SSH_USER: ${{ secrets.LOLIPOP_SSH_USER }}
+          SSH_PASSWORD: ${{ secrets.LOLIPOP_SSH_PASSWORD }}
+          SSH_PORT: ${{ secrets.LOLIPOP_SSH_PORT }}
+        run: |
+          set -euo pipefail
+
+          SOURCE_FILE="900_Lab/Web_KoppyOS_Beta/index.html"
+          REMOTE_FILE="/home/users/2/her.jp-mikipiano/web/koppy/index.html"
+
+          test -f "$SOURCE_FILE"
+
+          sshpass -p "$SSH_PASSWORD" \
+            scp \
+            -P "$SSH_PORT" \
+            -o StrictHostKeyChecking=accept-new \
+            "$SOURCE_FILE" \
+            "$SSH_USER@$SSH_HOST:$REMOTE_FILE"
+
+      - name: Deployment complete
+        run: |
+          echo "Koppy World deployed successfully."
