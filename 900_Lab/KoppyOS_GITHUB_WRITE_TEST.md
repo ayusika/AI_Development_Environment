@@ -1,3 +1,3 @@
 # KoppyOS GitHub Write Test
 
-Koppy Worldから初めてGitHubへ書き込みました。
+Koppy WorldからGitHubへの部分置換に成功しました！🎉
