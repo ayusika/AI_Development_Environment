@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 require __DIR__ . '/../bootstrap.php';
 
+require __DIR__ . '/../lib/proposal.php';
+
 $requestMethod =
     $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
@@ -257,150 +259,23 @@ if (
 
 /*
 |--------------------------------------------------------------------------
-| Proposal生成
+| Proposal生成・保存
 |--------------------------------------------------------------------------
 */
 
-$createdAt =
-    date(DATE_ATOM);
-
-$proposalSeed =
-    $targetPath
-    . '|'
-    . $operation
-    . '|'
-    . $content
-    . '|'
-    . $search
-    . '|'
-    . $replaceWith
-    . '|'
-    . $createdAt
-    . '|'
-    . bin2hex(
-        random_bytes(8)
-    );
-
-$proposalId =
-    substr(
-        hash(
-            'sha256',
-            $proposalSeed
-        ),
-        0,
-        16
-    );
-
-$proposal = [
-    'id' =>
-        $proposalId,
-
-    'status' =>
-        'awaiting_approval',
-
-    'target_path' =>
+$proposal =
+    createWriterProposal(
         $targetPath,
-
-    'operation' =>
         $operation,
-
-    'content' =>
-        $operation === 'patch'
-            ? null
-            : $content,
-
-    'search' =>
-        $operation === 'patch'
-            ? $search
-            : null,
-
-    'replace_with' =>
-        $operation === 'patch'
-            ? $replaceWith
-            : null,
-
-    'reason' =>
-        $reason,
-
-    'created_at' =>
-        $createdAt,
-
-    'approved_at' =>
-        null,
-
-    'executed_at' =>
-        null,
-];
-
-/*
-|--------------------------------------------------------------------------
-| 非公開領域へ保存
-|--------------------------------------------------------------------------
-*/
-
-$documentRoot =
-    $_SERVER['DOCUMENT_ROOT']
-    ?? '';
-
-if ($documentRoot === '') {
-    respondError(
-        'DOCUMENT_ROOT is unavailable.',
-        500
-    );
-}
-
-$privateRoot =
-    dirname(
-        $documentRoot,
-        2
-    )
-    . '/.koppy-private';
-
-$proposalDirectory =
-    $privateRoot
-    . '/proposals';
-
-if (!is_dir($proposalDirectory)) {
-    respondError(
-        'Proposal directory was not found.',
-        500
-    );
-}
-
-$proposalPath =
-    $proposalDirectory
-    . '/'
-    . $proposalId
-    . '.json';
-
-$json =
-    json_encode(
-        $proposal,
-        JSON_UNESCAPED_UNICODE
-        | JSON_UNESCAPED_SLASHES
-        | JSON_PRETTY_PRINT
+        $content,
+        $search,
+        $replaceWith,
+        $reason
     );
 
-if ($json === false) {
-    respondError(
-        'Failed to encode proposal.',
-        500
-    );
-}
-
-$result =
-    file_put_contents(
-        $proposalPath,
-        $json,
-        LOCK_EX
-    );
-
-if ($result === false) {
-    respondError(
-        'Failed to save proposal.',
-        500
-    );
-}
+saveWriterProposal(
+    $proposal
+);
 
 /*
 |--------------------------------------------------------------------------
