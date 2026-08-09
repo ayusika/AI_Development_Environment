@@ -120,18 +120,41 @@ if (
 
 /*
 |--------------------------------------------------------------------------
-| Deploy Allowlist v1
+| Deploy Allowlist v2
+|--------------------------------------------------------------------------
+|
+| API:
+|   600_KoppyOS/server/api/*
+|
+| Koppy World UI:
+|   900_Lab/Web_KoppyOS_Beta/index.html
+|
+| UI側はディレクトリ単位では許可せず、
+| index.html 1ファイルのみExact Matchで許可する。
 |--------------------------------------------------------------------------
 */
 
-$allowedRoot =
+$allowedApiRoot =
     '600_KoppyOS/server/api/';
 
-if (
-    !str_starts_with(
+$allowedUiPath =
+    '900_Lab/Web_KoppyOS_Beta/index.html';
+
+$isApiTarget =
+    str_starts_with(
         $targetPath,
-        $allowedRoot
-    )
+        $allowedApiRoot
+    );
+
+$isUiTarget =
+    hash_equals(
+        $allowedUiPath,
+        $targetPath
+    );
+
+if (
+    !$isApiTarget
+    && !$isUiTarget
 ) {
     respondError(
         'Target path is outside the Deploy Allowlist.',
@@ -197,25 +220,34 @@ if (
 */
 
 $relativePath =
-    substr(
-        $targetPath,
-        strlen(
-            $allowedRoot
-        )
-    );
+    null;
 
-if (
-    $relativePath === ''
-) {
-    respondError(
-        'Deploy target must be a file.',
-        422
-    );
+if ($isApiTarget) {
+    $relativePath =
+        substr(
+            $targetPath,
+            strlen(
+                $allowedApiRoot
+            )
+        );
+
+    if (
+        $relativePath === ''
+    ) {
+        respondError(
+            'Deploy target must be a file.',
+            422
+        );
+    }
+
+    $serverTarget =
+        '/koppy/api/'
+        . $relativePath;
+} else {
+    $serverTarget =
+        '/koppy/index.html';
 }
 
-$serverTarget =
-    '/koppy/api/'
-    . $relativePath;
 
 /*
 |--------------------------------------------------------------------------

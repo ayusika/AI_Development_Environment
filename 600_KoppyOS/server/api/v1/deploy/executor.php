@@ -261,14 +261,27 @@ if (
     );
 }
 
-$allowedRoot =
+$allowedApiRoot =
     '600_KoppyOS/server/api/';
 
-if (
-    !str_starts_with(
+$allowedUiPath =
+    '900_Lab/Web_KoppyOS_Beta/index.html';
+
+$isApiTarget =
+    str_starts_with(
         $targetPath,
-        $allowedRoot
-    )
+        $allowedApiRoot
+    );
+
+$isUiTarget =
+    hash_equals(
+        $allowedUiPath,
+        $targetPath
+    );
+
+if (
+    !$isApiTarget
+    && !$isUiTarget
 ) {
     respondError(
         'Target path is outside the Deploy Allowlist.',
@@ -277,24 +290,29 @@ if (
 }
 
 $relativePath =
-    substr(
-        $targetPath,
-        strlen(
-            $allowedRoot
-        )
-    );
+    null;
 
-if (
-    $relativePath === ''
-    || str_ends_with(
-        $relativePath,
-        '/'
-    )
-) {
-    respondError(
-        'Deploy target must be a file.',
-        422
-    );
+if ($isApiTarget) {
+    $relativePath =
+        substr(
+            $targetPath,
+            strlen(
+                $allowedApiRoot
+            )
+        );
+
+    if (
+        $relativePath === ''
+        || str_ends_with(
+            $relativePath,
+            '/'
+        )
+    ) {
+        respondError(
+            'Deploy target must be a file.',
+            422
+        );
+    }
 }
 
 /*
@@ -531,15 +549,20 @@ $githubHash =
 | Server target
 |--------------------------------------------------------------------------
 */
+if ($isApiTarget) {
+    $deployRoot =
+        $documentRoot
+        . '/api';
 
-$deployRoot =
-    $documentRoot
-    . '/api';
-
-$serverPath =
-    $deployRoot
-    . '/'
-    . $relativePath;
+    $serverPath =
+        $deployRoot
+        . '/'
+        . $relativePath;
+} else {
+    $serverPath =
+        $documentRoot
+        . '/index.html';
+}
 
 $serverDirectory =
     dirname(
