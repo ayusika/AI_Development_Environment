@@ -1569,56 +1569,114 @@
           部分置換では「探す文字列」がGitHub正本に完全一致で1か所だけ存在するときだけ変更するよ。
         </p>
 
+        <div class="writer-permission-panel">
+          <div class="writer-permission-head">
+            <span aria-hidden="true">🔐</span>
+            <strong>Writer 書き込み可能領域</strong>
+          </div>
+
+          <div class="writer-permission-list">
+            <code>600_KoppyOS/</code>
+            <code>900_Lab/</code>
+
+            <span class="writer-permission-label">
+              Exact Match
+            </span>
+
+            <code>000_HOME/決定事項.md</code>
+            <code>000_HOME/現在の状態.md</code>
+            <code>000_HOME/更新履歴.md</code>
+            <code>000_HOME/次にやること.md</code>
+          </div>
+
+          <p>
+            上記以外は、承認済みProposalでもExecutorが書き込みを拒否します。
+          </p>
+        </div>
+
         <form
           id="proposalForm"
           class="proposal-form"
         >
           <div class="proposal-field">
-            <label for="proposalTargetPath">
-              変更するファイル
-            </label>
+            <div class="proposal-field-head">
+              <label for="proposalTargetPath">
+                変更するファイル
+              </label>
+
+              <div class="proposal-field-tools">
+                <button
+                  class="proposal-mini-button"
+                  type="button"
+                  data-reset-target="proposalTargetPath"
+                  title="リセット"
+                >↺</button>
+
+                <button
+                  class="proposal-mini-button"
+                  type="button"
+                  data-paste-target="proposalTargetPath"
+                  title="クリップボードから貼り付け"
+                >📋</button>
+              </div>
+            </div>
 
             <input
               id="proposalTargetPath"
               class="proposal-input"
               type="text"
-              value="900_Lab/KoppyOS_GITHUB_WRITE_TEST.md"
               placeholder="例: 900_Lab/Web_KoppyOS_Beta/index.html"
               required
             >
           </div>
 
           <div class="proposal-field">
-            <label for="proposalOperation">
-              操作
-            </label>
+            <div class="proposal-field-head">
+              <label for="proposalOperation">
+                操作
+              </label>
+
+              <button
+                id="proposalOperationReset"
+                class="proposal-mini-button"
+                type="button"
+                title="追記へ戻す"
+              >↺</button>
+            </div>
 
             <select
               id="proposalOperation"
-              class="proposal-input"
+              class="proposal-input operation-append"
             >
-              <option value="append">
-                追記
-              </option>
-
-              <option value="patch">
-                部分置換
-              </option>
-
-              <option value="replace">
-                全文置換
-              </option>
-
-              <option value="create">
-                新規作成
-              </option>
+              <option value="append">追記</option>
+              <option value="patch">部分置換</option>
+              <option value="replace">全文置換</option>
+              <option value="create">新規作成</option>
             </select>
           </div>
 
           <div class="proposal-field">
-            <label for="proposalReason">
-              変更理由
-            </label>
+            <div class="proposal-field-head">
+              <label for="proposalReason">
+                変更理由
+              </label>
+
+              <div class="proposal-field-tools">
+                <button
+                  class="proposal-mini-button"
+                  type="button"
+                  data-reset-target="proposalReason"
+                  title="リセット"
+                >↺</button>
+
+                <button
+                  class="proposal-mini-button"
+                  type="button"
+                  data-paste-target="proposalReason"
+                  title="クリップボードから貼り付け"
+                >📋</button>
+              </div>
+            </div>
 
             <input
               id="proposalReason"
@@ -1633,9 +1691,27 @@
             id="proposalContentField"
             class="proposal-field"
           >
-            <label for="proposalContent">
-              変更内容
-            </label>
+            <div class="proposal-field-head">
+              <label for="proposalContent">
+                変更内容
+              </label>
+
+              <div class="proposal-field-tools">
+                <button
+                  class="proposal-mini-button"
+                  type="button"
+                  data-reset-target="proposalContent"
+                  title="リセット"
+                >↺</button>
+
+                <button
+                  class="proposal-mini-button"
+                  type="button"
+                  data-paste-target="proposalContent"
+                  title="クリップボードから貼り付け"
+                >📋</button>
+              </div>
+            </div>
 
             <textarea
               id="proposalContent"
@@ -1657,9 +1733,27 @@
             </p>
 
             <div class="proposal-field">
-              <label for="proposalSearch">
-                探す文字列
-              </label>
+              <div class="proposal-field-head">
+                <label for="proposalSearch">
+                  探す文字列
+                </label>
+
+                <div class="proposal-field-tools">
+                  <button
+                    class="proposal-mini-button"
+                    type="button"
+                    data-reset-target="proposalSearch"
+                    title="リセット"
+                  >↺</button>
+
+                  <button
+                    class="proposal-mini-button"
+                    type="button"
+                    data-paste-target="proposalSearch"
+                    title="クリップボードから貼り付け"
+                  >📋</button>
+                </div>
+              </div>
 
               <textarea
                 id="proposalSearch"
@@ -1670,9 +1764,27 @@
             </div>
 
             <div class="proposal-field">
-              <label for="proposalReplaceWith">
-                置換後
-              </label>
+              <div class="proposal-field-head">
+                <label for="proposalReplaceWith">
+                  置換後
+                </label>
+
+                <div class="proposal-field-tools">
+                  <button
+                    class="proposal-mini-button"
+                    type="button"
+                    data-reset-target="proposalReplaceWith"
+                    title="リセット"
+                  >↺</button>
+
+                  <button
+                    class="proposal-mini-button"
+                    type="button"
+                    data-paste-target="proposalReplaceWith"
+                    title="クリップボードから貼り付け"
+                  >📋</button>
+                </div>
+              </div>
 
               <textarea
                 id="proposalReplaceWith"
