@@ -3179,7 +3179,6 @@
           return operation;
       }
     }
-
     function updateOperationUi() {
       const isPatch =
         proposalOperation.value
@@ -3197,6 +3196,17 @@
       proposalSearch.required =
         isPatch;
 
+      proposalOperation.classList.remove(
+        "operation-append",
+        "operation-patch",
+        "operation-replace",
+        "operation-create"
+      );
+
+      proposalOperation.classList.add(
+        `operation-${proposalOperation.value}`
+      );
+
       if (isPatch) {
         proposalCreateButton.innerHTML =
           '<span aria-hidden="true">✦</span> 部分置換案をつくる';
@@ -3212,6 +3222,90 @@
       "change",
       updateOperationUi
     );
+
+    const proposalOperationReset =
+      document.getElementById(
+        "proposalOperationReset"
+      );
+
+    if (proposalOperationReset) {
+      proposalOperationReset.addEventListener(
+        "click",
+        () => {
+          proposalOperation.value =
+            "append";
+
+          updateOperationUi();
+        }
+      );
+    }
+
+    document
+      .querySelectorAll(
+        "[data-reset-target]"
+      )
+      .forEach(
+        button => {
+          button.addEventListener(
+            "click",
+            () => {
+              const target =
+                document.getElementById(
+                  button.dataset.resetTarget
+                );
+
+              if (!target) {
+                return;
+              }
+
+              target.value =
+                "";
+
+              target.focus();
+
+              clearProposalError();
+            }
+          );
+        }
+      );
+
+    document
+      .querySelectorAll(
+        "[data-paste-target]"
+      )
+      .forEach(
+        button => {
+          button.addEventListener(
+            "click",
+            async () => {
+              const target =
+                document.getElementById(
+                  button.dataset.pasteTarget
+                );
+
+              if (!target) {
+                return;
+              }
+
+              try {
+                const clipboardText =
+                  await navigator.clipboard.readText();
+
+                target.value =
+                  clipboardText;
+
+                target.focus();
+
+                clearProposalError();
+              } catch {
+                showProposalError(
+                  "クリップボードを読み取れなかったよ。ブラウザのクリップボード許可を確認してね。"
+                );
+              }
+            }
+          );
+        }
+      );
 
     updateOperationUi();
 
