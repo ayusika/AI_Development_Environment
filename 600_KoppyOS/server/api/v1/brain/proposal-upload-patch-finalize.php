@@ -84,6 +84,10 @@ $searchSha256 =
         )
     );
 
+$replaceIsEmpty =
+    ($payload['replace_is_empty'] ?? false)
+    === true;
+
 $replaceUploadId =
     trim(
         (string) (
@@ -180,16 +184,8 @@ validateUploadId(
     $searchUploadId
 );
 
-validateUploadId(
-    $replaceUploadId
-);
-
 validateTotalChunks(
     $searchTotalChunks
-);
-
-validateTotalChunks(
-    $replaceTotalChunks
 );
 
 validateSha256(
@@ -199,6 +195,17 @@ validateSha256(
 validateSha256(
     $replaceSha256
 );
+
+if (!$replaceIsEmpty) {
+    validateUploadId(
+        $replaceUploadId
+    );
+
+    validateTotalChunks(
+        $replaceTotalChunks
+    );
+}
+
 
 if ($targetPath === '') {
     respondError(
@@ -443,14 +450,86 @@ $searchUpload =
         false
     );
 
-$replaceUpload =
-    loadUploadSession(
-        $uploadRoot,
-        $replaceUploadId,
-        $replaceTotalChunks,
-        $replaceSha256,
-        true
-    );
+if ($replaceIsEmpty) {
+    $replaceWith =
+        '';
+
+    $actualReplaceSha256 =
+        hash(
+            'sha256',
+            ''
+        );
+
+    if (
+        !hash_equals(
+            $replaceSha256,
+            $actualReplaceSha256
+        )
+    ) {
+        respondError(
+            'Empty replacement SHA-256 verification failed.',
+            409
+        );
+    }
+
+    $replaceTransport = [
+        'upload_id' =>
+            null,
+
+        'total_chunks' =>
+            0,
+
+        'encoded_length' =>
+            0,
+
+        'decoded_length' =>
+            0,
+
+        'sha256' =>
+            $actualReplaceSha256,
+
+        'integrity_verified' =>
+            true,
+
+        'empty_value' =>
+            true,
+    ];
+} else {
+    $replaceUpload =
+        loadUploadSession(
+            $uploadRoot,
+            $replaceUploadId,
+            $replaceTotalChunks,
+            $replaceSha256,
+            true
+        );
+
+    $replaceWith =
+        $replaceUpload['content'];
+
+    $replaceTransport = [
+        'upload_id' =>
+            $replaceUploadId,
+
+        'total_chunks' =>
+            $replaceTotalChunks,
+
+        'encoded_length' =>
+            $replaceUpload['encoded_length'],
+
+        'decoded_length' =>
+            $replaceUpload['decoded_length'],
+
+        'sha256' =>
+            $replaceUpload['sha256'],
+
+        'integrity_verified' =>
+            true,
+
+        'empty_value' =>
+            false,
+    ];
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -464,8 +543,9 @@ $proposal =
         'patch',
         '',
         $searchUpload['content'],
-        $replaceUpload['content'],
+        $replaceWith,
         $reason
+
     );
 
 saveWriterProposal(
@@ -515,9 +595,11 @@ cleanupUploadSession(
     $searchUpload
 );
 
-cleanupUploadSession(
-    $replaceUpload
-);
+if (!$replaceIsEmpty) {
+    cleanupUploadSession(
+        $replaceUpload
+    );
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -553,25 +635,8 @@ respondSuccess([
                 true,
         ],
 
-        'replace_with' => [
-            'upload_id' =>
-                $replaceUploadId,
-
-            'total_chunks' =>
-                $replaceTotalChunks,
-
-            'encoded_length' =>
-                $replaceUpload['encoded_length'],
-
-            'decoded_length' =>
-                $replaceUpload['decoded_length'],
-
-            'sha256' =>
-                $replaceUpload['sha256'],
-
-            'integrity_verified' =>
-                true,
-        ],
+        'replace_with' =>
+            $replaceTransport,
 
         'temporary_upload_removed' =>
             true,

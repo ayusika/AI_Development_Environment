@@ -3646,7 +3646,6 @@ async function sha256Hex(
     .join("");
 }
 
-
 async function testProposalChunk(
   chunk
 ) {
@@ -3686,7 +3685,6 @@ async function testProposalChunk(
 
   return response.status;
 }
-
 
 async function splitProposalChunkUntilSafe(
   chunk
@@ -3746,19 +3744,19 @@ async function splitProposalChunkUntilSafe(
   ];
 }
 
-
-async function createAdaptiveProposal(
-  {
-    targetPath,
-    operation,
-    reason,
-    content,
-  }
+async function uploadAdaptiveValue(
+  value
 ) {
-  const encodedContent =
+  const encodedValue =
     encodeUtf8Base64(
-      content
+      value
     );
+
+  if (encodedValue === "") {
+    throw new Error(
+      "空文字列はChunk Uploadできないよ。"
+    );
+  }
 
   const initialChunkSize =
     64;
@@ -3768,11 +3766,11 @@ async function createAdaptiveProposal(
 
   for (
     let offset = 0;
-    offset < encodedContent.length;
+    offset < encodedValue.length;
     offset += initialChunkSize
   ) {
     initialChunks.push(
-      encodedContent.slice(
+      encodedValue.slice(
         offset,
         offset + initialChunkSize
       )
@@ -3801,7 +3799,7 @@ async function createAdaptiveProposal(
 
   if (
     reconstructed
-    !== encodedContent
+    !== encodedValue
   ) {
     throw new Error(
       "Adaptive Chunk再構築チェックに失敗したよ。"
@@ -3854,8 +3852,154 @@ async function createAdaptiveProposal(
     }
   }
 
-  const contentSha256 =
+  return {
+    uploadId,
+    totalChunks:
+      safeChunks.length,
+    sha256:
+      await sha256Hex(
+        value
+      ),
+  };
+}
+
+async function createAdaptivePatchProposal(
+  {
+    targetPath,
+    reason,
+    search,
+    replaceWith,
+  }
+) {
+  const searchUpload =
+    await uploadAdaptiveValue(
+      search
+    );
+
+  const replaceIsEmpty =
+    replaceWith === "";
+
+  const replaceSha256 =
     await sha256Hex(
+      replaceWith
+    );
+
+  let replaceUpload =
+    null;
+
+  if (!replaceIsEmpty) {
+    replaceUpload =
+      await uploadAdaptiveValue(
+        replaceWith
+      );
+  }
+
+  const finalizePayload = {
+    search_upload_id:
+      searchUpload.uploadId,
+
+    search_total_chunks:
+      searchUpload.totalChunks,
+
+    search_sha256:
+      searchUpload.sha256,
+
+    replace_is_empty:
+      replaceIsEmpty,
+
+    replace_sha256:
+      replaceSha256,
+
+    target_path:
+      targetPath,
+
+    reason,
+  };
+
+  if (replaceUpload) {
+    finalizePayload.replace_upload_id =
+      replaceUpload.uploadId;
+
+    finalizePayload.replace_total_chunks =
+      replaceUpload.totalChunks;
+  }
+
+  const finalizeResponse =
+    await fetch(
+      `${proposalApiBase}/proposal-upload-patch-finalize.php`,
+      {
+        method:
+          "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+
+        body:
+          JSON.stringify(
+            finalizePayload
+          ),
+      }
+    );
+
+  let result;
+
+  try {
+    result =
+      await finalizeResponse.json();
+  } catch {
+    throw new Error(
+      "Patch Finalize APIからJSONを読み取れなかったよ。"
+    );
+  }
+
+  if (
+    !finalizeResponse.ok
+    || result.success !== true
+  ) {
+    throw new Error(
+      result.error
+      || `Patch Finalize APIエラー（HTTP ${finalizeResponse.status}）`
+    );
+  }
+
+  const searchVerified =
+    result.data
+      ?.transport
+      ?.search
+      ?.integrity_verified
+    === true;
+
+  const replaceVerified =
+    result.data
+      ?.transport
+      ?.replace_with
+      ?.integrity_verified
+    === true;
+
+  if (
+    !searchVerified
+    || !replaceVerified
+  ) {
+    throw new Error(
+      "Adaptive Patchの完全性確認に失敗したよ。"
+    );
+  }
+
+  return result.data;
+}
+
+async function createAdaptiveProposal(
+  {
+    targetPath,
+    operation,
+    reason,
+    content,
+  }
+) {
+  const upload =
+    await uploadAdaptiveValue(
       content
     );
 
@@ -3874,13 +4018,13 @@ async function createAdaptiveProposal(
         body:
           JSON.stringify({
             upload_id:
-              uploadId,
+              upload.uploadId,
 
             total_chunks:
-              safeChunks.length,
+              upload.totalChunks,
 
             content_sha256:
-              contentSha256,
+              upload.sha256,
 
             target_path:
               targetPath,
@@ -3927,7 +4071,6 @@ async function createAdaptiveProposal(
   return result.data;
 }
 
-
     async function fetchProposalApi(
       path,
       payload
@@ -3957,34 +4100,36 @@ async function createAdaptiveProposal(
         result =
           await response.json();
       } catch {
-  const error =
-    new Error(
-      "Koppy APIからJSONを読み取れなかったよ。"
-    );
+        const error =
+          new Error(
+            "Koppy APIからJSONを読み取れなかったよ。"
+          );
 
-  error.status =
-    response.status;
+        error.status =
+          response.status;
 
-  throw error;
-}
+        throw error;
+      }
+
       if (
-  !response.ok
-  || result.success !== true
-) {
-  const error =
-    new Error(
-      result.error
-      || `APIエラー（HTTP ${response.status}）`
-    );
+        !response.ok
+        || result.success !== true
+      ) {
+        const error =
+          new Error(
+            result.error
+            || `APIエラー（HTTP ${response.status}）`
+          );
 
-  error.status =
-    response.status;
+        error.status =
+          response.status;
 
-  throw error;
-}
+        throw error;
+      }
 
-return result.data;
-}
+      return result.data;
+    }
+
     proposalForm.addEventListener(
       "submit",
       async (event) => {
@@ -4068,70 +4213,85 @@ return result.data;
             reason,
           };
 
-if (
-  operation === "patch"
-) {
-  payload.search =
-    encodeUtf8Base64(
-      search
-    );
+          if (
+            operation === "patch"
+          ) {
+            payload.search =
+              encodeUtf8Base64(
+                search
+              );
 
-  payload.search_encoding =
-    "base64";
+            payload.search_encoding =
+              "base64";
 
-  payload.replace_with =
-    encodeUtf8Base64(
-      replaceWith
-    );
+            payload.replace_with =
+              encodeUtf8Base64(
+                replaceWith
+              );
 
-  payload.replace_with_encoding =
-    "base64";
-} else {
-  payload.content =
-    encodeUtf8Base64(
-      content
-    );
+            payload.replace_with_encoding =
+              "base64";
+          } else {
+            payload.content =
+              encodeUtf8Base64(
+                content
+              );
 
-  payload.content_encoding =
-    "base64";
-}
+            payload.content_encoding =
+              "base64";
+          }
 
+          let data;
 
-         let data;
+          try {
+            data =
+              await fetchProposalApi(
+                "proposal.php",
+                payload
+              );
+          } catch (error) {
+            const isForbidden =
+              error?.status === 403
+              || String(
+                error?.message ?? ""
+              ).includes(
+                "HTTP 403"
+              );
 
-try {
-  data =
-    await fetchProposalApi(
-      "proposal.php",
-      payload
-    );
-} catch (error) {
-  const shouldUseAdaptiveTransport =
-    operation !== "patch"
-    && (
-      error?.status === 403
-      || String(
-        error?.message ?? ""
-      ).includes("HTTP 403")
-    );
+            if (!isForbidden) {
+              throw error;
+            }
 
-  if (!shouldUseAdaptiveTransport) {
-    throw error;
-  }
+            if (
+              operation === "patch"
+            ) {
+              setProposalStatus(
+                "working",
+                "部分置換を安全な経路で送信中…"
+              );
 
-  setProposalStatus(
-    "working",
-    "長文を安全な経路で送信中…"
-  );
+              data =
+                await createAdaptivePatchProposal({
+                  targetPath,
+                  reason,
+                  search,
+                  replaceWith,
+                });
+            } else {
+              setProposalStatus(
+                "working",
+                "長文を安全な経路で送信中…"
+              );
 
-  data =
-    await createAdaptiveProposal({
-      targetPath,
-      operation,
-      reason,
-      content,
-    });
-}
+              data =
+                await createAdaptiveProposal({
+                  targetPath,
+                  operation,
+                  reason,
+                  content,
+                });
+            }
+          }
 
           const proposal =
             data.proposal;
@@ -4210,7 +4370,16 @@ try {
             false
           );
 
-          updateOperationUi();
+          if (
+            proposalOperation.value
+            === "patch"
+          ) {
+            proposalCreateButton.innerHTML =
+              '<span aria-hidden="true">✦</span> 部分置換案をつくる';
+          } else {
+            proposalCreateButton.innerHTML =
+              '<span aria-hidden="true">✦</span> 変更案をつくる';
+          }
         }
       }
     );
