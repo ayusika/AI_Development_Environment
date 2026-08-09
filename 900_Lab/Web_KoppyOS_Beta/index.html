@@ -3351,11 +3351,16 @@ async function createAdaptiveProposal(
         result =
           await response.json();
       } catch {
-        throw new Error(
-          "Koppy APIからJSONを読み取れなかったよ。"
-        );
-      }
+  const error =
+    new Error(
+      "Koppy APIからJSONを読み取れなかったよ。"
+    );
 
+  error.status =
+    response.status;
+
+  throw error;
+}
       if (
   !response.ok
   || result.success !== true
