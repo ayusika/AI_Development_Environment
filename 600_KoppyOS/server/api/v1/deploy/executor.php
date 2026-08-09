@@ -1085,9 +1085,10 @@ $deployLog = [
     'target_github_path' =>
         $targetPath,
 
-    'target_server_path' =>
-        '/koppy/api/'
-        . $relativePath,
+ 'target_server_path' =>
+    $isApiTarget
+        ? '/koppy/api/' . $relativePath
+        : '/koppy/index.html',
 
     'github_commit_sha' =>
         $commitSha,
@@ -1150,9 +1151,10 @@ respondSuccess([
         'target_path' =>
             $targetPath,
 
-        'server_target' =>
-            '/koppy/api/'
-            . $relativePath,
+            'server_target' =>
+    $isApiTarget
+        ? '/koppy/api/' . $relativePath
+        : '/koppy/index.html',
 
         'commit_sha' =>
             $commitSha,
