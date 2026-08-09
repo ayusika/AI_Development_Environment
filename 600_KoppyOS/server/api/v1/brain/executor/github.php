@@ -244,6 +244,12 @@ $replaceWith =
 | 600_KoppyOS/
 | 900_Lab/
 |
+| Exact Match:
+| 000_HOME/決定事項.md
+| 000_HOME/現在の状態.md
+| 000_HOME/更新履歴.md
+| 000_HOME/次にやること.md
+|
 | Allowlist外はProposalが承認済みでもExecutorが拒否する。
 |--------------------------------------------------------------------------
 */
@@ -284,10 +290,16 @@ if (
 | Allowed roots
 |--------------------------------------------------------------------------
 */
-
 $allowedRoots = [
     '600_KoppyOS/',
     '900_Lab/',
+];
+
+$allowedExactPaths = [
+    '000_HOME/決定事項.md',
+    '000_HOME/現在の状態.md',
+    '000_HOME/更新履歴.md',
+    '000_HOME/次にやること.md',
 ];
 
 $isAllowedPath =
@@ -307,6 +319,18 @@ foreach (
 
         break;
     }
+}
+
+if (
+    !$isAllowedPath
+    && in_array(
+        $targetPath,
+        $allowedExactPaths,
+        true
+    )
+) {
+    $isAllowedPath =
+        true;
 }
 
 if (!$isAllowedPath) {
