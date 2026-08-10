@@ -1270,6 +1270,101 @@
         transform: translateY(-5px);
       }
     }
+    /* ======================================================
+       LOCAL BRIDGE
+    ====================================================== */
+
+    .local-bridge-panel {
+      margin-bottom: 18px;
+      padding: 22px;
+    }
+
+    .local-bridge-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .local-bridge-title {
+      margin: 0;
+      color: var(--blue-dark);
+      font-size: 20px;
+    }
+
+    .local-bridge-button {
+      padding: 11px 18px;
+      border: 0;
+      border-radius: 999px;
+      color: #ffffff;
+      font-weight: 700;
+      cursor: pointer;
+      background: linear-gradient(135deg, #73d2ff, #439fd7);
+      box-shadow: 0 8px 22px rgba(67, 159, 215, 0.22);
+    }
+
+    .local-bridge-button:disabled {
+      cursor: wait;
+      opacity: 0.6;
+    }
+
+    .local-bridge-status {
+      margin: 14px 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .local-bridge-status.success {
+      color: var(--success);
+    }
+
+    .local-bridge-status.warning {
+      color: var(--warning);
+    }
+
+    .local-bridge-status.error {
+      color: var(--error);
+    }
+
+    .local-bridge-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .local-bridge-card {
+      padding: 15px;
+      border: 1px solid rgba(112, 207, 255, 0.32);
+      border-radius: 16px;
+      background: rgba(238, 248, 253, 0.78);
+    }
+
+    .local-bridge-label {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .local-bridge-value {
+      font-size: 17px;
+      font-weight: 800;
+      overflow-wrap: anywhere;
+    }
+
+    .local-change-list {
+      margin: 14px 0 0;
+      padding: 14px 14px 14px 38px;
+      border-radius: 14px;
+      color: #294656;
+      font-family: "SFMono-Regular", Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.8;
+      overflow-wrap: anywhere;
+      background: rgba(238, 248, 253, 0.78);
+    }
 
     @media (max-width: 760px) {
       body {
@@ -1458,6 +1553,76 @@
           </p>
         </section>
       </div>
+      <!-- =========================================
+           LOCAL BRIDGE
+      ========================================== -->
+
+      <section class="panel local-bridge-panel">
+        <div class="local-bridge-header">
+          <div>
+            <p class="eyebrow">
+              LOCAL DEVELOPMENT
+            </p>
+
+            <h2 class="local-bridge-title">
+              Local Bridge β
+            </h2>
+          </div>
+
+          <button
+            id="localBridgeButton"
+            class="local-bridge-button"
+            type="button"
+          >
+            ローカルGitを確認
+          </button>
+        </div>
+
+        <p
+          id="localBridgeStatus"
+          class="local-bridge-status"
+        >
+          Local Bridgeへの接続待機中。
+        </p>
+
+        <div
+          id="localBridgeSummary"
+          class="local-bridge-grid"
+          hidden
+        >
+          <div class="local-bridge-card">
+            <span class="local-bridge-label">
+              CURRENT BRANCH
+            </span>
+
+            <span
+              id="localBranchValue"
+              class="local-bridge-value"
+            >
+              未取得
+            </span>
+          </div>
+
+          <div class="local-bridge-card">
+            <span class="local-bridge-label">
+              LOCAL CHANGES
+            </span>
+
+            <span
+              id="localChangesValue"
+              class="local-bridge-value"
+            >
+              未取得
+            </span>
+          </div>
+        </div>
+
+        <ul
+          id="localChangeList"
+          class="local-change-list"
+          hidden
+        ></ul>
+      </section>
 
       <section class="status-grid">
         <article class="panel status-card">
@@ -3282,6 +3447,7 @@
           chatInput.disabled =
             false;
 
+
           chatInput.focus();
         }
       }
@@ -4527,6 +4693,177 @@ async function createAdaptiveProposal(
       }
     );
 
+    /* ======================================================
+       LOCAL BRIDGE
+    ====================================================== */
+
+    const localBridgeButton =
+      document.getElementById(
+        "localBridgeButton"
+      );
+
+    const localBridgeStatus =
+      document.getElementById(
+        "localBridgeStatus"
+      );
+
+    const localBridgeSummary =
+      document.getElementById(
+        "localBridgeSummary"
+      );
+
+    const localBranchValue =
+      document.getElementById(
+        "localBranchValue"
+      );
+
+    const localChangesValue =
+      document.getElementById(
+        "localChangesValue"
+      );
+
+    const localChangeList =
+      document.getElementById(
+        "localChangeList"
+      );
+
+    function setLocalBridgeStatus(
+      message,
+      type = ""
+    ) {
+      localBridgeStatus.textContent =
+        message;
+
+      localBridgeStatus.className =
+        `local-bridge-status ${type}`;
+    }
+
+    async function loadLocalGitStatus() {
+      localBridgeButton.disabled =
+        true;
+
+      localBridgeSummary.hidden =
+        true;
+
+      localChangeList.hidden =
+        true;
+
+      localChangeList.replaceChildren();
+
+      setLocalBridgeStatus(
+        "Mac内のローカルGitを確認しています……"
+      );
+
+      try {
+        const response =
+          await fetch(
+            "/api/git-status",
+            {
+              cache:
+                "no-store",
+            }
+          );
+
+        if (!response.ok) {
+          throw new Error(
+            `HTTP ${response.status}`
+          );
+        }
+
+        const result =
+          await response.json();
+
+        if (result.success !== true) {
+          throw new Error(
+            result.error
+            || "原因不明のエラー"
+          );
+        }
+
+        localBranchValue.textContent =
+          result.branch
+          || "ブランチ名なし";
+
+        localBridgeSummary.hidden =
+          false;
+
+        if (result.hasChanges) {
+          const changes =
+            Array.isArray(result.changes)
+              ? result.changes
+              : [];
+
+          localChangesValue.textContent =
+            `${changes.length}件の変更あり`;
+
+          localChangesValue.style.color =
+            "var(--warning)";
+
+          for (const change of changes) {
+            const item =
+              document.createElement(
+                "li"
+              );
+
+            item.textContent =
+              change;
+
+            localChangeList.appendChild(
+              item
+            );
+          }
+
+          localChangeList.hidden =
+            changes.length === 0;
+
+          setLocalBridgeStatus(
+            `Local Bridge接続成功。${changes.length}件の変更を検知したよ。`,
+            "warning"
+          );
+        } else {
+          localChangesValue.textContent =
+            "変更なし";
+
+          localChangesValue.style.color =
+            "var(--success)";
+
+          setLocalBridgeStatus(
+            "Local Bridge接続成功。未コミット変更はないよ。",
+            "success"
+          );
+        }
+      } catch (error) {
+        console.error(
+          "Local Bridge error:",
+          error
+        );
+
+        localBranchValue.textContent =
+          "取得失敗";
+
+        localChangesValue.textContent =
+          "確認できません";
+
+        localChangesValue.style.color =
+          "var(--error)";
+
+        localBridgeSummary.hidden =
+          false;
+
+        setLocalBridgeStatus(
+          `Local Bridge接続失敗：${error.message}`,
+          "error"
+        );
+      } finally {
+        localBridgeButton.disabled =
+          false;
+      }
+    }
+
+    localBridgeButton.addEventListener(
+      "click",
+      loadLocalGitStatus
+    );
     chatInput.focus();
   </script>
 </body>
