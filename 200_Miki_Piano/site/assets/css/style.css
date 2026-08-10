@@ -3147,3 +3147,46 @@ a {
     padding: 17px 18px;
   }
 }
+
+/* ========================================
+   料金下・無料体験CTA
+======================================== */
+
+.price-trial-cta {
+  max-width: 720px;
+  margin: 70px auto 0;
+  padding-top: 48px;
+  border-top: 1px solid var(--color-border);
+  text-align: center;
+}
+
+.price-trial-catch {
+  margin-bottom: 18px;
+  color: var(--color-main-dark);
+  font-family: var(--font-serif);
+  font-size: clamp(22px, 3vw, 30px);
+  font-weight: 500;
+  line-height: 1.7;
+  letter-spacing: 0.05em;
+}
+
+.price-trial-text {
+  max-width: 620px;
+  margin: 0 auto 30px;
+  color: var(--color-text-soft);
+  font-size: 14px;
+  line-height: 2;
+}
+
+@media (max-width: 768px) {
+
+  .price-trial-cta {
+    margin-top: 48px;
+    padding-top: 38px;
+  }
+
+  .price-trial-text {
+    font-size: 14px;
+  }
+
+}
