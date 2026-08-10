@@ -2943,3 +2943,207 @@ a {
     font-size: 0.78rem;
   }
 }
+
+/* ========================================
+   新料金セクション
+======================================== */
+
+.price-intro {
+  margin: -10px auto 54px;
+  color: var(--color-text-soft);
+  text-align: center;
+  line-height: 2;
+}
+
+.course-grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 28px;
+  align-items: stretch;
+}
+
+.course-card {
+  position: relative;
+  padding: clamp(36px, 4vw, 54px);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-medium);
+  background: var(--color-bg);
+  box-shadow: 0 20px 52px var(--color-shadow);
+}
+
+.course-heading {
+  margin-bottom: 34px;
+}
+
+.course-en {
+  margin-bottom: 8px;
+  color: var(--color-main);
+  font-family: var(--font-serif);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.course-heading h3 {
+  margin: 0;
+  font-family: var(--font-serif);
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+}
+
+.course-main-price {
+  padding: 28px 0 30px;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  text-align: center;
+}
+
+.course-frequency {
+  margin-bottom: 6px;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.course-time {
+  margin-bottom: 24px;
+  color: var(--color-text-soft);
+  font-size: 14px;
+}
+
+.course-amount {
+  margin: 0;
+  color: var(--color-main-dark);
+  font-family: var(--font-serif);
+  font-size: clamp(30px, 4vw, 42px);
+  line-height: 1.3;
+}
+
+.course-amount span {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--color-text-soft);
+  font-family: var(--font-sans);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+}
+
+.course-description {
+  margin: 28px 0 0;
+  color: var(--color-text-soft);
+  font-size: 14px;
+  line-height: 2;
+}
+
+/* クラシック3プラン */
+
+.classic-plan-list {
+  border-top: 1px solid var(--color-border);
+}
+
+.classic-plan {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.classic-plan-frequency {
+  margin-bottom: 2px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.classic-plan-time {
+  margin: 0;
+  color: var(--color-text-soft);
+  font-size: 13px;
+}
+
+.classic-plan-price {
+  margin: 0;
+  color: var(--color-main-dark);
+  font-family: var(--font-serif);
+  font-size: clamp(22px, 3vw, 30px);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.classic-plan-price span {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--color-text-soft);
+  font-family: var(--font-sans);
+  font-size: 11px;
+}
+
+/* 下部メリット */
+
+.price-benefits {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 30px;
+}
+
+.price-benefit {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 22px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-small);
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.price-benefit span {
+  color: var(--color-main);
+  font-family: var(--font-serif);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+}
+
+.price-benefit p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* スマホ */
+
+@media (max-width: 768px) {
+
+  .price-intro {
+    margin-bottom: 38px;
+    font-size: 14px;
+  }
+
+  .course-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .course-card {
+    padding: 34px 24px;
+  }
+
+  .course-heading {
+    margin-bottom: 26px;
+  }
+
+  .classic-plan {
+    gap: 18px;
+    padding: 20px 0;
+  }
+
+  .price-benefits {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .price-benefit {
+    padding: 17px 18px;
+  }
+}
