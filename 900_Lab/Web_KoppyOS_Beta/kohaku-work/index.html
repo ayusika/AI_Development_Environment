@@ -1,0 +1,995 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+
+  <title>Kohaku Work | Koppy World</title>
+
+  <link rel="stylesheet" href="./styles.css">
+</head>
+
+<body>
+
+  <div class="app-shell">
+
+    <!-- ========================================
+         APP HEADER
+    ========================================= -->
+
+    <header class="app-header">
+      <div class="brand">
+        <span class="brand-koppy">Koppy World</span>
+        <span class="brand-section">Kohaku Work</span>
+      </div>
+
+      <button
+        class="icon-button"
+        type="button"
+        aria-label="設定"
+        data-action="settings"
+      >
+        ⚙︎
+      </button>
+    </header>
+
+
+    <!-- ========================================
+         MAIN
+    ========================================= -->
+
+    <main class="app-main">
+
+      <!-- ======================================
+           HOME VIEW
+      ======================================= -->
+
+      <section
+        class="view is-active"
+        id="view-home"
+        data-view="home"
+      >
+
+        <!-- 写メ日記 最優先 -->
+
+        <section class="hero-card diary-hero">
+
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">PHOTO DIARY</p>
+              <h1>写メ日記</h1>
+            </div>
+
+            <span class="status-badge" id="today-platform-badge">
+              ぬきナビ
+            </span>
+          </div>
+
+          <div class="today-context">
+            <span id="today-area">千葉</span>
+            <span class="separator">•</span>
+            <span id="today-date">8/12</span>
+          </div>
+
+          <button
+            class="primary-button primary-button-large"
+            type="button"
+            data-action="new-diary"
+          >
+            <span class="button-icon">＋</span>
+            今日の写メ日記を書く
+          </button>
+
+          <div class="diary-mini-status">
+
+            <div class="mini-status-item">
+              <span class="mini-label">下書き</span>
+              <strong id="draft-count">1</strong>
+            </div>
+
+            <div class="mini-status-item">
+              <span class="mini-label">今日の投稿</span>
+              <strong id="today-post-count">0</strong>
+            </div>
+
+          </div>
+
+          <div class="hero-actions">
+
+            <button
+              class="text-button"
+              type="button"
+              data-action="open-drafts"
+            >
+              下書き
+            </button>
+
+            <button
+              class="text-button"
+              type="button"
+              data-action="open-history"
+            >
+              過去ログ
+            </button>
+
+            <button
+              class="text-button"
+              type="button"
+              data-action="open-rules"
+            >
+              ルール
+            </button>
+
+          </div>
+
+        </section>
+
+
+        <!-- TODAY -->
+
+        <section class="content-card">
+
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">TODAY</p>
+              <h2>今日のお仕事</h2>
+            </div>
+
+            <button
+              class="small-link-button"
+              type="button"
+              data-action="shift-detail"
+            >
+              詳細
+            </button>
+          </div>
+
+          <div class="shift-summary">
+
+            <div>
+              <span class="summary-label">出勤</span>
+              <strong>千葉</strong>
+            </div>
+
+            <div>
+              <span class="summary-label">時間</span>
+              <strong>12:00〜</strong>
+            </div>
+
+          </div>
+
+          <div class="metric-grid">
+
+            <article class="metric-card">
+              <span>予約</span>
+              <strong>事前予約あり</strong>
+            </article>
+
+            <article class="metric-card highlight">
+              <span>次の空き</span>
+              <strong>23:00〜</strong>
+            </article>
+
+            <article class="metric-card">
+              <span>接客</span>
+              <strong>−</strong>
+            </article>
+
+            <article class="metric-card">
+              <span>売上</span>
+              <strong>¥ −</strong>
+            </article>
+
+          </div>
+
+        </section>
+
+
+        <!-- QUICK ACTION -->
+
+        <section class="quick-actions">
+
+          <button
+            class="quick-action-button"
+            type="button"
+            data-action="add-visit"
+          >
+            <span>＋</span>
+            接客を追加
+          </button>
+
+          <button
+            class="quick-action-button"
+            type="button"
+            data-action="search-customer"
+          >
+            <span>⌕</span>
+            顧客を探す
+          </button>
+
+        </section>
+
+
+        <!-- KOPPY CARD -->
+
+        <section class="content-card koppy-card">
+
+          <div class="koppy-heading">
+            <span class="koppy-symbol">♢ᴷ</span>
+
+            <div>
+              <p class="eyebrow">KOPPY</p>
+              <h2>今日のひとこと</h2>
+            </div>
+          </div>
+
+          <p class="koppy-message">
+            今日は23時からラスト1枠。
+            日記にも空き状況を入れておくとよさそう！
+          </p>
+
+        </section>
+
+      </section>
+
+
+      <!-- ======================================
+           DIARY HOME VIEW
+      ======================================= -->
+
+      <section
+        class="view"
+        id="view-diary"
+        data-view="diary"
+      >
+
+        <div class="page-heading">
+
+          <button
+            class="back-button"
+            type="button"
+            data-action="go-home"
+          >
+            ←
+          </button>
+
+          <div>
+            <p class="eyebrow">PHOTO DIARY</p>
+            <h1>写メ日記</h1>
+          </div>
+
+        </div>
+
+
+        <section class="content-card">
+
+          <div class="platform-panel">
+
+            <div>
+              <span class="platform-label">
+                TODAY
+              </span>
+
+              <strong id="diary-today-area">
+                千葉
+              </strong>
+            </div>
+
+            <div class="platform-mode nukinavi">
+              NUKINAVI MAIL
+            </div>
+
+          </div>
+
+
+          <button
+            class="primary-button primary-button-large"
+            type="button"
+            data-action="start-diary"
+          >
+            ＋ 新しく書く
+          </button>
+
+        </section>
+
+
+        <section class="menu-list">
+
+          <button
+            class="menu-row"
+            type="button"
+            data-action="open-drafts"
+          >
+            <span>
+              <strong>下書き</strong>
+              <small>途中の日記を続ける</small>
+            </span>
+
+            <span class="menu-count">
+              1
+            </span>
+          </button>
+
+
+          <button
+            class="menu-row"
+            type="button"
+            data-action="open-history"
+          >
+            <span>
+              <strong>過去ログ</strong>
+              <small>これまでの日記を見る</small>
+            </span>
+
+            <span>›</span>
+          </button>
+
+
+          <button
+            class="menu-row"
+            type="button"
+            data-action="open-rules"
+          >
+            <span>
+              <strong>日記ルール</strong>
+              <small>現在のKohakuルールを確認</small>
+            </span>
+
+            <span>›</span>
+          </button>
+
+        </section>
+
+      </section>
+
+
+      <!-- ======================================
+           NEW DIARY / NUKINAVI
+      ======================================= -->
+
+      <section
+        class="view"
+        id="view-nukinavi-create"
+        data-view="nukinavi-create"
+      >
+
+        <div class="page-heading">
+
+          <button
+            class="back-button"
+            type="button"
+            data-action="go-diary"
+          >
+            ←
+          </button>
+
+          <div>
+            <p class="eyebrow">NUKINAVI MAIL</p>
+            <h1>朝の日記</h1>
+          </div>
+
+        </div>
+
+
+        <section class="mode-banner nukinavi-banner">
+
+          <div>
+            <span>千葉</span>
+            <strong>8/12</strong>
+          </div>
+
+          <span class="mode-chip">
+            通常朝日記
+          </span>
+
+        </section>
+
+
+        <!-- 昨日のお客様 -->
+
+        <section class="content-card">
+
+          <div class="section-heading">
+
+            <div>
+              <p class="eyebrow">YESTERDAY</p>
+              <h2>昨日のお客様</h2>
+            </div>
+
+            <span class="count-badge">
+              4名
+            </span>
+
+          </div>
+
+
+          <div class="customer-check-list">
+
+            <label class="customer-check-row">
+
+              <input
+                type="checkbox"
+                name="visit"
+                value="visit-1"
+                checked
+              >
+
+              <span class="custom-check"></span>
+
+              <span class="visit-time">
+                12:00
+              </span>
+
+              <span class="visit-info">
+                <strong>リピのお兄さん</strong>
+                <small>120分｜リピ</small>
+              </span>
+
+            </label>
+
+
+            <label class="customer-check-row">
+
+              <input
+                type="checkbox"
+                name="visit"
+                value="visit-2"
+                checked
+              >
+
+              <span class="custom-check"></span>
+
+              <span class="visit-time">
+                14:30
+              </span>
+
+              <span class="visit-info">
+                <strong>初めましてのお兄さん</strong>
+                <small>90分｜新規</small>
+              </span>
+
+            </label>
+
+
+            <label class="customer-check-row">
+
+              <input
+                type="checkbox"
+                name="visit"
+                value="visit-3"
+                checked
+              >
+
+              <span class="custom-check"></span>
+
+              <span class="visit-time">
+                17:30
+              </span>
+
+              <span class="visit-info">
+                <strong>リピのお兄さん</strong>
+                <small>120分｜リピ</small>
+              </span>
+
+            </label>
+
+
+            <label class="customer-check-row">
+
+              <input
+                type="checkbox"
+                name="visit"
+                value="visit-4"
+                checked
+              >
+
+              <span class="custom-check"></span>
+
+              <span class="visit-time">
+                21:00
+              </span>
+
+              <span class="visit-info">
+                <strong>リピのお兄さん</strong>
+                <small>90分｜リピ</small>
+              </span>
+
+            </label>
+
+          </div>
+
+        </section>
+
+
+        <!-- 今日の空き -->
+
+        <section class="content-card">
+
+          <label
+            class="field-label"
+            for="availability-input"
+          >
+            今日の空き状況
+          </label>
+
+          <input
+            class="text-input"
+            id="availability-input"
+            type="text"
+            value="23時からラスト1枠"
+            placeholder="例：17時から空きあり"
+          >
+
+        </section>
+
+
+        <!-- 写真 -->
+
+        <section class="content-card">
+
+          <div class="field-label">
+            今日の写真
+          </div>
+
+          <label
+            class="photo-picker"
+            for="diary-photo"
+          >
+
+            <input
+              id="diary-photo"
+              type="file"
+              accept="image/*"
+            >
+
+            <span class="photo-picker-icon">
+              ＋
+            </span>
+
+            <strong>写真を選ぶ</strong>
+
+            <small>
+              自撮り1枚
+            </small>
+
+          </label>
+
+          <div
+            class="photo-preview"
+            id="photo-preview"
+            hidden
+          >
+            <img
+              id="photo-preview-image"
+              alt="選択した写真"
+            >
+          </div>
+
+        </section>
+
+
+        <!-- 追加メモ -->
+
+        <section class="content-card">
+
+          <label
+            class="field-label"
+            for="extra-note"
+          >
+            Koppyに追加で伝えること
+          </label>
+
+          <textarea
+            class="text-area"
+            id="extra-note"
+            rows="4"
+            placeholder="例：今日も事前予約いっぱいありがとって入れて"
+          ></textarea>
+
+          <button
+            class="secondary-button voice-button"
+            type="button"
+            data-action="voice-input"
+          >
+            🎙 話して入力
+          </button>
+
+        </section>
+
+
+        <button
+          class="primary-button generate-button"
+          type="button"
+          data-action="generate-diary"
+        >
+          <span class="koppy-symbol">♢ᴷ</span>
+          朝の日記をまとめて作る
+        </button>
+
+      </section>
+
+
+      <!-- ======================================
+           GENERATED / EDIT VIEW
+      ======================================= -->
+
+      <section
+        class="view"
+        id="view-diary-edit"
+        data-view="diary-edit"
+      >
+
+        <div class="page-heading">
+
+          <button
+            class="back-button"
+            type="button"
+            data-action="back-to-create"
+          >
+            ←
+          </button>
+
+          <div>
+            <p class="eyebrow">KOPPY DRAFT</p>
+            <h1>日記を仕上げる</h1>
+          </div>
+
+        </div>
+
+
+        <section class="content-card">
+
+          <label
+            class="field-label"
+            for="diary-title"
+          >
+            件名
+          </label>
+
+          <input
+            class="text-input"
+            id="diary-title"
+            type="text"
+            value="昨日もいっぱいありがと♡"
+          >
+
+        </section>
+
+
+        <section class="content-card">
+
+          <label
+            class="field-label"
+            for="diary-body"
+          >
+            本文
+          </label>
+
+          <textarea
+            class="text-area diary-body"
+            id="diary-body"
+            rows="18"
+          >昨日もたくさんありがと♡
+
+今日も事前予約ありがと〜☺️
+23時からラスト1枠なので会いに来てね♡
+
+↓昨日のお礼♡
+
+スタートから120分リピのお兄さん🥰
+昨日もいっぱいありがと♡
+また会えて嬉しかったよ〜☺️
+また次回もいっぱい楽しもうね♪
+
+14:30から90分のお兄さん♡
+初めましてありがと〜！
+いっぱい喜んでもらえて嬉しかったよ☺️
+また会いに来てくれるの楽しみに待ってるね♡
+
+❄︎こはく❄︎</textarea>
+
+        </section>
+
+
+        <!-- Koppy 修正 -->
+
+        <section class="content-card">
+
+          <div class="field-label">
+            ♢ᴷ Koppyに修正してもらう
+          </div>
+
+          <div class="suggestion-chips">
+
+            <button
+              type="button"
+              data-rewrite="shorter"
+            >
+              短く
+            </button>
+
+            <button
+              type="button"
+              data-rewrite="energetic"
+            >
+              元気め
+            </button>
+
+            <button
+              type="button"
+              data-rewrite="soft-sales"
+            >
+              営業感弱め
+            </button>
+
+          </div>
+
+          <textarea
+            class="text-area"
+            id="rewrite-note"
+            rows="3"
+            placeholder="例：最初の部分だけもっとテンション高く"
+          ></textarea>
+
+          <button
+            class="secondary-button"
+            type="button"
+            data-action="rewrite-diary"
+          >
+            ♢ᴷ この指示で直す
+          </button>
+
+        </section>
+
+
+        <div class="sticky-action-area">
+
+          <button
+            class="secondary-button"
+            type="button"
+            data-action="save-draft"
+          >
+            下書き保存
+          </button>
+
+          <button
+            class="primary-button"
+            type="button"
+            data-action="prepare-post"
+          >
+            投稿準備へ
+          </button>
+
+        </div>
+
+      </section>
+
+
+      <!-- ======================================
+           NUKINAVI POST PREP
+      ======================================= -->
+
+      <section
+        class="view"
+        id="view-post-prep"
+        data-view="post-prep"
+      >
+
+        <div class="page-heading">
+
+          <button
+            class="back-button"
+            type="button"
+            data-action="back-to-edit"
+          >
+            ←
+          </button>
+
+          <div>
+            <p class="eyebrow">READY</p>
+            <h1>投稿準備</h1>
+          </div>
+
+        </div>
+
+
+        <section class="success-card">
+
+          <span class="success-icon">
+            ✓
+          </span>
+
+          <div>
+            <strong>日記完成！</strong>
+            <small>内容を確認して投稿しよう</small>
+          </div>
+
+        </section>
+
+
+        <section class="content-card">
+
+          <div class="preview-block">
+
+            <span class="preview-label">
+              件名
+            </span>
+
+            <p id="post-preview-title">
+              昨日もいっぱいありがと♡
+            </p>
+
+          </div>
+
+          <div class="preview-block">
+
+            <span class="preview-label">
+              本文
+            </span>
+
+            <p
+              class="post-body-preview"
+              id="post-preview-body"
+            ></p>
+
+          </div>
+
+        </section>
+
+
+        <button
+          class="primary-button mail-button"
+          type="button"
+          data-action="create-nukinavi-mail"
+        >
+          📨 ぬきナビ用メールを作る
+        </button>
+
+
+        <section class="content-card post-complete-card">
+
+          <p>
+            メールを送信したら、
+            ここで投稿済みにしてね。
+          </p>
+
+          <button
+            class="secondary-button"
+            type="button"
+            data-action="mark-posted"
+          >
+            ✓ 投稿済みにする
+          </button>
+
+        </section>
+
+      </section>
+
+
+      <!-- ======================================
+           PLACEHOLDER VIEW
+      ======================================= -->
+
+      <section
+        class="view"
+        id="view-placeholder"
+        data-view="placeholder"
+      >
+
+        <div class="page-heading">
+
+          <button
+            class="back-button"
+            type="button"
+            data-action="go-home"
+          >
+            ←
+          </button>
+
+          <div>
+            <p class="eyebrow">KOHaku WORK</p>
+            <h1 id="placeholder-title">
+              準備中
+            </h1>
+          </div>
+
+        </div>
+
+        <section class="content-card empty-state">
+
+          <span class="koppy-symbol large">
+            ♢ᴷ
+          </span>
+
+          <strong>
+            この画面はこれから作るよ
+          </strong>
+
+          <p>
+            まずは写メ日記を最優先で実装中。
+          </p>
+
+        </section>
+
+      </section>
+
+    </main>
+
+
+    <!-- ========================================
+         BOTTOM NAVIGATION
+    ========================================= -->
+
+    <nav class="bottom-nav">
+
+      <button
+        class="nav-item is-active"
+        type="button"
+        data-nav="home"
+      >
+        <span class="nav-icon">⌂</span>
+        <span>ホーム</span>
+      </button>
+
+
+      <button
+        class="nav-item"
+        type="button"
+        data-nav="diary"
+      >
+        <span class="nav-icon">▧</span>
+        <span>日記</span>
+      </button>
+
+
+      <button
+        class="nav-item"
+        type="button"
+        data-nav="customers"
+      >
+        <span class="nav-icon">♙</span>
+        <span>顧客</span>
+      </button>
+
+
+      <button
+        class="nav-item"
+        type="button"
+        data-nav="visits"
+      >
+        <span class="nav-icon">＋</span>
+        <span>接客</span>
+      </button>
+
+
+      <button
+        class="nav-item"
+        type="button"
+        data-nav="sales"
+      >
+        <span class="nav-icon">¥</span>
+        <span>売上</span>
+      </button>
+
+
+      <button
+        class="nav-item"
+        type="button"
+        data-nav="koppy"
+      >
+        <span class="nav-icon koppy-symbol">♢ᴷ</span>
+        <span>Koppy</span>
+      </button>
+
+    </nav>
+
+  </div>
+
+
+  <script src="./app.js"></script>
+
+</body>
+</html>
