@@ -650,25 +650,134 @@
             </div>
 
 
-            <section class="idea-card idea-card-user">
+            <div class="comparison-editor-grid">
 
-              <div class="idea-card-heading">
-                <span class="idea-label">A</span>
+              <section class="idea-card idea-card-user">
 
-                <div>
-                  <strong>しいちゃん案</strong>
-                  <small>思ったことをそのまま書く</small>
+                <div class="idea-card-heading">
+                  <span class="idea-label">A</span>
+
+                  <div>
+                    <strong>しいちゃん案</strong>
+                    <small>思ったことをそのまま書く</small>
+                  </div>
                 </div>
-              </div>
 
-              <textarea
-                class="text-area customer-idea-textarea"
-                id="customer-idea-a"
-                rows="6"
-                placeholder="昨日ありがとー！久しぶりに会えて嬉しかった♡ みたいに、思ったことをがーっと書いてOK"
-              ></textarea>
+                <textarea
+                  class="text-area customer-idea-textarea"
+                  id="customer-idea-a"
+                  rows="10"
+                  placeholder="思ったことをがーっと書いてOK"
+                ></textarea>
 
-            </section>
+                <button
+                  class="idea-adopt-button idea-adopt-user"
+                  type="button"
+                  data-action="adopt-customer-idea"
+                  data-idea="a"
+                >
+                  A案を採用
+                </button>
+
+              </section>
+
+
+              <section
+                class="koppy-comparison-panel"
+                id="koppy-customer-ideas"
+                hidden
+              >
+
+                <div class="koppy-idea-tabs">
+
+                  <button
+                    class="koppy-idea-tab is-active"
+                    type="button"
+                    data-action="switch-customer-idea"
+                    data-idea="b"
+                  >
+                    B｜整える案
+                  </button>
+
+                  <button
+                    class="koppy-idea-tab"
+                    type="button"
+                    data-action="switch-customer-idea"
+                    data-idea="c"
+                  >
+                    C｜別案
+                  </button>
+
+                </div>
+
+
+                <section
+                  class="idea-card koppy-idea-panel is-active"
+                  data-koppy-idea-panel="b"
+                >
+
+                  <div class="idea-card-heading">
+                    <span class="idea-label koppy">B</span>
+
+                    <div>
+                      <strong>♢ᴷ 整える案</strong>
+                      <small>A案をできるだけ活かす</small>
+                    </div>
+                  </div>
+
+                  <textarea
+                    class="text-area customer-idea-textarea"
+                    id="customer-idea-b"
+                    rows="10"
+                  ></textarea>
+
+                  <button
+                    class="idea-adopt-button"
+                    type="button"
+                    data-action="adopt-customer-idea"
+                    data-idea="b"
+                  >
+                    B案を採用
+                  </button>
+
+                </section>
+
+
+                <section
+                  class="idea-card koppy-idea-panel"
+                  data-koppy-idea-panel="c"
+                  hidden
+                >
+
+                  <div class="idea-card-heading">
+                    <span class="idea-label koppy">C</span>
+
+                    <div>
+                      <strong>♢ᴷ 別案</strong>
+                      <small>内容をもとに自由に組み直す</small>
+                    </div>
+                  </div>
+
+                  <textarea
+                    class="text-area customer-idea-textarea"
+                    id="customer-idea-c"
+                    rows="10"
+                  ></textarea>
+
+                  <button
+                    class="idea-adopt-button"
+                    type="button"
+                    data-action="adopt-customer-idea"
+                    data-idea="c"
+                  >
+                    C案を採用
+                  </button>
+
+                </section>
+
+              </section>
+
+            </div>
 
 
             <button
@@ -677,84 +786,38 @@
               data-action="generate-customer-ideas"
             >
               <span class="koppy-symbol">♢ᴷ</span>
-              この内容からKoppy案をつくる
+              A案からKoppy案をつくる
             </button>
 
 
-            <div
-              class="koppy-idea-grid"
-              id="koppy-customer-ideas"
+            <section
+              class="customer-diff-panel"
+              id="customer-diff-panel"
               hidden
             >
 
-              <section class="idea-card">
+              <div class="diff-heading">
 
-                <div class="idea-card-heading">
-                  <span class="idea-label koppy">B</span>
-
-                  <div>
-                    <strong>♢ᴷ 整える案</strong>
-                    <small>A案の言葉をなるべく残す</small>
-                  </div>
+                <div>
+                  <p class="eyebrow">DIFF</p>
+                  <strong id="customer-diff-title">
+                    A ↔ B 差分
+                  </strong>
                 </div>
 
-                <textarea
-                  class="text-area customer-idea-textarea"
-                  id="customer-idea-b"
-                  rows="7"
-                ></textarea>
-
-                <button
-                  class="idea-adopt-button"
-                  type="button"
-                  data-action="adopt-customer-idea"
-                  data-idea="b"
-                >
-                  B案を採用
-                </button>
-
-              </section>
-
-
-              <section class="idea-card">
-
-                <div class="idea-card-heading">
-                  <span class="idea-label koppy">C</span>
-
-                  <div>
-                    <strong>♢ᴷ 別案</strong>
-                    <small>内容をもとに自由に書き直す</small>
-                  </div>
+                <div class="diff-legend">
+                  <span class="diff-remove">Aから変更</span>
+                  <span class="diff-add">Koppy案</span>
                 </div>
 
-                <textarea
-                  class="text-area customer-idea-textarea"
-                  id="customer-idea-c"
-                  rows="7"
-                ></textarea>
+              </div>
 
-                <button
-                  class="idea-adopt-button"
-                  type="button"
-                  data-action="adopt-customer-idea"
-                  data-idea="c"
-                >
-                  C案を採用
-                </button>
+              <div
+                class="diff-output"
+                id="customer-diff-output"
+              ></div>
 
-              </section>
-
-            </div>
-
-
-            <button
-              class="idea-adopt-button idea-adopt-user"
-              type="button"
-              data-action="adopt-customer-idea"
-              data-idea="a"
-            >
-              A案をそのまま採用
-            </button>
+            </section>
 
           </div>
 
