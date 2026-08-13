@@ -171,6 +171,10 @@ function handleAction(action, button) {
       generateCustomerIdeas();
       break;
 
+    case 'switch-customer-idea':
+      switchCustomerIdea(button.dataset.idea);
+      break;
+
     case 'adopt-customer-idea':
       adoptCustomerIdea(button);
       break;
