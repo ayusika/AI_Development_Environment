@@ -302,6 +302,7 @@ $allowedExactPaths = [
     '000_HOME/更新履歴.md',
     '000_HOME/次にやること.md',
     '000_BOOT/PROTOCOL_INDEX.md',
+    '040_Koppy/性格/README.md',
 ];
 
 $isAllowedPath =
