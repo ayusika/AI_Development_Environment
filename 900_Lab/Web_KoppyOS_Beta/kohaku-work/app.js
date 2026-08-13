@@ -159,6 +159,22 @@ function handleAction(action, button) {
       generateDiary();
       break;
 
+    case 'edit-customer-diary':
+      openCustomerEditor(button);
+      break;
+
+    case 'close-customer-editor':
+      closeCustomerEditor();
+      break;
+
+    case 'generate-customer-ideas':
+      generateCustomerIdeas();
+      break;
+
+    case 'adopt-customer-idea':
+      adoptCustomerIdea(button);
+      break;
+
     case 'back-to-create':
       showView('nukinaviCreate');
       break;
