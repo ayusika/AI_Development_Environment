@@ -423,16 +423,20 @@
 
           <div class="customer-check-list">
 
-            <label class="customer-check-row">
+            <div class="customer-check-row">
 
-              <input
-                type="checkbox"
-                name="visit"
-                value="visit-1"
-                checked
-              >
+              <label class="customer-select">
 
-              <span class="custom-check"></span>
+                <input
+                  type="checkbox"
+                  name="visit"
+                  value="visit-1"
+                  checked
+                >
+
+                <span class="custom-check"></span>
+
+              </label>
 
               <span class="visit-time">
                 12:00
@@ -443,19 +447,32 @@
                 <small>120分｜リピ</small>
               </span>
 
-            </label>
-
-
-            <label class="customer-check-row">
-
-              <input
-                type="checkbox"
-                name="visit"
-                value="visit-2"
-                checked
+              <button
+                class="customer-edit-button"
+                type="button"
+                data-action="edit-customer-diary"
+                data-visit-id="visit-1"
               >
+                個別編集
+              </button>
 
-              <span class="custom-check"></span>
+            </div>
+
+
+            <div class="customer-check-row">
+
+              <label class="customer-select">
+
+                <input
+                  type="checkbox"
+                  name="visit"
+                  value="visit-2"
+                  checked
+                >
+
+                <span class="custom-check"></span>
+
+              </label>
 
               <span class="visit-time">
                 14:30
@@ -466,19 +483,32 @@
                 <small>90分｜新規</small>
               </span>
 
-            </label>
-
-
-            <label class="customer-check-row">
-
-              <input
-                type="checkbox"
-                name="visit"
-                value="visit-3"
-                checked
+              <button
+                class="customer-edit-button"
+                type="button"
+                data-action="edit-customer-diary"
+                data-visit-id="visit-2"
               >
+                個別編集
+              </button>
 
-              <span class="custom-check"></span>
+            </div>
+
+
+            <div class="customer-check-row">
+
+              <label class="customer-select">
+
+                <input
+                  type="checkbox"
+                  name="visit"
+                  value="visit-3"
+                  checked
+                >
+
+                <span class="custom-check"></span>
+
+              </label>
 
               <span class="visit-time">
                 17:30
@@ -489,19 +519,32 @@
                 <small>120分｜リピ</small>
               </span>
 
-            </label>
-
-
-            <label class="customer-check-row">
-
-              <input
-                type="checkbox"
-                name="visit"
-                value="visit-4"
-                checked
+              <button
+                class="customer-edit-button"
+                type="button"
+                data-action="edit-customer-diary"
+                data-visit-id="visit-3"
               >
+                個別編集
+              </button>
 
-              <span class="custom-check"></span>
+            </div>
+
+
+            <div class="customer-check-row">
+
+              <label class="customer-select">
+
+                <input
+                  type="checkbox"
+                  name="visit"
+                  value="visit-4"
+                  checked
+                >
+
+                <span class="custom-check"></span>
+
+              </label>
 
               <span class="visit-time">
                 21:00
@@ -512,7 +555,16 @@
                 <small>90分｜リピ</small>
               </span>
 
-            </label>
+              <button
+                class="customer-edit-button"
+                type="button"
+                data-action="edit-customer-diary"
+                data-visit-id="visit-4"
+              >
+                個別編集
+              </button>
+
+            </div>
 
           </div>
 
