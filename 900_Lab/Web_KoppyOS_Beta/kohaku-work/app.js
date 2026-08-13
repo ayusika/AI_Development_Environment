@@ -1,13 +1,18 @@
 
 
+// WRITER:VIEW_REGISTRY:START
+
 const views = {
   home: document.querySelector('[data-view="home"]'),
   diary: document.querySelector('[data-view="diary"]'),
   nukinaviCreate: document.querySelector('[data-view="nukinavi-create"]'),
   diaryEdit: document.querySelector('[data-view="diary-edit"]'),
   postPrep: document.querySelector('[data-view="post-prep"]'),
+  schedule: document.querySelector('[data-view="schedule"]'),
   placeholder: document.querySelector('[data-view="placeholder"]'),
 };
+
+// WRITER:VIEW_REGISTRY:END
 
 const navItems = document.querySelectorAll('.nav-item');
 
