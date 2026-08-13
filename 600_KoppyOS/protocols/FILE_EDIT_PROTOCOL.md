@@ -139,6 +139,26 @@ WRITERマーカー等の安全構造を導入する。
 File Edit Protocolでは、
 以下の4操作を使用する。
 
+内部Operation名と、
+ユーザーへ提示する表示名は分離して扱う。
+
+正式な対応関係：
+
+- `APPEND` → `🟦 追記`
+- `PARTIAL REPLACE` → `🟨 部分置換`
+- `FULL REPLACE` → `🟪 全文置換`
+- `CREATE` → `🟥 新規作成`
+
+Protocol内部、実装、API、Executor等でOperationを識別する場合は、
+正式な内部Operation名を使用する。
+
+KoppyがWriter指示等をユーザーへ提示する場合は、
+原則としてユーザー向け表示名を使用する。
+
+内部Operation名をユーザー向け表示へそのまま露出させる必要がある場合は、
+技術的な確認・デバッグ・実装説明など、
+内部Operation名そのものを示す必要がある場合に限る。
+
 ---
 
 ## 4.1 🟦 APPEND
