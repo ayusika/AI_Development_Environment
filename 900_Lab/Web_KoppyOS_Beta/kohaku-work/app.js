@@ -123,6 +123,8 @@ document.addEventListener('click', (event) => {
 });
 
 
+// WRITER:MAIN_NAV_ROUTING:START
+
 function handleNav(navName) {
   if (navName === 'home') {
     showView('home');
@@ -134,15 +136,22 @@ function handleNav(navName) {
     return;
   }
 
+  if (navName === 'schedule') {
+    showView('schedule');
+    loadSchedule();
+    return;
+  }
+
   const labels = {
     customers: '顧客',
-    visits: '接客',
     sales: '売上',
     koppy: 'Koppy',
   };
 
   showPlaceholder(labels[navName] || '準備中');
 }
+
+// WRITER:MAIN_NAV_ROUTING:END
 
 
 function handleAction(action, button) {
