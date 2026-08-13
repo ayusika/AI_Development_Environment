@@ -1057,16 +1057,57 @@ h2 {
 .customer-check-row {
   position: relative;
 
-  min-height: 68px;
+  min-height: 72px;
 
   display: grid;
-  grid-template-columns: 28px 51px minmax(0, 1fr);
+  grid-template-columns:
+    28px
+    48px
+    minmax(0, 1fr)
+    auto;
+
   align-items: center;
-  gap: 10px;
+  gap: 9px;
 
   padding: 11px 2px;
 
   border-bottom: 1px solid var(--line);
+}
+
+.customer-select {
+  width: 28px;
+  min-height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.customer-edit-button {
+  min-height: 38px;
+
+  padding: 8px 10px;
+
+  border-radius: 11px;
+
+  white-space: nowrap;
+
+  color: var(--accent-deep);
+  background: var(--accent-soft);
+
+  border: 1px solid var(--line-strong);
+
+  font-size: 11px;
+  font-weight: 800;
+
+  transition:
+    transform 120ms ease,
+    background-color 120ms ease;
+}
+
+.customer-edit-button:active {
+  transform: scale(0.97);
+  background: #dff5ff;
 }
 
 .customer-check-row:last-child {
