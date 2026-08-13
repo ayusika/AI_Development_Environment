@@ -267,7 +267,17 @@ const customerIdeaC =
 const koppyCustomerIdeas =
   document.getElementById('koppy-customer-ideas');
 
+const customerDiffPanel =
+  document.getElementById('customer-diff-panel');
+
+const customerDiffOutput =
+  document.getElementById('customer-diff-output');
+
+const customerDiffTitle =
+  document.getElementById('customer-diff-title');
+
 let activeCustomerVisitId = '';
+let activeKoppyIdea = 'b';
 
 const customerIdeaState = {};
 
@@ -277,6 +287,8 @@ function openCustomerEditor(button) {
     button.closest('.customer-check-row');
 
   if (!row || !customerInlineEditor) return;
+
+  saveActiveCustomerIdeas();
 
   const visitId =
     button.dataset.visitId || '';
@@ -303,8 +315,17 @@ function openCustomerEditor(button) {
   customerIdeaC.value =
     saved?.c || '';
 
+  activeKoppyIdea =
+    saved?.activeKoppyIdea || 'b';
+
+  const hasKoppyIdeas =
+    Boolean(saved?.b || saved?.c);
+
   koppyCustomerIdeas.hidden =
-    !(saved?.b || saved?.c);
+    !hasKoppyIdeas;
+
+  customerDiffPanel.hidden =
+    !hasKoppyIdeas;
 
   row.insertAdjacentElement(
     'afterend',
@@ -312,6 +333,8 @@ function openCustomerEditor(button) {
   );
 
   customerInlineEditor.hidden = false;
+
+  switchCustomerIdea(activeKoppyIdea);
 }
 
 
@@ -334,6 +357,7 @@ function saveActiveCustomerIdeas() {
     a: customerIdeaA.value,
     b: customerIdeaB.value,
     c: customerIdeaC.value,
+    activeKoppyIdea,
   };
 }
 
@@ -347,22 +371,194 @@ function generateCustomerIdeas() {
     return;
   }
 
-  customerIdeaB.value =
-`${source}
+  /*
+   * Phase 1 UI prototype.
+   * 後でここを実際のKoppy生成へ差し替える。
+   */
 
-文章の雰囲気はそのままに、
-読みやすく整えたKoppy案だよ♡`;
+  customerIdeaB.value =
+    source
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
 
   customerIdeaC.value =
-`昨日は会いに来てくれてありがと〜♡
+`昨日も会いに来てくれてありがと♡
 
 ${source}
 
 また会えるの楽しみにしてるね☺️`;
 
   koppyCustomerIdeas.hidden = false;
+  customerDiffPanel.hidden = false;
 
+  activeKoppyIdea = 'b';
+
+  switchCustomerIdea('b');
   saveActiveCustomerIdeas();
+}
+
+
+function switchCustomerIdea(idea) {
+  if (idea !== 'b' && idea !== 'c') {
+    idea = 'b';
+  }
+
+  activeKoppyIdea = idea;
+
+  document
+    .querySelectorAll('.koppy-idea-tab')
+    .forEach((tab) => {
+      tab.classList.toggle(
+        'is-active',
+        tab.dataset.idea === idea
+      );
+    });
+
+  document
+    .querySelectorAll('[data-koppy-idea-panel]')
+    .forEach((panel) => {
+      const isActive =
+        panel.dataset.koppyIdeaPanel === idea;
+
+      panel.hidden = !isActive;
+      panel.classList.toggle(
+        'is-active',
+        isActive
+      );
+    });
+
+  updateCustomerDiff();
+  saveActiveCustomerIdeas();
+}
+
+
+function updateCustomerDiff() {
+  if (!customerDiffOutput) return;
+
+  const source =
+    customerIdeaA.value || '';
+
+  const target =
+    activeKoppyIdea === 'c'
+      ? customerIdeaC.value
+      : customerIdeaB.value;
+
+  customerDiffTitle.textContent =
+    `A ↔ ${activeKoppyIdea.toUpperCase()} 差分`;
+
+  renderSimpleDiff(
+    customerDiffOutput,
+    source,
+    target
+  );
+}
+
+
+function renderSimpleDiff(
+  container,
+  source,
+  target
+) {
+  container.replaceChildren();
+
+  if (source === target) {
+    const same =
+      document.createElement('span');
+
+    same.textContent =
+      source || '差分なし';
+
+    container.appendChild(same);
+    return;
+  }
+
+  let prefixLength = 0;
+
+  while (
+    prefixLength < source.length &&
+    prefixLength < target.length &&
+    source[prefixLength] ===
+      target[prefixLength]
+  ) {
+    prefixLength += 1;
+  }
+
+  let suffixLength = 0;
+
+  while (
+    suffixLength <
+      source.length - prefixLength &&
+    suffixLength <
+      target.length - prefixLength &&
+    source[
+      source.length - 1 - suffixLength
+    ] ===
+      target[
+        target.length - 1 - suffixLength
+      ]
+  ) {
+    suffixLength += 1;
+  }
+
+  const prefix =
+    source.slice(0, prefixLength);
+
+  const removed =
+    source.slice(
+      prefixLength,
+      source.length - suffixLength
+    );
+
+  const added =
+    target.slice(
+      prefixLength,
+      target.length - suffixLength
+    );
+
+  const suffix =
+    suffixLength
+      ? source.slice(
+          source.length - suffixLength
+        )
+      : '';
+
+  if (prefix) {
+    container.append(
+      document.createTextNode(prefix)
+    );
+  }
+
+  if (removed) {
+    const removeSpan =
+      document.createElement('span');
+
+    removeSpan.className =
+      'diff-remove';
+
+    removeSpan.textContent =
+      removed;
+
+    container.appendChild(removeSpan);
+  }
+
+  if (added) {
+    const addSpan =
+      document.createElement('span');
+
+    addSpan.className =
+      'diff-add';
+
+    addSpan.textContent =
+      added;
+
+    container.appendChild(addSpan);
+  }
+
+  if (suffix) {
+    container.append(
+      document.createTextNode(suffix)
+    );
+  }
 }
 
 
@@ -383,6 +579,7 @@ function adoptCustomerIdea(button) {
     a: customerIdeaA.value,
     b: customerIdeaB.value,
     c: customerIdeaC.value,
+    activeKoppyIdea,
     selected: idea,
     final: valueMap[idea] || '',
   };
@@ -391,6 +588,21 @@ function adoptCustomerIdea(button) {
     `${idea.toUpperCase()}案を採用したよ♡`
   );
 }
+
+
+[
+  customerIdeaA,
+  customerIdeaB,
+  customerIdeaC,
+].forEach((textarea) => {
+  textarea?.addEventListener(
+    'input',
+    () => {
+      updateCustomerDiff();
+      saveActiveCustomerIdeas();
+    }
+  );
+});
 
 
 /* ========================================
