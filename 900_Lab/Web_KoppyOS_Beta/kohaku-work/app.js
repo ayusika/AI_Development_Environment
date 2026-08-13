@@ -267,6 +267,11 @@ const customerIdeaC =
 const koppyCustomerIdeas =
   document.getElementById('koppy-customer-ideas');
 
+const koppyComparisonToolbar =
+  document.getElementById(
+    'koppy-comparison-toolbar'
+  );
+
 const customerDiffPanel =
   document.getElementById('customer-diff-panel');
 
