@@ -92,6 +92,10 @@ function updateBottomNav(viewName) {
     activeNav = 'diary';
   }
 
+  if (viewName === 'schedule') {
+    activeNav = 'schedule';
+  }
+
   const activeItem = document.querySelector(
     `.nav-item[data-nav="${activeNav}"]`
   );
