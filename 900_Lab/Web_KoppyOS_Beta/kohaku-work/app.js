@@ -441,7 +441,12 @@ function switchCustomerIdea(idea) {
 
 
 function updateCustomerDiff() {
-  if (!customerDiffOutput) return;
+  if (
+    !customerDiffSource ||
+    !customerDiffTarget
+  ) {
+    return;
+  }
 
   const source =
     customerIdeaA.value || '';
@@ -451,32 +456,48 @@ function updateCustomerDiff() {
       ? customerIdeaC.value
       : customerIdeaB.value;
 
-  customerDiffTitle.textContent =
-    `A ↔ ${activeKoppyIdea.toUpperCase()} 差分`;
+  const targetLabel =
+    activeKoppyIdea.toUpperCase();
 
-  renderSimpleDiff(
-    customerDiffOutput,
+  customerDiffTitle.textContent =
+    `A ↔ ${targetLabel} 差分`;
+
+  customerDiffTargetHeading.textContent =
+    `＋ ${targetLabel}｜Koppy案`;
+
+  renderSideBySideDiff(
+    customerDiffSource,
+    customerDiffTarget,
     source,
     target
   );
 }
 
 
-function renderSimpleDiff(
-  container,
+function renderSideBySideDiff(
+  sourceContainer,
+  targetContainer,
   source,
   target
 ) {
-  container.replaceChildren();
+  sourceContainer.replaceChildren();
+  targetContainer.replaceChildren();
 
   if (source === target) {
-    const same =
+    const sourceSame =
       document.createElement('span');
 
-    same.textContent =
+    const targetSame =
+      document.createElement('span');
+
+    sourceSame.textContent =
       source || '差分なし';
 
-    container.appendChild(same);
+    targetSame.textContent =
+      target || '差分なし';
+
+    sourceContainer.appendChild(sourceSame);
+    targetContainer.appendChild(targetSame);
     return;
   }
 
@@ -508,65 +529,80 @@ function renderSimpleDiff(
     suffixLength += 1;
   }
 
-  const prefix =
+  const sourcePrefix =
     source.slice(0, prefixLength);
 
-  const removed =
+  const sourceChanged =
     source.slice(
       prefixLength,
       source.length - suffixLength
     );
 
-  const added =
-    target.slice(
-      prefixLength,
-      target.length - suffixLength
-    );
-
-  const suffix =
+  const sourceSuffix =
     suffixLength
       ? source.slice(
           source.length - suffixLength
         )
       : '';
 
-  if (prefix) {
-    container.append(
-      document.createTextNode(prefix)
-    );
-  }
+  const targetPrefix =
+    target.slice(0, prefixLength);
 
-  if (removed) {
-    const removeSpan =
+  const targetChanged =
+    target.slice(
+      prefixLength,
+      target.length - suffixLength
+    );
+
+  const targetSuffix =
+    suffixLength
+      ? target.slice(
+          target.length - suffixLength
+        )
+      : '';
+
+  sourceContainer.append(
+    document.createTextNode(sourcePrefix)
+  );
+
+  if (sourceChanged) {
+    const removed =
       document.createElement('span');
 
-    removeSpan.className =
+    removed.className =
       'diff-remove';
 
-    removeSpan.textContent =
-      removed;
+    removed.textContent =
+      sourceChanged;
 
-    container.appendChild(removeSpan);
+    sourceContainer.appendChild(removed);
   }
 
-  if (added) {
-    const addSpan =
+  sourceContainer.append(
+    document.createTextNode(sourceSuffix)
+  );
+
+
+  targetContainer.append(
+    document.createTextNode(targetPrefix)
+  );
+
+  if (targetChanged) {
+    const added =
       document.createElement('span');
 
-    addSpan.className =
+    added.className =
       'diff-add';
 
-    addSpan.textContent =
-      added;
+    added.textContent =
+      targetChanged;
 
-    container.appendChild(addSpan);
+    targetContainer.appendChild(added);
   }
 
-  if (suffix) {
-    container.append(
-      document.createTextNode(suffix)
-    );
-  }
+  targetContainer.append(
+    document.createTextNode(targetSuffix)
+  );
 }
 
 
