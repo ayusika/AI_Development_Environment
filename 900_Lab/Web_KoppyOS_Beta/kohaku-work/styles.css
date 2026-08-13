@@ -1110,6 +1110,171 @@ h2 {
   background: #dff5ff;
 }
 
+
+/* ========================================
+   CUSTOMER INLINE EDITOR
+======================================== */
+
+.customer-inline-editor {
+  margin: 14px 0 4px;
+  padding: 16px;
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f8fdff,
+      #eef9ff
+    );
+
+  border: 1px solid var(--line-strong);
+}
+
+.inline-editor-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+
+  margin-bottom: 14px;
+}
+
+.inline-editor-heading h3 {
+  margin: 0;
+
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.inline-editor-close {
+  width: 38px;
+  height: 38px;
+
+  flex: 0 0 auto;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 50%;
+
+  color: var(--text-soft);
+  background: var(--surface-strong);
+
+  border: 1px solid var(--line);
+
+  font-size: 20px;
+}
+
+.idea-card {
+  padding: 13px;
+
+  border-radius: 15px;
+
+  background: rgba(255, 255, 255, 0.94);
+  border: 1px solid var(--line);
+
+  box-shadow: var(--shadow-soft);
+}
+
+.idea-card-user {
+  margin-bottom: 11px;
+}
+
+.idea-card-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-bottom: 10px;
+}
+
+.idea-card-heading > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.idea-card-heading strong {
+  font-size: 13px;
+}
+
+.idea-card-heading small {
+  color: var(--text-soft);
+  font-size: 10px;
+}
+
+.idea-label {
+  width: 30px;
+  height: 30px;
+
+  flex: 0 0 auto;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 10px;
+
+  color: var(--text);
+  background: var(--bg-soft);
+
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.idea-label.koppy {
+  color: var(--accent-deep);
+  background: var(--accent-soft);
+}
+
+.customer-idea-textarea {
+  min-height: 118px;
+}
+
+.customer-koppy-generate {
+  min-height: 52px;
+
+  margin: 11px 0;
+}
+
+.koppy-idea-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 11px;
+
+  margin-bottom: 11px;
+}
+
+.idea-adopt-button {
+  width: 100%;
+  min-height: 42px;
+
+  margin-top: 10px;
+  padding: 9px 12px;
+
+  border-radius: 12px;
+
+  color: var(--accent-deep);
+  background: var(--accent-soft);
+
+  border: 1px solid var(--line-strong);
+
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.idea-adopt-user {
+  color: var(--text-soft);
+  background: var(--surface-strong);
+  border-color: var(--line);
+}
+
+@media (min-width: 720px) {
+  .koppy-idea-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 .customer-check-row:last-child {
   border-bottom: 0;
 }
