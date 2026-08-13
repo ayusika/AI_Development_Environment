@@ -169,10 +169,23 @@ DEPRECATEDの場合のみ必要に応じて記載
 # 7. ACTIVE PROTOCOLS
 
 現在、Registration Requirementsを満たし、
-正式にACTIVEとして登録されているProtocolはない。
+正式にACTIVEとして登録されているProtocolは以下。
 
 ```text
-None
+Protocol Name:
+FILE_EDIT_PROTOCOL
+
+Status:
+ACTIVE
+
+TASK:
+WRITE
+
+Applies To:
+KoppyOSが管理対象ファイルへ変更を加える作業
+
+Source of Truth:
+600_KoppyOS/protocols/FILE_EDIT_PROTOCOL.md
 ```
 
 ---
