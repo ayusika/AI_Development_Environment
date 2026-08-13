@@ -270,11 +270,19 @@ const koppyCustomerIdeas =
 const customerDiffPanel =
   document.getElementById('customer-diff-panel');
 
-const customerDiffOutput =
-  document.getElementById('customer-diff-output');
+const customerDiffSource =
+  document.getElementById('customer-diff-source');
+
+const customerDiffTarget =
+  document.getElementById('customer-diff-target');
 
 const customerDiffTitle =
   document.getElementById('customer-diff-title');
+
+const customerDiffTargetHeading =
+  document.getElementById(
+    'customer-diff-target-heading'
+  );
 
 let activeCustomerVisitId = '';
 let activeKoppyIdea = 'b';
