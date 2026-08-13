@@ -623,6 +623,199 @@
 
           </div>
 
+
+          <!-- ======================================
+               DUMMY DIARY TEMPLATE
+          ======================================= -->
+
+          <template id="dummy-diary-template">
+
+            <article class="dummy-diary-card timeline-entry">
+
+              <div class="dummy-diary-heading">
+
+                <div>
+                  <p class="eyebrow">DUMMY DIARY</p>
+                  <h3>ダミー日記</h3>
+                </div>
+
+                <button
+                  class="dummy-diary-remove"
+                  type="button"
+                  data-action="remove-dummy-diary"
+                  aria-label="ダミー日記を削除"
+                >
+                  ×
+                </button>
+
+              </div>
+
+
+              <div class="dummy-field-grid">
+
+                <label class="dummy-field">
+                  <span>時間</span>
+
+                  <input
+                    class="text-input dummy-time-input"
+                    type="time"
+                    value="15:00"
+                  >
+                </label>
+
+
+                <div class="dummy-field">
+
+                  <span>コース時間</span>
+
+                  <div class="dummy-choice-row">
+
+                    <label class="dummy-choice">
+                      <input
+                        type="radio"
+                        name="dummy-course"
+                        value="60"
+                      >
+                      <span>60分</span>
+                    </label>
+
+                    <label class="dummy-choice">
+                      <input
+                        type="radio"
+                        name="dummy-course"
+                        value="90"
+                        checked
+                      >
+                      <span>90分</span>
+                    </label>
+
+                    <label class="dummy-choice">
+                      <input
+                        type="radio"
+                        name="dummy-course"
+                        value="120"
+                      >
+                      <span>120分</span>
+                    </label>
+
+                    <label class="dummy-choice">
+                      <input
+                        type="radio"
+                        name="dummy-course"
+                        value="other"
+                      >
+                      <span>その他</span>
+                    </label>
+
+                  </div>
+
+                </div>
+
+
+                <div class="dummy-field">
+
+                  <span>区分</span>
+
+                  <div class="dummy-choice-row">
+
+                    <label class="dummy-choice">
+                      <input
+                        type="radio"
+                        name="dummy-type"
+                        value="new"
+                        checked
+                      >
+                      <span>新規</span>
+                    </label>
+
+                    <label class="dummy-choice">
+                      <input
+                        type="radio"
+                        name="dummy-type"
+                        value="repeat"
+                      >
+                      <span>リピ</span>
+                    </label>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+
+              <div class="dummy-field dummy-op-field">
+
+                <div class="dummy-field-heading">
+                  <span>OP</span>
+                  <small>※項目名は後で確定</small>
+                </div>
+
+                <div class="dummy-choice-row dummy-op-list">
+
+                  <label class="dummy-choice">
+                    <input
+                      type="checkbox"
+                      value="op-temp-1"
+                    >
+                    <span>仮OP①</span>
+                  </label>
+
+                  <label class="dummy-choice">
+                    <input
+                      type="checkbox"
+                      value="op-temp-2"
+                    >
+                    <span>仮OP②</span>
+                  </label>
+
+                  <label class="dummy-choice">
+                    <input
+                      type="checkbox"
+                      value="op-temp-3"
+                    >
+                    <span>仮OP③</span>
+                  </label>
+
+                  <label class="dummy-choice">
+                    <input
+                      type="checkbox"
+                      value="none"
+                    >
+                    <span>OPなし</span>
+                  </label>
+
+                </div>
+
+              </div>
+
+
+              <label class="dummy-field">
+                <span>Koppyへの追加メモ</span>
+
+                <textarea
+                  class="text-area dummy-note"
+                  rows="3"
+                  placeholder="雰囲気や入れてほしい内容があれば書く。空欄でもOK"
+                ></textarea>
+              </label>
+
+
+              <button
+                class="primary-button dummy-generate-button"
+                type="button"
+                disabled
+              >
+                <span class="koppy-symbol">♢ᴷ</span>
+                この条件でダミー日記をつくる
+                <small>DB構築後に有効化</small>
+              </button>
+
+            </article>
+
+          </template>
+
+
           <div
             class="customer-inline-editor"
             id="customer-inline-editor"
