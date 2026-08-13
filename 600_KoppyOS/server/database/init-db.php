@@ -6,12 +6,6 @@ $documentRoot =
     $_SERVER['DOCUMENT_ROOT']
     ?? '';
 
-if ($documentRoot === '') {
-    throw new RuntimeException(
-        'DOCUMENT_ROOT is not available.'
-    );
-}
-
 $privateDirectory =
     $documentRoot
     . '/../../.koppy-private/database';
