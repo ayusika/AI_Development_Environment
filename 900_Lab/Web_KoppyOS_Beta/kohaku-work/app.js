@@ -242,6 +242,154 @@ function handleAction(action, button) {
 
 
 /* ========================================
+   CUSTOMER INLINE EDITOR
+======================================== */
+
+const customerInlineEditor =
+  document.getElementById('customer-inline-editor');
+
+const customerEditorName =
+  document.getElementById('inline-editor-customer-name');
+
+const customerIdeaA =
+  document.getElementById('customer-idea-a');
+
+const customerIdeaB =
+  document.getElementById('customer-idea-b');
+
+const customerIdeaC =
+  document.getElementById('customer-idea-c');
+
+const koppyCustomerIdeas =
+  document.getElementById('koppy-customer-ideas');
+
+let activeCustomerVisitId = '';
+
+const customerIdeaState = {};
+
+
+function openCustomerEditor(button) {
+  const row =
+    button.closest('.customer-check-row');
+
+  if (!row || !customerInlineEditor) return;
+
+  const visitId =
+    button.dataset.visitId || '';
+
+  const customerName =
+    row.querySelector('.visit-info strong')
+      ?.textContent
+      ?.trim() || 'お客様';
+
+  activeCustomerVisitId = visitId;
+
+  customerEditorName.textContent =
+    `${customerName}のお礼`;
+
+  const saved =
+    customerIdeaState[visitId];
+
+  customerIdeaA.value =
+    saved?.a || '';
+
+  customerIdeaB.value =
+    saved?.b || '';
+
+  customerIdeaC.value =
+    saved?.c || '';
+
+  koppyCustomerIdeas.hidden =
+    !(saved?.b || saved?.c);
+
+  row.insertAdjacentElement(
+    'afterend',
+    customerInlineEditor
+  );
+
+  customerInlineEditor.hidden = false;
+}
+
+
+function closeCustomerEditor() {
+  if (!customerInlineEditor) return;
+
+  saveActiveCustomerIdeas();
+
+  customerInlineEditor.hidden = true;
+
+  activeCustomerVisitId = '';
+}
+
+
+function saveActiveCustomerIdeas() {
+  if (!activeCustomerVisitId) return;
+
+  customerIdeaState[activeCustomerVisitId] = {
+    ...(customerIdeaState[activeCustomerVisitId] || {}),
+    a: customerIdeaA.value,
+    b: customerIdeaB.value,
+    c: customerIdeaC.value,
+  };
+}
+
+
+function generateCustomerIdeas() {
+  const source =
+    customerIdeaA.value.trim();
+
+  if (!source) {
+    alert('まずA案に思ったことを書いてね☺️');
+    return;
+  }
+
+  customerIdeaB.value =
+`${source}
+
+文章の雰囲気はそのままに、
+読みやすく整えたKoppy案だよ♡`;
+
+  customerIdeaC.value =
+`昨日は会いに来てくれてありがと〜♡
+
+${source}
+
+また会えるの楽しみにしてるね☺️`;
+
+  koppyCustomerIdeas.hidden = false;
+
+  saveActiveCustomerIdeas();
+}
+
+
+function adoptCustomerIdea(button) {
+  if (!activeCustomerVisitId) return;
+
+  const idea =
+    button.dataset.idea;
+
+  const valueMap = {
+    a: customerIdeaA.value,
+    b: customerIdeaB.value,
+    c: customerIdeaC.value,
+  };
+
+  customerIdeaState[activeCustomerVisitId] = {
+    ...(customerIdeaState[activeCustomerVisitId] || {}),
+    a: customerIdeaA.value,
+    b: customerIdeaB.value,
+    c: customerIdeaC.value,
+    selected: idea,
+    final: valueMap[idea] || '',
+  };
+
+  alert(
+    `${idea.toUpperCase()}案を採用したよ♡`
+  );
+}
+
+
+/* ========================================
    DIARY CREATE
 ======================================== */
 
