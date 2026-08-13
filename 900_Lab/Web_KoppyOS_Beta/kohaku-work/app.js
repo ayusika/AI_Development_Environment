@@ -287,6 +287,485 @@ function handleAction(action, button) {
 }
 
 
+// WRITER:WORK_SCHEDULE_LOGIC:START
+
+/* ========================================
+   WORK SCHEDULE
+======================================== */
+
+const scheduleApiUrl =
+  '/api/v1/schedule.php';
+
+const scheduleDateInput =
+  document.getElementById('schedule-date');
+
+const scheduleDateTitle =
+  document.getElementById('schedule-date-title');
+
+const scheduleVisitCount =
+  document.getElementById('schedule-visit-count');
+
+const scheduleList =
+  document.getElementById('schedule-list');
+
+const scheduleFormCard =
+  document.getElementById('schedule-form-card');
+
+const scheduleStore =
+  document.getElementById('schedule-store');
+
+const scheduleStartTime =
+  document.getElementById('schedule-start-time');
+
+const scheduleCustomCourse =
+  document.getElementById('schedule-custom-course');
+
+const scheduleFormMessage =
+  document.getElementById('schedule-form-message');
+
+const scheduleSaveButton =
+  document.getElementById('schedule-save-button');
+
+
+let selectedScheduleCourse = 90;
+let selectedCustomerStatus = 'repeat';
+
+
+if (scheduleDateInput) {
+  scheduleDateInput.addEventListener(
+    'change',
+    () => {
+      loadSchedule();
+    }
+  );
+}
+
+
+document.addEventListener(
+  'click',
+  (event) => {
+
+    const courseButton =
+      event.target.closest('[data-course]');
+
+    if (courseButton) {
+
+      document
+        .querySelectorAll('[data-course]')
+        .forEach((button) => {
+          button.classList.remove('is-selected');
+        });
+
+      courseButton.classList.add('is-selected');
+
+      selectedScheduleCourse =
+        Number(courseButton.dataset.course);
+
+      if (scheduleCustomCourse) {
+        scheduleCustomCourse.value = '';
+      }
+
+      return;
+    }
+
+
+    const statusButton =
+      event.target.closest(
+        '[data-customer-status]'
+      );
+
+    if (statusButton) {
+
+      document
+        .querySelectorAll(
+          '[data-customer-status]'
+        )
+        .forEach((button) => {
+          button.classList.remove('is-selected');
+        });
+
+      statusButton.classList.add('is-selected');
+
+      selectedCustomerStatus =
+        statusButton.dataset.customerStatus;
+    }
+  }
+);
+
+
+if (scheduleCustomCourse) {
+  scheduleCustomCourse.addEventListener(
+    'input',
+    () => {
+
+      const value =
+        Number(scheduleCustomCourse.value);
+
+      if (value > 0) {
+
+        selectedScheduleCourse = value;
+
+        document
+          .querySelectorAll('[data-course]')
+          .forEach((button) => {
+            button.classList.remove('is-selected');
+          });
+      }
+    }
+  );
+}
+
+
+function openScheduleForm() {
+
+  if (!scheduleFormCard) return;
+
+  scheduleFormCard.hidden = false;
+
+  scheduleFormCard.scrollIntoView({
+    behavior: 'smooth',
+    block: 'start',
+  });
+}
+
+
+function closeScheduleForm() {
+
+  if (!scheduleFormCard) return;
+
+  scheduleFormCard.hidden = true;
+
+  hideScheduleMessage();
+}
+
+
+async function loadSchedule() {
+
+  if (
+    !scheduleDateInput ||
+    !scheduleList
+  ) {
+    return;
+  }
+
+  const date =
+    scheduleDateInput.value;
+
+  if (!date) return;
+
+  scheduleList.innerHTML =
+    '<div class="schedule-loading">予定を読み込み中…</div>';
+
+  try {
+
+    const response =
+      await fetch(
+        `${scheduleApiUrl}?date=${encodeURIComponent(date)}`
+      );
+
+    const data =
+      await response.json();
+
+    if (
+      !response.ok ||
+      !data.success
+    ) {
+      throw new Error(
+        data.error || '予定の取得に失敗しました。'
+      );
+    }
+
+    renderSchedule(
+      date,
+      data.visits || []
+    );
+
+  } catch (error) {
+
+    scheduleList.innerHTML =
+      `<div class="schedule-error">${escapeHtml(
+        error.message
+      )}</div>`;
+  }
+}
+
+
+function renderSchedule(
+  date,
+  visits
+) {
+
+  if (
+    !scheduleList ||
+    !scheduleVisitCount
+  ) {
+    return;
+  }
+
+  scheduleVisitCount.textContent =
+    `${visits.length}件`;
+
+  if (scheduleDateTitle) {
+
+    const dateObject =
+      new Date(`${date}T00:00:00`);
+
+    scheduleDateTitle.textContent =
+      `${dateObject.getMonth() + 1}月${dateObject.getDate()}日の予定`;
+  }
+
+  if (visits.length === 0) {
+
+    scheduleList.innerHTML = `
+      <div class="schedule-empty">
+        <strong>まだ予定なし</strong>
+        <span>空いてるところに予約を追加しよう</span>
+      </div>
+    `;
+
+    return;
+  }
+
+  scheduleList.innerHTML =
+    visits
+      .map((visit) => {
+
+        const time =
+          String(visit.started_at || '')
+            .slice(11, 16);
+
+        const statusLabel =
+          scheduleCustomerStatusLabel(
+            visit.customer_status
+          );
+
+        const customerLabel =
+          visit.customer_name
+          || visit.customer_code
+          || statusLabel;
+
+        return `
+          <button
+            class="schedule-visit-card"
+            type="button"
+            data-visit-id="${Number(visit.id)}"
+          >
+            <span class="schedule-visit-time">
+              ${escapeHtml(time)}
+            </span>
+
+            <span class="schedule-visit-main">
+
+              <strong>
+                ${escapeHtml(customerLabel)}
+              </strong>
+
+              <small>
+                ${Number(visit.course_minutes)}分
+                ・
+                ${escapeHtml(statusLabel)}
+                ・
+                ${escapeHtml(visit.store_name)}
+              </small>
+
+            </span>
+
+            <span class="schedule-visit-arrow">
+              ›
+            </span>
+          </button>
+        `;
+      })
+      .join('');
+}
+
+
+function scheduleCustomerStatusLabel(
+  status
+) {
+
+  const labels = {
+    new: '新規',
+    repeat: 'リピ',
+    other_store_repeat: '他店リピ',
+    repeat_unknown_id: 'リピ・ID不明',
+  };
+
+  return labels[status] || '未設定';
+}
+
+
+async function saveScheduleVisit() {
+
+  if (
+    !scheduleDateInput ||
+    !scheduleStore ||
+    !scheduleStartTime ||
+    !scheduleSaveButton
+  ) {
+    return;
+  }
+
+  const date =
+    scheduleDateInput.value;
+
+  const time =
+    scheduleStartTime.value;
+
+  if (
+    !date ||
+    !time
+  ) {
+    showScheduleMessage(
+      '日付と開始時間を入れてね。',
+      true
+    );
+
+    return;
+  }
+
+
+  if (
+    !selectedScheduleCourse ||
+    selectedScheduleCourse <= 0
+  ) {
+    showScheduleMessage(
+      'コース時間を選んでね。',
+      true
+    );
+
+    return;
+  }
+
+
+  scheduleSaveButton.disabled = true;
+  scheduleSaveButton.textContent =
+    '登録中…';
+
+  hideScheduleMessage();
+
+
+  try {
+
+    const response =
+      await fetch(
+        scheduleApiUrl,
+        {
+          method: 'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body: JSON.stringify({
+            store_id:
+              Number(scheduleStore.value),
+
+            started_at:
+              `${date} ${time}`,
+
+            course_minutes:
+              selectedScheduleCourse,
+
+            customer_status:
+              selectedCustomerStatus,
+
+            customer_id:
+              null,
+          }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok ||
+      !data.success
+    ) {
+      throw new Error(
+        data.error || '予約登録に失敗しました。'
+      );
+    }
+
+
+    showScheduleMessage(
+      '予約を登録したよ ✓',
+      false
+    );
+
+    await loadSchedule();
+
+    window.setTimeout(
+      () => {
+        closeScheduleForm();
+      },
+      700
+    );
+
+
+  } catch (error) {
+
+    showScheduleMessage(
+      error.message,
+      true
+    );
+
+  } finally {
+
+    scheduleSaveButton.disabled = false;
+    scheduleSaveButton.textContent =
+      'この予約を登録';
+  }
+}
+
+
+function showScheduleMessage(
+  message,
+  isError = false
+) {
+
+  if (!scheduleFormMessage) return;
+
+  scheduleFormMessage.hidden = false;
+  scheduleFormMessage.textContent =
+    message;
+
+  scheduleFormMessage.classList.toggle(
+    'is-error',
+    isError
+  );
+}
+
+
+function hideScheduleMessage() {
+
+  if (!scheduleFormMessage) return;
+
+  scheduleFormMessage.hidden = true;
+  scheduleFormMessage.textContent = '';
+  scheduleFormMessage.classList.remove(
+    'is-error'
+  );
+}
+
+
+function escapeHtml(value) {
+
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+// WRITER:WORK_SCHEDULE_LOGIC:END
+
+
 /* ========================================
    DUMMY DIARY LITE
 ======================================== */
