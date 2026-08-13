@@ -1340,6 +1340,28 @@ h2 {
    KOPPY COMPARISON WORKSPACE
 ======================================== */
 
+.comparison-workspace {
+  min-width: 0;
+}
+
+.comparison-toolbar {
+  min-height: 46px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  margin-bottom: 8px;
+}
+
+.comparison-toolbar-label {
+  color: var(--text-soft);
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
 .comparison-editor-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -1354,7 +1376,7 @@ h2 {
   display: flex;
   gap: 7px;
 
-  margin-bottom: 8px;
+  margin: 0;
 }
 
 .koppy-idea-tab {
