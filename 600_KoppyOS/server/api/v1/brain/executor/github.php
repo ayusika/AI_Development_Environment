@@ -303,6 +303,7 @@ $allowedExactPaths = [
     '000_HOME/次にやること.md',
     '000_BOOT/PROTOCOL_INDEX.md',
     '040_Koppy/性格/README.md',
+    '000_BOOT/README.md',
 ];
 
 $isAllowedPath =
@@ -898,3 +899,4 @@ respondSuccess([
             $patchInfo,
     ],
 ]);
+
