@@ -975,6 +975,53 @@ PARTIAL REPLACEを利用して
 
 ---
 
+## 12.2 Repository Sync Before Edit
+
+新しいファイルを扱い始める場合、
+または新しい編集作業単位を開始する場合は、
+編集前にRepositoryの同期状態を確認する。
+
+基本順序：
+
+```text
+git status
+↓
+ローカル変更確認
+↓
+安全にpull可能か確認
+↓
+git pull
+↓
+最新状態確認
+↓
+対象実ファイル取得
+↓
+PRE-FLIGHT
+```
+
+`git pull` の前には必ず `git status` を確認する。
+
+未コミット変更が存在する場合は、
+勝手に以下を行わない。
+
+- stash
+- commit
+- restore
+- discard
+- reset
+
+安全にpullできない場合はSTOPし、
+ローカル変更の扱いを確認する。
+
+新しい対象ファイルを扱う場合は、
+最新のRepository状態を確認した後に
+その実ファイルを取得して編集判断を開始する。
+
+古いローカル状態や過去に取得した内容を、
+最新状態として扱ってはならない。
+
+---
+
 # 13. EXECUTION
 
 PRE-FLIGHT通過後、
