@@ -163,6 +163,14 @@ function handleAction(action, button) {
       openCustomerEditor(button);
       break;
 
+    case 'add-dummy-diary':
+      addDummyDiary(button);
+      break;
+
+    case 'remove-dummy-diary':
+      removeDummyDiary(button);
+      break;
+
     case 'close-customer-editor':
       closeCustomerEditor();
       break;
