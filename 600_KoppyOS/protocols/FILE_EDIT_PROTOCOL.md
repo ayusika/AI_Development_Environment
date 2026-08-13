@@ -1233,6 +1233,85 @@ WRITEに失敗した、
 
 ---
 
+## 17.1 Commit / Push After Edit
+
+対象ファイルの編集が完了し、
+必要なPOST-FLIGHT検証によってVERIFIEDとなった場合、
+GitHub正本への反映までを標準作業ルーチンとする。
+
+基本順序：
+
+```text
+POST-FLIGHT
+↓
+VERIFIED
+↓
+git diff / git status
+↓
+変更対象確認
+↓
+今回変更した対象ファイルを明示してgit add
+↓
+git commit
+↓
+git push
+↓
+git status
+↓
+同期状態確認
+↓
+DONE
+```
+
+commit前には、
+`git diff` および `git status` 等を使用して
+今回の変更対象を確認する。
+
+原則として、
+無関係な変更を同じcommitへ含めない。
+
+stageする場合は、
+`git add .` を無条件に使用せず、
+今回変更したRepository Root基準フルパスを明示して
+`git add` することを優先する。
+
+commit messageは、
+今回の変更内容を識別できる内容とする。
+
+`git push` は、
+必要なPOST-FLIGHT検証によって
+編集がVERIFIEDとなった後に実行する。
+
+`git push` 完了後は、
+`git status` 等によって
+ローカルRepositoryの状態を再確認する。
+
+pushに失敗した場合、
+ローカルでcommitが成功していても
+GitHub正本への反映完了として扱わない。
+
+push後の同期状態を確認できない場合も、
+DONEとして扱わない。
+
+以下の状態まで確認して、
+標準作業ルーチンの完了とする。
+
+```text
+編集完了
++
+POST-FLIGHT VERIFIED
++
+commit完了
++
+push完了
++
+最終同期確認
+=
+DONE
+```
+
+---
+
 # 18. Multi-Edit Rules
 
 複数ファイルまたは複数箇所を編集する場合でも、
