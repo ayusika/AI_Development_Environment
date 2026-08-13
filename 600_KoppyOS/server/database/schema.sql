@@ -2,69 +2,100 @@ PRAGMA foreign_keys = ON;
 
 
 /* =========================================================
-   Kohaku Work DB Lite
-   SQLite schema v1
+   Kohaku Work Database
+   Production Beta Schema v1.0
 
-   日時形式:
+   日時:
    YYYY-MM-DD HH:MM
-   例: 2026-08-14 15:00
 
-   秒は保存しない。
+   方針:
+   - visits を仕事データの中心にする
+   - 不明値は NULL
+   - 集計可能な結果は重複保存しない
+   - 金額は円単位の INTEGER
 ========================================================= */
 
 
 /* =========================================================
    1. STORES
-   対応店舗
 ========================================================= */
 
-CREATE TABLE IF NOT EXISTS stores (
+CREATE TABLE stores (
 
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 
     name TEXT NOT NULL UNIQUE,
 
+    active INTEGER NOT NULL DEFAULT 1
+        CHECK (active IN (0, 1)),
+
     created_at TEXT NOT NULL DEFAULT (
         strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
-    )
+    ),
 
+    updated_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    )
 );
 
 
 /* =========================================================
-   2. CUSTOMERS
-   顧客本体
-
-   名前はcustomer_namesで管理する。
-   customers自体は「同一人物」を表すIDの箱。
+   2. WORK_SHIFTS
 ========================================================= */
 
-CREATE TABLE IF NOT EXISTS customers (
+CREATE TABLE work_shifts (
 
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    store_id INTEGER NOT NULL,
+
+    start_at TEXT NOT NULL,
+
+    end_at TEXT NOT NULL,
 
     note TEXT,
 
     created_at TEXT NOT NULL DEFAULT (
         strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
-    )
+    ),
 
+    updated_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    ),
+
+    FOREIGN KEY (store_id)
+        REFERENCES stores(id)
+        ON DELETE RESTRICT
 );
 
 
 /* =========================================================
-   3. CUSTOMER_NAMES
-   顧客が持つ複数の名前
-
-   name_type例:
-   line
-   x
-   instagram
-   store
-   other
+   3. CUSTOMERS
 ========================================================= */
 
-CREATE TABLE IF NOT EXISTS customer_names (
+CREATE TABLE customers (
+
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    customer_code TEXT NOT NULL UNIQUE,
+
+    general_notes TEXT,
+
+    created_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    ),
+
+    updated_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    )
+);
+
+
+/* =========================================================
+   4. CUSTOMER_NAMES
+========================================================= */
+
+CREATE TABLE customer_names (
 
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 
@@ -76,6 +107,7 @@ CREATE TABLE IF NOT EXISTS customer_names (
             'x',
             'instagram',
             'store',
+            'nickname',
             'other'
         )
     ),
@@ -84,11 +116,16 @@ CREATE TABLE IF NOT EXISTS customer_names (
 
     store_id INTEGER,
 
-    is_primary INTEGER NOT NULL DEFAULT 0 CHECK (
-        is_primary IN (0, 1)
-    ),
+    is_primary INTEGER NOT NULL DEFAULT 0
+        CHECK (is_primary IN (0, 1)),
+
+    note TEXT,
 
     created_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    ),
+
+    updated_at TEXT NOT NULL DEFAULT (
         strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
     ),
 
@@ -99,121 +136,231 @@ CREATE TABLE IF NOT EXISTS customer_names (
     FOREIGN KEY (store_id)
         REFERENCES stores(id)
         ON DELETE SET NULL
-
 );
 
 
 /* =========================================================
-   4. VISITS
-   接客情報
-
-   ダミー日記用の架空接客もここへ入れられる。
-   ダミーの場合 customer_id は NULL。
+   5. VISITS
+   Kohaku Work の中心
 ========================================================= */
 
-CREATE TABLE IF NOT EXISTS visits (
+CREATE TABLE visits (
 
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-    customer_id INTEGER,
+    source_id TEXT UNIQUE,
 
     store_id INTEGER NOT NULL,
 
+    customer_id INTEGER,
+
     started_at TEXT NOT NULL,
 
-    course_minutes INTEGER NOT NULL CHECK (
-        course_minutes IN (
-            60,
-            75,
-            90,
-            120,
-            150,
-            180
-        )
+    course_minutes INTEGER CHECK (
+        course_minutes IS NULL
+        OR course_minutes > 0
     ),
 
-    customer_type TEXT NOT NULL CHECK (
-        customer_type IN (
+    customer_status TEXT CHECK (
+        customer_status IS NULL
+        OR customer_status IN (
             'new',
-            'repeat'
+            'repeat',
+            'other_store_repeat',
+            'repeat_unknown_id'
         )
     ),
 
-    options TEXT NOT NULL DEFAULT '[]',
+    customer_features TEXT,
 
-    is_dummy INTEGER NOT NULL DEFAULT 0 CHECK (
-        is_dummy IN (0, 1)
-    ),
+    conversation_notes TEXT,
 
-    note TEXT,
+    visit_notes TEXT,
+
+    is_dummy INTEGER NOT NULL DEFAULT 0
+        CHECK (is_dummy IN (0, 1)),
+
+    status TEXT NOT NULL DEFAULT 'scheduled'
+        CHECK (
+            status IN (
+                'scheduled',
+                'completed',
+                'cancelled',
+                'no_show'
+            )
+        ),
 
     created_at TEXT NOT NULL DEFAULT (
         strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
     ),
 
-    FOREIGN KEY (customer_id)
-        REFERENCES customers(id)
-        ON DELETE SET NULL,
+    updated_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    ),
 
     FOREIGN KEY (store_id)
         REFERENCES stores(id)
-        ON DELETE RESTRICT
+        ON DELETE RESTRICT,
 
+    FOREIGN KEY (customer_id)
+        REFERENCES customers(id)
+        ON DELETE SET NULL
 );
 
 
 /* =========================================================
-   5. DIARIES
-   写メ日記本体
+   6. OPTIONS
 ========================================================= */
 
-CREATE TABLE IF NOT EXISTS diaries (
+CREATE TABLE options (
 
     id INTEGER PRIMARY KEY AUTOINCREMENT,
 
-    store_id INTEGER NOT NULL,
+    name TEXT NOT NULL UNIQUE,
 
-    posted_at TEXT,
+    active INTEGER NOT NULL DEFAULT 1
+        CHECK (active IN (0, 1)),
 
-    platform TEXT NOT NULL CHECK (
-        platform IN (
-            'nukinavi',
-            'heaven',
-            'other'
+    sort_order INTEGER NOT NULL DEFAULT 10,
+
+    created_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    ),
+
+    updated_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    )
+);
+
+
+/* =========================================================
+   7. VISIT_OPTIONS
+========================================================= */
+
+CREATE TABLE visit_options (
+
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    visit_id INTEGER NOT NULL,
+
+    option_id INTEGER,
+
+    custom_name TEXT,
+
+    income_amount INTEGER,
+
+    created_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    ),
+
+    updated_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    ),
+
+    CHECK (
+        option_id IS NOT NULL
+        OR (
+            custom_name IS NOT NULL
+            AND trim(custom_name) <> ''
         )
     ),
+
+    FOREIGN KEY (visit_id)
+        REFERENCES visits(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (option_id)
+        REFERENCES options(id)
+        ON DELETE SET NULL
+);
+
+
+/* =========================================================
+   8. VISIT_DIARY_NOTES
+   顧客単位の日記素材
+========================================================= */
+
+CREATE TABLE visit_diary_notes (
+
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    visit_id INTEGER NOT NULL UNIQUE,
+
+    body TEXT NOT NULL DEFAULT '',
+
+    created_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    ),
+
+    updated_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    ),
+
+    FOREIGN KEY (visit_id)
+        REFERENCES visits(id)
+        ON DELETE CASCADE
+);
+
+
+/* =========================================================
+   9. DIARIES
+   実際の投稿単位
+========================================================= */
+
+CREATE TABLE diaries (
+
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    source_id TEXT UNIQUE,
+
+    store_id INTEGER NOT NULL,
+
+    platform TEXT NOT NULL,
 
     diary_type TEXT NOT NULL,
 
     title TEXT,
 
-    body TEXT NOT NULL,
+    body TEXT NOT NULL DEFAULT '',
+
+    scheduled_at TEXT,
+
+    posted_at TEXT,
+
+    is_dummy INTEGER NOT NULL DEFAULT 0
+        CHECK (is_dummy IN (0, 1)),
+
+    status TEXT NOT NULL DEFAULT 'draft'
+        CHECK (
+            status IN (
+                'draft',
+                'scheduled',
+                'posted',
+                'cancelled'
+            )
+        ),
 
     created_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    ),
+
+    updated_at TEXT NOT NULL DEFAULT (
         strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
     ),
 
     FOREIGN KEY (store_id)
         REFERENCES stores(id)
         ON DELETE RESTRICT
-
 );
 
 
 /* =========================================================
-   6. DIARY_VISITS
-   日記と接客をつなぐ中間テーブル
-
-   1つの日記に複数接客を入れられる。
-   同じ接客から複数媒体の日記も作れる。
-
-   sort_order:
-   日記内の並び順。
-   10,20,30... と振ることで、
-   後から15などを間に入れやすくする。
+   10. DIARY_VISITS
 ========================================================= */
 
-CREATE TABLE IF NOT EXISTS diary_visits (
+CREATE TABLE diary_visits (
+
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
 
     diary_id INTEGER NOT NULL,
 
@@ -221,7 +368,7 @@ CREATE TABLE IF NOT EXISTS diary_visits (
 
     sort_order INTEGER NOT NULL DEFAULT 10,
 
-    PRIMARY KEY (
+    UNIQUE (
         diary_id,
         visit_id
     ),
@@ -233,47 +380,220 @@ CREATE TABLE IF NOT EXISTS diary_visits (
     FOREIGN KEY (visit_id)
         REFERENCES visits(id)
         ON DELETE CASCADE
+);
 
+
+/* =========================================================
+   11. VISIT_SALES
+   接客ごとの確定実績
+========================================================= */
+
+CREATE TABLE visit_sales (
+
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    visit_id INTEGER NOT NULL UNIQUE,
+
+    base_price INTEGER,
+
+    base_income INTEGER,
+
+    option_income INTEGER,
+
+    tip_income INTEGER,
+
+    adjustment_income INTEGER,
+
+    created_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    ),
+
+    updated_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    ),
+
+    FOREIGN KEY (visit_id)
+        REFERENCES visits(id)
+        ON DELETE CASCADE
+);
+
+
+/* =========================================================
+   12. STORE_COURSE_RATES
+   店舗別コース料金マスタ
+========================================================= */
+
+CREATE TABLE store_course_rates (
+
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    store_id INTEGER NOT NULL,
+
+    course_minutes INTEGER NOT NULL CHECK (
+        course_minutes > 0
+    ),
+
+    base_price INTEGER NOT NULL,
+
+    base_income INTEGER NOT NULL,
+
+    effective_from TEXT NOT NULL,
+
+    effective_to TEXT,
+
+    active INTEGER NOT NULL DEFAULT 1
+        CHECK (active IN (0, 1)),
+
+    created_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    ),
+
+    updated_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    ),
+
+    UNIQUE (
+        store_id,
+        course_minutes,
+        effective_from
+    ),
+
+    FOREIGN KEY (store_id)
+        REFERENCES stores(id)
+        ON DELETE CASCADE
+);
+
+
+/* =========================================================
+   13. STORE_OPTION_RATES
+   店舗別OP料金マスタ
+========================================================= */
+
+CREATE TABLE store_option_rates (
+
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    store_id INTEGER NOT NULL,
+
+    option_id INTEGER NOT NULL,
+
+    income_amount INTEGER NOT NULL,
+
+    effective_from TEXT NOT NULL,
+
+    effective_to TEXT,
+
+    active INTEGER NOT NULL DEFAULT 1
+        CHECK (active IN (0, 1)),
+
+    created_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    ),
+
+    updated_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    ),
+
+    UNIQUE (
+        store_id,
+        option_id,
+        effective_from
+    ),
+
+    FOREIGN KEY (store_id)
+        REFERENCES stores(id)
+        ON DELETE CASCADE,
+
+    FOREIGN KEY (option_id)
+        REFERENCES options(id)
+        ON DELETE CASCADE
 );
 
 
 /* =========================================================
    INDEXES
-   後から検索が重くならないための最低限INDEX
 ========================================================= */
 
-CREATE INDEX IF NOT EXISTS idx_customer_names_customer_id
+CREATE INDEX idx_work_shifts_store_start
+ON work_shifts(store_id, start_at);
+
+CREATE INDEX idx_customer_names_customer
 ON customer_names(customer_id);
 
-CREATE INDEX IF NOT EXISTS idx_customer_names_name
+CREATE INDEX idx_customer_names_name
 ON customer_names(name);
 
-CREATE INDEX IF NOT EXISTS idx_visits_customer_id
+CREATE INDEX idx_visits_store_started
+ON visits(store_id, started_at);
+
+CREATE INDEX idx_visits_customer
 ON visits(customer_id);
 
-CREATE INDEX IF NOT EXISTS idx_visits_store_id
-ON visits(store_id);
+CREATE INDEX idx_visits_status
+ON visits(status);
 
-CREATE INDEX IF NOT EXISTS idx_visits_started_at
-ON visits(started_at);
+CREATE INDEX idx_visit_options_visit
+ON visit_options(visit_id);
 
-CREATE INDEX IF NOT EXISTS idx_diaries_store_id
+CREATE INDEX idx_diaries_store
 ON diaries(store_id);
 
-CREATE INDEX IF NOT EXISTS idx_diaries_posted_at
+CREATE INDEX idx_diaries_scheduled
+ON diaries(scheduled_at);
+
+CREATE INDEX idx_diaries_posted
 ON diaries(posted_at);
 
-CREATE INDEX IF NOT EXISTS idx_diary_visits_visit_id
+CREATE INDEX idx_diary_visits_diary
+ON diary_visits(diary_id);
+
+CREATE INDEX idx_diary_visits_visit
 ON diary_visits(visit_id);
+
+CREATE INDEX idx_store_course_rates_lookup
+ON store_course_rates(
+    store_id,
+    course_minutes,
+    effective_from
+);
+
+CREATE INDEX idx_store_option_rates_lookup
+ON store_option_rates(
+    store_id,
+    option_id,
+    effective_from
+);
 
 
 /* =========================================================
    INITIAL STORES
 ========================================================= */
 
-INSERT OR IGNORE INTO stores (name)
+INSERT INTO stores (name)
 VALUES
-    ('千葉'),
     ('札幌'),
+    ('千葉'),
     ('東京'),
     ('名古屋');
+
+
+/* =========================================================
+   INITIAL OPTIONS
+========================================================= */
+
+INSERT INTO options (
+    name,
+    sort_order
+)
+VALUES
+    ('聖水', 10),
+    ('射精', 20),
+    ('逆AF', 30),
+    ('コスプレ', 40),
+    ('ハイヒール', 50),
+    ('前立腺マッサージ', 60),
+    ('咀嚼', 70),
+    ('ごっくん', 80),
+    ('動画撮影', 90),
+    ('パンツお持ち帰り', 100),
+    ('パンスト', 110);
