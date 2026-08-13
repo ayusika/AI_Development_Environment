@@ -1335,6 +1335,143 @@ h2 {
   border-color: var(--line);
 }
 
+
+/* ========================================
+   KOPPY COMPARISON WORKSPACE
+======================================== */
+
+.comparison-editor-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.koppy-comparison-panel {
+  min-width: 0;
+}
+
+.koppy-idea-tabs {
+  display: flex;
+  gap: 7px;
+
+  margin-bottom: 8px;
+}
+
+.koppy-idea-tab {
+  min-height: 38px;
+
+  padding: 8px 13px;
+
+  border-radius: 11px;
+
+  color: var(--text-soft);
+  background: var(--surface-strong);
+
+  border: 1px solid var(--line);
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.koppy-idea-tab.is-active {
+  color: var(--accent-deep);
+  background: var(--accent-soft);
+  border-color: var(--line-strong);
+}
+
+.koppy-idea-panel[hidden] {
+  display: none;
+}
+
+.customer-diff-panel {
+  margin-top: 12px;
+  padding: 14px;
+
+  border-radius: 15px;
+
+  background: rgba(255, 255, 255, 0.86);
+  border: 1px solid var(--line);
+}
+
+.diff-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+
+  margin-bottom: 11px;
+}
+
+.diff-heading strong {
+  font-size: 13px;
+}
+
+.diff-legend {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+
+  font-size: 9px;
+}
+
+.diff-legend span {
+  padding: 4px 7px;
+  border-radius: 999px;
+}
+
+.diff-output {
+  min-height: 90px;
+
+  padding: 12px;
+
+  border-radius: 12px;
+
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+
+  white-space: pre-wrap;
+  word-break: break-word;
+
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.diff-remove {
+  background: rgba(233, 121, 143, 0.14);
+  text-decoration: line-through;
+}
+
+.diff-add {
+  background: rgba(112, 201, 168, 0.18);
+}
+
+@media (min-width: 1000px) {
+
+  body:has(#view-nukinavi-create.is-active) .app-main {
+    max-width: 1400px;
+  }
+
+  body:has(#view-nukinavi-create.is-active) .bottom-nav {
+    max-width: 1400px;
+  }
+
+  .comparison-editor-grid {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(0, 1fr);
+
+    gap: 16px;
+  }
+
+  .customer-inline-editor {
+    padding: 20px;
+  }
+
+  .customer-idea-textarea {
+    min-height: 280px;
+  }
+}
+
 @media (min-width: 720px) {
   .koppy-idea-grid {
     grid-template-columns: 1fr 1fr;
