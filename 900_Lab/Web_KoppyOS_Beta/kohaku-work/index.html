@@ -811,23 +811,53 @@
               <div class="diff-heading">
 
                 <div>
-                  <p class="eyebrow">DIFF</p>
+                  <p class="eyebrow">DIFF PREVIEW</p>
                   <strong id="customer-diff-title">
                     A ↔ B 差分
                   </strong>
                 </div>
 
                 <div class="diff-legend">
-                  <span class="diff-remove">Aから変更</span>
+                  <span class="diff-remove">A案</span>
                   <span class="diff-add">Koppy案</span>
                 </div>
 
               </div>
 
-              <div
-                class="diff-output"
-                id="customer-diff-output"
-              ></div>
+
+              <div class="diff-side-by-side">
+
+                <section class="diff-column diff-column-source">
+
+                  <div class="diff-column-heading">
+                    − A｜しいちゃん案
+                  </div>
+
+                  <div
+                    class="diff-output"
+                    id="customer-diff-source"
+                  ></div>
+
+                </section>
+
+
+                <section class="diff-column diff-column-target">
+
+                  <div
+                    class="diff-column-heading"
+                    id="customer-diff-target-heading"
+                  >
+                    ＋ B｜Koppy案
+                  </div>
+
+                  <div
+                    class="diff-output"
+                    id="customer-diff-target"
+                  ></div>
+
+                </section>
+
+              </div>
 
             </section>
 
