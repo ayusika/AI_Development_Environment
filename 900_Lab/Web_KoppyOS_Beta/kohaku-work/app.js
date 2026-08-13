@@ -254,6 +254,69 @@ function handleAction(action, button) {
 
 
 /* ========================================
+   DUMMY DIARY LITE
+======================================== */
+
+let dummyDiarySerial = 0;
+
+
+function addDummyDiary(button) {
+  const template =
+    document.getElementById(
+      'dummy-diary-template'
+    );
+
+  if (!template) return;
+
+  dummyDiarySerial += 1;
+
+  const fragment =
+    template.content.cloneNode(true);
+
+  const card =
+    fragment.querySelector(
+      '.dummy-diary-card'
+    );
+
+  if (!card) return;
+
+  card.dataset.dummyId =
+    `dummy-${dummyDiarySerial}`;
+
+  card
+    .querySelectorAll(
+      'input[name="dummy-course"]'
+    )
+    .forEach((input) => {
+      input.name =
+        `dummy-course-${dummyDiarySerial}`;
+    });
+
+  card
+    .querySelectorAll(
+      'input[name="dummy-type"]'
+    )
+    .forEach((input) => {
+      input.name =
+        `dummy-type-${dummyDiarySerial}`;
+    });
+
+  button.insertAdjacentElement(
+    'beforebegin',
+    card
+  );
+}
+
+
+function removeDummyDiary(button) {
+  const card =
+    button.closest('.dummy-diary-card');
+
+  card?.remove();
+}
+
+
+/* ========================================
    CUSTOMER INLINE EDITOR
 ======================================== */
 
