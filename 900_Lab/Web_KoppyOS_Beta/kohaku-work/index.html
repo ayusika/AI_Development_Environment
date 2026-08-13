@@ -1469,6 +1469,253 @@
       </section>
 
 
+      <!-- WRITER:WORK_SCHEDULE_VIEW:START -->
+
+      <!-- ======================================
+           WORK SCHEDULE VIEW
+      ======================================= -->
+
+      <section
+        class="view"
+        id="view-schedule"
+        data-view="schedule"
+      >
+
+        <div class="page-heading">
+
+          <button
+            class="back-button"
+            type="button"
+            data-action="go-home"
+          >
+            ←
+          </button>
+
+          <div>
+            <p class="eyebrow">SCHEDULE</p>
+            <h1>お仕事予定</h1>
+          </div>
+
+        </div>
+
+
+        <section class="content-card schedule-date-card">
+
+          <label
+            class="field-label"
+            for="schedule-date"
+          >
+            表示する日
+          </label>
+
+          <input
+            class="text-input"
+            id="schedule-date"
+            type="date"
+            value="2026-08-14"
+          >
+
+        </section>
+
+
+        <section class="content-card">
+
+          <div class="section-heading">
+
+            <div>
+              <p class="eyebrow">BOOKINGS</p>
+              <h2 id="schedule-date-title">
+                8月14日の予定
+              </h2>
+            </div>
+
+            <span
+              class="count-badge"
+              id="schedule-visit-count"
+            >
+              0件
+            </span>
+
+          </div>
+
+
+          <div
+            class="schedule-list"
+            id="schedule-list"
+          >
+
+            <div class="schedule-loading">
+              予定を読み込み中…
+            </div>
+
+          </div>
+
+
+          <button
+            class="primary-button schedule-add-button"
+            type="button"
+            data-action="open-schedule-form"
+          >
+            ＋ 予約を追加
+          </button>
+
+        </section>
+
+
+        <section
+          class="content-card schedule-form-card"
+          id="schedule-form-card"
+          hidden
+        >
+
+          <div class="section-heading">
+
+            <div>
+              <p class="eyebrow">NEW BOOKING</p>
+              <h2>予約を追加</h2>
+            </div>
+
+            <button
+              class="schedule-form-close"
+              type="button"
+              data-action="close-schedule-form"
+              aria-label="予約入力を閉じる"
+            >
+              ×
+            </button>
+
+          </div>
+
+
+          <div class="schedule-form-grid">
+
+            <label class="schedule-field">
+              <span>店舗</span>
+
+              <select
+                class="text-input"
+                id="schedule-store"
+              >
+                <option value="1">札幌</option>
+                <option value="2" selected>千葉</option>
+                <option value="3">東京</option>
+                <option value="4">名古屋</option>
+              </select>
+            </label>
+
+
+            <label class="schedule-field">
+              <span>開始時間</span>
+
+              <input
+                class="text-input"
+                id="schedule-start-time"
+                type="time"
+                step="600"
+                value="15:00"
+              >
+            </label>
+
+          </div>
+
+
+          <div class="schedule-field">
+
+            <span>コース</span>
+
+            <div
+              class="schedule-choice-row"
+              id="schedule-course-choices"
+            >
+
+              <button type="button" data-course="40">40分</button>
+              <button type="button" data-course="60">60分</button>
+              <button type="button" data-course="80">80分</button>
+              <button type="button" data-course="90" class="is-selected">90分</button>
+              <button type="button" data-course="100">100分</button>
+              <button type="button" data-course="120">120分</button>
+              <button type="button" data-course="150">150分</button>
+              <button type="button" data-course="180">180分</button>
+
+            </div>
+
+            <input
+              class="text-input schedule-custom-course"
+              id="schedule-custom-course"
+              type="number"
+              min="1"
+              placeholder="その他の分数"
+            >
+
+          </div>
+
+
+          <div class="schedule-field">
+
+            <span>区分</span>
+
+            <div
+              class="schedule-choice-row"
+              id="schedule-customer-status"
+            >
+
+              <button
+                type="button"
+                data-customer-status="new"
+              >
+                新規
+              </button>
+
+              <button
+                type="button"
+                data-customer-status="repeat"
+                class="is-selected"
+              >
+                リピ
+              </button>
+
+              <button
+                type="button"
+                data-customer-status="other_store_repeat"
+              >
+                他店リピ
+              </button>
+
+              <button
+                type="button"
+                data-customer-status="repeat_unknown_id"
+              >
+                リピ・ID不明
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <div
+            class="schedule-form-message"
+            id="schedule-form-message"
+            hidden
+          ></div>
+
+
+          <button
+            class="primary-button"
+            type="button"
+            data-action="save-schedule-visit"
+            id="schedule-save-button"
+          >
+            この予約を登録
+          </button>
+
+        </section>
+
+      </section>
+
+      <!-- WRITER:WORK_SCHEDULE_VIEW:END -->
+
+
       <!-- ======================================
            PLACEHOLDER VIEW
       ======================================= -->
