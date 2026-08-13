@@ -250,11 +250,27 @@ function handleAction(action, button) {
       break;
 
     case 'shift-detail':
-      showPlaceholder('今日の出勤詳細');
+      showView('schedule');
+      loadSchedule();
       break;
 
     case 'add-visit':
-      showPlaceholder('接客を追加');
+      showView('schedule');
+      loadSchedule().then(() => {
+        openScheduleForm();
+      });
+      break;
+
+    case 'open-schedule-form':
+      openScheduleForm();
+      break;
+
+    case 'close-schedule-form':
+      closeScheduleForm();
+      break;
+
+    case 'save-schedule-visit':
+      saveScheduleVisit();
       break;
 
     case 'search-customer':
