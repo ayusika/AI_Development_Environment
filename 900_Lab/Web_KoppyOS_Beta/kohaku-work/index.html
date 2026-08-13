@@ -568,6 +568,141 @@
 
           </div>
 
+          <div
+            class="customer-inline-editor"
+            id="customer-inline-editor"
+            hidden
+          >
+
+            <div class="inline-editor-heading">
+
+              <div>
+                <p class="eyebrow">PERSONAL THANKS</p>
+                <h3 id="inline-editor-customer-name">
+                  お礼を個別編集
+                </h3>
+              </div>
+
+              <button
+                class="inline-editor-close"
+                type="button"
+                data-action="close-customer-editor"
+                aria-label="閉じる"
+              >
+                ×
+              </button>
+
+            </div>
+
+
+            <section class="idea-card idea-card-user">
+
+              <div class="idea-card-heading">
+                <span class="idea-label">A</span>
+
+                <div>
+                  <strong>しいちゃん案</strong>
+                  <small>思ったことをそのまま書く</small>
+                </div>
+              </div>
+
+              <textarea
+                class="text-area customer-idea-textarea"
+                id="customer-idea-a"
+                rows="6"
+                placeholder="昨日ありがとー！久しぶりに会えて嬉しかった♡ みたいに、思ったことをがーっと書いてOK"
+              ></textarea>
+
+            </section>
+
+
+            <button
+              class="primary-button customer-koppy-generate"
+              type="button"
+              data-action="generate-customer-ideas"
+            >
+              <span class="koppy-symbol">♢ᴷ</span>
+              この内容からKoppy案をつくる
+            </button>
+
+
+            <div
+              class="koppy-idea-grid"
+              id="koppy-customer-ideas"
+              hidden
+            >
+
+              <section class="idea-card">
+
+                <div class="idea-card-heading">
+                  <span class="idea-label koppy">B</span>
+
+                  <div>
+                    <strong>♢ᴷ 整える案</strong>
+                    <small>A案の言葉をなるべく残す</small>
+                  </div>
+                </div>
+
+                <textarea
+                  class="text-area customer-idea-textarea"
+                  id="customer-idea-b"
+                  rows="7"
+                ></textarea>
+
+                <button
+                  class="idea-adopt-button"
+                  type="button"
+                  data-action="adopt-customer-idea"
+                  data-idea="b"
+                >
+                  B案を採用
+                </button>
+
+              </section>
+
+
+              <section class="idea-card">
+
+                <div class="idea-card-heading">
+                  <span class="idea-label koppy">C</span>
+
+                  <div>
+                    <strong>♢ᴷ 別案</strong>
+                    <small>内容をもとに自由に書き直す</small>
+                  </div>
+                </div>
+
+                <textarea
+                  class="text-area customer-idea-textarea"
+                  id="customer-idea-c"
+                  rows="7"
+                ></textarea>
+
+                <button
+                  class="idea-adopt-button"
+                  type="button"
+                  data-action="adopt-customer-idea"
+                  data-idea="c"
+                >
+                  C案を採用
+                </button>
+
+              </section>
+
+            </div>
+
+
+            <button
+              class="idea-adopt-button idea-adopt-user"
+              type="button"
+              data-action="adopt-customer-idea"
+              data-idea="a"
+            >
+              A案をそのまま採用
+            </button>
+
+          </div>
+
         </section>
 
 
