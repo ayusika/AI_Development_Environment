@@ -243,6 +243,8 @@ $replaceWith =
 |
 | 600_KoppyOS/
 | 900_Lab/
+| 200_Miki_Piano/site/
+| 060_Kohaku_Work/
 |
 | Exact Match:
 | 000_HOME/決定事項.md
