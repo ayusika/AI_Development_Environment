@@ -337,6 +337,9 @@ function openCustomerEditor(button) {
   koppyCustomerIdeas.hidden =
     !hasKoppyIdeas;
 
+  koppyComparisonToolbar.hidden =
+    !hasKoppyIdeas;
+
   customerDiffPanel.hidden =
     !hasKoppyIdeas;
 
@@ -347,7 +350,9 @@ function openCustomerEditor(button) {
 
   customerInlineEditor.hidden = false;
 
-  switchCustomerIdea(activeKoppyIdea);
+  if (hasKoppyIdeas) {
+    switchCustomerIdea(activeKoppyIdea);
+  }
 }
 
 
@@ -402,6 +407,7 @@ ${source}
 また会えるの楽しみにしてるね☺️`;
 
   koppyCustomerIdeas.hidden = false;
+  koppyComparisonToolbar.hidden = false;
   customerDiffPanel.hidden = false;
 
   activeKoppyIdea = 'b';
