@@ -2,8 +2,19 @@
 
 header('Content-Type: application/json; charset=utf-8');
 
+$documentRoot =
+    $_SERVER['DOCUMENT_ROOT']
+    ?? '';
+
+if ($documentRoot === '') {
+    throw new RuntimeException(
+        'DOCUMENT_ROOT is not available.'
+    );
+}
+
 $privateDirectory =
-    '/home/users/2/her.jp-mikipiano/.koppy-private/database';
+    $documentRoot
+    . '/../../.koppy-private/database';
 
 $schemaPath =
     $privateDirectory . '/schema.sql';
