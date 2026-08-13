@@ -294,6 +294,7 @@ $allowedRoots = [
     '600_KoppyOS/',
     '900_Lab/',
     '200_Miki_Piano/site/',
+    '060_Kohaku_Work/',
 ];
 
 $allowedExactPaths = [
