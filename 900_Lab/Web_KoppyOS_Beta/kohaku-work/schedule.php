@@ -788,6 +788,33 @@ try {
                 );
 
 
+        $hasOptions =
+            array_key_exists(
+                'options',
+                $payload
+            )
+            || array_key_exists(
+                'custom_option',
+                $payload
+            );
+
+        $optionNames =
+            isset($payload['options'])
+            && is_array($payload['options'])
+
+                ? $payload['options']
+                : [];
+
+        $customOption =
+            isset($payload['custom_option'])
+
+                ? trim(
+                    (string)
+                    $payload['custom_option']
+                )
+                : null;
+
+
         validateStore(
             $pdo,
             $storeId
