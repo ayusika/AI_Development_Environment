@@ -4173,3 +4173,30 @@ body:has(#view-schedule.is-active) .bottom-nav {
   }
 
 }
+
+@media (max-width: 700px) {
+
+  .schedule-grid-header {
+    min-height: 32px;
+  }
+
+
+  .schedule-day-header {
+    min-height: 32px;
+
+    padding: 2px 1px;
+  }
+
+
+  .schedule-day-header strong {
+    font-size: 9px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+
+  .schedule-day-header.is-today::before {
+    display: none;
+  }
+
+}
