@@ -872,6 +872,17 @@ try {
         ]);
 
 
+        if ($hasOptions) {
+
+            saveVisitOptions(
+                $pdo,
+                $visitId,
+                $optionNames,
+                $customOption
+            );
+        }
+
+
         echo json_encode(
             [
                 'success' => true,
