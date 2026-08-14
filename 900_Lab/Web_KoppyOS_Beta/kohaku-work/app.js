@@ -273,6 +273,18 @@ function handleAction(action, button) {
       saveScheduleVisit();
       break;
 
+    case 'close-schedule-detail':
+      closeScheduleDetail();
+      break;
+
+    case 'edit-schedule-visit':
+      editCurrentScheduleVisit();
+      break;
+
+    case 'delete-schedule-visit':
+      deleteCurrentScheduleVisit();
+      break;
+
     case 'search-customer':
       showPlaceholder('顧客を探す');
       break;
