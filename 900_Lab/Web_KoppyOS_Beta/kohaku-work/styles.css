@@ -2806,14 +2806,7 @@ body:has(#view-schedule.is-active) .bottom-nav {
 
   border-right: 1px solid var(--line);
 
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      transparent 0,
-      transparent calc(var(--schedule-hour-height) / 6 - 1px),
-      rgba(216, 238, 249, 0.42) calc(var(--schedule-hour-height) / 6 - 1px),
-      rgba(216, 238, 249, 0.42) calc(var(--schedule-hour-height) / 6)
-    );
+  background: #ffffff;
 }
 
 
@@ -2828,13 +2821,7 @@ body:has(#view-schedule.is-active) .bottom-nav {
       rgba(232, 248, 255, 0.58),
       rgba(232, 248, 255, 0.58)
     ),
-    repeating-linear-gradient(
-      to bottom,
-      transparent 0,
-      transparent calc(var(--schedule-hour-height) / 6 - 1px),
-      rgba(183, 225, 244, 0.48) calc(var(--schedule-hour-height) / 6 - 1px),
-      rgba(183, 225, 244, 0.48) calc(var(--schedule-hour-height) / 6)
-    );
+    #ffffff;
 }
 
 
@@ -2847,7 +2834,41 @@ body:has(#view-schedule.is-active) .bottom-nav {
 
   background: transparent;
 
+  border-top-style: solid;
+  border-top-color: rgba(202, 226, 238, 0.42);
+  border-top-width: 1px;
+
   cursor: pointer;
+}
+
+
+.schedule-time-slot.is-half-hour {
+  border-top-color: rgba(176, 210, 227, 0.58);
+  border-top-width: 1.4px;
+}
+
+
+.schedule-time-slot.is-hour {
+  border-top-color: rgba(149, 194, 216, 0.72);
+  border-top-width: 2px;
+}
+
+
+.schedule-day-column.is-today
+.schedule-time-slot {
+  border-top-color: rgba(166, 211, 232, 0.48);
+}
+
+
+.schedule-day-column.is-today
+.schedule-time-slot.is-half-hour {
+  border-top-color: rgba(137, 195, 221, 0.62);
+}
+
+
+.schedule-day-column.is-today
+.schedule-time-slot.is-hour {
+  border-top-color: rgba(107, 178, 210, 0.76);
 }
 
 
