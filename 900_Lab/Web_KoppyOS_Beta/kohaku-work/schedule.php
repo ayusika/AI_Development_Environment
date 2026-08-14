@@ -157,6 +157,41 @@ function validateCustomer(
 }
 
 
+function fetchVisitOptions(
+    PDO $pdo,
+    int $visitId
+): array {
+    $statement =
+        $pdo->prepare(
+            "
+            SELECT
+                vo.option_id,
+                o.name,
+                vo.custom_name,
+                vo.income_amount
+
+            FROM visit_options vo
+
+            LEFT JOIN options o
+                ON o.id = vo.option_id
+
+            WHERE vo.visit_id = ?
+
+            ORDER BY
+                o.sort_order ASC,
+                vo.id ASC
+            "
+        );
+
+    $statement->execute([
+        $visitId
+    ]);
+
+    return
+        $statement->fetchAll();
+}
+
+
 function fetchVisit(
     PDO $pdo,
     int $visitId
