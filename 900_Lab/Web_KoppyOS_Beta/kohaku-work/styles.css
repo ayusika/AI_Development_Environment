@@ -3640,3 +3640,163 @@ body:has(#view-schedule.is-active) .bottom-nav {
 
 
 /* WRITER:WORK_SCHEDULE_STYLES:END */
+
+/* ========================================
+   SCHEDULE ZOOM CONTROLS
+======================================== */
+
+.schedule-zoom-controls {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 3px;
+
+  border: 1px solid var(--line);
+  border-radius: 12px;
+
+  background: rgba(255, 255, 255, 0.88);
+
+  box-shadow: 0 3px 10px rgba(50, 104, 132, 0.08);
+}
+
+
+.schedule-zoom-button,
+.schedule-zoom-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 32px;
+
+  border: 0;
+  border-radius: 9px;
+
+  color: #55727f;
+  background: transparent;
+
+  cursor: pointer;
+}
+
+
+.schedule-zoom-button {
+  width: 34px;
+
+  font-size: 18px;
+  font-weight: 600;
+}
+
+
+.schedule-zoom-label {
+  min-width: 58px;
+
+  padding: 0 8px;
+
+  color: #397d9d;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+.schedule-zoom-button:hover,
+.schedule-zoom-label:hover {
+  background: rgba(145, 216, 245, 0.14);
+}
+
+
+.schedule-zoom-button:active,
+.schedule-zoom-label:active {
+  transform: translateY(1px);
+}
+
+
+/* ========================================
+   SCHEDULE HEIGHT RESIZE HANDLE
+======================================== */
+
+.schedule-resize-handle {
+  position: sticky;
+  z-index: 30;
+
+  left: 0;
+  bottom: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  height: 22px;
+
+  margin-top: -22px;
+
+  background:
+    linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.94)
+    );
+
+  cursor: ns-resize;
+
+  touch-action: none;
+  user-select: none;
+}
+
+
+.schedule-resize-handle span {
+  display: block;
+
+  width: 54px;
+  height: 4px;
+
+  border-radius: 999px;
+
+  background: rgba(111, 177, 207, 0.45);
+
+  transition:
+    width 0.15s ease,
+    background 0.15s ease;
+}
+
+
+.schedule-resize-handle:hover span {
+  width: 68px;
+
+  background: rgba(81, 158, 194, 0.68);
+}
+
+
+.schedule-resize-handle.is-dragging span {
+  width: 76px;
+
+  background: rgba(65, 145, 184, 0.82);
+}
+
+
+@media (max-width: 700px) {
+
+  .schedule-zoom-controls {
+    padding: 2px;
+  }
+
+
+  .schedule-zoom-button {
+    width: 38px;
+    height: 36px;
+  }
+
+
+  .schedule-zoom-label {
+    min-width: 56px;
+    height: 36px;
+  }
+
+
+  .schedule-resize-handle {
+    height: 28px;
+
+    margin-top: -28px;
+  }
+
+}
