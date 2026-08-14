@@ -1110,10 +1110,19 @@ function renderScheduleSlots(
       * hourHeight
       / 60;
 
+    let slotClass =
+      'is-ten-minute';
+
+    if (minute === 0) {
+      slotClass = 'is-hour';
+    } else if (minute === 30) {
+      slotClass = 'is-half-hour';
+    }
+
 
     slots.push(`
       <button
-        class="schedule-time-slot"
+        class="schedule-time-slot ${slotClass}"
         type="button"
         data-schedule-slot
         data-date="${date}"
