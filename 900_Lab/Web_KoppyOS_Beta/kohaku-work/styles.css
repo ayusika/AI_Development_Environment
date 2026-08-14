@@ -4200,3 +4200,139 @@ body:has(#view-schedule.is-active) .bottom-nav {
   }
 
 }
+
+/* ========================================
+   SCHEDULE OPTIONS
+======================================== */
+
+.schedule-option-grid {
+  display: grid;
+  grid-template-columns:
+    repeat(3, minmax(0, 1fr));
+
+  gap: 7px;
+}
+
+
+.schedule-option-choice {
+  position: relative;
+
+  min-width: 0;
+
+  cursor: pointer;
+}
+
+
+.schedule-option-choice input {
+  position: absolute;
+
+  opacity: 0;
+  pointer-events: none;
+}
+
+
+.schedule-option-choice span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 38px;
+
+  padding: 7px 8px;
+
+  border: 1px solid var(--line);
+  border-radius: 11px;
+
+  color: var(--text-soft);
+  background: #ffffff;
+
+  font-size: 11px;
+  font-weight: 800;
+
+  text-align: center;
+
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+}
+
+
+.schedule-option-choice input:checked + span {
+  color: var(--accent-deep);
+
+  border-color: var(--line-strong);
+
+  background:
+    rgba(210, 243, 255, 0.72);
+
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(91, 190, 230, 0.08);
+}
+
+
+.schedule-option-choice:active span {
+  transform: scale(0.98);
+}
+
+
+.schedule-custom-option {
+  display: grid;
+
+  gap: 6px;
+
+  margin-top: 10px;
+}
+
+
+.schedule-custom-option span {
+  color: var(--text-soft);
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+
+.schedule-custom-option input {
+  width: 100%;
+
+  min-height: 40px;
+
+  padding: 8px 11px;
+
+  border: 1px solid var(--line);
+  border-radius: 11px;
+
+  color: var(--text);
+  background: #ffffff;
+}
+
+
+@media (max-width: 700px) {
+
+  .schedule-option-grid {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    gap: 5px;
+  }
+
+
+  .schedule-option-choice span {
+    min-height: 34px;
+
+    padding: 5px 6px;
+
+    border-radius: 9px;
+
+    font-size: 9px;
+  }
+
+
+  .schedule-custom-option {
+    margin-top: 7px;
+  }
+
+}
