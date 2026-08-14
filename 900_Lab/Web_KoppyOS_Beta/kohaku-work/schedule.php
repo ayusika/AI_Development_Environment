@@ -513,13 +513,27 @@ try {
             $dateTo,
         ]);
 
+        $visits =
+            $statement->fetchAll();
+
+        foreach ($visits as &$visit) {
+
+            $visit['options'] =
+                fetchVisitOptions(
+                    $pdo,
+                    (int) $visit['id']
+                );
+        }
+
+        unset($visit);
+
+
         echo json_encode(
             [
                 'success' => true,
                 'date_from' => $dateFrom,
                 'date_to' => $dateTo,
-                'visits' =>
-                    $statement->fetchAll(),
+                'visits' => $visits,
                 'error' => null,
             ],
             JSON_UNESCAPED_UNICODE |
