@@ -4,11 +4,12 @@ on:
   push:
     branches:
       - main
- paths:
-  - "900_Lab/Web_KoppyOS_Beta/index.html"
-  - "900_Lab/Web_KoppyOS_Beta/kohaku-work/**"
-  - "600_KoppyOS/server/api/**"
-  - ".github/workflows/deploy-koppy-world-lolipop.yml"
+    paths:
+      - "900_Lab/Web_KoppyOS_Beta/index.html"
+      - "900_Lab/Web_KoppyOS_Beta/kohaku-work/**"
+      - "600_KoppyOS/server/api/**"
+      - ".github/workflows/deploy-koppy-world-lolipop.yml"
+
   workflow_dispatch:
 
 permissions:
@@ -40,11 +41,12 @@ jobs:
         run: |
           set -euo pipefail
 
-                    SOURCE_FILE="900_Lab/Web_KoppyOS_Beta/index.html"
+          SOURCE_FILE="900_Lab/Web_KoppyOS_Beta/index.html"
           REMOTE_FILE="/home/users/2/her.jp-mikipiano/web/koppy/index.html"
 
           KOHAKU_WORK_SOURCE="900_Lab/Web_KoppyOS_Beta/kohaku-work"
           KOHAKU_WORK_REMOTE="/home/users/2/her.jp-mikipiano/web/koppy/kohaku-work"
+
           API_SOURCE="600_KoppyOS/server/api"
           API_REMOTE="/home/users/2/her.jp-mikipiano/web/koppy/api"
 
@@ -73,11 +75,12 @@ jobs:
             -o StrictHostKeyChecking=accept-new \
             "$KOHAKU_WORK_SOURCE/"* \
             "$SSH_USER@$SSH_HOST:$KOHAKU_WORK_REMOTE/"
-            sshpass -p "$SSH_PASSWORD" \
+
+          sshpass -p "$SSH_PASSWORD" \
             scp \
-             -r \
-             -P "$SSH_PORT" \
-             -o StrictHostKeyChecking=accept-new \
+            -r \
+            -P "$SSH_PORT" \
+            -o StrictHostKeyChecking=accept-new \
             "$API_SOURCE/"* \
             "$SSH_USER@$SSH_HOST:$API_REMOTE/"
 
