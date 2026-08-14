@@ -2056,6 +2056,13 @@ function openScheduleDetail(
         </strong>
       </div>
 
+      <div class="schedule-detail-row">
+        <span>OP</span>
+        <strong>
+          ${escapeHtml(optionText)}
+        </strong>
+      </div>
+
     </div>
   `;
 
