@@ -3800,3 +3800,376 @@ body:has(#view-schedule.is-active) .bottom-nav {
   }
 
 }
+
+/* ========================================
+   MOBILE COMPACT SCHEDULE
+======================================== */
+
+@media (max-width: 700px) {
+
+  /* ----------------------------------------
+     PAGE
+  ---------------------------------------- */
+
+  body:has(#view-schedule.is-active) .app-main {
+    padding-left: 8px;
+    padding-right: 8px;
+  }
+
+
+  .schedule-page {
+    --schedule-hour-height: 68px;
+    --schedule-time-width: 48px;
+  }
+
+
+  /* ----------------------------------------
+     PAGE HEADER
+  ---------------------------------------- */
+
+  .schedule-page-header {
+    gap: 7px;
+
+    margin-bottom: 8px;
+  }
+
+
+  .schedule-page-header .back-button {
+    width: 34px;
+    height: 34px;
+
+    font-size: 18px;
+  }
+
+
+  .schedule-page-header .eyebrow {
+    font-size: 8px;
+  }
+
+
+  .schedule-page-header h1 {
+    font-size: 20px;
+  }
+
+
+  .schedule-page-header .schedule-add-button {
+    min-height: 34px;
+
+    padding: 6px 10px;
+
+    border-radius: 10px;
+
+    font-size: 11px;
+  }
+
+
+  /* ----------------------------------------
+     TOOLBAR
+  ---------------------------------------- */
+
+  .schedule-toolbar {
+    grid-template-columns:
+      auto
+      minmax(0, 1fr)
+      auto;
+
+    gap: 6px;
+
+    margin-bottom: 7px;
+    padding: 6px;
+
+    border-radius: 13px;
+  }
+
+
+  .schedule-date-navigation {
+    gap: 3px;
+  }
+
+
+  .schedule-nav-button {
+    width: 30px;
+    min-height: 30px;
+
+    border-radius: 9px;
+
+    font-size: 18px;
+  }
+
+
+  .schedule-today-button {
+    min-height: 30px;
+
+    padding: 5px 8px;
+
+    border-radius: 9px;
+
+    font-size: 10px;
+  }
+
+
+  .schedule-period-heading {
+    gap: 5px;
+  }
+
+
+  .schedule-period-heading strong {
+    font-size: 12px;
+  }
+
+
+  .schedule-period-heading span {
+    padding: 3px 5px;
+
+    font-size: 8px;
+  }
+
+
+  .schedule-view-switcher {
+    gap: 2px;
+
+    padding: 2px;
+
+    border-radius: 10px;
+  }
+
+
+  .schedule-view-button {
+    min-height: 28px;
+
+    padding: 4px 7px;
+
+    border-radius: 8px;
+
+    font-size: 9px;
+  }
+
+
+  .schedule-date-input {
+    width: 34px;
+    height: 30px;
+
+    padding: 0 3px;
+
+    border-radius: 9px;
+  }
+
+
+  /* ----------------------------------------
+     ZOOM
+  ---------------------------------------- */
+
+  .schedule-zoom-controls {
+    padding: 1px;
+
+    border-radius: 9px;
+  }
+
+
+  .schedule-zoom-button {
+    width: 30px;
+    height: 30px;
+
+    font-size: 15px;
+  }
+
+
+  .schedule-zoom-label {
+    min-width: 44px;
+    height: 30px;
+
+    padding: 0 4px;
+
+    font-size: 9px;
+  }
+
+
+  /* ----------------------------------------
+     STORE LEGEND
+  ---------------------------------------- */
+
+  .schedule-store-legend {
+    gap: 4px 8px;
+
+    margin: 0 3px 6px;
+  }
+
+
+  .store-legend {
+    gap: 3px;
+
+    font-size: 8px;
+  }
+
+
+  .store-legend i {
+    width: 6px;
+    height: 6px;
+  }
+
+
+  /* ----------------------------------------
+     CALENDAR SHELL
+  ---------------------------------------- */
+
+  .schedule-calendar-shell {
+    height: 560px;
+    min-height: 320px;
+
+    border-radius: 14px;
+  }
+
+
+  /* ----------------------------------------
+     GRID WIDTH
+  ---------------------------------------- */
+
+  .schedule-grid {
+    min-width: 620px;
+  }
+
+
+  .schedule-grid[data-view="day"] {
+    min-width: 100%;
+  }
+
+
+  .schedule-grid[data-view="week"] {
+    min-width: 610px;
+  }
+
+
+  .schedule-grid[data-view="two-weeks"] {
+    min-width: 1050px;
+  }
+
+
+  /* ----------------------------------------
+     DATE HEADER
+  ---------------------------------------- */
+
+  .schedule-grid-header {
+    min-height: 44px;
+  }
+
+
+  .schedule-day-header {
+    gap: 0;
+
+    padding: 4px 2px;
+  }
+
+
+  .schedule-day-header small {
+    font-size: 7px;
+  }
+
+
+  .schedule-day-header strong {
+    font-size: 11px;
+  }
+
+
+  .schedule-day-header.is-today::before {
+    top: 1px;
+    right: 2px;
+
+    font-size: 5px;
+  }
+
+
+  /* ----------------------------------------
+     TIME AXIS
+  ---------------------------------------- */
+
+  .schedule-time-label {
+    padding-right: 5px;
+
+    font-size: 8px;
+  }
+
+
+  /* ----------------------------------------
+     EVENT CARDS
+  ---------------------------------------- */
+
+  .schedule-event {
+    left: 2px;
+    right: 2px;
+
+    min-height: 22px;
+
+    padding: 9px 4px 4px;
+
+    border-radius: 7px;
+
+    box-shadow:
+      0 3px 8px
+      rgba(50, 104, 132, 0.12);
+  }
+
+
+  .schedule-event::before {
+    height: 3px;
+  }
+
+
+  .schedule-event.is-repeat::after {
+    top: 3px;
+
+    height: 3px;
+  }
+
+
+  .schedule-event-time {
+    margin-bottom: 1px;
+
+    font-size: 9px;
+  }
+
+
+  .schedule-event-main {
+    font-size: 8px;
+  }
+
+
+  .schedule-event-meta {
+    gap: 2px;
+
+    margin-top: 2px;
+
+    font-size: 6.5px;
+  }
+
+
+  .schedule-event-status {
+    padding: 1px 3px;
+  }
+
+
+  .schedule-event-progress {
+    gap: 2px;
+
+    margin-top: 2px;
+
+    font-size: 7px;
+  }
+
+
+  /* ----------------------------------------
+     RESIZE HANDLE
+  ---------------------------------------- */
+
+  .schedule-resize-handle {
+    height: 24px;
+
+    margin-top: -24px;
+  }
+
+
+  .schedule-resize-handle span {
+    width: 42px;
+    height: 3px;
+  }
+
+}
