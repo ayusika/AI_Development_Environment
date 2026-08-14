@@ -380,6 +380,12 @@ const scheduleState = {
 const scheduleStartHour = 11;
 const scheduleEndHour = 27;
 
+const scheduleZoom = {
+  minHourHeight: 54,
+  maxHourHeight: 150,
+  step: 6,
+};
+
 let selectedScheduleCourse = 90;
 let selectedCustomerStatus = 'repeat';
 
