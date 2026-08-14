@@ -1265,6 +1265,50 @@ function renderScheduleCalendar(
     period,
     hourHeight
   );
+
+  scrollScheduleToToday();
+}
+
+
+function scrollScheduleToToday() {
+
+  const shell =
+    document.querySelector(
+      '.schedule-calendar-shell'
+    );
+
+  const todayColumn =
+    document.querySelector(
+      '.schedule-day-column.is-today'
+    );
+
+  if (!shell || !todayColumn) {
+    return;
+  }
+
+  const columnCenter =
+    todayColumn.offsetLeft
+    + todayColumn.offsetWidth / 2;
+
+  const targetLeft =
+    columnCenter
+    - shell.clientWidth / 2;
+
+  const maxLeft =
+    Math.max(
+      0,
+      shell.scrollWidth
+      - shell.clientWidth
+    );
+
+  shell.scrollLeft =
+    Math.min(
+      maxLeft,
+      Math.max(
+        0,
+        targetLeft
+      )
+    );
 }
 
 
