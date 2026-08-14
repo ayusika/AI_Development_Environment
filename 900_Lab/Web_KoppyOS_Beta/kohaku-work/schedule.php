@@ -192,6 +192,92 @@ function fetchVisitOptions(
 }
 
 
+function saveVisitOptions(
+    PDO $pdo,
+    int $visitId,
+    array $optionNames,
+    ?string $customName
+): void {
+    $deleteStatement =
+        $pdo->prepare(
+            'DELETE FROM visit_options
+             WHERE visit_id = ?'
+        );
+
+    $deleteStatement->execute([
+        $visitId
+    ]);
+
+
+    $optionStatement =
+        $pdo->prepare(
+            'SELECT id
+             FROM options
+             WHERE name = ?
+               AND active = 1'
+        );
+
+    $insertStatement =
+        $pdo->prepare(
+            'INSERT INTO visit_options
+            (
+                visit_id,
+                option_id,
+                custom_name
+            )
+            VALUES (?, ?, ?)'
+        );
+
+
+    foreach ($optionNames as $name) {
+
+        $name =
+            trim(
+                (string) $name
+            );
+
+        if ($name === '') {
+            continue;
+        }
+
+        $optionStatement->execute([
+            $name
+        ]);
+
+        $optionId =
+            $optionStatement->fetchColumn();
+
+        if (!$optionId) {
+            throw new RuntimeException(
+                'Option was not found: '
+                . $name
+            );
+        }
+
+        $insertStatement->execute([
+            $visitId,
+            (int) $optionId,
+            null,
+        ]);
+    }
+
+
+    $customName =
+        $customName !== null
+            ? trim($customName)
+            : '';
+
+    if ($customName !== '') {
+
+        $insertStatement->execute([
+            $visitId,
+            null,
+            $customName,
+        ]);
+    }
+}
+
+
 function fetchVisit(
     PDO $pdo,
     int $visitId
