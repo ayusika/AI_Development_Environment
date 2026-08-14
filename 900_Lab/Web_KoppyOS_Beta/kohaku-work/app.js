@@ -391,6 +391,74 @@ let selectedCustomerStatus = 'repeat';
 
 
 initializeSchedule();
+initializeScheduleZoom();
+
+
+function initializeScheduleZoom() {
+
+  const shell =
+    document.querySelector(
+      '.schedule-calendar-shell'
+    );
+
+  const page =
+    document.querySelector(
+      '.schedule-page'
+    );
+
+  if (!shell || !page) return;
+
+  shell.addEventListener(
+    'wheel',
+    (event) => {
+
+      if (!event.ctrlKey) {
+        return;
+      }
+
+      event.preventDefault();
+
+      const currentHeight =
+        getScheduleHourHeight();
+
+      const direction =
+        event.deltaY < 0
+          ? 1
+          : -1;
+
+      const nextHeight =
+        Math.min(
+          scheduleZoom.maxHourHeight,
+          Math.max(
+            scheduleZoom.minHourHeight,
+            currentHeight
+            + scheduleZoom.step * direction
+          )
+        );
+
+      if (
+        nextHeight === currentHeight
+      ) {
+        return;
+      }
+
+      page.style.setProperty(
+        '--schedule-hour-height',
+        `${nextHeight}px`
+      );
+
+      const period =
+        getSchedulePeriod();
+
+      renderScheduleCalendar(
+        period
+      );
+    },
+    {
+      passive: false,
+    }
+  );
+}
 
 
 function initializeSchedule() {
