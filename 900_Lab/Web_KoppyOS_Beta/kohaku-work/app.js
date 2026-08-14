@@ -1140,12 +1140,8 @@ function renderScheduleCalendar(
               ${isToday ? 'is-today' : ''}
             "
           >
-            <small>
-              ${weekday}
-            </small>
-
             <strong>
-              ${object.getMonth() + 1}/${object.getDate()}
+              ${object.getMonth() + 1}/${object.getDate()}(${weekday})
             </strong>
           </div>
         `;
