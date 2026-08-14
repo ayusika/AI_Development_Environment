@@ -666,6 +666,14 @@ try {
             (int) $pdo->lastInsertId();
 
 
+        saveVisitOptions(
+            $pdo,
+            $visitId,
+            $optionNames,
+            $customOption
+        );
+
+
         echo json_encode(
             [
                 'success' => true,
