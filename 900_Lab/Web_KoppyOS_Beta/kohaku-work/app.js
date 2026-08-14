@@ -391,6 +391,117 @@ let selectedCustomerStatus = 'repeat';
 
 
 initializeSchedule();
+initializeScheduleResize();
+
+
+function initializeScheduleResize() {
+
+  const shell =
+    document.querySelector(
+      '.schedule-calendar-shell'
+    );
+
+  const handle =
+    document.querySelector(
+      '[data-schedule-resize-handle]'
+    );
+
+  if (!shell || !handle) return;
+
+  let startY = 0;
+  let startHeight = 0;
+
+  const stopResize =
+    (event) => {
+
+      handle.classList.remove(
+        'is-dragging'
+      );
+
+      if (
+        event.pointerId !== undefined
+        && handle.hasPointerCapture(
+          event.pointerId
+        )
+      ) {
+        handle.releasePointerCapture(
+          event.pointerId
+        );
+      }
+    };
+
+
+  handle.addEventListener(
+    'pointerdown',
+    (event) => {
+
+      event.preventDefault();
+
+      startY = event.clientY;
+      startHeight =
+        shell.getBoundingClientRect()
+          .height;
+
+      handle.classList.add(
+        'is-dragging'
+      );
+
+      handle.setPointerCapture(
+        event.pointerId
+      );
+    }
+  );
+
+
+  handle.addEventListener(
+    'pointermove',
+    (event) => {
+
+      if (
+        !handle.classList.contains(
+          'is-dragging'
+        )
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+
+      const deltaY =
+        event.clientY - startY;
+
+      const maxHeight =
+        Math.max(
+          420,
+          window.innerHeight - 120
+        );
+
+      const nextHeight =
+        Math.min(
+          maxHeight,
+          Math.max(
+            360,
+            startHeight + deltaY
+          )
+        );
+
+      shell.style.height =
+        `${nextHeight}px`;
+    }
+  );
+
+
+  handle.addEventListener(
+    'pointerup',
+    stopResize
+  );
+
+
+  handle.addEventListener(
+    'pointercancel',
+    stopResize
+  );
+}
 
 
 function setScheduleZoom(
