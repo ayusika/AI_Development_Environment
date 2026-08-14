@@ -1726,6 +1726,20 @@ function resetScheduleForm() {
 
 
   document
+    .querySelectorAll(
+      '[data-schedule-option]'
+    )
+    .forEach((input) => {
+      input.checked = false;
+    });
+
+
+  if (scheduleCustomOption) {
+    scheduleCustomOption.value = '';
+  }
+
+
+  document
     .querySelectorAll('[data-course]')
     .forEach((button) => {
 
