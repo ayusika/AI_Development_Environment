@@ -594,6 +594,24 @@ try {
                 : null;
 
 
+        $optionNames =
+            isset($payload['options'])
+            && is_array($payload['options'])
+
+                ? $payload['options']
+                : [];
+
+
+        $customOption =
+            isset($payload['custom_option'])
+
+                ? trim(
+                    (string)
+                    $payload['custom_option']
+                )
+                : null;
+
+
         validateStore(
             $pdo,
             $storeId
