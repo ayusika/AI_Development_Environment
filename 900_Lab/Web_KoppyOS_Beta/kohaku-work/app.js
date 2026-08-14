@@ -1233,12 +1233,28 @@ function renderScheduleEvent(
       visit.store_name
     );
 
+  const courseClass =
+    scheduleCourseClass(
+      Number(visit.course_minutes)
+    );
+
+  const repeatClass =
+    [
+      'repeat',
+      'other_store_repeat',
+      'repeat_unknown_id',
+    ].includes(visit.customer_status)
+      ? 'is-repeat'
+      : '';
+
 
   return `
     <button
       class="
         schedule-event
         ${storeClass}
+        ${courseClass}
+        ${repeatClass}
       "
       type="button"
       data-schedule-event="${Number(visit.id)}"
