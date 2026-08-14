@@ -521,6 +521,41 @@ document.addEventListener(
   'click',
   (event) => {
 
+    const zoomButton =
+      event.target.closest(
+        '[data-schedule-zoom]'
+      );
+
+    if (zoomButton) {
+
+      const action =
+        zoomButton.dataset.scheduleZoom;
+
+      const currentHeight =
+        getScheduleHourHeight();
+
+      if (action === 'in') {
+        setScheduleZoom(
+          currentHeight
+          + scheduleZoom.step
+        );
+      }
+
+      if (action === 'out') {
+        setScheduleZoom(
+          currentHeight
+          - scheduleZoom.step
+        );
+      }
+
+      if (action === 'reset') {
+        setScheduleZoom(96);
+      }
+
+      return;
+    }
+
+
     const viewButton =
       event.target.closest(
         '[data-schedule-view]'
