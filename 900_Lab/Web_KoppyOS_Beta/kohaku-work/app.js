@@ -2078,6 +2078,46 @@ function scheduleStoreClass(
 }
 
 
+function scheduleCourseClass(
+  minutes
+) {
+
+  if (minutes <= 45) {
+    return 'course-40';
+  }
+
+  if (minutes <= 65) {
+    return 'course-60';
+  }
+
+  if (minutes <= 85) {
+    return 'course-80';
+  }
+
+  if (minutes <= 95) {
+    return 'course-90';
+  }
+
+  if (minutes <= 105) {
+    return 'course-100';
+  }
+
+  if (minutes <= 127) {
+    return 'course-120';
+  }
+
+  if (minutes <= 165) {
+    return 'course-150';
+  }
+
+  if (minutes <= 180) {
+    return 'course-180';
+  }
+
+  return 'course-over-180';
+}
+
+
 function scheduleFormatDate(
   date
 ) {
