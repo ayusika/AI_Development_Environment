@@ -2944,18 +2944,46 @@ body:has(#view-schedule.is-active) .bottom-nav {
 
   overflow: hidden;
 
-  padding: 6px 7px;
+  padding: 12px 7px 6px;
 
   border-radius: 10px;
 
-  color: #ffffff;
-  background: var(--store-color, var(--accent-deep));
+  color: #35505e;
+  background: var(--course-color, #e7f4fa);
 
   text-align: left;
 
   box-shadow: 0 5px 14px rgba(50, 104, 132, 0.15);
 
   cursor: pointer;
+}
+
+
+.schedule-event::before {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+
+  height: 4px;
+
+  background: var(--store-color, var(--accent-deep));
+}
+
+
+.schedule-event.is-repeat::after {
+  content: "";
+
+  position: absolute;
+  top: 4px;
+  left: 0;
+  right: 0;
+
+  height: 4px;
+
+  background: #ddb85c;
 }
 
 
@@ -2983,6 +3011,52 @@ body:has(#view-schedule.is-active) .bottom-nav {
 
 .schedule-event.store-nagoya {
   --store-color: #d7aa50;
+}
+
+
+.schedule-event.course-40 {
+  --course-color: #e9edf0;
+}
+
+
+.schedule-event.course-60 {
+  --course-color: #bfe5cf;
+}
+
+
+.schedule-event.course-80 {
+  --course-color: #aee2d8;
+}
+
+
+.schedule-event.course-90 {
+  --course-color: #b9d9f3;
+}
+
+
+.schedule-event.course-100 {
+  --course-color: #b7e6ef;
+}
+
+
+.schedule-event.course-120 {
+  --course-color: #efc0d3;
+}
+
+
+.schedule-event.course-150 {
+  --course-color: #ddb9d7;
+}
+
+
+.schedule-event.course-180 {
+  --course-color: #cbbbe3;
+}
+
+
+.schedule-event.course-over-180 {
+  --course-color: #b7a3d8;
+  color: #ffffff;
 }
 
 
