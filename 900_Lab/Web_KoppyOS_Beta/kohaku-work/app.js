@@ -308,20 +308,29 @@ function handleAction(action, button) {
 const scheduleApiUrl =
   '/api/v1/schedule.php';
 
+const scheduleCalendar =
+  document.getElementById('schedule-calendar');
+
 const scheduleDateInput =
   document.getElementById('schedule-date');
 
-const scheduleDateTitle =
-  document.getElementById('schedule-date-title');
+const schedulePeriodTitle =
+  document.getElementById('schedule-period-title');
 
 const scheduleVisitCount =
   document.getElementById('schedule-visit-count');
 
-const scheduleList =
-  document.getElementById('schedule-list');
-
 const scheduleFormCard =
   document.getElementById('schedule-form-card');
+
+const scheduleFormTitle =
+  document.getElementById('schedule-form-title');
+
+const scheduleFormDate =
+  document.getElementById('schedule-form-date');
+
+const scheduleEditId =
+  document.getElementById('schedule-edit-id');
 
 const scheduleStore =
   document.getElementById('schedule-store');
@@ -338,16 +347,107 @@ const scheduleFormMessage =
 const scheduleSaveButton =
   document.getElementById('schedule-save-button');
 
+const scheduleDetailDrawer =
+  document.getElementById('schedule-detail-drawer');
+
+const scheduleDrawerBackdrop =
+  document.getElementById('schedule-drawer-backdrop');
+
+const scheduleDetailTitle =
+  document.getElementById('schedule-detail-title');
+
+const scheduleDetailBody =
+  document.getElementById('schedule-detail-body');
+
+const scheduleDetailCustomerState =
+  document.getElementById('schedule-detail-customer-state');
+
+const scheduleDetailDiaryState =
+  document.getElementById('schedule-detail-diary-state');
+
+const scheduleDetailSalesState =
+  document.getElementById('schedule-detail-sales-state');
+
+
+const scheduleState = {
+  view: 'day',
+  anchorDate: null,
+  visits: [],
+  selectedVisit: null,
+};
+
+
+const scheduleStartHour = 8;
+const scheduleEndHour = 24;
 
 let selectedScheduleCourse = 90;
 let selectedCustomerStatus = 'repeat';
 
 
+initializeSchedule();
+
+
+function initializeSchedule() {
+
+  if (!scheduleDateInput) return;
+
+  const today =
+    scheduleFormatDate(
+      new Date()
+    );
+
+  scheduleState.anchorDate = today;
+  scheduleDateInput.value = today;
+
+  if (scheduleFormDate) {
+    scheduleFormDate.value = today;
+  }
+}
+
+
+/* ========================================
+   SCHEDULE EVENTS
+======================================== */
+
 if (scheduleDateInput) {
+
   scheduleDateInput.addEventListener(
     'change',
     () => {
+
+      if (!scheduleDateInput.value) return;
+
+      scheduleState.anchorDate =
+        scheduleDateInput.value;
+
       loadSchedule();
+    }
+  );
+}
+
+
+if (scheduleCustomCourse) {
+
+  scheduleCustomCourse.addEventListener(
+    'input',
+    () => {
+
+      const value =
+        Number(
+          scheduleCustomCourse.value
+        );
+
+      if (value <= 0) return;
+
+      selectedScheduleCourse = value;
+
+      document
+        .querySelectorAll('[data-course]')
+        .forEach((button) => {
+          button.classList.remove(
+            'is-selected'
+          );
+        });
     }
   );
 }
@@ -357,21 +457,130 @@ document.addEventListener(
   'click',
   (event) => {
 
+    const viewButton =
+      event.target.closest(
+        '[data-schedule-view]'
+      );
+
+    if (viewButton) {
+
+      scheduleState.view =
+        viewButton.dataset.scheduleView;
+
+      document
+        .querySelectorAll(
+          '[data-schedule-view]'
+        )
+        .forEach((button) => {
+          button.classList.toggle(
+            'is-selected',
+            button === viewButton
+          );
+        });
+
+      loadSchedule();
+      return;
+    }
+
+
+    const moveButton =
+      event.target.closest(
+        '[data-schedule-move]'
+      );
+
+    if (moveButton) {
+
+      const direction =
+        Number(
+          moveButton.dataset.scheduleMove
+        );
+
+      moveSchedulePeriod(direction);
+      return;
+    }
+
+
+    const todayButton =
+      event.target.closest(
+        '[data-schedule-today]'
+      );
+
+    if (todayButton) {
+
+      const today =
+        scheduleFormatDate(
+          new Date()
+        );
+
+      scheduleState.anchorDate = today;
+
+      if (scheduleDateInput) {
+        scheduleDateInput.value = today;
+      }
+
+      loadSchedule();
+      return;
+    }
+
+
+    const slotButton =
+      event.target.closest(
+        '[data-schedule-slot]'
+      );
+
+    if (slotButton) {
+
+      openScheduleForm(
+        slotButton.dataset.date,
+        slotButton.dataset.time
+      );
+
+      return;
+    }
+
+
+    const eventButton =
+      event.target.closest(
+        '[data-schedule-event]'
+      );
+
+    if (eventButton) {
+
+      const visit =
+        scheduleState.visits.find(
+          (item) =>
+            Number(item.id) ===
+            Number(eventButton.dataset.scheduleEvent)
+        );
+
+      if (visit) {
+        openScheduleDetail(visit);
+      }
+
+      return;
+    }
+
+
     const courseButton =
-      event.target.closest('[data-course]');
+      event.target.closest(
+        '[data-course]'
+      );
 
     if (courseButton) {
+
+      selectedScheduleCourse =
+        Number(
+          courseButton.dataset.course
+        );
 
       document
         .querySelectorAll('[data-course]')
         .forEach((button) => {
-          button.classList.remove('is-selected');
+          button.classList.toggle(
+            'is-selected',
+            button === courseButton
+          );
         });
-
-      courseButton.classList.add('is-selected');
-
-      selectedScheduleCourse =
-        Number(courseButton.dataset.course);
 
       if (scheduleCustomCourse) {
         scheduleCustomCourse.value = '';
@@ -388,56 +597,883 @@ document.addEventListener(
 
     if (statusButton) {
 
+      selectedCustomerStatus =
+        statusButton.dataset.customerStatus;
+
       document
         .querySelectorAll(
           '[data-customer-status]'
         )
         .forEach((button) => {
-          button.classList.remove('is-selected');
+          button.classList.toggle(
+            'is-selected',
+            button === statusButton
+          );
         });
 
-      statusButton.classList.add('is-selected');
+      return;
+    }
 
-      selectedCustomerStatus =
-        statusButton.dataset.customerStatus;
+
+    const featureButton =
+      event.target.closest(
+        '[data-schedule-feature]'
+      );
+
+    if (featureButton) {
+
+      const labels = {
+        customer: '顧客情報',
+        diary: 'お礼日記',
+        sales: '売上入力',
+      };
+
+      showPlaceholder(
+        labels[
+          featureButton.dataset.scheduleFeature
+        ] || '準備中'
+      );
     }
   }
 );
 
 
-if (scheduleCustomCourse) {
-  scheduleCustomCourse.addEventListener(
-    'input',
+if (scheduleDrawerBackdrop) {
+
+  scheduleDrawerBackdrop.addEventListener(
+    'click',
     () => {
-
-      const value =
-        Number(scheduleCustomCourse.value);
-
-      if (value > 0) {
-
-        selectedScheduleCourse = value;
-
-        document
-          .querySelectorAll('[data-course]')
-          .forEach((button) => {
-            button.classList.remove('is-selected');
-          });
-      }
+      closeScheduleDetail();
     }
   );
 }
 
 
-function openScheduleForm() {
+/* ========================================
+   PERIOD
+======================================== */
+
+function getSchedulePeriod() {
+
+  const anchor =
+    scheduleParseDate(
+      scheduleState.anchorDate
+      || scheduleFormatDate(new Date())
+    );
+
+  let start =
+    new Date(anchor);
+
+  let days = 1;
+
+
+  if (
+    scheduleState.view === 'week'
+    || scheduleState.view === 'two-weeks'
+  ) {
+
+    const day =
+      start.getDay();
+
+    const mondayOffset =
+      day === 0
+        ? -6
+        : 1 - day;
+
+    start.setDate(
+      start.getDate() + mondayOffset
+    );
+
+    days =
+      scheduleState.view === 'week'
+        ? 7
+        : 14;
+  }
+
+
+  const end =
+    new Date(start);
+
+  end.setDate(
+    end.getDate() + days - 1
+  );
+
+
+  const dates = [];
+
+  for (
+    let index = 0;
+    index < days;
+    index += 1
+  ) {
+
+    const date =
+      new Date(start);
+
+    date.setDate(
+      start.getDate() + index
+    );
+
+    dates.push(
+      scheduleFormatDate(date)
+    );
+  }
+
+
+  return {
+    start:
+      scheduleFormatDate(start),
+
+    end:
+      scheduleFormatDate(end),
+
+    dates,
+  };
+}
+
+
+function moveSchedulePeriod(
+  direction
+) {
+
+  const current =
+    scheduleParseDate(
+      scheduleState.anchorDate
+    );
+
+  let amount = 1;
+
+  if (scheduleState.view === 'week') {
+    amount = 7;
+  }
+
+  if (
+    scheduleState.view === 'two-weeks'
+  ) {
+    amount = 14;
+  }
+
+  current.setDate(
+    current.getDate()
+    + amount * direction
+  );
+
+  scheduleState.anchorDate =
+    scheduleFormatDate(current);
+
+  if (scheduleDateInput) {
+    scheduleDateInput.value =
+      scheduleState.anchorDate;
+  }
+
+  loadSchedule();
+}
+
+
+/* ========================================
+   LOAD
+======================================== */
+
+async function loadSchedule() {
+
+  if (!scheduleCalendar) {
+    return;
+  }
+
+
+  if (!scheduleState.anchorDate) {
+
+    scheduleState.anchorDate =
+      scheduleFormatDate(
+        new Date()
+      );
+  }
+
+
+  const period =
+    getSchedulePeriod();
+
+
+  scheduleCalendar.innerHTML = `
+    <div class="schedule-loading">
+      予定を読み込み中…
+    </div>
+  `;
+
+
+  updateSchedulePeriodTitle(
+    period
+  );
+
+
+  try {
+
+    const params =
+      new URLSearchParams({
+        date_from:
+          period.start,
+
+        date_to:
+          period.end,
+      });
+
+
+    const response =
+      await fetch(
+        `${scheduleApiUrl}?${params.toString()}`
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+      throw new Error(
+        data.error
+        || '予定の取得に失敗しました。'
+      );
+    }
+
+
+    scheduleState.visits =
+      data.visits || [];
+
+
+    if (scheduleVisitCount) {
+
+      scheduleVisitCount.textContent =
+        `${scheduleState.visits.length}件`;
+    }
+
+
+    renderScheduleCalendar(
+      period
+    );
+
+
+  } catch (error) {
+
+    scheduleCalendar.innerHTML = `
+      <div class="schedule-error">
+        <strong>予定を読み込めなかった</strong>
+        <span>
+          ${escapeHtml(error.message)}
+        </span>
+      </div>
+    `;
+  }
+}
+
+
+/* ========================================
+   RENDER
+======================================== */
+
+function renderScheduleCalendar(
+  period
+) {
+
+  const days =
+    period.dates.length;
+
+  const hourHeight =
+    getScheduleHourHeight();
+
+  const totalMinutes =
+    (
+      scheduleEndHour
+      - scheduleStartHour
+    ) * 60;
+
+  const totalHeight =
+    totalMinutes
+    * hourHeight
+    / 60;
+
+
+  const columns =
+    `var(--schedule-time-width) repeat(${days}, minmax(0, 1fr))`;
+
+
+  const headerHtml =
+    period.dates
+      .map((date) => {
+
+        const object =
+          scheduleParseDate(date);
+
+        const weekday =
+          [
+            '日',
+            '月',
+            '火',
+            '水',
+            '木',
+            '金',
+            '土',
+          ][object.getDay()];
+
+        const isToday =
+          date ===
+          scheduleFormatDate(
+            new Date()
+          );
+
+        return `
+          <div
+            class="
+              schedule-day-header
+              ${isToday ? 'is-today' : ''}
+            "
+          >
+            <small>
+              ${weekday}
+            </small>
+
+            <strong>
+              ${object.getMonth() + 1}/${object.getDate()}
+            </strong>
+          </div>
+        `;
+      })
+      .join('');
+
+
+  const timeLabels = [];
+
+  for (
+    let hour = scheduleStartHour;
+    hour <= scheduleEndHour;
+    hour += 1
+  ) {
+
+    const top =
+      (
+        hour
+        - scheduleStartHour
+      ) * hourHeight;
+
+    timeLabels.push(`
+      <span
+        class="schedule-time-label"
+        style="top:${top}px"
+      >
+        ${String(hour).padStart(2, '0')}:00
+      </span>
+    `);
+  }
+
+
+  const dayColumns =
+    period.dates
+      .map((date) => {
+
+        const isToday =
+          date ===
+          scheduleFormatDate(
+            new Date()
+          );
+
+        return `
+          <div
+            class="
+              schedule-day-column
+              ${isToday ? 'is-today' : ''}
+            "
+            data-schedule-day="${date}"
+            style="height:${totalHeight}px"
+          >
+            ${renderScheduleSlots(
+              date,
+              totalHeight,
+              hourHeight
+            )}
+
+            ${renderScheduleEventsForDate(
+              date,
+              hourHeight
+            )}
+
+            ${isToday
+              ? renderScheduleNowLine(
+                  hourHeight
+                )
+              : ''
+            }
+          </div>
+        `;
+      })
+      .join('');
+
+
+  scheduleCalendar.innerHTML = `
+    <div
+      class="schedule-grid"
+      data-view="${escapeHtml(
+        scheduleState.view
+      )}"
+    >
+
+      <div
+        class="schedule-grid-header"
+        style="grid-template-columns:${columns}"
+      >
+
+        <div
+          class="schedule-grid-header-spacer"
+        ></div>
+
+        ${headerHtml}
+
+      </div>
+
+
+      <div
+        class="schedule-grid-body"
+        style="
+          grid-template-columns:${columns};
+          height:${totalHeight}px;
+        "
+      >
+
+        <div
+          class="schedule-time-axis"
+          style="height:${totalHeight}px"
+        >
+          ${timeLabels.join('')}
+        </div>
+
+        ${dayColumns}
+
+      </div>
+
+    </div>
+  `;
+
+
+  scrollScheduleNearFirstVisit(
+    period,
+    hourHeight
+  );
+}
+
+
+function renderScheduleSlots(
+  date,
+  totalHeight,
+  hourHeight
+) {
+
+  const slotMinutes = 10;
+
+  const slotCount =
+    (
+      (
+        scheduleEndHour
+        - scheduleStartHour
+      ) * 60
+    ) / slotMinutes;
+
+  const slots = [];
+
+
+  for (
+    let index = 0;
+    index < slotCount;
+    index += 1
+  ) {
+
+    const minutes =
+      index * slotMinutes;
+
+    const absoluteMinutes =
+      scheduleStartHour * 60
+      + minutes;
+
+    const hour =
+      Math.floor(
+        absoluteMinutes / 60
+      );
+
+    const minute =
+      absoluteMinutes % 60;
+
+    const time =
+      `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+
+    const top =
+      minutes
+      * hourHeight
+      / 60;
+
+
+    slots.push(`
+      <button
+        class="schedule-time-slot"
+        type="button"
+        data-schedule-slot
+        data-date="${date}"
+        data-time="${time}"
+        style="
+          top:${top}px;
+        "
+        aria-label="${date} ${time}に予約を追加"
+      ></button>
+    `);
+  }
+
+
+  return slots.join('');
+}
+
+
+function renderScheduleEventsForDate(
+  date,
+  hourHeight
+) {
+
+  return scheduleState.visits
+    .filter((visit) =>
+      String(
+        visit.started_at
+      ).slice(0, 10) === date
+    )
+    .map((visit) =>
+      renderScheduleEvent(
+        visit,
+        hourHeight
+      )
+    )
+    .join('');
+}
+
+
+function renderScheduleEvent(
+  visit,
+  hourHeight
+) {
+
+  const time =
+    String(
+      visit.started_at
+      || ''
+    ).slice(11, 16);
+
+  const [
+    hourText,
+    minuteText,
+  ] = time.split(':');
+
+  const startMinutes =
+    Number(hourText) * 60
+    + Number(minuteText);
+
+  const calendarStart =
+    scheduleStartHour * 60;
+
+  const top =
+    (
+      startMinutes
+      - calendarStart
+    ) * hourHeight / 60;
+
+  const duration =
+    Math.max(
+      10,
+      Number(
+        visit.course_minutes
+        || 0
+      )
+    );
+
+  const height =
+    Math.max(
+      28,
+      duration
+      * hourHeight
+      / 60
+      - 3
+    );
+
+
+  if (
+    top < 0
+    || startMinutes
+      >= scheduleEndHour * 60
+  ) {
+    return '';
+  }
+
+
+  const status =
+    scheduleCustomerStatusLabel(
+      visit.customer_status
+    );
+
+  const customer =
+    visit.customer_name
+    || visit.customer_code
+    || status;
+
+  const storeClass =
+    scheduleStoreClass(
+      visit.store_name
+    );
+
+
+  return `
+    <button
+      class="
+        schedule-event
+        ${storeClass}
+      "
+      type="button"
+      data-schedule-event="${Number(visit.id)}"
+      style="
+        top:${top}px;
+        height:${height}px;
+      "
+    >
+
+      <span class="schedule-event-time">
+        ${escapeHtml(time)}
+      </span>
+
+      <span class="schedule-event-main">
+        ${escapeHtml(customer)}
+      </span>
+
+      <span class="schedule-event-meta">
+
+        <span class="schedule-event-status">
+          ${Number(visit.course_minutes)}分
+        </span>
+
+        <span class="schedule-event-status">
+          ${escapeHtml(status)}
+        </span>
+
+      </span>
+
+      <span class="schedule-event-progress">
+
+        <span
+          class="${Number(visit.customer_linked) ? '' : 'is-incomplete'}"
+          title="顧客"
+        >
+          👤
+        </span>
+
+        <span
+          class="${Number(visit.diary_linked) ? '' : 'is-incomplete'}"
+          title="日記"
+        >
+          📓
+        </span>
+
+        <span
+          class="${Number(visit.sales_entered) ? '' : 'is-incomplete'}"
+          title="売上"
+        >
+          ¥
+        </span>
+
+      </span>
+
+    </button>
+  `;
+}
+
+
+function renderScheduleNowLine(
+  hourHeight
+) {
+
+  const now =
+    new Date();
+
+  const minutes =
+    now.getHours() * 60
+    + now.getMinutes();
+
+  const start =
+    scheduleStartHour * 60;
+
+  const end =
+    scheduleEndHour * 60;
+
+
+  if (
+    minutes < start
+    || minutes >= end
+  ) {
+    return '';
+  }
+
+
+  const top =
+    (
+      minutes - start
+    ) * hourHeight / 60;
+
+
+  return `
+    <div
+      class="schedule-now-line"
+      style="top:${top}px"
+    >
+
+      <span class="schedule-now-label">
+        ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}
+      </span>
+
+    </div>
+  `;
+}
+
+
+/* ========================================
+   PERIOD TITLE
+======================================== */
+
+function updateSchedulePeriodTitle(
+  period
+) {
+
+  if (!schedulePeriodTitle) return;
+
+
+  const start =
+    scheduleParseDate(
+      period.start
+    );
+
+  const end =
+    scheduleParseDate(
+      period.end
+    );
+
+
+  if (period.start === period.end) {
+
+    schedulePeriodTitle.textContent =
+      `${start.getFullYear()}年${start.getMonth() + 1}月${start.getDate()}日`;
+
+    return;
+  }
+
+
+  schedulePeriodTitle.textContent =
+    `${start.getMonth() + 1}/${start.getDate()} 〜 ${end.getMonth() + 1}/${end.getDate()}`;
+}
+
+
+/* ========================================
+   ADD / EDIT FORM
+======================================== */
+
+function openScheduleForm(
+  date = null,
+  time = null
+) {
 
   if (!scheduleFormCard) return;
 
-  scheduleFormCard.hidden = false;
 
-  scheduleFormCard.scrollIntoView({
-    behavior: 'smooth',
-    block: 'start',
-  });
+  closeScheduleDetail();
+
+
+  const targetDate =
+    date
+    || scheduleState.anchorDate
+    || scheduleFormatDate(
+      new Date()
+    );
+
+
+  resetScheduleForm();
+
+
+  if (scheduleFormDate) {
+    scheduleFormDate.value =
+      targetDate;
+  }
+
+
+  if (scheduleStartTime) {
+    scheduleStartTime.value =
+      time || '12:00';
+  }
+
+
+  scheduleFormCard.hidden = false;
+}
+
+
+function resetScheduleForm() {
+
+  if (scheduleEditId) {
+    scheduleEditId.value = '';
+  }
+
+
+  if (scheduleFormTitle) {
+    scheduleFormTitle.textContent =
+      '予約を追加';
+  }
+
+
+  if (scheduleSaveButton) {
+    scheduleSaveButton.textContent =
+      'この予約を登録';
+  }
+
+
+  selectedScheduleCourse = 90;
+  selectedCustomerStatus = 'repeat';
+
+
+  if (scheduleCustomCourse) {
+    scheduleCustomCourse.value = '';
+  }
+
+
+  if (scheduleStore) {
+    scheduleStore.value = '2';
+  }
+
+
+  document
+    .querySelectorAll('[data-course]')
+    .forEach((button) => {
+
+      button.classList.toggle(
+        'is-selected',
+        Number(button.dataset.course)
+        === 90
+      );
+    });
+
+
+  document
+    .querySelectorAll(
+      '[data-customer-status]'
+    )
+    .forEach((button) => {
+
+      button.classList.toggle(
+        'is-selected',
+        button.dataset.customerStatus
+        === 'repeat'
+      );
+    });
+
+
+  hideScheduleMessage();
 }
 
 
@@ -451,183 +1487,33 @@ function closeScheduleForm() {
 }
 
 
-async function loadSchedule() {
-
-  if (
-    !scheduleDateInput ||
-    !scheduleList
-  ) {
-    return;
-  }
-
-  const date =
-    scheduleDateInput.value;
-
-  if (!date) return;
-
-  scheduleList.innerHTML =
-    '<div class="schedule-loading">予定を読み込み中…</div>';
-
-  try {
-
-    const response =
-      await fetch(
-        `${scheduleApiUrl}?date=${encodeURIComponent(date)}`
-      );
-
-    const data =
-      await response.json();
-
-    if (
-      !response.ok ||
-      !data.success
-    ) {
-      throw new Error(
-        data.error || '予定の取得に失敗しました。'
-      );
-    }
-
-    renderSchedule(
-      date,
-      data.visits || []
-    );
-
-  } catch (error) {
-
-    scheduleList.innerHTML =
-      `<div class="schedule-error">${escapeHtml(
-        error.message
-      )}</div>`;
-  }
-}
-
-
-function renderSchedule(
-  date,
-  visits
-) {
-
-  if (
-    !scheduleList ||
-    !scheduleVisitCount
-  ) {
-    return;
-  }
-
-  scheduleVisitCount.textContent =
-    `${visits.length}件`;
-
-  if (scheduleDateTitle) {
-
-    const dateObject =
-      new Date(`${date}T00:00:00`);
-
-    scheduleDateTitle.textContent =
-      `${dateObject.getMonth() + 1}月${dateObject.getDate()}日の予定`;
-  }
-
-  if (visits.length === 0) {
-
-    scheduleList.innerHTML = `
-      <div class="schedule-empty">
-        <strong>まだ予定なし</strong>
-        <span>空いてるところに予約を追加しよう</span>
-      </div>
-    `;
-
-    return;
-  }
-
-  scheduleList.innerHTML =
-    visits
-      .map((visit) => {
-
-        const time =
-          String(visit.started_at || '')
-            .slice(11, 16);
-
-        const statusLabel =
-          scheduleCustomerStatusLabel(
-            visit.customer_status
-          );
-
-        const customerLabel =
-          visit.customer_name
-          || visit.customer_code
-          || statusLabel;
-
-        return `
-          <button
-            class="schedule-visit-card"
-            type="button"
-            data-visit-id="${Number(visit.id)}"
-          >
-            <span class="schedule-visit-time">
-              ${escapeHtml(time)}
-            </span>
-
-            <span class="schedule-visit-main">
-
-              <strong>
-                ${escapeHtml(customerLabel)}
-              </strong>
-
-              <small>
-                ${Number(visit.course_minutes)}分
-                ・
-                ${escapeHtml(statusLabel)}
-                ・
-                ${escapeHtml(visit.store_name)}
-              </small>
-
-            </span>
-
-            <span class="schedule-visit-arrow">
-              ›
-            </span>
-          </button>
-        `;
-      })
-      .join('');
-}
-
-
-function scheduleCustomerStatusLabel(
-  status
-) {
-
-  const labels = {
-    new: '新規',
-    repeat: 'リピ',
-    other_store_repeat: '他店リピ',
-    repeat_unknown_id: 'リピ・ID不明',
-  };
-
-  return labels[status] || '未設定';
-}
-
-
 async function saveScheduleVisit() {
 
   if (
-    !scheduleDateInput ||
-    !scheduleStore ||
-    !scheduleStartTime ||
-    !scheduleSaveButton
+    !scheduleFormDate
+    || !scheduleStore
+    || !scheduleStartTime
+    || !scheduleSaveButton
   ) {
     return;
   }
 
+
   const date =
-    scheduleDateInput.value;
+    scheduleFormDate.value;
 
   const time =
     scheduleStartTime.value;
 
-  if (
-    !date ||
-    !time
-  ) {
+  const editId =
+    Number(
+      scheduleEditId?.value
+      || 0
+    );
+
+
+  if (!date || !time) {
+
     showScheduleMessage(
       '日付と開始時間を入れてね。',
       true
@@ -638,11 +1524,12 @@ async function saveScheduleVisit() {
 
 
   if (
-    !selectedScheduleCourse ||
-    selectedScheduleCourse <= 0
+    !selectedScheduleCourse
+    || selectedScheduleCourse <= 0
   ) {
+
     showScheduleMessage(
-      'コース時間を選んでね。',
+      '予約時間を選んでね。',
       true
     );
 
@@ -651,10 +1538,36 @@ async function saveScheduleVisit() {
 
 
   scheduleSaveButton.disabled = true;
+
   scheduleSaveButton.textContent =
-    '登録中…';
+    editId
+      ? '更新中…'
+      : '登録中…';
+
 
   hideScheduleMessage();
+
+
+  const payload = {
+    store_id:
+      Number(
+        scheduleStore.value
+      ),
+
+    started_at:
+      `${date} ${time}`,
+
+    course_minutes:
+      selectedScheduleCourse,
+
+    customer_status:
+      selectedCustomerStatus,
+  };
+
+
+  if (editId) {
+    payload.id = editId;
+  }
 
 
   try {
@@ -663,29 +1576,20 @@ async function saveScheduleVisit() {
       await fetch(
         scheduleApiUrl,
         {
-          method: 'POST',
+          method:
+            editId
+              ? 'PATCH'
+              : 'POST',
 
           headers: {
             'Content-Type':
               'application/json',
           },
 
-          body: JSON.stringify({
-            store_id:
-              Number(scheduleStore.value),
-
-            started_at:
-              `${date} ${time}`,
-
-            course_minutes:
-              selectedScheduleCourse,
-
-            customer_status:
-              selectedCustomerStatus,
-
-            customer_id:
-              null,
-          }),
+          body:
+            JSON.stringify(
+              payload
+            ),
         }
       );
 
@@ -695,28 +1599,28 @@ async function saveScheduleVisit() {
 
 
     if (
-      !response.ok ||
-      !data.success
+      !response.ok
+      || !data.success
     ) {
       throw new Error(
-        data.error || '予約登録に失敗しました。'
+        data.error
+        || '予約の保存に失敗しました。'
       );
     }
 
 
-    showScheduleMessage(
-      '予約を登録したよ ✓',
-      false
-    );
+    scheduleState.anchorDate =
+      date;
+
+    if (scheduleDateInput) {
+      scheduleDateInput.value =
+        date;
+    }
+
+
+    closeScheduleForm();
 
     await loadSchedule();
-
-    window.setTimeout(
-      () => {
-        closeScheduleForm();
-      },
-      700
-    );
 
 
   } catch (error) {
@@ -728,10 +1632,544 @@ async function saveScheduleVisit() {
 
   } finally {
 
-    scheduleSaveButton.disabled = false;
+    scheduleSaveButton.disabled =
+      false;
+
     scheduleSaveButton.textContent =
-      'この予約を登録';
+      editId
+        ? '変更を保存'
+        : 'この予約を登録';
   }
+}
+
+
+/* ========================================
+   DETAIL
+======================================== */
+
+function openScheduleDetail(
+  visit
+) {
+
+  if (
+    !scheduleDetailDrawer
+    || !scheduleDetailBody
+  ) {
+    return;
+  }
+
+
+  scheduleState.selectedVisit =
+    visit;
+
+
+  const status =
+    scheduleCustomerStatusLabel(
+      visit.customer_status
+    );
+
+  const customer =
+    visit.customer_name
+    || visit.customer_code
+    || status;
+
+  const date =
+    String(
+      visit.started_at
+    ).slice(0, 10);
+
+  const time =
+    String(
+      visit.started_at
+    ).slice(11, 16);
+
+
+  if (scheduleDetailTitle) {
+    scheduleDetailTitle.textContent =
+      customer;
+  }
+
+
+  scheduleDetailBody.innerHTML = `
+    <div class="schedule-detail-card">
+
+      <div class="schedule-detail-row">
+        <span>日時</span>
+        <strong>
+          ${escapeHtml(date)}
+          ${escapeHtml(time)}
+        </strong>
+      </div>
+
+      <div class="schedule-detail-row">
+        <span>店舗</span>
+        <strong>
+          ${escapeHtml(visit.store_name)}
+        </strong>
+      </div>
+
+      <div class="schedule-detail-row">
+        <span>予約時間</span>
+        <strong>
+          ${Number(visit.course_minutes)}分
+        </strong>
+      </div>
+
+      <div class="schedule-detail-row">
+        <span>区分</span>
+        <strong>
+          ${escapeHtml(status)}
+        </strong>
+      </div>
+
+    </div>
+  `;
+
+
+  updateScheduleDetailState(
+    scheduleDetailCustomerState,
+    Number(
+      visit.customer_linked
+    ),
+    '紐付け済',
+    '未紐付け'
+  );
+
+
+  updateScheduleDetailState(
+    scheduleDetailDiaryState,
+    Number(
+      visit.diary_linked
+    ),
+    '完了',
+    '未入力'
+  );
+
+
+  updateScheduleDetailState(
+    scheduleDetailSalesState,
+    Number(
+      visit.sales_entered
+    ),
+    '入力済',
+    '未入力'
+  );
+
+
+  if (scheduleDrawerBackdrop) {
+    scheduleDrawerBackdrop.hidden =
+      false;
+  }
+
+
+  scheduleDetailDrawer.classList.add(
+    'is-open'
+  );
+
+  scheduleDetailDrawer.setAttribute(
+    'aria-hidden',
+    'false'
+  );
+}
+
+
+function updateScheduleDetailState(
+  element,
+  complete,
+  completeText,
+  incompleteText
+) {
+
+  if (!element) return;
+
+
+  element.textContent =
+    complete
+      ? completeText
+      : incompleteText;
+
+
+  const button =
+    element.closest('button');
+
+  if (button) {
+
+    button.classList.toggle(
+      'is-complete',
+      Boolean(complete)
+    );
+  }
+}
+
+
+function closeScheduleDetail() {
+
+  if (scheduleDetailDrawer) {
+
+    scheduleDetailDrawer.classList.remove(
+      'is-open'
+    );
+
+    scheduleDetailDrawer.setAttribute(
+      'aria-hidden',
+      'true'
+    );
+  }
+
+
+  if (scheduleDrawerBackdrop) {
+    scheduleDrawerBackdrop.hidden =
+      true;
+  }
+}
+
+
+function editCurrentScheduleVisit() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+  if (!visit) return;
+
+
+  closeScheduleDetail();
+
+  resetScheduleForm();
+
+
+  const date =
+    String(
+      visit.started_at
+    ).slice(0, 10);
+
+  const time =
+    String(
+      visit.started_at
+    ).slice(11, 16);
+
+
+  if (scheduleEditId) {
+    scheduleEditId.value =
+      String(visit.id);
+  }
+
+
+  if (scheduleFormTitle) {
+    scheduleFormTitle.textContent =
+      '予約を編集';
+  }
+
+
+  if (scheduleFormDate) {
+    scheduleFormDate.value =
+      date;
+  }
+
+
+  if (scheduleStartTime) {
+    scheduleStartTime.value =
+      time;
+  }
+
+
+  if (scheduleStore) {
+    scheduleStore.value =
+      String(visit.store_id);
+  }
+
+
+  selectedScheduleCourse =
+    Number(
+      visit.course_minutes
+    );
+
+
+  const standardCourse =
+    document.querySelector(
+      `[data-course="${selectedScheduleCourse}"]`
+    );
+
+
+  document
+    .querySelectorAll('[data-course]')
+    .forEach((button) => {
+
+      button.classList.toggle(
+        'is-selected',
+        button === standardCourse
+      );
+    });
+
+
+  if (
+    !standardCourse
+    && scheduleCustomCourse
+  ) {
+    scheduleCustomCourse.value =
+      String(
+        selectedScheduleCourse
+      );
+  }
+
+
+  selectedCustomerStatus =
+    visit.customer_status;
+
+
+  document
+    .querySelectorAll(
+      '[data-customer-status]'
+    )
+    .forEach((button) => {
+
+      button.classList.toggle(
+        'is-selected',
+        button.dataset.customerStatus
+        === selectedCustomerStatus
+      );
+    });
+
+
+  if (scheduleSaveButton) {
+    scheduleSaveButton.textContent =
+      '変更を保存';
+  }
+
+
+  scheduleFormCard.hidden = false;
+}
+
+
+async function deleteCurrentScheduleVisit() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+  if (!visit) return;
+
+
+  const confirmed =
+    window.confirm(
+      'この予約をDBから削除する？\n関連する日記・売上・OPの紐付けも削除されます。'
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        scheduleApiUrl,
+        {
+          method: 'DELETE',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              id:
+                Number(
+                  visit.id
+                ),
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+      throw new Error(
+        data.error
+        || '予約を削除できませんでした。'
+      );
+    }
+
+
+    closeScheduleDetail();
+
+    scheduleState.selectedVisit =
+      null;
+
+    await loadSchedule();
+
+
+  } catch (error) {
+
+    window.alert(
+      error.message
+    );
+  }
+}
+
+
+/* ========================================
+   HELPERS
+======================================== */
+
+function scheduleCustomerStatusLabel(
+  status
+) {
+
+  const labels = {
+    new: '新規',
+    repeat: 'リピ',
+    other_store_repeat:
+      '他店リピ',
+    repeat_unknown_id:
+      'リピ・ID不明',
+  };
+
+  return labels[status]
+    || '未設定';
+}
+
+
+function scheduleStoreClass(
+  storeName
+) {
+
+  const classes = {
+    札幌: 'store-sapporo',
+    千葉: 'store-chiba',
+    東京: 'store-tokyo',
+    名古屋: 'store-nagoya',
+  };
+
+  return classes[storeName]
+    || 'store-sapporo';
+}
+
+
+function scheduleFormatDate(
+  date
+) {
+
+  const year =
+    date.getFullYear();
+
+  const month =
+    String(
+      date.getMonth() + 1
+    ).padStart(2, '0');
+
+  const day =
+    String(
+      date.getDate()
+    ).padStart(2, '0');
+
+
+  return `${year}-${month}-${day}`;
+}
+
+
+function scheduleParseDate(
+  value
+) {
+
+  return new Date(
+    `${value}T00:00:00`
+  );
+}
+
+
+function getScheduleHourHeight() {
+
+  const page =
+    document.querySelector(
+      '.schedule-page'
+    );
+
+  if (!page) {
+    return 96;
+  }
+
+
+  const value =
+    getComputedStyle(page)
+      .getPropertyValue(
+        '--schedule-hour-height'
+      )
+      .trim();
+
+
+  return Number(
+    value.replace('px', '')
+  ) || 96;
+}
+
+
+function scrollScheduleNearFirstVisit(
+  period,
+  hourHeight
+) {
+
+  const shell =
+    document.querySelector(
+      '.schedule-calendar-shell'
+    );
+
+  if (!shell) return;
+
+
+  const visibleVisits =
+    scheduleState.visits
+      .filter((visit) => {
+
+        const date =
+          String(
+            visit.started_at
+          ).slice(0, 10);
+
+        return period.dates.includes(
+          date
+        );
+      });
+
+
+  let targetHour = 12;
+
+
+  if (visibleVisits.length > 0) {
+
+    const firstTime =
+      String(
+        visibleVisits[0].started_at
+      ).slice(11, 16);
+
+    const hour =
+      Number(
+        firstTime.slice(0, 2)
+      );
+
+    targetHour =
+      Math.max(
+        scheduleStartHour,
+        hour - 1
+      );
+  }
+
+
+  shell.scrollTop =
+    Math.max(
+      0,
+      (
+        targetHour
+        - scheduleStartHour
+      ) * hourHeight
+    );
 }
 
 
@@ -740,9 +2178,14 @@ function showScheduleMessage(
   isError = false
 ) {
 
-  if (!scheduleFormMessage) return;
+  if (!scheduleFormMessage) {
+    return;
+  }
 
-  scheduleFormMessage.hidden = false;
+
+  scheduleFormMessage.hidden =
+    false;
+
   scheduleFormMessage.textContent =
     message;
 
@@ -755,17 +2198,26 @@ function showScheduleMessage(
 
 function hideScheduleMessage() {
 
-  if (!scheduleFormMessage) return;
+  if (!scheduleFormMessage) {
+    return;
+  }
 
-  scheduleFormMessage.hidden = true;
-  scheduleFormMessage.textContent = '';
+
+  scheduleFormMessage.hidden =
+    true;
+
+  scheduleFormMessage.textContent =
+    '';
+
   scheduleFormMessage.classList.remove(
     'is-error'
   );
 }
 
 
-function escapeHtml(value) {
+function escapeHtml(
+  value
+) {
 
   return String(value)
     .replaceAll('&', '&amp;')
