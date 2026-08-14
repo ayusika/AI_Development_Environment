@@ -2246,6 +2246,51 @@ function editCurrentScheduleVisit() {
     });
 
 
+  const visitOptions =
+    Array.isArray(visit.options)
+      ? visit.options
+      : [];
+
+
+  const standardOptionNames =
+    visitOptions
+      .map((option) =>
+        option.name
+          ? String(option.name)
+          : ''
+      )
+      .filter(Boolean);
+
+
+  document
+    .querySelectorAll(
+      '[data-schedule-option]'
+    )
+    .forEach((input) => {
+
+      input.checked =
+        standardOptionNames.includes(
+          String(input.value)
+        );
+    });
+
+
+  if (scheduleCustomOption) {
+
+    const customNames =
+      visitOptions
+        .map((option) =>
+          option.custom_name
+            ? String(option.custom_name)
+            : ''
+        )
+        .filter(Boolean);
+
+    scheduleCustomOption.value =
+      customNames.join('、');
+  }
+
+
   if (scheduleSaveButton) {
     scheduleSaveButton.textContent =
       '変更を保存';
