@@ -268,6 +268,12 @@ function fetchVisit(
         );
     }
 
+    $visit['options'] =
+        fetchVisitOptions(
+            $pdo,
+            $visitId
+        );
+
     return $visit;
 }
 
