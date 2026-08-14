@@ -1840,6 +1840,24 @@ async function saveScheduleVisit() {
   hideScheduleMessage();
 
 
+  const selectedOptions =
+    Array.from(
+      document.querySelectorAll(
+        '[data-schedule-option]:checked'
+      )
+    )
+      .map((input) =>
+        String(input.value).trim()
+      )
+      .filter(Boolean);
+
+
+  const customOption =
+    scheduleCustomOption
+      ? scheduleCustomOption.value.trim()
+      : '';
+
+
   const payload = {
     store_id:
       Number(
@@ -1854,6 +1872,12 @@ async function saveScheduleVisit() {
 
     customer_status:
       selectedCustomerStatus,
+
+    options:
+      selectedOptions,
+
+    custom_option:
+      customOption,
   };
 
 
