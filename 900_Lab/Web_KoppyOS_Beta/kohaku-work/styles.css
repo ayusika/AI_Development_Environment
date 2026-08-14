@@ -2595,9 +2595,14 @@ body:has(#view-schedule.is-active) .bottom-nav {
   position: relative;
 
   width: 100%;
+  height: 620px;
+  min-height: 360px;
+  max-height: calc(100vh - 120px);
 
   overflow: auto;
   overscroll-behavior: contain;
+
+  resize: vertical;
 
   border: 1px solid var(--line);
   border-radius: 20px;
