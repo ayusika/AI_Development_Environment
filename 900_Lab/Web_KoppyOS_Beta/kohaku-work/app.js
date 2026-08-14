@@ -377,7 +377,7 @@ const scheduleState = {
 };
 
 
-const scheduleStartHour = 8;
+const scheduleStartHour = 11;
 const scheduleEndHour = 27;
 
 let selectedScheduleCourse = 90;
