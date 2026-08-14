@@ -2006,6 +2006,24 @@ function openScheduleDetail(
   }
 
 
+  const optionNames =
+    Array.isArray(visit.options)
+      ? visit.options
+          .map((option) =>
+            option.name
+            || option.custom_name
+            || ''
+          )
+          .filter(Boolean)
+      : [];
+
+
+  const optionText =
+    optionNames.length
+      ? optionNames.join(' / ')
+      : 'なし';
+
+
   scheduleDetailBody.innerHTML = `
     <div class="schedule-detail-card">
 
