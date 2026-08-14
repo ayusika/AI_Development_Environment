@@ -341,6 +341,9 @@ const scheduleStartTime =
 const scheduleCustomCourse =
   document.getElementById('schedule-custom-course');
 
+const scheduleCustomOption =
+  document.getElementById('schedule-custom-option');
+
 const scheduleFormMessage =
   document.getElementById('schedule-form-message');
 
