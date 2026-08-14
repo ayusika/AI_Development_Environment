@@ -370,7 +370,7 @@ const scheduleDetailSalesState =
 
 
 const scheduleState = {
-  view: 'day',
+  view: 'two-weeks',
   anchorDate: null,
   visits: [],
   selectedVisit: null,
@@ -378,7 +378,7 @@ const scheduleState = {
 
 
 const scheduleStartHour = 8;
-const scheduleEndHour = 24;
+const scheduleEndHour = 27;
 
 let selectedScheduleCourse = 90;
 let selectedCustomerStatus = 'repeat';
