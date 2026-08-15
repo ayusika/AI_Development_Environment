@@ -329,6 +329,12 @@ const scheduleFormTitle =
 const scheduleFormDate =
   document.getElementById('schedule-form-date');
 
+const scheduleBookedDate =
+  document.getElementById('schedule-booked-date');
+
+const scheduleBookedTime =
+  document.getElementById('schedule-booked-time');
+
 const scheduleEditId =
   document.getElementById('schedule-edit-id');
 
