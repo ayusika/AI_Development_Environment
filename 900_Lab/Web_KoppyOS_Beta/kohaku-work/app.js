@@ -3777,6 +3777,21 @@ document.addEventListener(
     column.classList.add(
       'is-drag-over'
     );
+
+
+    const cardTopClientY =
+      event.clientY
+      - Number(
+          scheduleDragState
+            .grabOffsetY
+          || 0
+        );
+
+
+    showScheduleDragPreview(
+      column,
+      cardTopClientY
+    );
   }
 );
 
