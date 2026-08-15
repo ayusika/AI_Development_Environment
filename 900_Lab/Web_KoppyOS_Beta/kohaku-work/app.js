@@ -1270,12 +1270,10 @@ function renderScheduleCalendar(
 
   if (!preserveScroll) {
 
-    scrollScheduleNearFirstVisit(
+    scrollScheduleToNow(
       period,
       hourHeight
     );
-
-    scrollScheduleToToday();
   }
 }
 
