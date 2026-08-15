@@ -2304,6 +2304,38 @@ function editCurrentScheduleVisit() {
     ).slice(11, 16);
 
 
+  const bookedAt =
+    visit.booked_at
+      ? String(
+          visit.booked_at
+        )
+      : '';
+
+
+  const bookedDate =
+    bookedAt
+      ? bookedAt.slice(0, 10)
+      : '';
+
+
+  const bookedTime =
+    bookedAt
+      ? bookedAt.slice(11, 16)
+      : '';
+
+
+  if (scheduleBookedDate) {
+    scheduleBookedDate.value =
+      bookedDate;
+  }
+
+
+  if (scheduleBookedTime) {
+    scheduleBookedTime.value =
+      bookedTime;
+  }
+
+
   if (scheduleEditId) {
     scheduleEditId.value =
       String(visit.id);
