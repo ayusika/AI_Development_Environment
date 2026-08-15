@@ -815,6 +815,10 @@ APPENDを使用しない。
 
 ---
 
+
+### Koppy OSパネル｜置換後
+
+````markdown
 ## 10.5 🟥 CREATE Format
 
 ```text
