@@ -4374,5 +4374,36 @@ body:has(#view-schedule.is-active) .bottom-nav {
   font-weight: 900;
 }
 
+/* ========================================
+   SCHEDULE EVENT OPTIONS VISIBILITY FIX
+======================================== */
+
+.schedule-event-options {
+  position: relative;
+  z-index: 2;
+
+  display: block !important;
+
+  width: 100%;
+
+  margin-top: 4px;
+
+  color: #35505e !important;
+
+  font-size: 8px;
+  font-weight: 900;
+  line-height: 1.35;
+
+  white-space: normal;
+
+  overflow: visible;
+  text-overflow: clip;
+
+  opacity: 1 !important;
+}
 
 
+.schedule-event.course-over-180
+.schedule-event-options {
+  color: #ffffff !important;
+}
