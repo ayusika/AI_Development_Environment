@@ -308,6 +308,7 @@ function fetchVisit(
             SELECT
                 v.id,
                 v.started_at,
+                v.booked_at,
                 v.course_minutes,
                 v.customer_status,
                 v.status,
