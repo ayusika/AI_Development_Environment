@@ -916,6 +916,7 @@ try {
                     store_id = ?,
                     customer_id = ?,
                     started_at = ?,
+                    booked_at = ?,
                     course_minutes = ?,
                     customer_status = ?,
                     updated_at =
@@ -933,6 +934,7 @@ try {
             $storeId,
             $customerId,
             $startedAt,
+            $bookedAt,
             $courseMinutes,
             $customerStatus,
             $visitId,
