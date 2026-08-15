@@ -654,6 +654,10 @@ try {
             $startedAt
         );
 
+        validateBookedAt(
+            $bookedAt
+        );
+
         if ($courseMinutes <= 0) {
             throw new RuntimeException(
                 'course_minutes must be a positive integer.'
