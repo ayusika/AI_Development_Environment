@@ -157,6 +157,127 @@ function validateCustomer(
 }
 
 
+function fetchVisitOptions(
+    PDO $pdo,
+    int $visitId
+): array {
+    $statement =
+        $pdo->prepare(
+            "
+            SELECT
+                vo.option_id,
+                o.name,
+                vo.custom_name,
+                vo.income_amount
+
+            FROM visit_options vo
+
+            LEFT JOIN options o
+                ON o.id = vo.option_id
+
+            WHERE vo.visit_id = ?
+
+            ORDER BY
+                o.sort_order ASC,
+                vo.id ASC
+            "
+        );
+
+    $statement->execute([
+        $visitId
+    ]);
+
+    return
+        $statement->fetchAll();
+}
+
+
+function saveVisitOptions(
+    PDO $pdo,
+    int $visitId,
+    array $optionNames,
+    ?string $customName
+): void {
+    $deleteStatement =
+        $pdo->prepare(
+            'DELETE FROM visit_options
+             WHERE visit_id = ?'
+        );
+
+    $deleteStatement->execute([
+        $visitId
+    ]);
+
+
+    $optionStatement =
+        $pdo->prepare(
+            'SELECT id
+             FROM options
+             WHERE name = ?
+               AND active = 1'
+        );
+
+    $insertStatement =
+        $pdo->prepare(
+            'INSERT INTO visit_options
+            (
+                visit_id,
+                option_id,
+                custom_name
+            )
+            VALUES (?, ?, ?)'
+        );
+
+
+    foreach ($optionNames as $name) {
+
+        $name =
+            trim(
+                (string) $name
+            );
+
+        if ($name === '') {
+            continue;
+        }
+
+        $optionStatement->execute([
+            $name
+        ]);
+
+        $optionId =
+            $optionStatement->fetchColumn();
+
+        if (!$optionId) {
+            throw new RuntimeException(
+                'Option was not found: '
+                . $name
+            );
+        }
+
+        $insertStatement->execute([
+            $visitId,
+            (int) $optionId,
+            null,
+        ]);
+    }
+
+
+    $customName =
+        $customName !== null
+            ? trim($customName)
+            : '';
+
+    if ($customName !== '') {
+
+        $insertStatement->execute([
+            $visitId,
+            null,
+            $customName,
+        ]);
+    }
+}
+
+
 function fetchVisit(
     PDO $pdo,
     int $visitId
@@ -232,6 +353,12 @@ function fetchVisit(
             'Visit was not found.'
         );
     }
+
+    $visit['options'] =
+        fetchVisitOptions(
+            $pdo,
+            $visitId
+        );
 
     return $visit;
 }
@@ -386,13 +513,27 @@ try {
             $dateTo,
         ]);
 
+        $visits =
+            $statement->fetchAll();
+
+        foreach ($visits as &$visit) {
+
+            $visit['options'] =
+                fetchVisitOptions(
+                    $pdo,
+                    (int) $visit['id']
+                );
+        }
+
+        unset($visit);
+
+
         echo json_encode(
             [
                 'success' => true,
                 'date_from' => $dateFrom,
                 'date_to' => $dateTo,
-                'visits' =>
-                    $statement->fetchAll(),
+                'visits' => $visits,
                 'error' => null,
             ],
             JSON_UNESCAPED_UNICODE |
@@ -453,6 +594,24 @@ try {
                 : null;
 
 
+        $optionNames =
+            isset($payload['options'])
+            && is_array($payload['options'])
+
+                ? $payload['options']
+                : [];
+
+
+        $customOption =
+            isset($payload['custom_option'])
+
+                ? trim(
+                    (string)
+                    $payload['custom_option']
+                )
+                : null;
+
+
         validateStore(
             $pdo,
             $storeId
@@ -505,6 +664,14 @@ try {
 
         $visitId =
             (int) $pdo->lastInsertId();
+
+
+        saveVisitOptions(
+            $pdo,
+            $visitId,
+            $optionNames,
+            $customOption
+        );
 
 
         echo json_encode(
@@ -621,6 +788,33 @@ try {
                 );
 
 
+        $hasOptions =
+            array_key_exists(
+                'options',
+                $payload
+            )
+            || array_key_exists(
+                'custom_option',
+                $payload
+            );
+
+        $optionNames =
+            isset($payload['options'])
+            && is_array($payload['options'])
+
+                ? $payload['options']
+                : [];
+
+        $customOption =
+            isset($payload['custom_option'])
+
+                ? trim(
+                    (string)
+                    $payload['custom_option']
+                )
+                : null;
+
+
         validateStore(
             $pdo,
             $storeId
@@ -676,6 +870,17 @@ try {
             $customerStatus,
             $visitId,
         ]);
+
+
+        if ($hasOptions) {
+
+            saveVisitOptions(
+                $pdo,
+                $visitId,
+                $optionNames,
+                $customOption
+            );
+        }
 
 
         echo json_encode(
