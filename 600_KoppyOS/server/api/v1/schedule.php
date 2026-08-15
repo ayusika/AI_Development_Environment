@@ -590,6 +590,18 @@ try {
                 )
             );
 
+
+        $bookedAt =
+            isset($payload['booked_at'])
+            && $payload['booked_at'] !== ''
+
+                ? trim(
+                    (string)
+                    $payload['booked_at']
+                )
+                : null;
+
+
         $courseMinutes =
             (int) (
                 $payload['course_minutes']
