@@ -1265,12 +1265,15 @@ function renderScheduleCalendar(
   `;
 
 
-  scrollScheduleNearFirstVisit(
-    period,
-    hourHeight
-  );
+  if (!preserveScroll) {
 
-  scrollScheduleToToday();
+    scrollScheduleNearFirstVisit(
+      period,
+      hourHeight
+    );
+
+    scrollScheduleToToday();
+  }
 }
 
 
