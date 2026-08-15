@@ -1966,18 +1966,44 @@ async function saveScheduleVisit() {
     }
 
 
-    scheduleState.anchorDate =
-      date;
+    if (!editId) {
 
-    if (scheduleDateInput) {
-      scheduleDateInput.value =
+      scheduleState.anchorDate =
         date;
+
+      if (scheduleDateInput) {
+        scheduleDateInput.value =
+          date;
+      }
+
+    } else {
+
+      scheduleState.anchorDate =
+        previousAnchorDate;
+
+      if (scheduleDateInput) {
+        scheduleDateInput.value =
+          previousAnchorDate;
+      }
     }
 
 
     closeScheduleForm();
 
     await loadSchedule();
+
+
+    if (
+      editId
+      && calendarShell
+    ) {
+
+      calendarShell.scrollLeft =
+        previousScrollLeft;
+
+      calendarShell.scrollTop =
+        previousScrollTop;
+    }
 
 
   } catch (error) {
