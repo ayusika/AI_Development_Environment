@@ -529,9 +529,17 @@ try {
                 "
             );
 
+        $queryDateTo =
+            (new DateTimeImmutable(
+                $dateTo
+            ))
+                ->modify('+1 day')
+                ->format('Y-m-d');
+
+
         $statement->execute([
             $dateFrom,
-            $dateTo,
+            $queryDateTo,
         ]);
 
         $visits =
