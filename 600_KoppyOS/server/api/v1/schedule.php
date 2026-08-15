@@ -782,6 +782,30 @@ try {
                 : $currentVisit['started_at'];
 
 
+        $bookedAt =
+            array_key_exists(
+                'booked_at',
+                $payload
+            )
+                ? (
+                    $payload['booked_at'] === null
+                    || $payload['booked_at'] === ''
+
+                        ? null
+                        : trim(
+                            (string)
+                            $payload['booked_at']
+                        )
+                )
+                : (
+                    $currentVisit['booked_at'] === null
+
+                        ? null
+                        : (string)
+                            $currentVisit['booked_at']
+                );
+
+
         $courseMinutes =
             array_key_exists(
                 'course_minutes',
