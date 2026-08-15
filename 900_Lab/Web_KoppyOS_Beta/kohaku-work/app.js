@@ -3661,11 +3661,23 @@ document.addEventListener(
     if (!visit) return;
 
 
+    const cardRect =
+      card.getBoundingClientRect();
+
+
     scheduleDragState = {
       visitId,
+
       originalStartedAt:
         String(
           visit.started_at || ''
+        ),
+
+      grabOffsetY:
+        Math.max(
+          0,
+          event.clientY
+          - cardRect.top
         ),
     };
 
