@@ -1728,12 +1728,48 @@ function openScheduleForm(
   closeScheduleDetail();
 
 
-  const targetDate =
+  let targetDate =
     date
     || scheduleState.anchorDate
     || scheduleFormatDate(
       new Date()
     );
+
+
+  let targetTime =
+    time || '12:00';
+
+
+  if (targetTime) {
+
+    const [
+      hourText,
+      minuteText,
+    ] = targetTime.split(':');
+
+    const hour =
+      Number(hourText);
+
+    if (hour >= 24) {
+
+      const nextDate =
+        scheduleParseDate(
+          targetDate
+        );
+
+      nextDate.setDate(
+        nextDate.getDate() + 1
+      );
+
+      targetDate =
+        scheduleFormatDate(
+          nextDate
+        );
+
+      targetTime =
+        `${String(hour - 24).padStart(2, '0')}:${minuteText}`;
+    }
+  }
 
 
   resetScheduleForm();
