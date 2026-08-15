@@ -1541,7 +1541,11 @@ function renderScheduleEvent(
         ${repeatClass}
       "
       type="button"
+      draggable="true"
       data-schedule-event="${Number(visit.id)}"
+      data-schedule-started-at="${escapeHtml(
+        String(visit.started_at || '')
+      )}"
       style="
         top:${top}px;
         height:${height}px;
