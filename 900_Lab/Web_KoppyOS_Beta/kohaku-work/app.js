@@ -1783,7 +1783,7 @@ function openScheduleForm(
 
   if (scheduleStartTime) {
     scheduleStartTime.value =
-      time || '12:00';
+      targetTime;
   }
 
 
