@@ -517,11 +517,27 @@ try {
                 LEFT JOIN visit_sales vs
                     ON vs.visit_id = v.id
 
-                WHERE substr(
-                    v.started_at,
-                    1,
-                    10
-                ) BETWEEN ? AND ?
+                WHERE
+                    (
+                        substr(
+                            v.started_at,
+                            1,
+                            10
+                        ) BETWEEN ? AND ?
+                    )
+                    OR
+                    (
+                        substr(
+                            v.started_at,
+                            1,
+                            10
+                        ) = ?
+                        AND substr(
+                            v.started_at,
+                            12,
+                            5
+                        ) < '03:00'
+                    )
 
                 ORDER BY
                     v.started_at ASC,
@@ -539,6 +555,7 @@ try {
 
         $statement->execute([
             $dateFrom,
+            $dateTo,
             $queryDateTo,
         ]);
 
