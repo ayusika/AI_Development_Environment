@@ -1908,6 +1908,25 @@ async function saveScheduleVisit() {
   }
 
 
+  const calendarShell =
+    document.querySelector(
+      '.schedule-calendar-shell'
+    );
+
+  const previousScrollLeft =
+    calendarShell
+      ? calendarShell.scrollLeft
+      : 0;
+
+  const previousScrollTop =
+    calendarShell
+      ? calendarShell.scrollTop
+      : 0;
+
+  const previousAnchorDate =
+    scheduleState.anchorDate;
+
+
   try {
 
     const response =
