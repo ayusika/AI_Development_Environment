@@ -1066,7 +1066,8 @@ async function loadSchedule(
 
 
     renderScheduleCalendar(
-      period
+      period,
+      preserveScroll
     );
 
 
