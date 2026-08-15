@@ -4336,3 +4336,48 @@ body:has(#view-schedule.is-active) .bottom-nav {
   }
 
 }
+
+/* ========================================
+   SCHEDULE EVENT OPTIONS
+======================================== */
+
+.schedule-event-options {
+  display: block;
+
+  margin-top: 4px;
+
+  overflow: hidden;
+
+  color: rgba(53, 80, 94, 0.82);
+
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1.35;
+
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+
+.schedule-event.course-over-180
+.schedule-event-options {
+  color: rgba(255, 255, 255, 0.88);
+}
+
+
+.schedule-event-options::before {
+  content: "OP ";
+
+  opacity: 0.62;
+
+  font-size: 7px;
+  font-weight: 900;
+}
+
+
+/* 高さが短い予約でも
+   主要情報を優先する */
+.schedule-event[style*="height:28px"]
+.schedule-event-options {
+  display: none;
+}
