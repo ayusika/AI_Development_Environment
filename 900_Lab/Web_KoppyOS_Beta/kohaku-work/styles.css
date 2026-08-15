@@ -4494,3 +4494,64 @@ body:has(#view-schedule.is-active) .bottom-nav {
     font-size: 6px;
   }
 }
+
+/* ========================================
+   SCHEDULE DRAG PREVIEW
+======================================== */
+
+.schedule-day-column {
+  position: relative;
+}
+
+
+.schedule-drag-preview {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  height: 2px;
+
+  z-index: 20;
+
+  pointer-events: none;
+
+  background: #45b9e9;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.8);
+}
+
+
+.schedule-drag-preview span {
+  position: absolute;
+
+  left: 3px;
+  top: -17px;
+
+  padding: 2px 5px;
+
+  border-radius: 6px;
+
+  background: #45b9e9;
+  color: #ffffff;
+
+  font-size: 8px;
+  font-weight: 900;
+  line-height: 1.2;
+
+  white-space: nowrap;
+}
+
+
+.schedule-event.is-dragging {
+  opacity: 0.55;
+}
+
+
+.schedule-day-column.is-drag-over {
+  background-color:
+    rgba(69, 185, 233, 0.035);
+}
