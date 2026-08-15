@@ -3626,3 +3626,228 @@ function initializeApp() {
 
 
 initializeApp();
+
+/* ========================================
+   SCHEDULE DRAG MOVE
+   desktop foundation
+======================================== */
+
+let scheduleDragState = null;
+
+
+document.addEventListener(
+  'dragstart',
+  (event) => {
+
+    const card =
+      event.target.closest(
+        '[data-schedule-event]'
+      );
+
+    if (!card) return;
+
+
+    const visitId =
+      Number(
+        card.dataset.scheduleEvent
+      );
+
+    const visit =
+      scheduleState.visits.find(
+        (item) =>
+          Number(item.id) === visitId
+      );
+
+    if (!visit) return;
+
+
+    scheduleDragState = {
+      visitId,
+      originalStartedAt:
+        String(
+          visit.started_at || ''
+        ),
+    };
+
+
+    card.classList.add(
+      'is-dragging'
+    );
+
+
+    if (event.dataTransfer) {
+
+      event.dataTransfer.effectAllowed =
+        'move';
+
+      event.dataTransfer.setData(
+        'text/plain',
+        String(visitId)
+      );
+    }
+  }
+);
+
+
+document.addEventListener(
+  'dragend',
+  (event) => {
+
+    const card =
+      event.target.closest(
+        '[data-schedule-event]'
+      );
+
+    if (card) {
+      card.classList.remove(
+        'is-dragging'
+      );
+    }
+
+
+    document
+      .querySelectorAll(
+        '.schedule-day-column.is-drag-over'
+      )
+      .forEach((column) => {
+
+        column.classList.remove(
+          'is-drag-over'
+        );
+      });
+
+
+    scheduleDragState = null;
+  }
+);
+
+
+document.addEventListener(
+  'dragover',
+  (event) => {
+
+    const column =
+      event.target.closest(
+        '[data-schedule-day]'
+      );
+
+    if (
+      !column
+      || !scheduleDragState
+    ) {
+      return;
+    }
+
+
+    event.preventDefault();
+
+
+    if (event.dataTransfer) {
+      event.dataTransfer.dropEffect =
+        'move';
+    }
+
+
+    document
+      .querySelectorAll(
+        '.schedule-day-column.is-drag-over'
+      )
+      .forEach((item) => {
+
+        if (item !== column) {
+          item.classList.remove(
+            'is-drag-over'
+          );
+        }
+      });
+
+
+    column.classList.add(
+      'is-drag-over'
+    );
+  }
+);
+
+
+function getScheduleDropTarget(
+  column,
+  clientY
+) {
+
+  if (!column) {
+    return null;
+  }
+
+
+  const date =
+    column.dataset.scheduleDay;
+
+  if (!date) {
+    return null;
+  }
+
+
+  const rect =
+    column.getBoundingClientRect();
+
+
+  const relativeY =
+    Math.max(
+      0,
+      Math.min(
+        rect.height,
+        clientY - rect.top
+      )
+    );
+
+
+  const totalMinutes =
+    (
+      scheduleEndHour
+      - scheduleStartHour
+    ) * 60;
+
+
+  const rawMinutes =
+    relativeY
+    / rect.height
+    * totalMinutes;
+
+
+  const snappedMinutes =
+    Math.round(
+      rawMinutes / 10
+    ) * 10;
+
+
+  const absoluteMinutes =
+    Math.max(
+      scheduleStartHour * 60,
+      Math.min(
+        scheduleEndHour * 60 - 10,
+        scheduleStartHour * 60
+        + snappedMinutes
+      )
+    );
+
+
+  const hour =
+    Math.floor(
+      absoluteMinutes / 60
+    );
+
+  const minute =
+    absoluteMinutes % 60;
+
+
+  const time =
+    `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+
+
+  return {
+    date,
+    time,
+    startedAt:
+      `${date} ${time}`,
+  };
+}
