@@ -4012,3 +4012,95 @@ document.addEventListener(
     }
   }
 );
+
+/* ========================================
+   SCHEDULE DRAG PREVIEW
+======================================== */
+
+let scheduleDragPreview = null;
+
+
+function clearScheduleDragPreview() {
+
+  if (scheduleDragPreview) {
+    scheduleDragPreview.remove();
+    scheduleDragPreview = null;
+  }
+}
+
+
+function showScheduleDragPreview(
+  column,
+  clientY
+) {
+
+  clearScheduleDragPreview();
+
+
+  const dropTarget =
+    getScheduleDropTarget(
+      column,
+      clientY
+    );
+
+  if (!dropTarget) {
+    return;
+  }
+
+
+  const rect =
+    column.getBoundingClientRect();
+
+
+  const totalMinutes =
+    (
+      scheduleEndHour
+      - scheduleStartHour
+    ) * 60;
+
+
+  const [hour, minute] =
+    dropTarget.time
+      .split(':')
+      .map(Number);
+
+
+  const minuteFromStart =
+    (
+      hour * 60
+      + minute
+    )
+    - scheduleStartHour * 60;
+
+
+  const top =
+    minuteFromStart
+    / totalMinutes
+    * rect.height;
+
+
+  const marker =
+    document.createElement(
+      'div'
+    );
+
+  marker.className =
+    'schedule-drag-preview';
+
+  marker.style.top =
+    `${top}px`;
+
+  marker.innerHTML = `
+    <span>
+      ${dropTarget.time}
+    </span>
+  `;
+
+
+  column.appendChild(
+    marker
+  );
+
+  scheduleDragPreview =
+    marker;
+}
