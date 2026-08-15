@@ -76,6 +76,26 @@ function validateStartedAt(
 }
 
 
+function validateBookedAt(
+    ?string $value
+): void {
+    if ($value === null) {
+        return;
+    }
+
+    if (
+        !preg_match(
+            '/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/',
+            $value
+        )
+    ) {
+        throw new RuntimeException(
+            'booked_at must be YYYY-MM-DD HH:MM.'
+        );
+    }
+}
+
+
 function validateCustomerStatus(
     string $status
 ): void {
