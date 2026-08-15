@@ -3851,3 +3851,143 @@ function getScheduleDropTarget(
       `${date} ${time}`,
   };
 }
+
+/* ========================================
+   SCHEDULE DRAG DROP SAVE
+======================================== */
+
+document.addEventListener(
+  'drop',
+  async (event) => {
+
+    const column =
+      event.target.closest(
+        '[data-schedule-day]'
+      );
+
+    if (
+      !column
+      || !scheduleDragState
+    ) {
+      return;
+    }
+
+
+    event.preventDefault();
+
+
+    const dropTarget =
+      getScheduleDropTarget(
+        column,
+        event.clientY
+      );
+
+    if (!dropTarget) {
+      return;
+    }
+
+
+    const visitId =
+      Number(
+        scheduleDragState.visitId
+      );
+
+    const originalStartedAt =
+      String(
+        scheduleDragState
+          .originalStartedAt
+        || ''
+      );
+
+
+    if (
+      dropTarget.startedAt
+      === originalStartedAt
+    ) {
+      return;
+    }
+
+
+    const calendarShell =
+      document.querySelector(
+        '.schedule-calendar-shell'
+      );
+
+    const previousScrollLeft =
+      calendarShell
+        ? calendarShell.scrollLeft
+        : 0;
+
+    const previousScrollTop =
+      calendarShell
+        ? calendarShell.scrollTop
+        : 0;
+
+
+    column.classList.remove(
+      'is-drag-over'
+    );
+
+
+    try {
+
+      const response =
+        await fetch(
+          scheduleApiUrl,
+          {
+            method: 'PATCH',
+
+            headers: {
+              'Content-Type':
+                'application/json',
+            },
+
+            body:
+              JSON.stringify({
+                id: visitId,
+
+                started_at:
+                  dropTarget.startedAt,
+              }),
+          }
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (
+        !response.ok
+        || !data.success
+      ) {
+        throw new Error(
+          data.error
+          || '予約時間を変更できませんでした。'
+        );
+      }
+
+
+      await loadSchedule(
+        true
+      );
+
+
+      if (calendarShell) {
+
+        calendarShell.scrollLeft =
+          previousScrollLeft;
+
+        calendarShell.scrollTop =
+          previousScrollTop;
+      }
+
+
+    } catch (error) {
+
+      window.alert(
+        `予約を移動できなかったよ。\n\n${error.message}`
+      );
+    }
+  }
+);
