@@ -1501,6 +1501,30 @@ function renderScheduleEvent(
       : '';
 
 
+  const optionNames =
+    Array.isArray(visit.options)
+      ? visit.options
+          .map((option) =>
+            option.name
+            || option.custom_name
+            || ''
+          )
+          .filter(Boolean)
+      : [];
+
+
+  const optionHtml =
+    optionNames.length
+      ? `
+        <span class="schedule-event-options">
+          ${escapeHtml(
+            optionNames.join('・')
+          )}
+        </span>
+      `
+      : '';
+
+
   return `
     <button
       class="
