@@ -987,7 +987,9 @@ function moveSchedulePeriod(
    LOAD
 ======================================== */
 
-async function loadSchedule() {
+async function loadSchedule(
+  preserveScroll = false
+) {
 
   if (!scheduleCalendar) {
     return;
