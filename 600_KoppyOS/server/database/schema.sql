@@ -156,6 +156,8 @@ CREATE TABLE visits (
 
     started_at TEXT NOT NULL,
 
+    booked_at TEXT,
+
     course_minutes INTEGER CHECK (
         course_minutes IS NULL
         OR course_minutes > 0
@@ -205,6 +207,48 @@ CREATE TABLE visits (
     FOREIGN KEY (customer_id)
         REFERENCES customers(id)
         ON DELETE SET NULL
+);
+
+
+/* =========================================================
+   5A. VISIT_CHANGE_HISTORY
+   顧客から申し出があった予約変更のみ保存
+========================================================= */
+
+CREATE TABLE visit_change_history (
+
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    visit_id INTEGER NOT NULL,
+
+    requested_at TEXT NOT NULL,
+
+    change_type TEXT NOT NULL DEFAULT 'other'
+        CHECK (
+            change_type IN (
+                'datetime',
+                'course',
+                'store',
+                'option',
+                'status',
+                'multiple',
+                'other'
+            )
+        ),
+
+    before_data TEXT NOT NULL,
+
+    after_data TEXT NOT NULL,
+
+    note TEXT,
+
+    created_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    ),
+
+    FOREIGN KEY (visit_id)
+        REFERENCES visits(id)
+        ON DELETE CASCADE
 );
 
 
