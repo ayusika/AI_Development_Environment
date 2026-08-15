@@ -4604,3 +4604,149 @@ document.addEventListener(
     passive: false,
   }
 );
+
+/* ========================================
+   SCHEDULE INITIAL POSITION
+   today + current time centered
+======================================== */
+
+function scrollScheduleToNow(
+  period,
+  hourHeight
+) {
+
+  const shell =
+    document.querySelector(
+      '.schedule-calendar-shell'
+    );
+
+  if (!shell) {
+    return;
+  }
+
+
+  const now =
+    new Date();
+
+
+  let targetDate =
+    scheduleFormatDate(
+      now
+    );
+
+
+  let targetMinutes =
+    now.getHours() * 60
+    + now.getMinutes();
+
+
+  /*
+   * 0:00〜2:59 は
+   * 前日の24:00〜26:59として扱う
+   */
+  if (
+    now.getHours() < 3
+  ) {
+
+    const previousDate =
+      new Date(now);
+
+    previousDate.setDate(
+      previousDate.getDate() - 1
+    );
+
+    targetDate =
+      scheduleFormatDate(
+        previousDate
+      );
+
+    targetMinutes +=
+      24 * 60;
+  }
+
+
+  const targetColumn =
+    document.querySelector(
+      `[data-schedule-day="${targetDate}"]`
+    );
+
+
+  if (targetColumn) {
+
+    const columnCenter =
+      targetColumn.offsetLeft
+      + targetColumn.offsetWidth / 2;
+
+
+    const targetLeft =
+      columnCenter
+      - shell.clientWidth / 2;
+
+
+    const maxLeft =
+      Math.max(
+        0,
+        shell.scrollWidth
+        - shell.clientWidth
+      );
+
+
+    shell.scrollLeft =
+      Math.min(
+        maxLeft,
+        Math.max(
+          0,
+          targetLeft
+        )
+      );
+  }
+
+
+  const calendarStartMinutes =
+    scheduleStartHour * 60;
+
+
+  const calendarEndMinutes =
+    scheduleEndHour * 60;
+
+
+  const clampedMinutes =
+    Math.min(
+      calendarEndMinutes,
+      Math.max(
+        calendarStartMinutes,
+        targetMinutes
+      )
+    );
+
+
+  const currentTop =
+    (
+      clampedMinutes
+      - calendarStartMinutes
+    )
+    * hourHeight / 60;
+
+
+  const targetTop =
+    currentTop
+    - shell.clientHeight / 2;
+
+
+  const maxTop =
+    Math.max(
+      0,
+      shell.scrollHeight
+      - shell.clientHeight
+    );
+
+
+  shell.scrollTop =
+    Math.min(
+      maxTop,
+      Math.max(
+        0,
+        targetTop
+      )
+    );
+}
