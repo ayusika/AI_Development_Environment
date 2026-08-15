@@ -1477,9 +1477,19 @@ function renderScheduleEvent(
     minuteText,
   ] = time.split(':');
 
-  const startMinutes =
+  let startMinutes =
     Number(hourText) * 60
     + Number(minuteText);
+
+
+  if (
+    Number(hourText) >= 0
+    && Number(hourText) < 3
+  ) {
+    startMinutes +=
+      24 * 60;
+  }
+
 
   const calendarStart =
     scheduleStartHour * 60;
