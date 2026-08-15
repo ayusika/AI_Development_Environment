@@ -1087,7 +1087,8 @@ async function loadSchedule() {
 ======================================== */
 
 function renderScheduleCalendar(
-  period
+  period,
+  preserveScroll = false
 ) {
 
   const days =
