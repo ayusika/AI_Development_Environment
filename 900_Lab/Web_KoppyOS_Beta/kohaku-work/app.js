@@ -3888,10 +3888,19 @@ document.addEventListener(
     event.preventDefault();
 
 
+    const cardTopClientY =
+      event.clientY
+      - Number(
+          scheduleDragState
+            .grabOffsetY
+          || 0
+        );
+
+
     const dropTarget =
       getScheduleDropTarget(
         column,
-        event.clientY
+        cardTopClientY
       );
 
     if (!dropTarget) {
