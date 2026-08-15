@@ -1555,11 +1555,9 @@ function renderScheduleEvent(
           ${Number(visit.course_minutes)}分
         </span>
 
-        <span class="schedule-event-status">
-          ${escapeHtml(status)}
-        </span>
-
       </span>
+
+      ${optionHtml}
 
       <span class="schedule-event-progress">
 
