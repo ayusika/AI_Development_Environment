@@ -1548,13 +1548,28 @@ function renderScheduleEvent(
       "
     >
 
-      <span class="schedule-event-time">
-        ${escapeHtml(time)}
+      <span class="schedule-event-heading">
+
+        <span class="schedule-event-time">
+          ${escapeHtml(time)}
+        </span>
+
+        <span class="schedule-event-kind">
+          ${escapeHtml(status)}
+        </span>
+
       </span>
 
-      <span class="schedule-event-main">
-        ${escapeHtml(customer)}
-      </span>
+      ${
+        visit.customer_name
+        || visit.customer_code
+          ? `
+            <span class="schedule-event-main">
+              ${escapeHtml(customer)}
+            </span>
+          `
+          : ''
+      }
 
       <span class="schedule-event-meta">
 
