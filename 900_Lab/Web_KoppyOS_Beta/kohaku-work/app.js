@@ -1939,6 +1939,45 @@ async function saveScheduleVisit() {
       : '';
 
 
+  const bookedDate =
+    scheduleBookedDate
+      ? scheduleBookedDate.value
+      : '';
+
+  const bookedTime =
+    scheduleBookedTime
+      ? scheduleBookedTime.value
+      : '';
+
+
+  if (
+    (bookedDate && !bookedTime)
+    || (!bookedDate && bookedTime)
+  ) {
+
+    showScheduleMessage(
+      '予約受付日は日付と時刻を両方入れてね。',
+      true
+    );
+
+    scheduleSaveButton.disabled =
+      false;
+
+    scheduleSaveButton.textContent =
+      editId
+        ? '変更を保存'
+        : 'この予約を登録';
+
+    return;
+  }
+
+
+  const bookedAt =
+    bookedDate && bookedTime
+      ? `${bookedDate} ${bookedTime}`
+      : null;
+
+
   const payload = {
     store_id:
       Number(
