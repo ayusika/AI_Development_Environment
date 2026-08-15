@@ -1751,6 +1751,24 @@ function openScheduleForm(
   }
 
 
+  const bookedNow =
+    new Date();
+
+
+  if (scheduleBookedDate) {
+    scheduleBookedDate.value =
+      scheduleFormatDate(
+        bookedNow
+      );
+  }
+
+
+  if (scheduleBookedTime) {
+    scheduleBookedTime.value =
+      `${String(bookedNow.getHours()).padStart(2, '0')}:${String(bookedNow.getMinutes()).padStart(2, '0')}`;
+  }
+
+
   scheduleFormCard.hidden = false;
 }
 
