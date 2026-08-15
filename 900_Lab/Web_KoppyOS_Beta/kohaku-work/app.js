@@ -4411,3 +4411,196 @@ document.addEventListener(
     resetScheduleTouchDrag();
   }
 );
+
+/* ========================================
+   SCHEDULE TOUCH DROP SAVE
+======================================== */
+
+document.addEventListener(
+  'pointerup',
+  async (event) => {
+
+    if (
+      event.pointerType !== 'touch'
+      || !scheduleTouchDrag
+    ) {
+      return;
+    }
+
+
+    const touchState =
+      scheduleTouchDrag;
+
+
+    clearScheduleTouchHoldTimer();
+
+
+    if (
+      !touchState.active
+    ) {
+
+      resetScheduleTouchDrag();
+
+      return;
+    }
+
+
+    event.preventDefault();
+
+
+    const element =
+      document.elementFromPoint(
+        event.clientX,
+        event.clientY
+      );
+
+
+    const column =
+      element?.closest(
+        '[data-schedule-day]'
+      );
+
+
+    if (!column) {
+
+      resetScheduleTouchDrag();
+
+      return;
+    }
+
+
+    const cardTopClientY =
+      event.clientY
+      - Number(
+          touchState.grabOffsetY
+          || 0
+        );
+
+
+    const dropTarget =
+      getScheduleDropTarget(
+        column,
+        cardTopClientY
+      );
+
+
+    if (!dropTarget) {
+
+      resetScheduleTouchDrag();
+
+      return;
+    }
+
+
+    const visitId =
+      Number(
+        touchState.visitId
+      );
+
+
+    const originalStartedAt =
+      String(
+        touchState.originalStartedAt
+        || ''
+      );
+
+
+    if (
+      dropTarget.startedAt
+      === originalStartedAt
+    ) {
+
+      resetScheduleTouchDrag();
+
+      return;
+    }
+
+
+    const calendarShell =
+      document.querySelector(
+        '.schedule-calendar-shell'
+      );
+
+
+    const previousScrollLeft =
+      calendarShell
+        ? calendarShell.scrollLeft
+        : 0;
+
+
+    const previousScrollTop =
+      calendarShell
+        ? calendarShell.scrollTop
+        : 0;
+
+
+    resetScheduleTouchDrag();
+
+
+    try {
+
+      const response =
+        await fetch(
+          scheduleApiUrl,
+          {
+            method: 'PATCH',
+
+            headers: {
+              'Content-Type':
+                'application/json',
+            },
+
+            body:
+              JSON.stringify({
+                id:
+                  visitId,
+
+                started_at:
+                  dropTarget.startedAt,
+              }),
+          }
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (
+        !response.ok
+        || !data.success
+      ) {
+
+        throw new Error(
+          data.error
+          || '予約時間を変更できませんでした。'
+        );
+      }
+
+
+      await loadSchedule(
+        true
+      );
+
+
+      if (calendarShell) {
+
+        calendarShell.scrollLeft =
+          previousScrollLeft;
+
+        calendarShell.scrollTop =
+          previousScrollTop;
+      }
+
+
+    } catch (error) {
+
+      window.alert(
+        `予約を移動できなかったよ。\n\n${error.message}`
+      );
+    }
+  },
+  {
+    passive: false,
+  }
+);
