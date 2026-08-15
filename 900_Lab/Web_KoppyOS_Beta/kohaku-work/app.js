@@ -1987,6 +1987,9 @@ async function saveScheduleVisit() {
     started_at:
       `${date} ${time}`,
 
+    booked_at:
+      bookedAt,
+
     course_minutes:
       selectedScheduleCourse,
 
