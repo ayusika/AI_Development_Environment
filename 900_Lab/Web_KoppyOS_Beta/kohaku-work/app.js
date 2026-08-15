@@ -3729,6 +3729,8 @@ document.addEventListener(
       });
 
 
+    clearScheduleDragPreview();
+
     scheduleDragState = null;
   }
 );
