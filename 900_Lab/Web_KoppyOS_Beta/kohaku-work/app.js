@@ -1620,8 +1620,19 @@ function renderScheduleNowLine(
   const now =
     new Date();
 
+  let displayHour =
+    now.getHours();
+
+
+  if (
+    displayHour < 3
+  ) {
+    displayHour += 24;
+  }
+
+
   const minutes =
-    now.getHours() * 60
+    displayHour * 60
     + now.getMinutes();
 
   const start =
@@ -1652,7 +1663,7 @@ function renderScheduleNowLine(
     >
 
       <span class="schedule-now-label">
-        ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}
+        ${String(displayHour).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}
       </span>
 
     </div>
