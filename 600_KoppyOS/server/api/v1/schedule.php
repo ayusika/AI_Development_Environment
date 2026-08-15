@@ -681,18 +681,20 @@ try {
                     store_id,
                     customer_id,
                     started_at,
+                    booked_at,
                     course_minutes,
                     customer_status,
                     is_dummy,
                     status
                 )
-                VALUES (?, ?, ?, ?, ?, 0, ?)'
+                VALUES (?, ?, ?, ?, ?, ?, 0, ?)'
             );
 
         $statement->execute([
             $storeId,
             $customerId,
             $startedAt,
+            $bookedAt,
             $courseMinutes,
             $customerStatus,
             'scheduled',
