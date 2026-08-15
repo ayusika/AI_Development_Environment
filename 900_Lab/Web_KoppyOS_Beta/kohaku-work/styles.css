@@ -4407,3 +4407,90 @@ body:has(#view-schedule.is-active) .bottom-nav {
 .schedule-event-options {
   color: #ffffff !important;
 }
+
+/* ========================================
+   SCHEDULE EVENT HEADING
+   time + customer status
+======================================== */
+
+.schedule-event-heading {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 3px;
+
+  min-width: 0;
+  margin-bottom: 2px;
+}
+
+
+.schedule-event-heading .schedule-event-time {
+  flex: 0 1 auto;
+
+  margin: 0;
+
+  white-space: nowrap;
+}
+
+
+.schedule-event-kind {
+  flex: 0 0 auto;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 0;
+
+  padding: 1px 3px;
+
+  border-radius: 999px;
+
+  color: rgba(53, 80, 94, 0.78);
+  background: rgba(255, 255, 255, 0.42);
+
+  font-size: 7px;
+  font-weight: 900;
+  line-height: 1.25;
+
+  white-space: nowrap;
+}
+
+
+/* 長時間コースの濃色カード */
+
+.schedule-event.course-over-180
+.schedule-event-kind {
+  color: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.16);
+}
+
+
+/* 2週間表示などカード幅が狭い場合 */
+
+.schedule-calendar.is-compact
+.schedule-event-kind {
+  padding-inline: 2px;
+
+  font-size: 6px;
+}
+
+
+/* スマホ */
+
+@media (max-width: 640px) {
+
+  .schedule-event-heading {
+    gap: 2px;
+    margin-bottom: 1px;
+  }
+
+  .schedule-event-kind {
+    padding: 1px 2px;
+
+    font-size: 6px;
+  }
+}
