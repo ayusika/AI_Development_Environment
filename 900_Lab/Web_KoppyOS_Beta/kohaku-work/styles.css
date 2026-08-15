@@ -4375,9 +4375,4 @@ body:has(#view-schedule.is-active) .bottom-nav {
 }
 
 
-/* 高さが短い予約でも
-   主要情報を優先する */
-.schedule-event[style*="height:28px"]
-.schedule-event-options {
-  display: none;
-}
+
