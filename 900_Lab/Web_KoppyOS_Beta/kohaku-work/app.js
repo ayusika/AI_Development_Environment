@@ -1410,11 +1410,47 @@ function renderScheduleEventsForDate(
 ) {
 
   return scheduleState.visits
-    .filter((visit) =>
-      String(
-        visit.started_at
-      ).slice(0, 10) === date
-    )
+    .filter((visit) => {
+
+      const startedAt =
+        String(
+          visit.started_at
+          || ''
+        );
+
+      const startedDate =
+        startedAt.slice(0, 10);
+
+      const startedHour =
+        Number(
+          startedAt.slice(11, 13)
+        );
+
+
+      if (
+        startedHour >= 0
+        && startedHour < 3
+      ) {
+
+        const previousDate =
+          scheduleParseDate(
+            startedDate
+          );
+
+        previousDate.setDate(
+          previousDate.getDate() - 1
+        );
+
+        return (
+          scheduleFormatDate(
+            previousDate
+          ) === date
+        );
+      }
+
+
+      return startedDate === date;
+    })
     .map((visit) =>
       renderScheduleEvent(
         visit,
