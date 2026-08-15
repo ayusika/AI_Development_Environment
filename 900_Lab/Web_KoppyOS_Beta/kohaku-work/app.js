@@ -1973,32 +1973,19 @@ async function saveScheduleVisit() {
     }
 
 
-    if (!editId) {
+    scheduleState.anchorDate =
+      previousAnchorDate;
 
-      scheduleState.anchorDate =
-        date;
-
-      if (scheduleDateInput) {
-        scheduleDateInput.value =
-          date;
-      }
-
-    } else {
-
-      scheduleState.anchorDate =
+    if (scheduleDateInput) {
+      scheduleDateInput.value =
         previousAnchorDate;
-
-      if (scheduleDateInput) {
-        scheduleDateInput.value =
-          previousAnchorDate;
-      }
     }
 
 
     closeScheduleForm();
 
     await loadSchedule(
-      Boolean(editId)
+      true
     );
 
 
