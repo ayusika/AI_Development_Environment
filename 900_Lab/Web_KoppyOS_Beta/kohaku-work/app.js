@@ -1997,7 +1997,9 @@ async function saveScheduleVisit() {
 
     closeScheduleForm();
 
-    await loadSchedule();
+    await loadSchedule(
+      Boolean(editId)
+    );
 
 
     if (
