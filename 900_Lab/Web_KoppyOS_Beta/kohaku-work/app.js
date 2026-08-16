@@ -1022,10 +1022,40 @@ function openCustomerDetail(
         </p>
 
         <p>
-          <strong>来店回数</strong>
+          <strong>来店</strong>
           ${escapeHtml(
             String(
               customer.visit_count
+              || 0
+            )
+          )}回
+        </p>
+
+        <p>
+          <strong>予約中</strong>
+          ${escapeHtml(
+            String(
+              customer.scheduled_count
+              || 0
+            )
+          )}件
+        </p>
+
+        <p>
+          <strong>キャンセル</strong>
+          ${escapeHtml(
+            String(
+              customer.cancelled_count
+              || 0
+            )
+          )}件
+        </p>
+
+        <p>
+          <strong>無断キャンセル</strong>
+          ${escapeHtml(
+            String(
+              customer.no_show_count
               || 0
             )
           )}件
