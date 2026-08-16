@@ -2201,10 +2201,77 @@ h2 {
   font-weight: 800;
 }
 
+.customer-alias-section {
+  margin-top: 24px;
+}
+
+.customer-alias-section h2 {
+  margin:
+    0
+    0
+    10px;
+
+  font-size: 14px;
+}
+
+.customer-alias-list {
+  overflow: hidden;
+
+  border:
+    1px solid
+    var(--line);
+
+  border-radius:
+    var(--radius-md);
+
+  background:
+    var(--surface);
+}
+
+.customer-alias-list p {
+  min-height: 44px;
+
+  margin: 0;
+
+  padding:
+    10px
+    13px;
+
+  display: grid;
+  grid-template-columns:
+    minmax(100px, 0.7fr)
+    minmax(0, 1.3fr);
+
+  align-items: center;
+
+  gap: 12px;
+}
+
+.customer-alias-list p + p {
+  border-top:
+    1px solid
+    var(--line);
+}
+
+.customer-alias-list strong {
+  color:
+    var(--text-soft);
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+
 @media (max-width: 520px) {
   .customer-status-summary {
     grid-template-columns:
       repeat(2, minmax(0, 1fr));
+  }
+
+  .customer-alias-list p {
+    grid-template-columns:
+      105px
+      minmax(0, 1fr);
   }
 }
 
