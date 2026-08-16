@@ -1233,9 +1233,8 @@ function openCustomerDetail(
 
                         <strong class="customer-visit-date">
                           ${escapeHtml(
-                            String(
+                            formatVisitDateTime(
                               visit.started_at
-                              || '日時未登録'
                             )
                           )}
                         </strong>
