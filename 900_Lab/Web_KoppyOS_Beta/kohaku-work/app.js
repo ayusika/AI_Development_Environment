@@ -385,6 +385,36 @@ function closeDatabaseRecords() {
 }
 
 
+function closeInlineDatabaseRecords(
+  tableName
+) {
+
+  if (!tableName) {
+    return;
+  }
+
+
+  const recordContainer =
+    document.querySelector(
+      `[data-database-records="${CSS.escape(
+        tableName
+      )}"]`
+    );
+
+
+  if (!recordContainer) {
+    return;
+  }
+
+
+  recordContainer.innerHTML =
+    '';
+
+  recordContainer.hidden =
+    true;
+}
+
+
 async function openDatabaseRecords(
   tableName
 ) {
