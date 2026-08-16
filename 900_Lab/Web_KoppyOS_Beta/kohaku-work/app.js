@@ -1125,6 +1125,67 @@ async function loadCustomers() {
   }
 }
 
+
+function filterCustomerCards() {
+
+  const searchInput =
+    document.getElementById(
+      'customer-search-input'
+    );
+
+  if (!searchInput) {
+    return;
+  }
+
+
+  let query =
+    searchInput.value
+      .trim()
+      .toLowerCase();
+
+
+  if (query.startsWith('#')) {
+    query =
+      query.slice(1);
+  }
+
+
+  document
+    .querySelectorAll(
+      '#customer-list .customer-card'
+    )
+    .forEach((card) => {
+
+      const searchText =
+        String(
+          card.dataset.customerSearch
+          || ''
+        );
+
+
+      card.hidden =
+        query !== ''
+        && !searchText.includes(
+          query
+        );
+    });
+}
+
+
+const customerSearchInput =
+  document.getElementById(
+    'customer-search-input'
+  );
+
+
+if (customerSearchInput) {
+
+  customerSearchInput.addEventListener(
+    'input',
+    filterCustomerCards
+  );
+}
+
 // WRITER:CUSTOMERS_LOGIC:END
 
 
