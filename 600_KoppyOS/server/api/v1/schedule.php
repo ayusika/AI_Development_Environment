@@ -1111,6 +1111,66 @@ try {
         }
 
 
+        if (
+            $customerRequestedChange
+            && $changeType !== null
+        ) {
+
+            $beforeJson =
+                json_encode(
+                    $beforeChangeData,
+                    JSON_UNESCAPED_UNICODE
+                    | JSON_UNESCAPED_SLASHES
+                    | JSON_THROW_ON_ERROR
+                );
+
+            $afterJson =
+                json_encode(
+                    $afterChangeData,
+                    JSON_UNESCAPED_UNICODE
+                    | JSON_UNESCAPED_SLASHES
+                    | JSON_THROW_ON_ERROR
+                );
+
+
+            $historyStatement =
+                $pdo->prepare(
+                    "
+                    INSERT INTO visit_change_history
+                    (
+                        visit_id,
+                        requested_at,
+                        change_type,
+                        before_data,
+                        after_data,
+                        note
+                    )
+                    VALUES (
+                        ?,
+                        strftime(
+                            '%Y-%m-%d %H:%M',
+                            'now',
+                            'localtime'
+                        ),
+                        ?,
+                        ?,
+                        ?,
+                        ?
+                    )
+                    "
+                );
+
+
+            $historyStatement->execute([
+                $visitId,
+                $changeType,
+                $beforeJson,
+                $afterJson,
+                null,
+            ]);
+        }
+
+
         $pdo->commit();
 
 
