@@ -447,7 +447,7 @@ async function openDatabaseRecords(
 
     if (!records.length) {
 
-      databaseRecordContent.innerHTML = `
+      recordContainer.innerHTML = `
         <p>レコードはありません。</p>
       `;
 
