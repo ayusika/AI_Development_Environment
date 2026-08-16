@@ -1079,6 +1079,13 @@ try {
 
 } catch (Throwable $e) {
 
+    if (
+        $pdo instanceof PDO
+        && $pdo->inTransaction()
+    ) {
+        $pdo->rollBack();
+    }
+
     http_response_code(400);
 
     echo json_encode(
