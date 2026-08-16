@@ -1093,6 +1093,8 @@ async function loadCustomers() {
   }
 }
 
+// WRITER:CUSTOMERS_LOGIC:END
+
 
 // WRITER:WORK_SCHEDULE_LOGIC:START
 
