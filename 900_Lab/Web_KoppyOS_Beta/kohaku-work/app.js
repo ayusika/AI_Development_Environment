@@ -633,12 +633,6 @@ async function loadDatabaseViewer() {
           return `
             <section
               class="database-table-card"
-              role="button"
-              tabindex="0"
-              data-action="open-database-records"
-              data-table-name="${escapeHtml(
-                String(table.name)
-              )}"
             >
 
               <div class="database-table-heading">
@@ -649,12 +643,27 @@ async function loadDatabaseViewer() {
                   )}
                 </h3>
 
-                <span>
-                  ${escapeHtml(
-                    String(table.row_count)
-                  )}
-                  件
-                </span>
+                <div>
+
+                  <span>
+                    ${escapeHtml(
+                      String(table.row_count)
+                    )}
+                    件
+                  </span>
+
+                  <button
+                    class="small-link-button"
+                    type="button"
+                    data-action="open-database-records"
+                    data-table-name="${escapeHtml(
+                      String(table.name)
+                    )}"
+                  >
+                    レコードを見る
+                  </button>
+
+                </div>
 
               </div>
 
