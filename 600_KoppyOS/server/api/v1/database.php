@@ -50,6 +50,103 @@ try {
     ];
 
 
+    $requestedTable =
+        isset($_GET['table'])
+            ? trim(
+                (string)
+                $_GET['table']
+            )
+            : '';
+
+
+    if ($requestedTable !== '') {
+
+        if (
+            !in_array(
+                $requestedTable,
+                $allowedTables,
+                true
+            )
+        ) {
+
+            throw new RuntimeException(
+                'Table is not allowed.'
+            );
+        }
+
+
+        $existsStatement =
+            $pdo->prepare(
+                "
+                SELECT
+                    COUNT(*)
+
+                FROM sqlite_master
+
+                WHERE
+                    type = 'table'
+                    AND name = ?
+                "
+            );
+
+
+        $existsStatement->execute([
+            $requestedTable
+        ]);
+
+
+        $exists =
+            (int)
+            $existsStatement->fetchColumn()
+            > 0;
+
+
+        if (!$exists) {
+
+            throw new RuntimeException(
+                'Table does not exist.'
+            );
+        }
+
+
+        $recordStatement =
+            $pdo->query(
+                'SELECT * FROM "'
+                . $requestedTable
+                . '" ORDER BY id DESC LIMIT 50'
+            );
+
+
+        $records =
+            $recordStatement->fetchAll();
+
+
+        echo json_encode(
+            [
+                'success' =>
+                    true,
+
+                'read_only' =>
+                    true,
+
+                'table' =>
+                    $requestedTable,
+
+                'records' =>
+                    $records,
+
+                'error' =>
+                    null,
+            ],
+            JSON_UNESCAPED_UNICODE |
+            JSON_PRETTY_PRINT
+        );
+
+
+        exit;
+    }
+
+
     $tables = [];
 
 
