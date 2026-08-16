@@ -77,7 +77,28 @@ try {
                             WHEN v.status = 'completed'
                             THEN v.id
                         END
-                    ) AS visit_count
+                    ) AS visit_count,
+
+                    COUNT(
+                        DISTINCT CASE
+                            WHEN v.status = 'scheduled'
+                            THEN v.id
+                        END
+                    ) AS scheduled_count,
+
+                    COUNT(
+                        DISTINCT CASE
+                            WHEN v.status = 'cancelled'
+                            THEN v.id
+                        END
+                    ) AS cancelled_count,
+
+                    COUNT(
+                        DISTINCT CASE
+                            WHEN v.status = 'no_show'
+                            THEN v.id
+                        END
+                    ) AS no_show_count
 
                 FROM customers c
 
