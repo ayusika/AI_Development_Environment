@@ -2428,6 +2428,16 @@ function closeScheduleDetail() {
     scheduleDrawerBackdrop.hidden =
       true;
   }
+
+
+  if (scheduleHistoryPanel) {
+
+    scheduleHistoryPanel.hidden =
+      true;
+
+    scheduleHistoryPanel.innerHTML =
+      '';
+  }
 }
 
 
