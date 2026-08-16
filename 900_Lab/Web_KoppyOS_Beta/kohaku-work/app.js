@@ -2670,15 +2670,15 @@ async function openCurrentScheduleHistory() {
           `;
 
 
-    scheduleDetailBody.insertAdjacentHTML(
-      'beforeend',
-      `
-        <div class="schedule-history-list">
-          <h3>予約変更履歴</h3>
-          ${historyHtml}
-        </div>
-      `
-    );
+    scheduleHistoryPanel.innerHTML = `
+      <div class="schedule-history-list">
+        <h3>予約変更履歴</h3>
+        ${historyHtml}
+      </div>
+    `;
+
+    scheduleHistoryPanel.hidden =
+      false;
 
 
   } catch (error) {
