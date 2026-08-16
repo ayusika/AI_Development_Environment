@@ -989,6 +989,9 @@ try {
         }
 
 
+        $pdo->commit();
+
+
         echo json_encode(
             [
                 'success' => true,
