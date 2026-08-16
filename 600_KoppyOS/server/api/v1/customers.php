@@ -60,6 +60,137 @@ try {
         );
 
 
+    if ($method === 'GET') {
+
+        $statement =
+            $pdo->query(
+                "
+                SELECT
+                    c.id,
+                    c.customer_code,
+                    c.general_notes,
+                    c.created_at,
+                    c.updated_at,
+
+                    COUNT(
+                        DISTINCT v.id
+                    ) AS visit_count
+
+                FROM customers c
+
+                LEFT JOIN visits v
+                    ON v.customer_id = c.id
+
+                GROUP BY c.id
+
+                ORDER BY
+                    c.updated_at DESC,
+                    c.id DESC
+                "
+            );
+
+
+        $customers =
+            $statement->fetchAll();
+
+
+        $nameStatement =
+            $pdo->query(
+                "
+                SELECT
+                    id,
+                    customer_id,
+                    name_type,
+                    name,
+                    store_id,
+                    is_primary,
+                    note
+
+                FROM customer_names
+
+                ORDER BY
+                    customer_id ASC,
+                    is_primary DESC,
+                    id ASC
+                "
+            );
+
+
+        $namesByCustomer =
+            [];
+
+
+        foreach (
+            $nameStatement->fetchAll()
+            as $nameRecord
+        ) {
+
+            $customerId =
+                (int)
+                $nameRecord['customer_id'];
+
+
+            if (
+                !isset(
+                    $namesByCustomer[
+                        $customerId
+                    ]
+                )
+            ) {
+                $namesByCustomer[
+                    $customerId
+                ] = [];
+            }
+
+
+            $namesByCustomer[
+                $customerId
+            ][] =
+                $nameRecord;
+        }
+
+
+        foreach (
+            $customers
+            as &$customer
+        ) {
+
+            $customerId =
+                (int)
+                $customer['id'];
+
+
+            $customer['names'] =
+                $namesByCustomer[
+                    $customerId
+                ]
+                ?? [];
+        }
+
+        unset($customer);
+
+
+        echo json_encode(
+            [
+                'success' =>
+                    true,
+
+                'read_only' =>
+                    true,
+
+                'customers' =>
+                    $customers,
+
+                'error' =>
+                    null,
+            ],
+            JSON_UNESCAPED_UNICODE
+        );
+
+        exit;
+    }
+
+
     if ($method !== 'POST') {
 
         http_response_code(405);
