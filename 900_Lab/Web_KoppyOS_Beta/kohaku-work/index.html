@@ -2168,6 +2168,47 @@
               </button>
 
 
+              <div
+                class="schedule-customer-cancel-panel"
+                id="schedule-customer-cancel-panel"
+                hidden
+              >
+
+                <label>
+                  <span>キャンセル理由</span>
+
+                  <textarea
+                    id="schedule-customer-cancel-reason"
+                    rows="3"
+                    maxlength="500"
+                    placeholder="例：予定が入ったため"
+                  ></textarea>
+                </label>
+
+
+                <div class="schedule-customer-cancel-actions">
+
+                  <button
+                    class="secondary-button"
+                    type="button"
+                    data-action="close-customer-cancel"
+                  >
+                    やめる
+                  </button>
+
+                  <button
+                    class="schedule-customer-cancel-confirm"
+                    type="button"
+                    data-action="save-customer-cancel"
+                  >
+                    キャンセルとして保存
+                  </button>
+
+                </div>
+
+              </div>
+
+
               <button
                 class="schedule-delete-button"
                 type="button"
