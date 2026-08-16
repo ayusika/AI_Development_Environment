@@ -121,6 +121,55 @@ try {
             $recordStatement->fetchAll();
 
 
+        $customerNames =
+            [];
+
+
+        if ($requestedTable === 'visits') {
+
+            $nameStatement =
+                $pdo->query(
+                    "
+                    SELECT
+                        customer_id,
+                        name
+
+                    FROM customer_names
+
+                    WHERE is_primary = 1
+
+                    ORDER BY id ASC
+                    "
+                );
+
+
+            foreach (
+                $nameStatement->fetchAll()
+                as $nameRecord
+            ) {
+
+                $customerId =
+                    (int)
+                    $nameRecord['customer_id'];
+
+
+                if (
+                    !isset(
+                        $customerNames[
+                            $customerId
+                        ]
+                    )
+                ) {
+                    $customerNames[
+                        $customerId
+                    ] =
+                        (string)
+                        $nameRecord['name'];
+                }
+            }
+        }
+
+
         echo json_encode(
             [
                 'success' =>
@@ -134,6 +183,9 @@ try {
 
                 'records' =>
                     $records,
+
+                'customer_names' =>
+                    $customerNames,
 
                 'error' =>
                     null,
