@@ -308,6 +308,184 @@ function handleAction(action, button) {
 }
 
 
+const databaseApiUrl =
+  '/api/v1/database.php';
+
+const databaseViewer =
+  document.getElementById('database-viewer');
+
+
+async function loadDatabaseViewer() {
+
+  if (!databaseViewer) {
+    return;
+  }
+
+
+  databaseViewer.innerHTML = `
+    <p>DB情報を読み込み中...</p>
+  `;
+
+
+  try {
+
+    const response =
+      await fetch(
+        databaseApiUrl,
+        {
+          method: 'GET',
+          cache: 'no-store',
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+
+      throw new Error(
+        data.error
+        || 'DB情報を取得できませんでした。'
+      );
+    }
+
+
+    const tables =
+      Array.isArray(data.tables)
+        ? data.tables
+        : [];
+
+
+    const tablesHtml =
+      tables
+        .map((table) => {
+
+          if (!table.exists) {
+
+            return `
+              <section class="database-table-card">
+                <h3>
+                  ${escapeHtml(
+                    String(table.name)
+                  )}
+                </h3>
+
+                <p>
+                  テーブルが存在しません
+                </p>
+              </section>
+            `;
+          }
+
+
+          const columns =
+            Array.isArray(table.columns)
+              ? table.columns
+              : [];
+
+
+          const columnsHtml =
+            columns
+              .map((column) => {
+
+                const flags = [];
+
+                if (column.primary_key) {
+                  flags.push('PK');
+                }
+
+                if (column.not_null) {
+                  flags.push('NOT NULL');
+                }
+
+
+                return `
+                  <div class="database-column-row">
+
+                    <strong>
+                      ${escapeHtml(
+                        String(column.name)
+                      )}
+                    </strong>
+
+                    <span>
+                      ${escapeHtml(
+                        String(
+                          column.type
+                          || 'TEXT'
+                        )
+                      )}
+                    </span>
+
+                    <small>
+                      ${escapeHtml(
+                        flags.join(' / ')
+                      )}
+                    </small>
+
+                  </div>
+                `;
+              })
+              .join('');
+
+
+          return `
+            <section class="database-table-card">
+
+              <div class="database-table-heading">
+
+                <h3>
+                  ${escapeHtml(
+                    String(table.name)
+                  )}
+                </h3>
+
+                <span>
+                  ${escapeHtml(
+                    String(table.row_count)
+                  )}
+                  件
+                </span>
+
+              </div>
+
+              <div class="database-column-list">
+                ${columnsHtml}
+              </div>
+
+            </section>
+          `;
+        })
+        .join('');
+
+
+    databaseViewer.innerHTML =
+      tablesHtml
+      || `
+        <p>
+          表示できるテーブルがありません。
+        </p>
+      `;
+
+
+  } catch (error) {
+
+    databaseViewer.innerHTML = `
+      <p>
+        ${escapeHtml(
+          error.message
+        )}
+      </p>
+    `;
+  }
+}
+
+
 // WRITER:WORK_SCHEDULE_LOGIC:START
 
 /* ========================================
