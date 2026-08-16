@@ -598,6 +598,16 @@ const scheduleCustomerCancelReason =
     'schedule-customer-cancel-reason'
   );
 
+const scheduleCustomerPanel =
+  document.getElementById(
+    'schedule-customer-panel'
+  );
+
+const scheduleCustomerName =
+  document.getElementById(
+    'schedule-customer-name'
+  );
+
 
 const scheduleState = {
   view: 'two-weeks',
