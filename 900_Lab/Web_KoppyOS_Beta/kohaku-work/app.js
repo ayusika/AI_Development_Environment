@@ -2535,14 +2535,82 @@ async function openCurrentScheduleHistory() {
                 !== after.started_at
               ) {
 
+                const beforeStartedAt =
+                  String(
+                    before.started_at
+                    || ''
+                  );
+
+                const afterStartedAt =
+                  String(
+                    after.started_at
+                    || ''
+                  );
+
+
+                const beforeDate =
+                  beforeStartedAt.slice(
+                    0,
+                    10
+                  );
+
+                const afterDate =
+                  afterStartedAt.slice(
+                    0,
+                    10
+                  );
+
+
+                const formatShortDateTime =
+                  (value) => {
+
+                    if (!value) {
+                      return '未設定';
+                    }
+
+                    const month =
+                      Number(
+                        value.slice(
+                          5,
+                          7
+                        )
+                      );
+
+                    const day =
+                      Number(
+                        value.slice(
+                          8,
+                          10
+                        )
+                      );
+
+                    const time =
+                      value.slice(
+                        11,
+                        16
+                      );
+
+                    return `${month}/${day} ${time}`;
+                  };
+
+
                 changes.push({
                   label: '日時',
+
                   before:
-                    before.started_at
-                    || '未設定',
+                    formatShortDateTime(
+                      beforeStartedAt
+                    ),
+
                   after:
-                    after.started_at
-                    || '未設定',
+                    beforeDate === afterDate
+                      ? afterStartedAt.slice(
+                          11,
+                          16
+                        )
+                      : formatShortDateTime(
+                          afterStartedAt
+                        ),
                 });
               }
 
