@@ -148,8 +148,12 @@ function handleNav(navName) {
     return;
   }
 
+  if (navName === 'customers') {
+    showView('customers');
+    return;
+  }
+
   const labels = {
-    customers: '顧客',
     sales: '売上',
     koppy: 'Koppy',
   };
