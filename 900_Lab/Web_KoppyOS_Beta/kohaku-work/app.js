@@ -984,6 +984,70 @@ function openCustomerDetail(
   };
 
 
+  const formatVisitDateTime =
+    (value) => {
+
+      if (!value) {
+        return '日時未登録';
+      }
+
+
+      const match =
+        String(value).match(
+          /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/
+        );
+
+
+      if (!match) {
+        return String(value);
+      }
+
+
+      const year =
+        Number(match[1]);
+
+      const month =
+        Number(match[2]);
+
+      const day =
+        Number(match[3]);
+
+      const hour =
+        match[4];
+
+      const minute =
+        match[5];
+
+
+      const weekDays = [
+        '日',
+        '月',
+        '火',
+        '水',
+        '木',
+        '金',
+        '土',
+      ];
+
+
+      const date =
+        new Date(
+          year,
+          month - 1,
+          day
+        );
+
+
+      const weekDay =
+        weekDays[
+          date.getDay()
+        ];
+
+
+      return `${year}年${month}月${day}日（${weekDay}）${hour}:${minute}`;
+    };
+
+
   const title =
     document.getElementById(
       'customer-detail-title'
