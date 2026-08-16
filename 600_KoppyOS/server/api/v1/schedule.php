@@ -1250,6 +1250,10 @@ try {
                     booked_at = ?,
                     course_minutes = ?,
                     customer_status = ?,
+                    status = ?,
+                    cancelled_at = ?,
+                    cancel_reason = ?,
+                    cancelled_by = ?,
                     updated_at =
                         strftime(
                             '%Y-%m-%d %H:%M',
