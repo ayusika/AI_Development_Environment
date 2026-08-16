@@ -879,6 +879,8 @@ async function loadDatabaseViewer() {
 const customersApiUrl =
   '/api/v1/customers.php';
 
+let loadedCustomers = [];
+
 
 async function loadCustomers() {
 
