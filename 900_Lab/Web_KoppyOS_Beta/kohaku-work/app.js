@@ -892,6 +892,27 @@ const customersApiUrl =
 
 let loadedCustomers = [];
 
+let selectedCustomerId = null;
+
+
+function openCustomerDetail(
+  customerId
+) {
+
+  selectedCustomerId =
+    Number(customerId);
+
+
+  if (!selectedCustomerId) {
+    return;
+  }
+
+
+  showView(
+    'customerDetail'
+  );
+}
+
 
 async function loadCustomers() {
 
