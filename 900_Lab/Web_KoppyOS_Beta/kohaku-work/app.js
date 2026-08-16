@@ -1036,6 +1036,9 @@ async function loadCustomers() {
               data-customer-search="${escapeHtml(
                 searchText
               )}"
+              data-action="open-customer-detail"
+              role="button"
+              tabindex="0"
             >
 
               <div class="customer-card-heading">
