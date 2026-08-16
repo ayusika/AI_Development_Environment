@@ -230,6 +230,13 @@ try {
                     $customerId
                 ]
                 ?? [];
+
+
+            $customer['visits'] =
+                $visitsByCustomer[
+                    $customerId
+                ]
+                ?? [];
         }
 
         unset($customer);
