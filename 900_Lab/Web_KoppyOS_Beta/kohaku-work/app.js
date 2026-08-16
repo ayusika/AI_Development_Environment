@@ -365,6 +365,152 @@ const databaseRecordContent =
   );
 
 
+function closeDatabaseRecords() {
+
+  if (databaseRecordViewer) {
+    databaseRecordViewer.hidden =
+      true;
+  }
+
+  if (databaseRecordContent) {
+    databaseRecordContent.innerHTML =
+      '';
+  }
+}
+
+
+async function openDatabaseRecords(
+  tableName
+) {
+
+  if (
+    !tableName
+    || !databaseRecordViewer
+    || !databaseRecordContent
+  ) {
+    return;
+  }
+
+
+  databaseRecordViewer.hidden =
+    false;
+
+
+  if (databaseRecordTitle) {
+    databaseRecordTitle.textContent =
+      tableName;
+  }
+
+
+  databaseRecordContent.innerHTML = `
+    <p>レコードを読み込み中...</p>
+  `;
+
+
+  try {
+
+    const response =
+      await fetch(
+        `${databaseApiUrl}?table=${encodeURIComponent(
+          tableName
+        )}`,
+        {
+          method: 'GET',
+          cache: 'no-store',
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+      throw new Error(
+        data.error
+        || 'レコードを取得できませんでした。'
+      );
+    }
+
+
+    const records =
+      Array.isArray(data.records)
+        ? data.records
+        : [];
+
+
+    if (!records.length) {
+
+      databaseRecordContent.innerHTML = `
+        <p>レコードはありません。</p>
+      `;
+
+      return;
+    }
+
+
+    const recordsHtml =
+      records
+        .map((record) => {
+
+          const fieldsHtml =
+            Object.entries(record)
+              .map(
+                ([
+                  key,
+                  value,
+                ]) => `
+                  <div class="database-record-field">
+
+                    <strong>
+                      ${escapeHtml(
+                        String(key)
+                      )}
+                    </strong>
+
+                    <span>
+                      ${escapeHtml(
+                        value === null
+                          ? 'NULL'
+                          : String(value)
+                      )}
+                    </span>
+
+                  </div>
+                `
+              )
+              .join('');
+
+
+          return `
+            <article class="database-record-card">
+              ${fieldsHtml}
+            </article>
+          `;
+        })
+        .join('');
+
+
+    databaseRecordContent.innerHTML =
+      recordsHtml;
+
+
+  } catch (error) {
+
+    databaseRecordContent.innerHTML = `
+      <p>
+        ${escapeHtml(
+          error.message
+        )}
+      </p>
+    `;
+  }
+}
+
+
 async function loadDatabaseViewer() {
 
   if (!databaseViewer) {
