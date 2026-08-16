@@ -1117,6 +1117,59 @@ try {
         );
 
 
+        $allowedStatuses = [
+            'scheduled',
+            'completed',
+            'cancelled',
+            'no_show',
+        ];
+
+
+        if (
+            !in_array(
+                $status,
+                $allowedStatuses,
+                true
+            )
+        ) {
+            throw new RuntimeException(
+                'Invalid status.'
+            );
+        }
+
+
+        $allowedCancelledBy = [
+            'customer',
+            'self',
+            'store',
+            'other',
+        ];
+
+
+        if (
+            $cancelledBy !== null
+            && !in_array(
+                $cancelledBy,
+                $allowedCancelledBy,
+                true
+            )
+        ) {
+            throw new RuntimeException(
+                'Invalid cancelled_by.'
+            );
+        }
+
+
+        if (
+            $cancelledBy === 'customer'
+            && $customerId === null
+        ) {
+            throw new RuntimeException(
+                'Customer cancellation requires a linked customer.'
+            );
+        }
+
+
         $pdo->beginTransaction();
 
 
