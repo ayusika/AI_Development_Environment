@@ -931,10 +931,14 @@ async function loadCustomers() {
     }
 
 
-    const customers =
+    loadedCustomers =
       Array.isArray(data.customers)
         ? data.customers
         : [];
+
+
+    const customers =
+      loadedCustomers;
 
 
     if (customers.length === 0) {
