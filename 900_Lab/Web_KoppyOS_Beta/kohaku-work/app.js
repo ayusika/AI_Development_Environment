@@ -497,13 +497,13 @@ async function openDatabaseRecords(
         .join('');
 
 
-    databaseRecordContent.innerHTML =
+    recordContainer.innerHTML =
       recordsHtml;
 
 
   } catch (error) {
 
-    databaseRecordContent.innerHTML = `
+    recordContainer.innerHTML = `
       <p>
         ${escapeHtml(
           error.message
