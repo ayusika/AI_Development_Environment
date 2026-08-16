@@ -571,6 +571,11 @@ const scheduleDetailDiaryState =
 const scheduleDetailSalesState =
   document.getElementById('schedule-detail-sales-state');
 
+const scheduleCustomerCancelButton =
+  document.getElementById(
+    'schedule-customer-cancel-button'
+  );
+
 
 const scheduleState = {
   view: 'two-weeks',
