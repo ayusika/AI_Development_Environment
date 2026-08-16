@@ -120,6 +120,71 @@ try {
             [];
 
 
+        $visitStatement =
+            $pdo->query(
+                "
+                SELECT
+                    id,
+                    customer_id,
+                    store_id,
+                    started_at,
+                    booked_at,
+                    course_minutes,
+                    customer_status,
+                    customer_features,
+                    conversation_notes,
+                    visit_notes,
+                    is_dummy,
+                    status,
+                    cancelled_at,
+                    cancel_reason,
+                    cancelled_by
+
+                FROM visits
+
+                WHERE customer_id IS NOT NULL
+
+                ORDER BY
+                    started_at DESC,
+                    id DESC
+                "
+            );
+
+
+        $visitsByCustomer =
+            [];
+
+
+        foreach (
+            $visitStatement->fetchAll()
+            as $visitRecord
+        ) {
+
+            $customerId =
+                (int)
+                $visitRecord['customer_id'];
+
+
+            if (
+                !isset(
+                    $visitsByCustomer[
+                        $customerId
+                    ]
+                )
+            ) {
+                $visitsByCustomer[
+                    $customerId
+                ] = [];
+            }
+
+
+            $visitsByCustomer[
+                $customerId
+            ][] =
+                $visitRecord;
+        }
+
+
         foreach (
             $nameStatement->fetchAll()
             as $nameRecord
