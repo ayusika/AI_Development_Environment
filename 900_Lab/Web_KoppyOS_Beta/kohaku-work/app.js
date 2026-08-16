@@ -2428,6 +2428,54 @@ function closeScheduleDetail() {
 }
 
 
+async function openCurrentScheduleHistory() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+  if (!visit) return;
+
+
+  try {
+
+    const response =
+      await fetch(
+        `${scheduleApiUrl}?visit_id=${encodeURIComponent(
+          String(visit.id)
+        )}`
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+      throw new Error(
+        data.error
+        || '予約変更履歴を取得できませんでした。'
+      );
+    }
+
+
+    console.log(
+      'Schedule change history:',
+      data
+    );
+
+
+  } catch (error) {
+
+    window.alert(
+      error.message
+    );
+  }
+}
+
+
 function editCurrentScheduleVisit() {
 
   const visit =
