@@ -1067,6 +1067,141 @@ function openCustomerDetail(
         </p>
 
       </div>
+
+
+      <hr>
+
+
+      <div class="customer-visit-history">
+
+        <h2>
+          来店履歴
+        </h2>
+
+        ${
+          visits.length === 0
+            ? `
+              <p>
+                来店履歴はありません。
+              </p>
+            `
+            : visits
+                .map((visit) => {
+
+                  const statusLabel =
+                    visitStatusLabels[
+                      visit.status
+                    ]
+                    || String(
+                      visit.status
+                      || '不明'
+                    );
+
+
+                  const customerStatusLabel =
+                    customerStatusLabels[
+                      visit.customer_status
+                    ]
+                    || String(
+                      visit.customer_status
+                      || '未登録'
+                    );
+
+
+                  return `
+                    <section class="content-card customer-visit-card">
+
+                      <p>
+                        <strong>
+                          ${escapeHtml(
+                            String(
+                              visit.started_at
+                              || '日時未登録'
+                            )
+                          )}
+                        </strong>
+                      </p>
+
+                      <p>
+                        状態：
+                        ${escapeHtml(
+                          statusLabel
+                        )}
+                      </p>
+
+                      <p>
+                        顧客区分：
+                        ${escapeHtml(
+                          customerStatusLabel
+                        )}
+                      </p>
+
+                      <p>
+                        コース：
+                        ${
+                          visit.course_minutes
+                            ? `${escapeHtml(
+                                String(
+                                  visit.course_minutes
+                                )
+                              )}分`
+                            : '未登録'
+                        }
+                      </p>
+
+                      ${
+                        visit.conversation_notes
+                          ? `
+                            <p>
+                              <strong>会話メモ</strong><br>
+                              ${escapeHtml(
+                                String(
+                                  visit.conversation_notes
+                                )
+                              )}
+                            </p>
+                          `
+                          : ''
+                      }
+
+                      ${
+                        visit.visit_notes
+                          ? `
+                            <p>
+                              <strong>来店メモ</strong><br>
+                              ${escapeHtml(
+                                String(
+                                  visit.visit_notes
+                                )
+                              )}
+                            </p>
+                          `
+                          : ''
+                      }
+
+                      ${
+                        visit.status === 'cancelled'
+                        && visit.cancel_reason
+                          ? `
+                            <p>
+                              <strong>キャンセル理由</strong><br>
+                              ${escapeHtml(
+                                String(
+                                  visit.cancel_reason
+                                )
+                              )}
+                            </p>
+                          `
+                          : ''
+                      }
+
+                    </section>
+                  `;
+                })
+                .join('')
+        }
+
+      </div>
     `;
   }
 
