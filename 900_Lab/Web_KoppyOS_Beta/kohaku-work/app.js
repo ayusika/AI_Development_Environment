@@ -533,8 +533,28 @@ async function openDatabaseRecords(
         .join('');
 
 
-    recordContainer.innerHTML =
-      recordsHtml;
+    recordContainer.innerHTML = `
+      <div class="database-inline-record-heading">
+
+        <strong>
+          RECORDS
+        </strong>
+
+        <button
+          class="small-link-button"
+          type="button"
+          data-action="close-inline-database-records"
+          data-table-name="${escapeHtml(
+            tableName
+          )}"
+        >
+          閉じる
+        </button>
+
+      </div>
+
+      ${recordsHtml}
+    `;
 
 
   } catch (error) {
