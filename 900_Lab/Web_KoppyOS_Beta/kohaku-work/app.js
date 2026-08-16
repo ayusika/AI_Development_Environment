@@ -1165,8 +1165,9 @@ function openCustomerDetail(
                   return `
                     <section class="content-card customer-visit-card">
 
-                      <p>
-                        <strong>
+                      <div class="customer-visit-card-header">
+
+                        <strong class="customer-visit-date">
                           ${escapeHtml(
                             String(
                               visit.started_at
@@ -1174,34 +1175,45 @@ function openCustomerDetail(
                             )
                           )}
                         </strong>
-                      </p>
 
-                      <p>
-                        状態：
-                        ${escapeHtml(
-                          statusLabel
-                        )}
-                      </p>
+                        <span
+                          class="customer-visit-status"
+                          data-status="${escapeHtml(
+                            String(
+                              visit.status
+                              || ''
+                            )
+                          )}"
+                        >
+                          ${escapeHtml(
+                            statusLabel
+                          )}
+                        </span>
 
-                      <p>
-                        顧客区分：
-                        ${escapeHtml(
-                          customerStatusLabel
-                        )}
-                      </p>
+                      </div>
 
-                      <p>
-                        コース：
-                        ${
-                          visit.course_minutes
-                            ? `${escapeHtml(
-                                String(
-                                  visit.course_minutes
-                                )
-                              )}分`
-                            : '未登録'
-                        }
-                      </p>
+
+                      <div class="customer-visit-meta">
+
+                        <span>
+                          ${escapeHtml(
+                            customerStatusLabel
+                          )}
+                        </span>
+
+                        <span>
+                          ${
+                            visit.course_minutes
+                              ? `${escapeHtml(
+                                  String(
+                                    visit.course_minutes
+                                  )
+                                )}分`
+                              : 'コース未登録'
+                          }
+                        </span>
+
+                      </div>
 
                       ${
                         visit.conversation_notes
