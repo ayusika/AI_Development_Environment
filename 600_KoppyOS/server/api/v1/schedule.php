@@ -877,6 +877,14 @@ try {
                 );
 
 
+        $customerRequestedChange =
+            filter_var(
+                $payload['customer_requested_change']
+                ?? false,
+                FILTER_VALIDATE_BOOLEAN
+            );
+
+
         $hasOptions =
             array_key_exists(
                 'options',
