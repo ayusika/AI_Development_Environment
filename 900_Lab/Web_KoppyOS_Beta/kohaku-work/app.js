@@ -323,6 +323,16 @@ function handleAction(action, button) {
       loadDatabaseViewer();
       break;
 
+    case 'open-database-records':
+      openDatabaseRecords(
+        button.dataset.tableName
+      );
+      break;
+
+    case 'close-database-records':
+      closeDatabaseRecords();
+      break;
+
     case 'settings':
       showPlaceholder('設定');
       break;
