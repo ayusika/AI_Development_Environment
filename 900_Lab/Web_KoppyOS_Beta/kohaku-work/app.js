@@ -335,6 +335,9 @@ const scheduleBookedDate =
 const scheduleBookedTime =
   document.getElementById('schedule-booked-time');
 
+const scheduleCustomerChange =
+  document.getElementById('schedule-customer-change');
+
 const scheduleEditId =
   document.getElementById('schedule-edit-id');
 
