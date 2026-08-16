@@ -2129,6 +2129,47 @@
             </div>
 
 
+            <div
+              class="schedule-customer-panel"
+              id="schedule-customer-panel"
+              hidden
+            >
+
+              <label>
+                <span>顧客名</span>
+
+                <input
+                  id="schedule-customer-name"
+                  type="text"
+                  maxlength="100"
+                  autocomplete="off"
+                  placeholder="例：テスト太郎"
+                >
+              </label>
+
+
+              <div class="schedule-customer-actions">
+
+                <button
+                  class="secondary-button"
+                  type="button"
+                  data-action="close-schedule-customer"
+                >
+                  やめる
+                </button>
+
+                <button
+                  type="button"
+                  data-action="create-schedule-customer"
+                >
+                  新規顧客として紐付け
+                </button>
+
+              </div>
+
+            </div>
+
+
             <button
               class="schedule-history-button"
               type="button"
