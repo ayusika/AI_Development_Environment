@@ -277,6 +277,10 @@ function handleAction(action, button) {
       closeScheduleDetail();
       break;
 
+    case 'open-schedule-history':
+      openCurrentScheduleHistory();
+      break;
+
     case 'edit-schedule-visit':
       editCurrentScheduleVisit();
       break;
