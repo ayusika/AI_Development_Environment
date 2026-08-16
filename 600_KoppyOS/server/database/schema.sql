@@ -103,11 +103,12 @@ CREATE TABLE customer_names (
 
     name_type TEXT NOT NULL CHECK (
         name_type IN (
+            'nickname',
+            'okini_talk',
             'line',
             'x',
             'instagram',
             'store',
-            'nickname',
             'other'
         )
     ),
