@@ -941,6 +941,9 @@ try {
         );
 
 
+        $pdo->beginTransaction();
+
+
         $statement =
             $pdo->prepare(
                 "
