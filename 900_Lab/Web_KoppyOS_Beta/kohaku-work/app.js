@@ -2695,6 +2695,9 @@ function closeScheduleDetail() {
     scheduleHistoryPanel.innerHTML =
       '';
   }
+
+
+  closeCustomerCancelPanel();
 }
 
 
