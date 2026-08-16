@@ -491,10 +491,43 @@ async function openDatabaseRecords(
     }
 
 
-    const columnNames =
+    const rawColumnNames =
       Object.keys(
         records[0]
       );
+
+
+    const visitPriorityColumns = [
+      'id',
+      'customer_id',
+      'started_at',
+      'status',
+      'customer_status',
+      'course_minutes',
+      'cancel_reason',
+      'cancelled_at',
+      'cancelled_by',
+    ];
+
+
+    const columnNames =
+      tableName === 'visits'
+        ? [
+            ...visitPriorityColumns.filter(
+              (columnName) =>
+                rawColumnNames.includes(
+                  columnName
+                )
+            ),
+
+            ...rawColumnNames.filter(
+              (columnName) =>
+                !visitPriorityColumns.includes(
+                  columnName
+                )
+            ),
+          ]
+        : rawColumnNames;
 
 
     const tableHeadHtml =
