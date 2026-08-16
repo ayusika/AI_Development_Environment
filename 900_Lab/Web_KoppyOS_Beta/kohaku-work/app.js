@@ -475,7 +475,15 @@ async function loadDatabaseViewer() {
 
 
           return `
-            <section class="database-table-card">
+            <section
+              class="database-table-card"
+              role="button"
+              tabindex="0"
+              data-action="open-database-records"
+              data-table-name="${escapeHtml(
+                String(table.name)
+              )}"
+            >
 
               <div class="database-table-heading">
 
