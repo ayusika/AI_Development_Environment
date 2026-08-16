@@ -2617,6 +2617,55 @@ function updateScheduleDetailState(
 }
 
 
+function openCustomerCancelPanel() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+  if (
+    !visit
+    || !scheduleCustomerCancelPanel
+    || !Boolean(
+      Number(
+        visit.customer_linked
+      )
+    )
+  ) {
+    return;
+  }
+
+
+  if (scheduleCustomerCancelReason) {
+    scheduleCustomerCancelReason.value =
+      '';
+  }
+
+
+  scheduleCustomerCancelPanel.hidden =
+    false;
+
+
+  if (scheduleCustomerCancelReason) {
+    scheduleCustomerCancelReason.focus();
+  }
+}
+
+
+function closeCustomerCancelPanel() {
+
+  if (scheduleCustomerCancelPanel) {
+    scheduleCustomerCancelPanel.hidden =
+      true;
+  }
+
+
+  if (scheduleCustomerCancelReason) {
+    scheduleCustomerCancelReason.value =
+      '';
+  }
+}
+
+
 function closeScheduleDetail() {
 
   if (scheduleDetailDrawer) {
