@@ -2649,6 +2649,56 @@ function updateScheduleDetailState(
 }
 
 
+function openScheduleCustomerPanel() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+
+  if (
+    !visit
+    || !scheduleCustomerPanel
+    || Boolean(
+      Number(
+        visit.customer_linked
+      )
+    )
+  ) {
+    return;
+  }
+
+
+  if (scheduleCustomerName) {
+    scheduleCustomerName.value =
+      '';
+  }
+
+
+  scheduleCustomerPanel.hidden =
+    false;
+
+
+  if (scheduleCustomerName) {
+    scheduleCustomerName.focus();
+  }
+}
+
+
+function closeScheduleCustomerPanel() {
+
+  if (scheduleCustomerPanel) {
+    scheduleCustomerPanel.hidden =
+      true;
+  }
+
+
+  if (scheduleCustomerName) {
+    scheduleCustomerName.value =
+      '';
+  }
+}
+
+
 function openCustomerCancelPanel() {
 
   const visit =
