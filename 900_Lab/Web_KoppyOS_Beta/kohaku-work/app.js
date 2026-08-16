@@ -185,6 +185,12 @@ function handleAction(action, button) {
       showView('customers');
       break;
 
+    case 'open-customer-detail':
+      openCustomerDetail(
+        button.dataset.customerId
+      );
+      break;
+
     case 'generate-diary':
       generateDiary();
       break;
