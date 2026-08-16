@@ -1272,6 +1272,10 @@ try {
             $bookedAt,
             $courseMinutes,
             $customerStatus,
+            $status,
+            $cancelledAt,
+            $cancelReason,
+            $cancelledBy,
             $visitId,
         ]);
 
