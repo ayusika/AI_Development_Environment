@@ -2125,6 +2125,92 @@ h2 {
 }
 
 
+/* WRITER:CUSTOMER_DETAIL_STYLES:START */
+
+/* ========================================
+   CUSTOMER DETAIL
+======================================== */
+
+.customer-status-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+
+  gap: 10px;
+
+  margin:
+    16px
+    0
+    22px;
+}
+
+.customer-status-item {
+  min-width: 0;
+
+  padding:
+    13px
+    10px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  gap: 5px;
+
+  text-align: center;
+
+  border:
+    1px solid
+    var(--line);
+
+  border-radius:
+    var(--radius-md);
+
+  background:
+    var(--accent-softer);
+
+  box-shadow:
+    var(--shadow-soft);
+}
+
+.customer-status-item span {
+  color:
+    var(--text-soft);
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.customer-status-item strong {
+  display: flex;
+  align-items: baseline;
+
+  gap: 2px;
+
+  color:
+    var(--text);
+
+  font-size: 23px;
+  line-height: 1;
+}
+
+.customer-status-item small {
+  color:
+    var(--text-soft);
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+@media (max-width: 520px) {
+  .customer-status-summary {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* WRITER:CUSTOMER_DETAIL_STYLES:END */
+
+
 /* ========================================
    EMPTY STATE
 ======================================== */
