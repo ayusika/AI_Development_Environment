@@ -406,6 +406,92 @@ try {
 
     if ($method === 'GET') {
 
+        $historyVisitId =
+            isset($_GET['visit_id'])
+            && $_GET['visit_id'] !== ''
+
+                ? (int) $_GET['visit_id']
+                : null;
+
+
+        if (
+            $historyVisitId !== null
+            && $historyVisitId > 0
+        ) {
+
+            fetchVisit(
+                $pdo,
+                $historyVisitId
+            );
+
+
+            $historyStatement =
+                $pdo->prepare(
+                    "
+                    SELECT
+                        id,
+                        visit_id,
+                        requested_at,
+                        change_type,
+                        before_data,
+                        after_data,
+                        note,
+                        created_at
+
+                    FROM visit_change_history
+
+                    WHERE visit_id = ?
+
+                    ORDER BY
+                        requested_at DESC,
+                        id DESC
+                    "
+                );
+
+            $historyStatement->execute([
+                $historyVisitId
+            ]);
+
+
+            $history =
+                $historyStatement->fetchAll();
+
+
+            foreach ($history as &$historyItem) {
+
+                $historyItem['before_data'] =
+                    json_decode(
+                        $historyItem['before_data'],
+                        true
+                    );
+
+                $historyItem['after_data'] =
+                    json_decode(
+                        $historyItem['after_data'],
+                        true
+                    );
+            }
+
+            unset($historyItem);
+
+
+            echo json_encode(
+                [
+                    'success' => true,
+                    'visit_id' =>
+                        $historyVisitId,
+                    'history' =>
+                        $history,
+                    'error' => null,
+                ],
+                JSON_UNESCAPED_UNICODE |
+                JSON_PRETTY_PRINT
+            );
+
+            exit;
+        }
+
+
         $date =
             trim(
                 (string) (
