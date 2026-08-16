@@ -150,6 +150,7 @@ function handleNav(navName) {
 
   if (navName === 'customers') {
     showView('customers');
+    loadCustomers();
     return;
   }
 
