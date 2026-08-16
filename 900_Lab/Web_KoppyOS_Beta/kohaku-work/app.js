@@ -290,6 +290,10 @@ function handleAction(action, button) {
       closeScheduleCustomerPanel();
       break;
 
+    case 'create-schedule-customer':
+      createScheduleCustomer();
+      break;
+
     case 'open-customer-cancel':
       openCustomerCancelPanel();
       break;
