@@ -375,6 +375,9 @@ const scheduleDetailTitle =
 const scheduleDetailBody =
   document.getElementById('schedule-detail-body');
 
+const scheduleHistoryPanel =
+  document.getElementById('schedule-history-panel');
+
 const scheduleDetailCustomerState =
   document.getElementById('schedule-detail-customer-state');
 
