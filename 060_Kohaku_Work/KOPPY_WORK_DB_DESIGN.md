@@ -249,11 +249,12 @@ KH-000001
 
 ## name_type例
 
+- nickname
+- okini_talk
 - line
 - x
 - instagram
 - store
-- nickname
 - other
 
 1人の顧客に複数名義を登録できる。
