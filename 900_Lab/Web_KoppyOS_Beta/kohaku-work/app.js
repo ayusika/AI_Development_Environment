@@ -2461,9 +2461,67 @@ async function openCurrentScheduleHistory() {
     }
 
 
-    console.log(
-      'Schedule change history:',
-      data
+    const history =
+      Array.isArray(data.history)
+        ? data.history
+        : [];
+
+
+    const historyHtml =
+      history.length
+        ? history
+            .map((item) => {
+
+              const typeLabels = {
+                datetime: '日時変更',
+                course: '予約時間変更',
+                store: '店舗変更',
+                option: 'OP変更',
+                status: '区分変更',
+                multiple: '複数項目変更',
+                other: 'その他変更',
+              };
+
+
+              const typeLabel =
+                typeLabels[item.change_type]
+                || '予約変更';
+
+
+              return `
+                <div class="schedule-history-item">
+                  <strong>
+                    ${escapeHtml(typeLabel)}
+                  </strong>
+
+                  <span>
+                    受付：
+                    ${escapeHtml(
+                      String(
+                        item.requested_at
+                        || ''
+                      )
+                    )}
+                  </span>
+                </div>
+              `;
+            })
+            .join('')
+        : `
+            <p class="schedule-history-empty">
+              変更履歴はありません
+            </p>
+          `;
+
+
+    scheduleDetailBody.insertAdjacentHTML(
+      'beforeend',
+      `
+        <div class="schedule-history-list">
+          <h3>予約変更履歴</h3>
+          ${historyHtml}
+        </div>
+      `
     );
 
 
