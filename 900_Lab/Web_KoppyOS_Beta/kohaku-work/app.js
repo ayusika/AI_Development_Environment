@@ -2100,6 +2100,9 @@ async function saveScheduleVisit() {
 
     custom_option:
       customOption,
+
+    customer_requested_change:
+      customerRequestedChange,
   };
 
 
