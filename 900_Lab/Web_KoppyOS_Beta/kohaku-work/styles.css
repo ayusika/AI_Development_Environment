@@ -3486,6 +3486,146 @@ body:has(#view-schedule.is-active) .bottom-nav {
 }
 
 
+.schedule-history-button {
+  width: 100%;
+  min-height: 50px;
+
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+
+  column-gap: 9px;
+
+  margin-bottom: 10px;
+  padding: 10px 13px;
+
+  border: 1px solid var(--line);
+  border-radius: 14px;
+
+  color: var(--text);
+  background: #ffffff;
+
+  text-align: left;
+}
+
+
+.schedule-history-button > span {
+  grid-row: 1 / 3;
+
+  font-size: 18px;
+}
+
+
+.schedule-history-button strong {
+  font-size: 12px;
+}
+
+
+.schedule-history-button small {
+  color: var(--text-faint);
+
+  font-size: 9px;
+}
+
+
+.schedule-history-panel {
+  margin-bottom: 14px;
+}
+
+
+.schedule-history-panel[hidden] {
+  display: none;
+}
+
+
+.schedule-history-list {
+  display: grid;
+  gap: 9px;
+}
+
+
+.schedule-history-list h3 {
+  margin: 0 0 2px;
+
+  color: var(--text-soft);
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+
+.schedule-history-item {
+  display: grid;
+  gap: 7px;
+
+  padding: 12px 13px;
+
+  border: 1px solid var(--line);
+  border-radius: 14px;
+
+  background: var(--bg-soft);
+}
+
+
+.schedule-history-item > strong {
+  color: var(--accent-deep);
+
+  font-size: 12px;
+}
+
+
+.schedule-history-item > span {
+  color: var(--text-faint);
+
+  font-size: 9px;
+}
+
+
+.schedule-history-change {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px;
+
+  align-items: baseline;
+}
+
+
+.schedule-history-change-label {
+  color: var(--text-soft);
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+
+.schedule-history-change-values {
+  min-width: 0;
+
+  color: var(--text);
+
+  font-size: 11px;
+  font-weight: 700;
+
+  overflow-wrap: anywhere;
+}
+
+
+.schedule-history-empty {
+  margin: 0;
+  padding: 12px;
+
+  border: 1px dashed var(--line);
+  border-radius: 12px;
+
+  color: var(--text-faint);
+  background: var(--bg-soft);
+
+  font-size: 11px;
+  text-align: center;
+}
+
+
 .schedule-detail-actions {
   display: grid;
   gap: 9px;
