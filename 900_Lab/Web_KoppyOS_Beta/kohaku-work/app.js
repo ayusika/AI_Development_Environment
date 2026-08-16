@@ -383,26 +383,29 @@ async function openDatabaseRecords(
   tableName
 ) {
 
-  if (
-    !tableName
-    || !databaseRecordViewer
-    || !databaseRecordContent
-  ) {
+  if (!tableName) {
     return;
   }
 
 
-  databaseRecordViewer.hidden =
-    false;
+  const recordContainer =
+    document.querySelector(
+      `[data-database-records="${CSS.escape(
+        tableName
+      )}"]`
+    );
 
 
-  if (databaseRecordTitle) {
-    databaseRecordTitle.textContent =
-      tableName;
+  if (!recordContainer) {
+    return;
   }
 
 
-  databaseRecordContent.innerHTML = `
+  recordContainer.hidden =
+    false;
+
+
+  recordContainer.innerHTML = `
     <p>レコードを読み込み中...</p>
   `;
 
