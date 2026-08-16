@@ -290,6 +290,10 @@ function handleAction(action, button) {
       closeCustomerCancelPanel();
       break;
 
+    case 'save-customer-cancel':
+      saveCustomerCancellation();
+      break;
+
     case 'edit-schedule-visit':
       editCurrentScheduleVisit();
       break;
