@@ -294,6 +294,10 @@ function handleAction(action, button) {
       showPlaceholder('顧客を探す');
       break;
 
+    case 'open-database':
+      showView('database');
+      break;
+
     case 'settings':
       showPlaceholder('設定');
       break;
