@@ -282,6 +282,14 @@ function handleAction(action, button) {
       openCurrentScheduleHistory();
       break;
 
+    case 'open-customer-cancel':
+      openCustomerCancelPanel();
+      break;
+
+    case 'close-customer-cancel':
+      closeCustomerCancelPanel();
+      break;
+
     case 'edit-schedule-visit':
       editCurrentScheduleVisit();
       break;
