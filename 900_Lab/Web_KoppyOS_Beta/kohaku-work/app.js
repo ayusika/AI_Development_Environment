@@ -999,11 +999,37 @@ async function loadCustomers() {
             };
 
 
+          const searchText = [
+            String(
+              customer.id
+              || ''
+            ),
+
+            String(
+              customer.customer_code
+              || ''
+            ),
+
+            ...names.map(
+              (nameRecord) =>
+                String(
+                  nameRecord.name
+                  || ''
+                )
+            ),
+          ]
+            .join(' ')
+            .toLowerCase();
+
+
           return `
             <section
               class="content-card customer-card"
               data-customer-id="${escapeHtml(
                 String(customer.id)
+              )}"
+              data-customer-search="${escapeHtml(
+                searchText
               )}"
             >
 
