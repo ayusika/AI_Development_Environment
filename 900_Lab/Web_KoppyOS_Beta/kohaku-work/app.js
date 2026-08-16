@@ -1150,25 +1150,85 @@ function filterCustomerCards() {
   }
 
 
-  document
-    .querySelectorAll(
+  const customerCards =
+    document.querySelectorAll(
       '#customer-list .customer-card'
-    )
-    .forEach((card) => {
+    );
 
-      const searchText =
-        String(
-          card.dataset.customerSearch
-          || ''
+
+  let visibleCount = 0;
+
+
+  customerCards.forEach((card) => {
+
+    const searchText =
+      String(
+        card.dataset.customerSearch
+        || ''
+      );
+
+
+    card.hidden =
+      query !== ''
+      && !searchText.includes(
+        query
+      );
+
+
+    if (!card.hidden) {
+      visibleCount += 1;
+    }
+  });
+
+
+  let emptyMessage =
+    document.getElementById(
+      'customer-search-empty'
+    );
+
+
+  if (
+    visibleCount === 0
+    && query !== ''
+  ) {
+
+    if (!emptyMessage) {
+
+      emptyMessage =
+        document.createElement(
+          'section'
+        );
+
+      emptyMessage.id =
+        'customer-search-empty';
+
+      emptyMessage.className =
+        'content-card';
+
+      emptyMessage.innerHTML = `
+        <p>
+          該当する顧客はいません。
+        </p>
+      `;
+
+
+      const customerList =
+        document.getElementById(
+          'customer-list'
         );
 
 
-      card.hidden =
-        query !== ''
-        && !searchText.includes(
-          query
+      if (customerList) {
+        customerList.appendChild(
+          emptyMessage
         );
-    });
+      }
+    }
+
+  } else if (emptyMessage) {
+
+    emptyMessage.remove();
+  }
 }
 
 
