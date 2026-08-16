@@ -491,43 +491,57 @@ async function openDatabaseRecords(
     }
 
 
-    const recordsHtml =
+    const columnNames =
+      Object.keys(
+        records[0]
+      );
+
+
+    const tableHeadHtml =
+      columnNames
+        .map(
+          (columnName) => `
+            <th>
+              ${escapeHtml(
+                columnName
+              )}
+            </th>
+          `
+        )
+        .join('');
+
+
+    const tableBodyHtml =
       records
         .map((record) => {
 
-          const fieldsHtml =
-            Object.entries(record)
+          const cellsHtml =
+            columnNames
               .map(
-                ([
-                  key,
-                  value,
-                ]) => `
-                  <div class="database-record-field">
+                (columnName) => {
 
-                    <strong>
-                      ${escapeHtml(
-                        String(key)
-                      )}
-                    </strong>
+                  const value =
+                    record[columnName];
 
-                    <span>
+
+                  return `
+                    <td>
                       ${escapeHtml(
                         value === null
                           ? 'NULL'
                           : String(value)
                       )}
-                    </span>
-
-                  </div>
-                `
+                    </td>
+                  `;
+                }
               )
               .join('');
 
 
           return `
-            <article class="database-record-card">
-              ${fieldsHtml}
-            </article>
+            <tr>
+              ${cellsHtml}
+            </tr>
           `;
         })
         .join('');
@@ -553,7 +567,24 @@ async function openDatabaseRecords(
 
       </div>
 
-      ${recordsHtml}
+
+      <div class="database-record-table-scroll">
+
+        <table class="database-record-table">
+
+          <thead>
+            <tr>
+              ${tableHeadHtml}
+            </tr>
+          </thead>
+
+          <tbody>
+            ${tableBodyHtml}
+          </tbody>
+
+        </table>
+
+      </div>
     `;
 
 
