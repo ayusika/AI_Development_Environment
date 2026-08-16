@@ -2670,6 +2670,143 @@ function closeCustomerCancelPanel() {
 }
 
 
+async function saveCustomerCancellation() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+
+  if (
+    !visit
+    || !Boolean(
+      Number(
+        visit.customer_linked
+      )
+    )
+  ) {
+    window.alert(
+      '顧客情報が紐付いている予約だけキャンセルできます。'
+    );
+
+    return;
+  }
+
+
+  const reason =
+    scheduleCustomerCancelReason
+      ? scheduleCustomerCancelReason.value.trim()
+      : '';
+
+
+  if (!reason) {
+
+    window.alert(
+      'キャンセル理由を入力してください。'
+    );
+
+
+    if (scheduleCustomerCancelReason) {
+      scheduleCustomerCancelReason.focus();
+    }
+
+    return;
+  }
+
+
+  const saveButton =
+    document.querySelector(
+      '[data-action="save-customer-cancel"]'
+    );
+
+
+  if (saveButton) {
+
+    saveButton.disabled =
+      true;
+
+    saveButton.textContent =
+      '保存中...';
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        scheduleApiUrl,
+        {
+          method: 'PATCH',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              id:
+                Number(
+                  visit.id
+                ),
+
+              status:
+                'cancelled',
+
+              cancelled_by:
+                'customer',
+
+              cancel_reason:
+                reason,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+
+      throw new Error(
+        data.error
+        || 'キャンセルの保存に失敗しました。'
+      );
+    }
+
+
+    closeScheduleDetail();
+
+
+    await loadSchedule(
+      true
+    );
+
+
+  } catch (error) {
+
+    window.alert(
+      error.message
+    );
+
+
+  } finally {
+
+    if (saveButton) {
+
+      saveButton.disabled =
+        false;
+
+      saveButton.textContent =
+        'キャンセルとして保存';
+    }
+  }
+}
+
+
 function closeScheduleDetail() {
 
   if (scheduleDetailDrawer) {
