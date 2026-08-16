@@ -1170,6 +1170,45 @@ try {
         }
 
 
+        if (
+            $status === 'cancelled'
+            && $cancelledBy === 'customer'
+        ) {
+
+            if (
+                $cancelReason === null
+                || trim($cancelReason) === ''
+            ) {
+                throw new RuntimeException(
+                    'Customer cancellation requires a cancel_reason.'
+                );
+            }
+
+
+            $cancelledAt =
+                (string)
+                $pdo
+                    ->query(
+                        "
+                        SELECT strftime(
+                            '%Y-%m-%d %H:%M',
+                            'now',
+                            'localtime'
+                        )
+                        "
+                    )
+                    ->fetchColumn();
+        }
+
+
+        if ($status !== 'cancelled') {
+
+            $cancelledAt = null;
+            $cancelReason = null;
+            $cancelledBy = null;
+        }
+
+
         $pdo->beginTransaction();
 
 
