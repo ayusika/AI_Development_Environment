@@ -2436,7 +2436,24 @@ async function openCurrentScheduleHistory() {
   const visit =
     scheduleState.selectedVisit;
 
-  if (!visit) return;
+  if (
+    !visit
+    || !scheduleHistoryPanel
+  ) {
+    return;
+  }
+
+
+  if (!scheduleHistoryPanel.hidden) {
+
+    scheduleHistoryPanel.hidden =
+      true;
+
+    scheduleHistoryPanel.innerHTML =
+      '';
+
+    return;
+  }
 
 
   try {
