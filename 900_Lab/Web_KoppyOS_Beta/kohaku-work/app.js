@@ -1073,40 +1073,52 @@ function openCustomerDetail(
 
         </div>
 
-        <p>
-          <strong>呼び名</strong>
-          ${escapeHtml(
-            findName('nickname')
-          )}
-        </p>
+        <section class="customer-alias-section">
 
-        <p>
-          <strong>オキニトーク</strong>
-          ${escapeHtml(
-            findName('okini_talk')
-          )}
-        </p>
+          <h2>
+            名義情報
+          </h2>
 
-        <p>
-          <strong>LINE</strong>
-          ${escapeHtml(
-            findName('line')
-          )}
-        </p>
+          <div class="customer-alias-list">
 
-        <p>
-          <strong>X</strong>
-          ${escapeHtml(
-            findName('x')
-          )}
-        </p>
+            <p>
+              <strong>呼び名</strong>
+              ${escapeHtml(
+                findName('nickname')
+              )}
+            </p>
 
-        <p>
-          <strong>Instagram</strong>
-          ${escapeHtml(
-            findName('instagram')
-          )}
-        </p>
+            <p>
+              <strong>オキニトーク</strong>
+              ${escapeHtml(
+                findName('okini_talk')
+              )}
+            </p>
+
+            <p>
+              <strong>LINE</strong>
+              ${escapeHtml(
+                findName('line')
+              )}
+            </p>
+
+            <p>
+              <strong>X</strong>
+              ${escapeHtml(
+                findName('x')
+              )}
+            </p>
+
+            <p>
+              <strong>Instagram</strong>
+              ${escapeHtml(
+                findName('instagram')
+              )}
+            </p>
+
+          </div>
+
+        </section>
 
       </div>
 
