@@ -557,12 +557,46 @@ async function openDatabaseRecords(
                     record[columnName];
 
 
+                  let displayValue =
+                    value === null
+                      ? 'NULL'
+                      : String(value);
+
+
+                  if (
+                    tableName === 'visits'
+                    && columnName === 'customer_id'
+                    && value !== null
+                  ) {
+
+                    const customerNames =
+                      data.customer_names
+                      && typeof data.customer_names === 'object'
+                        ? data.customer_names
+                        : {};
+
+
+                    const customerName =
+                      customerNames[
+                        String(value)
+                      ]
+                      || customerNames[
+                        value
+                      ];
+
+
+                    if (customerName) {
+
+                      displayValue =
+                        `${customerName} (#${value})`;
+                    }
+                  }
+
+
                   return `
                     <td>
                       ${escapeHtml(
-                        value === null
-                          ? 'NULL'
-                          : String(value)
+                        displayValue
                       )}
                     </td>
                   `;
