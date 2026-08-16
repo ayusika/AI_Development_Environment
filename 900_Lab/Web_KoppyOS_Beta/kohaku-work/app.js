@@ -333,6 +333,12 @@ function handleAction(action, button) {
       closeDatabaseRecords();
       break;
 
+    case 'close-inline-database-records':
+      closeInlineDatabaseRecords(
+        button.dataset.tableName
+      );
+      break;
+
     case 'settings':
       showPlaceholder('設定');
       break;
