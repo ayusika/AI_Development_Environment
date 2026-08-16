@@ -2488,11 +2488,147 @@ async function openCurrentScheduleHistory() {
                 || '予約変更';
 
 
+              const before =
+                item.before_data
+                || {};
+
+              const after =
+                item.after_data
+                || {};
+
+
+              const changes = [];
+
+
+              if (
+                before.started_at
+                !== after.started_at
+              ) {
+
+                changes.push({
+                  label: '日時',
+                  before:
+                    before.started_at
+                    || '未設定',
+                  after:
+                    after.started_at
+                    || '未設定',
+                });
+              }
+
+
+              if (
+                before.course_minutes
+                !== after.course_minutes
+              ) {
+
+                changes.push({
+                  label: '予約時間',
+                  before:
+                    before.course_minutes
+                      ? `${before.course_minutes}分`
+                      : '未設定',
+                  after:
+                    after.course_minutes
+                      ? `${after.course_minutes}分`
+                      : '未設定',
+                });
+              }
+
+
+              if (
+                before.store_id
+                !== after.store_id
+              ) {
+
+                changes.push({
+                  label: '店舗',
+                  before:
+                    before.store_id
+                    ?? '未設定',
+                  after:
+                    after.store_id
+                    ?? '未設定',
+                });
+              }
+
+
+              const beforeOptions =
+                Array.isArray(before.options)
+                  ? before.options
+                  : [];
+
+              const afterOptions =
+                Array.isArray(after.options)
+                  ? after.options
+                  : [];
+
+
+              if (
+                JSON.stringify(beforeOptions)
+                !== JSON.stringify(afterOptions)
+              ) {
+
+                changes.push({
+                  label: 'OP',
+                  before:
+                    beforeOptions.length
+                      ? beforeOptions.join('・')
+                      : 'なし',
+                  after:
+                    afterOptions.length
+                      ? afterOptions.join('・')
+                      : 'なし',
+                });
+              }
+
+
+              if (
+                before.customer_status
+                !== after.customer_status
+              ) {
+
+                changes.push({
+                  label: '区分',
+                  before:
+                    before.customer_status
+                    || '未設定',
+                  after:
+                    after.customer_status
+                    || '未設定',
+                });
+              }
+
+
+              const changesHtml =
+                changes
+                  .map((change) => `
+                    <div class="schedule-history-change">
+                      <span class="schedule-history-change-label">
+                        ${escapeHtml(change.label)}
+                      </span>
+
+                      <span class="schedule-history-change-values">
+                        ${escapeHtml(
+                          String(change.before)
+                        )}
+                        →
+                        ${escapeHtml(
+                          String(change.after)
+                        )}
+                      </span>
+                    </div>
+                  `)
+                  .join('');
+
+
               return `
                 <div class="schedule-history-item">
                   <strong>
                     ${escapeHtml(typeLabel)}
                   </strong>
+
+                  ${changesHtml}
 
                   <span>
                     受付：
