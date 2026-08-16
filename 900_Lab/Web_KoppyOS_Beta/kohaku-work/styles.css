@@ -2262,6 +2262,122 @@ h2 {
 }
 
 
+.customer-visit-history {
+  margin-top: 24px;
+}
+
+.customer-visit-history > h2 {
+  margin:
+    0
+    0
+    10px;
+
+  font-size: 16px;
+}
+
+.customer-visit-card {
+  margin-top: 0;
+}
+
+.customer-visit-card + .customer-visit-card {
+  margin-top: 12px;
+}
+
+.customer-visit-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 12px;
+
+  margin-bottom: 12px;
+}
+
+.customer-visit-date {
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+.customer-visit-status {
+  flex: 0 0 auto;
+
+  padding:
+    5px
+    9px;
+
+  border-radius:
+    999px;
+
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.customer-visit-status[data-status="scheduled"] {
+  color:
+    var(--accent-deep);
+
+  background:
+    var(--accent-soft);
+}
+
+.customer-visit-status[data-status="completed"] {
+  color:
+    var(--success);
+
+  background:
+    var(--success-soft);
+}
+
+.customer-visit-status[data-status="cancelled"] {
+  color:
+    var(--danger);
+
+  background:
+    var(--danger-soft);
+}
+
+.customer-visit-status[data-status="no_show"] {
+  color:
+    var(--warning);
+
+  background:
+    var(--warning-soft);
+}
+
+.customer-visit-meta {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap:
+    7px
+    9px;
+
+  margin-bottom: 14px;
+}
+
+.customer-visit-meta span {
+  padding:
+    5px
+    8px;
+
+  border:
+    1px solid
+    var(--line);
+
+  border-radius:
+    999px;
+
+  color:
+    var(--text-soft);
+
+  background:
+    var(--accent-softer);
+
+  font-size: 10px;
+  font-weight: 800;
+}
+
+
 @media (max-width: 520px) {
   .customer-status-summary {
     grid-template-columns:
