@@ -1655,6 +1655,13 @@ function renderScheduleEventsForDate(
   return scheduleState.visits
     .filter((visit) => {
 
+      if (
+        visit.status === 'cancelled'
+      ) {
+        return false;
+      }
+
+
       const startedAt =
         String(
           visit.started_at
