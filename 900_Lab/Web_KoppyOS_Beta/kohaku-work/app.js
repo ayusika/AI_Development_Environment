@@ -962,6 +962,28 @@ function openCustomerDetail(
     };
 
 
+  const visits =
+    Array.isArray(customer.visits)
+      ? customer.visits
+      : [];
+
+
+  const visitStatusLabels = {
+    scheduled: '予約',
+    completed: '来店済み',
+    cancelled: 'キャンセル',
+    no_show: '無断キャンセル',
+  };
+
+
+  const customerStatusLabels = {
+    new: '新規',
+    repeat: 'リピーター',
+    other_store_repeat: '他店リピーター',
+    repeat_unknown_id: 'リピーター・ID不明',
+  };
+
+
   const title =
     document.getElementById(
       'customer-detail-title'
