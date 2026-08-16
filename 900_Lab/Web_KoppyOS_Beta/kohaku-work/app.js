@@ -1021,45 +1021,57 @@ function openCustomerDetail(
           )}
         </p>
 
-        <p>
-          <strong>来店</strong>
-          ${escapeHtml(
-            String(
-              customer.visit_count
-              || 0
-            )
-          )}回
-        </p>
+        <div class="customer-status-summary">
 
-        <p>
-          <strong>予約中</strong>
-          ${escapeHtml(
-            String(
-              customer.scheduled_count
-              || 0
-            )
-          )}件
-        </p>
+          <div class="customer-status-item">
+            <span>来店</span>
+            <strong>
+              ${escapeHtml(
+                String(
+                  customer.visit_count
+                  || 0
+                )
+              )}<small>回</small>
+            </strong>
+          </div>
 
-        <p>
-          <strong>キャンセル</strong>
-          ${escapeHtml(
-            String(
-              customer.cancelled_count
-              || 0
-            )
-          )}件
-        </p>
+          <div class="customer-status-item">
+            <span>予約中</span>
+            <strong>
+              ${escapeHtml(
+                String(
+                  customer.scheduled_count
+                  || 0
+                )
+              )}<small>件</small>
+            </strong>
+          </div>
 
-        <p>
-          <strong>無断キャンセル</strong>
-          ${escapeHtml(
-            String(
-              customer.no_show_count
-              || 0
-            )
-          )}件
-        </p>
+          <div class="customer-status-item">
+            <span>キャンセル</span>
+            <strong>
+              ${escapeHtml(
+                String(
+                  customer.cancelled_count
+                  || 0
+                )
+              )}<small>件</small>
+            </strong>
+          </div>
+
+          <div class="customer-status-item">
+            <span>無断</span>
+            <strong>
+              ${escapeHtml(
+                String(
+                  customer.no_show_count
+                  || 0
+                )
+              )}<small>件</small>
+            </strong>
+          </div>
+
+        </div>
 
         <p>
           <strong>呼び名</strong>
