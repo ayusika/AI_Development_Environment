@@ -181,6 +181,10 @@ function handleAction(action, button) {
       showView('diary');
       break;
 
+    case 'back-to-customers':
+      showView('customers');
+      break;
+
     case 'generate-diary':
       generateDiary();
       break;
