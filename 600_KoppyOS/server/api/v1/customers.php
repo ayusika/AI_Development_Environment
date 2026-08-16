@@ -73,7 +73,10 @@ try {
                     c.updated_at,
 
                     COUNT(
-                        DISTINCT v.id
+                        DISTINCT CASE
+                            WHEN v.status = 'completed'
+                            THEN v.id
+                        END
                     ) AS visit_count
 
                 FROM customers c
