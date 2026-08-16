@@ -1015,6 +1015,39 @@ try {
         }
 
 
+        $updatedVisit =
+            fetchVisit(
+                $pdo,
+                $visitId
+            );
+
+
+        $afterChangeData = [
+            'store_id' =>
+                (int) $updatedVisit['store_id'],
+
+            'started_at' =>
+                $updatedVisit['started_at'],
+
+            'booked_at' =>
+                $updatedVisit['booked_at'],
+
+            'course_minutes' =>
+                (int) $updatedVisit['course_minutes'],
+
+            'customer_status' =>
+                $updatedVisit['customer_status'],
+
+            'customer_id' =>
+                $updatedVisit['customer_id'] === null
+                    ? null
+                    : (int) $updatedVisit['customer_id'],
+
+            'options' =>
+                $updatedVisit['options'],
+        ];
+
+
         $pdo->commit();
 
 
