@@ -192,6 +192,20 @@ CREATE TABLE visits (
             )
         ),
 
+    cancelled_at TEXT,
+
+    cancel_reason TEXT,
+
+    cancelled_by TEXT CHECK (
+        cancelled_by IS NULL
+        OR cancelled_by IN (
+            'customer',
+            'self',
+            'store',
+            'other'
+        )
+    ),
+
     created_at TEXT NOT NULL DEFAULT (
         strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
     ),
