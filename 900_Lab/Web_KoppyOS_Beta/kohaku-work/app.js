@@ -908,6 +908,147 @@ function openCustomerDetail(
   }
 
 
+  const customer =
+    loadedCustomers.find(
+      (customerRecord) =>
+        Number(
+          customerRecord.id
+        ) === selectedCustomerId
+    );
+
+
+  if (!customer) {
+    return;
+  }
+
+
+  const names =
+    Array.isArray(customer.names)
+      ? customer.names
+      : [];
+
+
+  const primaryName =
+    names.find(
+      (nameRecord) =>
+        Number(
+          nameRecord.is_primary
+        ) === 1
+    )
+    || names[0]
+    || null;
+
+
+  const displayName =
+    primaryName
+      ? String(primaryName.name)
+      : '名前未登録';
+
+
+  const findName =
+    (nameType) => {
+
+      const record =
+        names.find(
+          (nameRecord) =>
+            nameRecord.name_type
+            === nameType
+        );
+
+
+      return record
+        ? String(record.name)
+        : '未登録';
+    };
+
+
+  const title =
+    document.getElementById(
+      'customer-detail-title'
+    );
+
+  const content =
+    document.getElementById(
+      'customer-detail-content'
+    );
+
+
+  if (title) {
+
+    title.textContent =
+      `${displayName} (#${customer.id})`;
+  }
+
+
+  if (content) {
+
+    content.innerHTML = `
+      <p class="eyebrow">
+        READ ONLY
+      </p>
+
+      <div class="customer-name-summary">
+
+        <p>
+          <strong>顧客コード</strong>
+          ${escapeHtml(
+            String(
+              customer.customer_code
+              || '未登録'
+            )
+          )}
+        </p>
+
+        <p>
+          <strong>来店回数</strong>
+          ${escapeHtml(
+            String(
+              customer.visit_count
+              || 0
+            )
+          )}件
+        </p>
+
+        <p>
+          <strong>呼び名</strong>
+          ${escapeHtml(
+            findName('nickname')
+          )}
+        </p>
+
+        <p>
+          <strong>オキニトーク</strong>
+          ${escapeHtml(
+            findName('okini_talk')
+          )}
+        </p>
+
+        <p>
+          <strong>LINE</strong>
+          ${escapeHtml(
+            findName('line')
+          )}
+        </p>
+
+        <p>
+          <strong>X</strong>
+          ${escapeHtml(
+            findName('x')
+          )}
+        </p>
+
+        <p>
+          <strong>Instagram</strong>
+          ${escapeHtml(
+            findName('instagram')
+          )}
+        </p>
+
+      </div>
+    `;
+  }
+
+
   showView(
     'customerDetail'
   );
