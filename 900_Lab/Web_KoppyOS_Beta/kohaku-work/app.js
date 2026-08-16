@@ -671,6 +671,14 @@ async function loadDatabaseViewer() {
                 ${columnsHtml}
               </div>
 
+              <div
+                class="database-inline-records"
+                data-database-records="${escapeHtml(
+                  String(table.name)
+                )}"
+                hidden
+              ></div>
+
             </section>
           `;
         })
