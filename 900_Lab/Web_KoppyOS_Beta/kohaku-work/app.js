@@ -870,6 +870,228 @@ async function loadDatabaseViewer() {
 }
 
 
+/* ========================================
+   CUSTOMERS
+======================================== */
+
+const customersApiUrl =
+  '/api/v1/customers.php';
+
+
+async function loadCustomers() {
+
+  const customerList =
+    document.getElementById(
+      'customer-list'
+    );
+
+
+  if (!customerList) {
+    return;
+  }
+
+
+  customerList.innerHTML = `
+    <section class="content-card">
+      <p>
+        顧客情報を読み込んでいます...
+      </p>
+    </section>
+  `;
+
+
+  try {
+
+    const response =
+      await fetch(
+        customersApiUrl,
+        {
+          method: 'GET',
+          cache: 'no-store',
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+      throw new Error(
+        data.error
+        || '顧客情報を取得できませんでした。'
+      );
+    }
+
+
+    const customers =
+      Array.isArray(data.customers)
+        ? data.customers
+        : [];
+
+
+    if (customers.length === 0) {
+
+      customerList.innerHTML = `
+        <section class="content-card">
+          <p>
+            登録されている顧客はいません。
+          </p>
+        </section>
+      `;
+
+      return;
+    }
+
+
+    customerList.innerHTML =
+      customers
+        .map((customer) => {
+
+          const names =
+            Array.isArray(customer.names)
+              ? customer.names
+              : [];
+
+
+          const primaryName =
+            names.find(
+              (nameRecord) =>
+                Number(
+                  nameRecord.is_primary
+                ) === 1
+            )
+            || names[0]
+            || null;
+
+
+          const displayName =
+            primaryName
+              ? String(primaryName.name)
+              : '名前未登録';
+
+
+          const findName =
+            (nameType) => {
+
+              const record =
+                names.find(
+                  (nameRecord) =>
+                    nameRecord.name_type
+                    === nameType
+                );
+
+
+              return record
+                ? String(record.name)
+                : '未登録';
+            };
+
+
+          return `
+            <section
+              class="content-card customer-card"
+              data-customer-id="${escapeHtml(
+                String(customer.id)
+              )}"
+            >
+
+              <div class="customer-card-heading">
+
+                <div>
+
+                  <p class="eyebrow">
+                    CUSTOMER
+                  </p>
+
+                  <h2>
+                    ${escapeHtml(
+                      displayName
+                    )}
+                    <small>
+                      (#${escapeHtml(
+                        String(customer.id)
+                      )})
+                    </small>
+                  </h2>
+
+                </div>
+
+                <span>
+                  来店 ${escapeHtml(
+                    String(
+                      customer.visit_count
+                      || 0
+                    )
+                  )}件
+                </span>
+
+              </div>
+
+
+              <div class="customer-name-summary">
+
+                <p>
+                  <strong>呼び名</strong>
+                  ${escapeHtml(
+                    findName('nickname')
+                  )}
+                </p>
+
+                <p>
+                  <strong>オキニトーク</strong>
+                  ${escapeHtml(
+                    findName('okini_talk')
+                  )}
+                </p>
+
+                <p>
+                  <strong>LINE</strong>
+                  ${escapeHtml(
+                    findName('line')
+                  )}
+                </p>
+
+                <p>
+                  <strong>X</strong>
+                  ${escapeHtml(
+                    findName('x')
+                  )}
+                </p>
+
+                <p>
+                  <strong>Instagram</strong>
+                  ${escapeHtml(
+                    findName('instagram')
+                  )}
+                </p>
+
+              </div>
+
+            </section>
+          `;
+        })
+        .join('');
+
+
+  } catch (error) {
+
+    customerList.innerHTML = `
+      <section class="content-card">
+        <p>
+          ${escapeHtml(
+            error.message
+          )}
+        </p>
+      </section>
+    `;
+  }
+}
+
+
 // WRITER:WORK_SCHEDULE_LOGIC:START
 
 /* ========================================
