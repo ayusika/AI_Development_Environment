@@ -2069,6 +2069,14 @@ async function saveScheduleVisit() {
       : null;
 
 
+  const customerRequestedChange =
+    Boolean(
+      editId
+      && scheduleCustomerChange
+      && scheduleCustomerChange.checked
+    );
+
+
   const payload = {
     store_id:
       Number(
