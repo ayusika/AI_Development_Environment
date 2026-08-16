@@ -944,6 +944,32 @@ try {
         $pdo->beginTransaction();
 
 
+        $beforeChangeData = [
+            'store_id' =>
+                (int) $currentVisit['store_id'],
+
+            'started_at' =>
+                $currentVisit['started_at'],
+
+            'booked_at' =>
+                $currentVisit['booked_at'],
+
+            'course_minutes' =>
+                (int) $currentVisit['course_minutes'],
+
+            'customer_status' =>
+                $currentVisit['customer_status'],
+
+            'customer_id' =>
+                $currentVisit['customer_id'] === null
+                    ? null
+                    : (int) $currentVisit['customer_id'],
+
+            'options' =>
+                $currentVisit['options'],
+        ];
+
+
         $statement =
             $pdo->prepare(
                 "
