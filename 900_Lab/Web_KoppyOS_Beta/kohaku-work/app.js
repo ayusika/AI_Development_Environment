@@ -2552,6 +2552,17 @@ function openScheduleDetail(
   );
 
 
+  if (scheduleCustomerCancelButton) {
+
+    scheduleCustomerCancelButton.hidden =
+      !Boolean(
+        Number(
+          visit.customer_linked
+        )
+      );
+  }
+
+
   if (scheduleDrawerBackdrop) {
     scheduleDrawerBackdrop.hidden =
       false;
