@@ -977,6 +977,90 @@ try {
             );
 
 
+        $status =
+            array_key_exists(
+                'status',
+                $payload
+            )
+                ? trim(
+                    (string)
+                    $payload['status']
+                )
+                : (string)
+                    $currentVisit['status'];
+
+
+        $cancelledAt =
+            array_key_exists(
+                'cancelled_at',
+                $payload
+            )
+                ? (
+                    $payload['cancelled_at'] === null
+                    || $payload['cancelled_at'] === ''
+
+                        ? null
+                        : trim(
+                            (string)
+                            $payload['cancelled_at']
+                        )
+                )
+                : (
+                    $currentVisit['cancelled_at'] === null
+
+                        ? null
+                        : (string)
+                            $currentVisit['cancelled_at']
+                );
+
+
+        $cancelReason =
+            array_key_exists(
+                'cancel_reason',
+                $payload
+            )
+                ? (
+                    $payload['cancel_reason'] === null
+
+                        ? null
+                        : trim(
+                            (string)
+                            $payload['cancel_reason']
+                        )
+                )
+                : (
+                    $currentVisit['cancel_reason'] === null
+
+                        ? null
+                        : (string)
+                            $currentVisit['cancel_reason']
+                );
+
+
+        $cancelledBy =
+            array_key_exists(
+                'cancelled_by',
+                $payload
+            )
+                ? (
+                    $payload['cancelled_by'] === null
+                    || $payload['cancelled_by'] === ''
+
+                        ? null
+                        : trim(
+                            (string)
+                            $payload['cancelled_by']
+                        )
+                )
+                : (
+                    $currentVisit['cancelled_by'] === null
+
+                        ? null
+                        : (string)
+                            $currentVisit['cancelled_by']
+                );
+
+
         $hasOptions =
             array_key_exists(
                 'options',
