@@ -296,6 +296,7 @@ function handleAction(action, button) {
 
     case 'open-database':
       showView('database');
+      loadDatabaseViewer();
       break;
 
     case 'settings':
