@@ -1891,6 +1891,12 @@ function resetScheduleForm() {
   }
 
 
+  if (scheduleCustomerChange) {
+    scheduleCustomerChange.checked =
+      false;
+  }
+
+
   document
     .querySelectorAll(
       '[data-schedule-option]'
