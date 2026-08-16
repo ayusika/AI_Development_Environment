@@ -561,6 +561,9 @@ try {
                     v.course_minutes,
                     v.customer_status,
                     v.status,
+                    v.cancelled_at,
+                    v.cancel_reason,
+                    v.cancelled_by,
                     v.customer_id,
 
                     s.id AS store_id,
