@@ -1048,6 +1048,69 @@ try {
         ];
 
 
+        $changedTypes = [];
+
+
+        if (
+            $beforeChangeData['started_at']
+            !== $afterChangeData['started_at']
+        ) {
+            $changedTypes[] = 'datetime';
+        }
+
+
+        if (
+            $beforeChangeData['course_minutes']
+            !== $afterChangeData['course_minutes']
+        ) {
+            $changedTypes[] = 'course';
+        }
+
+
+        if (
+            $beforeChangeData['store_id']
+            !== $afterChangeData['store_id']
+        ) {
+            $changedTypes[] = 'store';
+        }
+
+
+        if (
+            json_encode(
+                $beforeChangeData['options'],
+                JSON_UNESCAPED_UNICODE
+            )
+            !==
+            json_encode(
+                $afterChangeData['options'],
+                JSON_UNESCAPED_UNICODE
+            )
+        ) {
+            $changedTypes[] = 'option';
+        }
+
+
+        if (
+            $beforeChangeData['customer_status']
+            !== $afterChangeData['customer_status']
+        ) {
+            $changedTypes[] = 'status';
+        }
+
+
+        $changeType = null;
+
+        if (count($changedTypes) === 1) {
+
+            $changeType =
+                $changedTypes[0];
+
+        } elseif (count($changedTypes) > 1) {
+
+            $changeType = 'multiple';
+        }
+
+
         $pdo->commit();
 
 
