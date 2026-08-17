@@ -1320,6 +1320,7 @@ try {
                     booked_at = ?,
                     course_minutes = ?,
                     customer_status = ?,
+                    customer_features = ?,
                     status = ?,
                     cancelled_at = ?,
                     cancel_reason = ?,
