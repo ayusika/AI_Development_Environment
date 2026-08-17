@@ -1820,6 +1820,11 @@ const scheduleCustomerName =
     'schedule-customer-name'
   );
 
+const scheduleCustomerFeatures =
+  document.getElementById(
+    'schedule-customer-features'
+  );
+
 
 const scheduleState = {
   view: 'two-weeks',
