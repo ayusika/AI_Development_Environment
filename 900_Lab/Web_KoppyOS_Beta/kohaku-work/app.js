@@ -3892,11 +3892,23 @@ function openScheduleCustomerPanel() {
   }
 
 
+  if (scheduleCustomerFeatures) {
+    scheduleCustomerFeatures.value =
+      visit.customer_features
+        ? String(
+            visit.customer_features
+          )
+        : '';
+  }
+
+
   scheduleCustomerPanel.hidden =
     false;
 
 
-  if (scheduleCustomerName) {
+  if (scheduleCustomerFeatures) {
+    scheduleCustomerFeatures.focus();
+  } else if (scheduleCustomerName) {
     scheduleCustomerName.focus();
   }
 }
