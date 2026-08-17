@@ -3939,6 +3939,119 @@ function closeScheduleCustomerPanel() {
 }
 
 
+async function saveScheduleCustomerFeatures() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+
+  if (
+    !visit
+    || !scheduleCustomerFeatures
+  ) {
+    return;
+  }
+
+
+  const customerFeatures =
+    scheduleCustomerFeatures.value.trim();
+
+
+  const saveButton =
+    document.querySelector(
+      '[data-action="save-schedule-customer-features"]'
+    );
+
+
+  if (saveButton) {
+    saveButton.disabled =
+      true;
+
+    saveButton.textContent =
+      '保存中...';
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        scheduleApiUrl,
+        {
+          method: 'PATCH',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              id:
+                Number(
+                  visit.id
+                ),
+
+              customer_features:
+                customerFeatures,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+      throw new Error(
+        data.error
+        || '特徴メモを保存できませんでした。'
+      );
+    }
+
+
+    if (data.visit) {
+      scheduleState.selectedVisit =
+        data.visit;
+
+      scheduleCustomerFeatures.value =
+        data.visit.customer_features
+          ? String(
+              data.visit.customer_features
+            )
+          : '';
+    }
+
+
+    window.alert(
+      '特徴メモを保存しました。'
+    );
+
+
+  } catch (error) {
+
+    window.alert(
+      error.message
+    );
+
+
+  } finally {
+
+    if (saveButton) {
+      saveButton.disabled =
+        false;
+
+      saveButton.textContent =
+        '特徴メモを保存';
+    }
+  }
+}
+
+
 async function createScheduleCustomer() {
 
   const visit =
