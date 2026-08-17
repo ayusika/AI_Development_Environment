@@ -344,6 +344,7 @@ function fetchVisit(
                 v.booked_at,
                 v.course_minutes,
                 v.customer_status,
+                v.customer_features,
                 v.status,
                 v.cancelled_at,
                 v.cancel_reason,
