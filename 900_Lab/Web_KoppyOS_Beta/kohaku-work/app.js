@@ -1839,7 +1839,8 @@ const scheduleZoom = {
 };
 
 let selectedScheduleCourse = 90;
-let selectedCustomerStatus = 'repeat';
+let selectedCustomerStatus =
+  'repeat_unknown_id';
 
 
 initializeSchedule();
