@@ -307,6 +307,10 @@ function handleAction(action, button) {
       closeScheduleCustomerPanel();
       break;
 
+    case 'save-schedule-customer-features':
+      saveScheduleCustomerFeatures();
+      break;
+
     case 'create-schedule-customer':
       createScheduleCustomer();
       break;
