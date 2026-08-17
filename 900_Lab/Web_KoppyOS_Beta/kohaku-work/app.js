@@ -3381,7 +3381,7 @@ function resetScheduleForm() {
       button.classList.toggle(
         'is-selected',
         button.dataset.customerStatus
-        === 'repeat'
+        === 'repeat_unknown_id'
       );
     });
 
