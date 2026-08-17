@@ -1008,6 +1008,32 @@ try {
                 );
 
 
+        $customerFeatures =
+            array_key_exists(
+                'customer_features',
+                $payload
+            )
+                ? (
+                    trim(
+                        (string)
+                        $payload['customer_features']
+                    ) === ''
+
+                        ? null
+                        : trim(
+                            (string)
+                            $payload['customer_features']
+                        )
+                )
+                : (
+                    $currentVisit['customer_features'] === null
+
+                        ? null
+                        : (string)
+                            $currentVisit['customer_features']
+                );
+
+
         $customerRequestedChange =
             filter_var(
                 $payload['customer_requested_change']
