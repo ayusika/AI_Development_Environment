@@ -819,6 +819,11 @@ try {
             $customerStatus
         );
 
+        validateCustomerIdentityState(
+            $customerStatus,
+            $customerId
+        );
+
         validateCustomer(
             $pdo,
             $customerId
