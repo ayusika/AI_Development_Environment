@@ -318,6 +318,42 @@ CREATE TABLE visit_change_history (
 
 
 /* =========================================================
+   5B. CUSTOMER_IDENTITY_HISTORY
+   本人照合による顧客紐付け変更履歴
+========================================================= */
+
+CREATE TABLE customer_identity_history (
+
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    visit_id INTEGER NOT NULL,
+
+    before_customer_id INTEGER,
+
+    after_customer_id INTEGER,
+
+    action_type TEXT NOT NULL CHECK (
+        action_type IN (
+            'linked',
+            'unlinked',
+            'relinked',
+            'new_customer_created'
+        )
+    ),
+
+    note TEXT,
+
+    created_at TEXT NOT NULL DEFAULT (
+        strftime('%Y-%m-%d %H:%M', 'now', 'localtime')
+    ),
+
+    FOREIGN KEY (visit_id)
+        REFERENCES visits(id)
+        ON DELETE CASCADE
+);
+
+
+/* =========================================================
    6. OPTIONS
 ========================================================= */
 
