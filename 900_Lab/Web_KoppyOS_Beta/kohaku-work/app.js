@@ -3926,6 +3926,12 @@ function closeScheduleCustomerPanel() {
     scheduleCustomerName.value =
       '';
   }
+
+
+  if (scheduleCustomerFeatures) {
+    scheduleCustomerFeatures.value =
+      '';
+  }
 }
 
 
