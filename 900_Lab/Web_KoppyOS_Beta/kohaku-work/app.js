@@ -3326,7 +3326,8 @@ function resetScheduleForm() {
 
 
   selectedScheduleCourse = 90;
-  selectedCustomerStatus = 'repeat';
+  selectedCustomerStatus =
+    'repeat_unknown_id';
 
 
   if (scheduleCustomCourse) {
