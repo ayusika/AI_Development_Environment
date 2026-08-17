@@ -1343,6 +1343,7 @@ try {
             $bookedAt,
             $courseMinutes,
             $customerStatus,
+            $customerFeatures,
             $status,
             $cancelledAt,
             $cancelReason,
