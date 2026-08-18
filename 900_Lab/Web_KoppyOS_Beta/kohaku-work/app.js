@@ -1856,6 +1856,26 @@ const scheduleIdentityFeatureList =
     'schedule-identity-feature-list'
   );
 
+const scheduleIdentitySearchKeyword =
+  document.getElementById(
+    'schedule-identity-search-keyword'
+  );
+
+const scheduleIdentitySearchStatus =
+  document.getElementById(
+    'schedule-identity-search-status'
+  );
+
+const scheduleIdentitySearchStore =
+  document.getElementById(
+    'schedule-identity-search-store'
+  );
+
+const scheduleIdentitySearchResults =
+  document.getElementById(
+    'schedule-identity-search-results'
+  );
+
 
 const scheduleState = {
   view: 'two-weeks',
