@@ -4070,26 +4070,51 @@ function selectScheduleIdentityCandidate(
 ) {
 
   const visitId =
-    button?.dataset?.visitId;
+    Number(
+      button?.dataset?.visitId
+    );
+
+
+  const currentVisit =
+    scheduleState.selectedVisit;
 
 
   if (
     !visitId
+    || !currentVisit
     || !scheduleIdentitySearchResults
   ) {
     return;
   }
 
 
+  const candidateVisit =
+    scheduleState.identitySearchVisits
+      .find(
+        (visit) =>
+          Number(visit.id)
+          === visitId
+      );
+
+
+  if (!candidateVisit) {
+
+    window.alert(
+      '候補visitの情報を取得できませんでした。'
+    );
+
+    return;
+  }
+
+
+  scheduleState.selectedIdentityCandidate =
+    candidateVisit;
+
+
   const result =
     button.closest(
       '.schedule-identity-search-result'
     );
-
-
-  if (!result) {
-    return;
-  }
 
 
   document
@@ -4104,9 +4129,64 @@ function selectScheduleIdentityCandidate(
     });
 
 
-  result.classList.add(
-    'is-selected'
-  );
+  if (result) {
+
+    result.classList.add(
+      'is-selected'
+    );
+  }
+
+
+  const customerStatusLabels = {
+    new: '新規',
+    repeat: 'リピ',
+    other_store_repeat: '他店リピ',
+    repeat_unknown_id: 'リピ・ID不明',
+  };
+
+
+  const renderFeatures =
+    (features) => {
+
+      if (
+        !Array.isArray(features)
+        || features.length === 0
+      ) {
+        return 'なし';
+      }
+
+
+      return features
+        .map((feature) => {
+
+          const label =
+            getIdentityFeatureLabel(
+              feature.feature_type
+            );
+
+
+          return `${label}: ${
+            feature.feature_value
+          }`;
+        })
+        .join(' / ');
+    };
+
+
+  const currentFeatures =
+    Array.isArray(
+      currentVisit.identity_features
+    )
+      ? currentVisit.identity_features
+      : [];
+
+
+  const candidateFeatures =
+    Array.isArray(
+      candidateVisit.identity_features
+    )
+      ? candidateVisit.identity_features
+      : [];
 
 
   let confirmation =
@@ -4139,19 +4219,119 @@ function selectScheduleIdentityCandidate(
     <div>
 
       <strong>
-        同一人物候補を選択中
+        同一人物候補を比較
       </strong>
 
-      <p>
-        visit #${escapeHtml(
-          visitId
-        )} を選択しました。
-      </p>
+      <div class="schedule-identity-comparison">
 
-      <p>
-        現在の予約とこの候補を比較して、
-        同一人物か確認します。
-      </p>
+        <section>
+
+          <h4>
+            現在の予約
+          </h4>
+
+          <p>
+            日時：
+            ${escapeHtml(
+              currentVisit.started_at
+              || ''
+            )}
+          </p>
+
+          <p>
+            店舗：
+            ${escapeHtml(
+              currentVisit.store_name
+              || ''
+            )}
+          </p>
+
+          <p>
+            区分：
+            ${escapeHtml(
+              customerStatusLabels[
+                currentVisit.customer_status
+              ]
+              || currentVisit.customer_status
+              || ''
+            )}
+          </p>
+
+          <p>
+            特徴メモ：
+            ${escapeHtml(
+              currentVisit.customer_features
+              || 'なし'
+            )}
+          </p>
+
+          <p>
+            構造化特徴：
+            ${escapeHtml(
+              renderFeatures(
+                currentFeatures
+              )
+            )}
+          </p>
+
+        </section>
+
+
+        <section>
+
+          <h4>
+            候補 visit #${escapeHtml(
+              candidateVisit.id
+            )}
+          </h4>
+
+          <p>
+            日時：
+            ${escapeHtml(
+              candidateVisit.started_at
+              || ''
+            )}
+          </p>
+
+          <p>
+            店舗：
+            ${escapeHtml(
+              candidateVisit.store_name
+              || ''
+            )}
+          </p>
+
+          <p>
+            区分：
+            ${escapeHtml(
+              customerStatusLabels[
+                candidateVisit.customer_status
+              ]
+              || candidateVisit.customer_status
+              || ''
+            )}
+          </p>
+
+          <p>
+            特徴メモ：
+            ${escapeHtml(
+              candidateVisit.customer_features
+              || 'なし'
+            )}
+          </p>
+
+          <p>
+            構造化特徴：
+            ${escapeHtml(
+              renderFeatures(
+                candidateFeatures
+              )
+            )}
+          </p>
+
+        </section>
+
+      </div>
 
     </div>
   `;
