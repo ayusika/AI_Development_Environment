@@ -1731,6 +1731,9 @@ const scheduleApiUrl =
 const visitIdentityFeaturesApiUrl =
   '/api/v1/visit-identity-features.php';
 
+const customerIdentitySearchApiUrl =
+  '/api/v1/customer-identity-search.php';
+
 const scheduleCalendar =
   document.getElementById('schedule-calendar');
 
