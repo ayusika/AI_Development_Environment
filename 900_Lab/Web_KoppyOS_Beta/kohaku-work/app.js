@@ -4063,6 +4063,99 @@ async function loadScheduleIdentityFeatures() {
 }
 
 
+function selectScheduleIdentityCandidate(
+  button
+) {
+
+  const visitId =
+    button?.dataset?.visitId;
+
+
+  if (
+    !visitId
+    || !scheduleIdentitySearchResults
+  ) {
+    return;
+  }
+
+
+  const result =
+    button.closest(
+      '.schedule-identity-search-result'
+    );
+
+
+  if (!result) {
+    return;
+  }
+
+
+  document
+    .querySelectorAll(
+      '.schedule-identity-search-result'
+    )
+    .forEach((item) => {
+
+      item.classList.remove(
+        'is-selected'
+      );
+    });
+
+
+  result.classList.add(
+    'is-selected'
+  );
+
+
+  let confirmation =
+    document.getElementById(
+      'schedule-identity-candidate-confirmation'
+    );
+
+
+  if (!confirmation) {
+
+    confirmation =
+      document.createElement(
+        'div'
+      );
+
+    confirmation.id =
+      'schedule-identity-candidate-confirmation';
+
+    confirmation.className =
+      'schedule-identity-candidate-confirmation';
+
+
+    scheduleIdentitySearchResults.after(
+      confirmation
+    );
+  }
+
+
+  confirmation.innerHTML = `
+    <div>
+
+      <strong>
+        同一人物候補を選択中
+      </strong>
+
+      <p>
+        visit #${escapeHtml(
+          visitId
+        )} を選択しました。
+      </p>
+
+      <p>
+        現在の予約とこの候補を比較して、
+        同一人物か確認します。
+      </p>
+
+    </div>
+  `;
+}
+
+
 async function searchScheduleIdentity() {
 
   if (
