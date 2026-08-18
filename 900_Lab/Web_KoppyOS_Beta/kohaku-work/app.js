@@ -4243,6 +4243,13 @@ async function searchScheduleIdentity() {
         : [];
 
 
+    scheduleState.identitySearchVisits =
+      visits;
+
+    scheduleState.selectedIdentityCandidate =
+      null;
+
+
     if (visits.length === 0) {
 
       scheduleIdentitySearchResults.innerHTML =
