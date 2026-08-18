@@ -315,6 +315,10 @@ function handleAction(action, button) {
       addScheduleIdentityFeature();
       break;
 
+    case 'search-schedule-identity':
+      searchScheduleIdentity();
+      break;
+
     case 'create-schedule-customer':
       createScheduleCustomer();
       break;
