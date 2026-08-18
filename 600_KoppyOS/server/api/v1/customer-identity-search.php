@@ -1,1 +1,432 @@
-あ
+<?php
+
+declare(strict_types=1);
+
+
+header(
+    'Content-Type: application/json; charset=utf-8'
+);
+
+
+require_once
+    __DIR__
+    . '/lib/database.php';
+
+
+$pdo = null;
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function validateIdentitySearchCustomerStatus(
+    string $customerStatus
+): void {
+
+    if ($customerStatus === '') {
+        return;
+    }
+
+
+    $allowedStatuses = [
+        'new',
+        'repeat',
+        'other_store_repeat',
+        'repeat_unknown_id',
+    ];
+
+
+    if (
+        !in_array(
+            $customerStatus,
+            $allowedStatuses,
+            true
+        )
+    ) {
+        throw new RuntimeException(
+            'Invalid customer_status.'
+        );
+    }
+}
+
+
+function fetchIdentityFeaturesByVisitIds(
+    PDO $pdo,
+    array $visitIds
+): array {
+
+    if ($visitIds === []) {
+        return [];
+    }
+
+
+    $placeholders =
+        implode(
+            ',',
+            array_fill(
+                0,
+                count($visitIds),
+                '?'
+            )
+        );
+
+
+    $statement =
+        $pdo->prepare(
+            "
+            SELECT
+                id,
+                visit_id,
+                feature_type,
+                feature_value,
+                note,
+                created_at,
+                updated_at
+
+            FROM visit_identity_features
+
+            WHERE visit_id IN ({$placeholders})
+
+            ORDER BY
+                visit_id DESC,
+                id ASC
+            "
+        );
+
+
+    $statement->execute(
+        $visitIds
+    );
+
+
+    $featuresByVisit =
+        [];
+
+
+    foreach (
+        $statement->fetchAll()
+        as $feature
+    ) {
+
+        $visitId =
+            (int)
+            $feature['visit_id'];
+
+
+        if (
+            !isset(
+                $featuresByVisit[
+                    $visitId
+                ]
+            )
+        ) {
+            $featuresByVisit[
+                $visitId
+            ] = [];
+        }
+
+
+        $featuresByVisit[
+            $visitId
+        ][] =
+            $feature;
+    }
+
+
+    return
+        $featuresByVisit;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+try {
+
+    $pdo =
+        koppyDatabase();
+
+
+    $method =
+        strtoupper(
+            $_SERVER['REQUEST_METHOD']
+            ?? 'GET'
+        );
+
+
+    if ($method !== 'GET') {
+
+        http_response_code(405);
+
+
+        echo json_encode(
+            [
+                'success' => false,
+                'error' =>
+                    'Method not allowed.',
+            ],
+            JSON_UNESCAPED_UNICODE
+            | JSON_UNESCAPED_SLASHES
+        );
+
+        exit;
+    }
+
+
+    $keyword =
+        trim(
+            (string)
+            (
+                $_GET['keyword']
+                ?? ''
+            )
+        );
+
+
+    $customerStatus =
+        trim(
+            (string)
+            (
+                $_GET['customer_status']
+                ?? ''
+            )
+        );
+
+
+    $storeId =
+        isset(
+            $_GET['store_id']
+        )
+            && $_GET['store_id'] !== ''
+                ? (int)
+                    $_GET['store_id']
+                : null;
+
+
+    validateIdentitySearchCustomerStatus(
+        $customerStatus
+    );
+
+
+    if (
+        $storeId !== null
+        && $storeId <= 0
+    ) {
+        throw new RuntimeException(
+            'store_id must be a positive integer.'
+        );
+    }
+
+
+    $whereConditions = [
+        'v.customer_id IS NULL',
+    ];
+
+
+    $parameters =
+        [];
+
+
+    if ($customerStatus !== '') {
+
+        $whereConditions[] =
+            'v.customer_status = ?';
+
+        $parameters[] =
+            $customerStatus;
+    }
+
+
+    if ($storeId !== null) {
+
+        $whereConditions[] =
+            'v.store_id = ?';
+
+        $parameters[] =
+            $storeId;
+    }
+
+
+    if ($keyword !== '') {
+
+        $whereConditions[] =
+            "
+            (
+                v.customer_features LIKE ?
+                OR v.started_at LIKE ?
+                OR s.name LIKE ?
+
+                OR EXISTS (
+                    SELECT 1
+
+                    FROM visit_identity_features vif_search
+
+                    WHERE
+                        vif_search.visit_id = v.id
+
+                        AND (
+                            vif_search.feature_value LIKE ?
+                            OR vif_search.note LIKE ?
+                        )
+                )
+            )
+            ";
+
+
+        $likeKeyword =
+            '%' . $keyword . '%';
+
+
+        $parameters[] =
+            $likeKeyword;
+
+        $parameters[] =
+            $likeKeyword;
+
+        $parameters[] =
+            $likeKeyword;
+
+        $parameters[] =
+            $likeKeyword;
+
+        $parameters[] =
+            $likeKeyword;
+    }
+
+
+    $whereSql =
+        implode(
+            "\nAND ",
+            $whereConditions
+        );
+
+
+    $statement =
+        $pdo->prepare(
+            "
+            SELECT
+                v.id,
+                v.store_id,
+                s.name AS store_name,
+                v.customer_id,
+                v.started_at,
+                v.booked_at,
+                v.course_minutes,
+                v.customer_status,
+                v.customer_features,
+                v.status,
+                v.cancelled_at,
+                v.cancel_reason,
+                v.cancelled_by
+
+            FROM visits v
+
+            LEFT JOIN stores s
+                ON s.id = v.store_id
+
+            WHERE
+                {$whereSql}
+
+            ORDER BY
+                v.started_at DESC,
+                v.id DESC
+
+            LIMIT 100
+            "
+        );
+
+
+    $statement->execute(
+        $parameters
+    );
+
+
+    $visits =
+        $statement->fetchAll();
+
+
+    $visitIds =
+        array_map(
+            static fn (
+                array $visit
+            ): int =>
+                (int)
+                $visit['id'],
+            $visits
+        );
+
+
+    $featuresByVisit =
+        fetchIdentityFeaturesByVisitIds(
+            $pdo,
+            $visitIds
+        );
+
+
+    foreach (
+        $visits
+        as &$visit
+    ) {
+
+        $visitId =
+            (int)
+            $visit['id'];
+
+
+        $visit['identity_features'] =
+            $featuresByVisit[
+                $visitId
+            ]
+            ?? [];
+    }
+
+    unset($visit);
+
+
+    echo json_encode(
+        [
+            'success' => true,
+
+            'data' => [
+                'filters' => [
+                    'keyword' =>
+                        $keyword,
+
+                    'customer_status' =>
+                        $customerStatus,
+
+                    'store_id' =>
+                        $storeId,
+                ],
+
+                'count' =>
+                    count(
+                        $visits
+                    ),
+
+                'visits' =>
+                    $visits,
+            ],
+        ],
+        JSON_UNESCAPED_UNICODE
+        | JSON_UNESCAPED_SLASHES
+    );
+
+
+} catch (Throwable $error) {
+
+    http_response_code(400);
+
+
+    echo json_encode(
+        [
+            'success' => false,
+            'error' =>
+                $error->getMessage(),
+        ],
+        JSON_UNESCAPED_UNICODE
+        | JSON_UNESCAPED_SLASHES
+    );
+}
