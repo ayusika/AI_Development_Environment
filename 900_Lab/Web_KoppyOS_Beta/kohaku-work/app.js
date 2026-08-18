@@ -1895,6 +1895,8 @@ const scheduleState = {
   anchorDate: null,
   visits: [],
   selectedVisit: null,
+  identitySearchVisits: [],
+  selectedIdentityCandidate: null,
 };
 
 
