@@ -4030,6 +4030,142 @@ async function loadScheduleIdentityFeatures() {
 }
 
 
+async function addScheduleIdentityFeature() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+
+  if (
+    !visit
+    || !scheduleIdentityFeatureType
+    || !scheduleIdentityFeatureValue
+    || !scheduleIdentityFeatureNote
+  ) {
+    return;
+  }
+
+
+  const featureType =
+    scheduleIdentityFeatureType.value;
+
+  const featureValue =
+    scheduleIdentityFeatureValue.value.trim();
+
+  const note =
+    scheduleIdentityFeatureNote.value.trim();
+
+
+  if (featureValue === '') {
+
+    window.alert(
+      '特徴を入力してね。'
+    );
+
+    scheduleIdentityFeatureValue.focus();
+
+    return;
+  }
+
+
+  const addButton =
+    document.querySelector(
+      '[data-action="add-schedule-identity-feature"]'
+    );
+
+
+  if (addButton) {
+
+    addButton.disabled =
+      true;
+
+    addButton.textContent =
+      '追加中...';
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        visitIdentityFeaturesApiUrl,
+        {
+          method: 'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              visit_id:
+                Number(
+                  visit.id
+                ),
+
+              feature_type:
+                featureType,
+
+              feature_value:
+                featureValue,
+
+              note:
+                note,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+      throw new Error(
+        data.error
+        || '構造化特徴を追加できませんでした。'
+      );
+    }
+
+
+    scheduleIdentityFeatureValue.value =
+      '';
+
+    scheduleIdentityFeatureNote.value =
+      '';
+
+
+    await loadScheduleIdentityFeatures();
+
+
+    scheduleIdentityFeatureValue.focus();
+
+
+  } catch (error) {
+
+    window.alert(
+      error.message
+    );
+
+
+  } finally {
+
+    if (addButton) {
+
+      addButton.disabled =
+        false;
+
+      addButton.textContent =
+        '構造化特徴を追加';
+    }
+  }
+}
+
+
 function openScheduleCustomerPanel() {
 
   const visit =
