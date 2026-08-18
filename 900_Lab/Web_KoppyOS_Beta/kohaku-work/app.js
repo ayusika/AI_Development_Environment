@@ -4247,6 +4247,17 @@ async function searchScheduleIdentity() {
                 )}
               </small>
 
+              <button
+                class="secondary-button"
+                type="button"
+                data-action="select-schedule-identity-candidate"
+                data-visit-id="${escapeHtml(
+                  visit.id
+                )}"
+              >
+                この人を確認
+              </button>
+
             </article>
           `;
         })
