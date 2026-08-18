@@ -2154,6 +2154,113 @@
 
 
               <div
+                class="schedule-identity-search-panel"
+                id="schedule-identity-search-panel"
+              >
+
+                <h3>
+                  ID不明客を探す
+                </h3>
+
+                <p>
+                  名前が分からない過去のお客様を、
+                  特徴や店舗から探します。
+                </p>
+
+
+                <label>
+                  <span>キーワード</span>
+
+                  <input
+                    id="schedule-identity-search-keyword"
+                    type="search"
+                    maxlength="200"
+                    autocomplete="off"
+                    placeholder="例：少し太め、口ひげ、建築系"
+                  >
+                </label>
+
+
+                <label>
+                  <span>顧客区分</span>
+
+                  <select
+                    id="schedule-identity-search-status"
+                  >
+                    <option value="">
+                      すべて
+                    </option>
+
+                    <option value="repeat_unknown_id">
+                      リピ・ID不明
+                    </option>
+
+                    <option value="new">
+                      新規
+                    </option>
+
+                    <option value="other_store_repeat">
+                      他店リピ
+                    </option>
+
+                    <option value="repeat">
+                      リピ
+                    </option>
+                  </select>
+                </label>
+
+
+                <label>
+                  <span>店舗</span>
+
+                  <select
+                    id="schedule-identity-search-store"
+                  >
+                    <option value="">
+                      すべて
+                    </option>
+
+                    <option value="1">
+                      札幌
+                    </option>
+
+                    <option value="2">
+                      千葉
+                    </option>
+
+                    <option value="3">
+                      東京
+                    </option>
+
+                    <option value="4">
+                      名古屋
+                    </option>
+                  </select>
+                </label>
+
+
+                <div class="schedule-customer-actions">
+
+                  <button
+                    class="secondary-button"
+                    type="button"
+                    data-action="search-schedule-identity"
+                  >
+                    ID不明客を検索
+                  </button>
+
+                </div>
+
+
+                <div
+                  id="schedule-identity-search-results"
+                  class="schedule-identity-search-results"
+                ></div>
+
+              </div>
+
+
+              <div
                 class="schedule-identity-feature-panel"
                 id="schedule-identity-feature-panel"
               >
