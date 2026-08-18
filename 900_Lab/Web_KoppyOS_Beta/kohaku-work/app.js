@@ -319,6 +319,12 @@ function handleAction(action, button) {
       searchScheduleIdentity();
       break;
 
+    case 'select-schedule-identity-candidate':
+      selectScheduleIdentityCandidate(
+        button
+      );
+      break;
+
     case 'create-schedule-customer':
       createScheduleCustomer();
       break;
