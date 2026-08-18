@@ -1832,6 +1832,26 @@ const scheduleCustomerFeatures =
     'schedule-customer-features'
   );
 
+const scheduleIdentityFeatureType =
+  document.getElementById(
+    'schedule-identity-feature-type'
+  );
+
+const scheduleIdentityFeatureValue =
+  document.getElementById(
+    'schedule-identity-feature-value'
+  );
+
+const scheduleIdentityFeatureNote =
+  document.getElementById(
+    'schedule-identity-feature-note'
+  );
+
+const scheduleIdentityFeatureList =
+  document.getElementById(
+    'schedule-identity-feature-list'
+  );
+
 
 const scheduleState = {
   view: 'two-weeks',
