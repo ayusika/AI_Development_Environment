@@ -1724,6 +1724,9 @@ if (customerSearchInput) {
 const scheduleApiUrl =
   '/api/v1/schedule.php';
 
+const visitIdentityFeaturesApiUrl =
+  '/api/v1/visit-identity-features.php';
+
 const scheduleCalendar =
   document.getElementById('schedule-calendar');
 
