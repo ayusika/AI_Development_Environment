@@ -4012,6 +4012,10 @@ async function loadScheduleIdentityFeatures() {
         : [];
 
 
+    scheduleState.selectedVisit.identity_features =
+      features;
+
+
     if (features.length === 0) {
 
       scheduleIdentityFeatureList.innerHTML =
