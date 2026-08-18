@@ -4420,11 +4420,20 @@ async function searchScheduleIdentity() {
 
 
     const visits =
-      Array.isArray(
-        data.data?.visits
+      (
+        Array.isArray(
+          data.data?.visits
+        )
+          ? data.data.visits
+          : []
       )
-        ? data.data.visits
-        : [];
+        .filter(
+          (visit) =>
+            Number(visit.id)
+            !== Number(
+              scheduleState.selectedVisit?.id
+            )
+        );
 
 
     scheduleState.identitySearchVisits =
