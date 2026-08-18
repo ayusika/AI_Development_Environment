@@ -311,6 +311,10 @@ function handleAction(action, button) {
       saveScheduleCustomerFeatures();
       break;
 
+    case 'add-schedule-identity-feature':
+      addScheduleIdentityFeature();
+      break;
+
     case 'create-schedule-customer':
       createScheduleCustomer();
       break;
