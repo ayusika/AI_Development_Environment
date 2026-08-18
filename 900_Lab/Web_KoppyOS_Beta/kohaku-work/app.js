@@ -4065,6 +4065,9 @@ function openScheduleCustomerPanel() {
     false;
 
 
+  loadScheduleIdentityFeatures();
+
+
   if (scheduleCustomerFeatures) {
     scheduleCustomerFeatures.focus();
   } else if (scheduleCustomerName) {
