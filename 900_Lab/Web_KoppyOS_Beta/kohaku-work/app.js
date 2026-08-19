@@ -2503,6 +2503,21 @@ document.addEventListener(
     }
 
 
+    const saveCustomerIdentityFeaturesButton =
+      event.target.closest(
+        '[data-action="save-schedule-customer-identity-features"]'
+      );
+
+    if (saveCustomerIdentityFeaturesButton) {
+
+      saveScheduleCustomerIdentityFeatures(
+        saveCustomerIdentityFeaturesButton
+      );
+
+      return;
+    }
+
+
     const featureButton =
       event.target.closest(
         '[data-schedule-feature]'
