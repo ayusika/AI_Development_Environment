@@ -1351,6 +1351,7 @@ try {
                     course_minutes = ?,
                     customer_status = ?,
                     customer_features = ?,
+                    visitor_type = ?,
                     status = ?,
                     cancelled_at = ?,
                     cancel_reason = ?,
