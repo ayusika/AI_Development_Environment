@@ -300,6 +300,248 @@ try {
                 : 0;
 
 
+        if (
+            isset(
+                $payload['name_type']
+            )
+        ) {
+
+            $nameType =
+                trim(
+                    (string)
+                    $payload['name_type']
+                );
+
+
+            $name =
+                isset($payload['name'])
+                    ? trim(
+                        (string)
+                        $payload['name']
+                    )
+                    : '';
+
+
+            $allowedNameTypes = [
+                'nickname',
+                'okini_talk',
+                'line',
+                'x',
+                'instagram',
+            ];
+
+
+            if ($customerId <= 0) {
+                throw new RuntimeException(
+                    'id is required.'
+                );
+            }
+
+
+            if (
+                !in_array(
+                    $nameType,
+                    $allowedNameTypes,
+                    true
+                )
+            ) {
+                throw new RuntimeException(
+                    'Invalid name_type.'
+                );
+            }
+
+
+            $customerStatement =
+                $pdo->prepare(
+                    "
+                    SELECT id
+
+                    FROM customers
+
+                    WHERE id = ?
+
+                    LIMIT 1
+                    "
+                );
+
+
+            $customerStatement->execute([
+                $customerId,
+            ]);
+
+
+            if (
+                !$customerStatement->fetch()
+            ) {
+                throw new RuntimeException(
+                    'Customer not found.'
+                );
+            }
+
+
+            $nameStatement =
+                $pdo->prepare(
+                    "
+                    SELECT id
+
+                    FROM customer_names
+
+                    WHERE
+                        customer_id = ?
+                        AND name_type = ?
+
+                    ORDER BY
+                        is_primary DESC,
+                        id ASC
+
+                    LIMIT 1
+                    "
+                );
+
+
+            $nameStatement->execute([
+                $customerId,
+                $nameType,
+            ]);
+
+
+            $existingName =
+                $nameStatement->fetch();
+
+
+            if ($name === '') {
+
+                if ($existingName) {
+
+                    $deleteStatement =
+                        $pdo->prepare(
+                            "
+                            DELETE FROM customer_names
+
+                            WHERE id = ?
+                            "
+                        );
+
+
+                    $deleteStatement->execute([
+                        (int)
+                        $existingName['id'],
+                    ]);
+                }
+
+            } elseif ($existingName) {
+
+                $updateStatement =
+                    $pdo->prepare(
+                        "
+                        UPDATE customer_names
+
+                        SET
+                            name = ?,
+                            updated_at =
+                                strftime(
+                                    '%Y-%m-%d %H:%M',
+                                    'now',
+                                    'localtime'
+                                )
+
+                        WHERE id = ?
+                        "
+                    );
+
+
+                $updateStatement->execute([
+                    $name,
+                    (int)
+                    $existingName['id'],
+                ]);
+
+            } else {
+
+                $insertStatement =
+                    $pdo->prepare(
+                        "
+                        INSERT INTO customer_names
+                        (
+                            customer_id,
+                            name_type,
+                            name,
+                            is_primary
+                        )
+                        VALUES
+                        (
+                            ?,
+                            ?,
+                            ?,
+                            ?
+                        )
+                        "
+                    );
+
+
+                $insertStatement->execute([
+                    $customerId,
+                    $nameType,
+                    $name,
+                    $nameType === 'nickname'
+                        ? 1
+                        : 0,
+                ]);
+            }
+
+
+            $touchStatement =
+                $pdo->prepare(
+                    "
+                    UPDATE customers
+
+                    SET
+                        updated_at =
+                            strftime(
+                                '%Y-%m-%d %H:%M',
+                                'now',
+                                'localtime'
+                            )
+
+                    WHERE id = ?
+                    "
+                );
+
+
+            $touchStatement->execute([
+                $customerId,
+            ]);
+
+
+            echo json_encode(
+                [
+                    'success' =>
+                        true,
+
+                    'customer_name' => [
+                        'customer_id' =>
+                            $customerId,
+
+                        'name_type' =>
+                            $nameType,
+
+                        'name' =>
+                            $name !== ''
+                                ? $name
+                                : null,
+                    ],
+
+                    'error' =>
+                        null,
+                ],
+                JSON_UNESCAPED_UNICODE
+            );
+
+
+            exit;
+        }
+
+
         $generalNotes =
             isset($payload['general_notes'])
                 ? trim(
