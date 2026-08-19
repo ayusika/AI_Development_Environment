@@ -4873,7 +4873,7 @@ async function addScheduleIdentityFeature() {
 }
 
 
-function openScheduleCustomerPanel() {
+async function openScheduleCustomerPanel() {
 
   const visit =
     scheduleState.selectedVisit;
@@ -4900,50 +4900,290 @@ function openScheduleCustomerPanel() {
     scheduleCustomerPanel.hidden =
       true;
 
-    const customerName =
-      visit.customer_name
-      || '名前未登録';
-
-    const customerCode =
-      visit.customer_code
-      || '未登録';
-
-
-    scheduleLinkedCustomerPanel.innerHTML = `
-      <div class="schedule-detail-card">
-
-        <div class="schedule-detail-row">
-          <span>顧客名</span>
-          <strong>
-            ${escapeHtml(
-              String(customerName)
-            )}
-          </strong>
-        </div>
-
-        <div class="schedule-detail-row">
-          <span>顧客ID</span>
-          <strong>
-            #${escapeHtml(
-              String(customerId)
-            )}
-          </strong>
-        </div>
-
-        <div class="schedule-detail-row">
-          <span>顧客コード</span>
-          <strong>
-            ${escapeHtml(
-              String(customerCode)
-            )}
-          </strong>
-        </div>
-
-      </div>
-    `;
-
     scheduleLinkedCustomerPanel.hidden =
       false;
+
+    scheduleLinkedCustomerPanel.innerHTML =
+      '<p>顧客情報を読み込み中...</p>';
+
+
+    try {
+
+      const response =
+        await fetch(
+          customersApiUrl,
+          {
+            method: 'GET',
+            cache: 'no-store',
+          }
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (
+        !response.ok
+        || !data.success
+      ) {
+        throw new Error(
+          data.error
+          || '顧客情報を取得できませんでした。'
+        );
+      }
+
+
+      const customers =
+        Array.isArray(
+          data.customers
+        )
+          ? data.customers
+          : [];
+
+
+      const customer =
+        customers.find(
+          (customerRecord) =>
+            Number(
+              customerRecord.id
+            ) === customerId
+        );
+
+
+      if (!customer) {
+        throw new Error(
+          '紐付け先の顧客が見つかりませんでした。'
+        );
+      }
+
+
+      const names =
+        Array.isArray(
+          customer.names
+        )
+          ? customer.names
+          : [];
+
+
+      const primaryName =
+        names.find(
+          (nameRecord) =>
+            Number(
+              nameRecord.is_primary
+            ) === 1
+        )
+        || names[0]
+        || null;
+
+
+      const displayName =
+        primaryName
+          ? String(
+              primaryName.name
+            )
+          : (
+              visit.customer_name
+              || '名前未登録'
+            );
+
+
+      const findName =
+        (nameType) => {
+
+          const nameRecord =
+            names.find(
+              (record) =>
+                record.name_type
+                === nameType
+            );
+
+          return nameRecord
+            ? String(
+                nameRecord.name
+              )
+            : '未登録';
+        };
+
+
+      const visits =
+        Array.isArray(
+          customer.visits
+        )
+          ? customer.visits
+          : [];
+
+
+      const visitHistoryHtml =
+        visits.length
+          ? visits
+              .slice(0, 5)
+              .map(
+                (customerVisit) => `
+                  <div class="schedule-detail-row">
+                    <span>
+                      ${escapeHtml(
+                        String(
+                          customerVisit.started_at
+                          || '日時未登録'
+                        )
+                      )}
+                    </span>
+
+                    <strong>
+                      ${escapeHtml(
+                        String(
+                          customerVisit.course_minutes
+                          || ''
+                        )
+                      )}${customerVisit.course_minutes
+                        ? '分'
+                        : ''}
+                    </strong>
+                  </div>
+                `
+              )
+              .join('')
+          : `
+              <p>
+                来店履歴はありません。
+              </p>
+            `;
+
+
+      scheduleLinkedCustomerPanel.innerHTML = `
+        <div class="schedule-detail-card">
+
+          <div class="schedule-detail-row">
+            <span>顧客名</span>
+            <strong>
+              ${escapeHtml(
+                displayName
+              )}
+            </strong>
+          </div>
+
+          <div class="schedule-detail-row">
+            <span>顧客ID</span>
+            <strong>
+              #${escapeHtml(
+                String(customerId)
+              )}
+            </strong>
+          </div>
+
+          <div class="schedule-detail-row">
+            <span>顧客コード</span>
+            <strong>
+              ${escapeHtml(
+                String(
+                  customer.customer_code
+                  || '未登録'
+                )
+              )}
+            </strong>
+          </div>
+
+          <div class="schedule-detail-row">
+            <span>来店</span>
+            <strong>
+              ${escapeHtml(
+                String(
+                  customer.visit_count
+                  || 0
+                )
+              )}回
+            </strong>
+          </div>
+
+          <div class="schedule-detail-row">
+            <span>予約中</span>
+            <strong>
+              ${escapeHtml(
+                String(
+                  customer.scheduled_count
+                  || 0
+                )
+              )}件
+            </strong>
+          </div>
+
+        </div>
+
+
+        <div class="schedule-detail-card">
+
+          <div class="schedule-detail-row">
+            <span>呼び名</span>
+            <strong>
+              ${escapeHtml(
+                findName('nickname')
+              )}
+            </strong>
+          </div>
+
+          <div class="schedule-detail-row">
+            <span>オキニトーク</span>
+            <strong>
+              ${escapeHtml(
+                findName('okini_talk')
+              )}
+            </strong>
+          </div>
+
+          <div class="schedule-detail-row">
+            <span>LINE</span>
+            <strong>
+              ${escapeHtml(
+                findName('line')
+              )}
+            </strong>
+          </div>
+
+          <div class="schedule-detail-row">
+            <span>X</span>
+            <strong>
+              ${escapeHtml(
+                findName('x')
+              )}
+            </strong>
+          </div>
+
+          <div class="schedule-detail-row">
+            <span>Instagram</span>
+            <strong>
+              ${escapeHtml(
+                findName('instagram')
+              )}
+            </strong>
+          </div>
+
+        </div>
+
+
+        <div class="schedule-detail-card">
+
+          <strong>
+            直近の来店履歴
+          </strong>
+
+          ${visitHistoryHtml}
+
+        </div>
+      `;
+
+
+    } catch (error) {
+
+      scheduleLinkedCustomerPanel.innerHTML = `
+        <p>
+          ${escapeHtml(
+            error.message
+          )}
+        </p>
+      `;
+    }
+
 
     return;
   }
