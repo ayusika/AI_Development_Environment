@@ -193,6 +193,42 @@ function validateCustomer(
 }
 
 
+function fetchCustomerNames(
+    PDO $pdo,
+    ?int $customerId
+): array {
+
+    if ($customerId === null) {
+        return [];
+    }
+
+    $statement =
+        $pdo->prepare(
+            "
+            SELECT
+                name_type,
+                name,
+                is_primary
+
+            FROM customer_names
+
+            WHERE customer_id = ?
+
+            ORDER BY
+                is_primary DESC,
+                id ASC
+            "
+        );
+
+    $statement->execute([
+        $customerId
+    ]);
+
+    return
+        $statement->fetchAll();
+}
+
+
 function fetchVisitOptions(
     PDO $pdo,
     int $visitId
