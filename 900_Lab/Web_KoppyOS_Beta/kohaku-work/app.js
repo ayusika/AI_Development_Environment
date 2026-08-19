@@ -5358,16 +5358,205 @@ async function openScheduleCustomerPanel() {
         <div class="schedule-detail-card">
 
           <strong>
-            特徴メモ
+            顧客特徴
           </strong>
 
-          <p>
-            ${escapeHtml(
-              String(
-                latestCustomerFeatures
-              )
-            )}
-          </p>
+          <label>
+            <span>年代</span>
+            <input
+              type="text"
+              data-customer-feature-input="age_range"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'age_range'
+                )
+              )}"
+              placeholder="例：40代"
+            >
+          </label>
+
+          <label>
+            <span>身長</span>
+            <input
+              type="text"
+              data-customer-feature-input="height"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'height'
+                )
+              )}"
+              placeholder="例：170cmくらい"
+            >
+          </label>
+
+          <label>
+            <span>体格</span>
+            <input
+              type="text"
+              data-customer-feature-input="body_type"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'body_type'
+                )
+              )}"
+              placeholder="例：少し太め"
+            >
+          </label>
+
+          <label>
+            <span>髪</span>
+            <input
+              type="text"
+              data-customer-feature-input="hair"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'hair'
+                )
+              )}"
+              placeholder="髪型・髪色など"
+            >
+          </label>
+
+          <label>
+            <span>ヒゲ</span>
+            <input
+              type="text"
+              data-customer-feature-input="facial_hair"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'facial_hair'
+                )
+              )}"
+              placeholder="例：口ひげ"
+            >
+          </label>
+
+          <label>
+            <span>眼鏡</span>
+            <input
+              type="text"
+              data-customer-feature-input="glasses"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'glasses'
+                )
+              )}"
+              placeholder="眼鏡の特徴"
+            >
+          </label>
+
+          <label>
+            <span>見た目</span>
+            <input
+              type="text"
+              data-customer-feature-input="appearance"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'appearance'
+                )
+              )}"
+              placeholder="その他の見た目"
+            >
+          </label>
+
+          <label>
+            <span>似てる人</span>
+            <input
+              type="text"
+              data-customer-feature-input="lookalike"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'lookalike'
+                )
+              )}"
+              placeholder="似ている人"
+            >
+          </label>
+
+          <label>
+            <span>職業</span>
+            <input
+              type="text"
+              data-customer-feature-input="occupation"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'occupation'
+                )
+              )}"
+              placeholder="例：建築系"
+            >
+          </label>
+
+          <label>
+            <span>声・話し方</span>
+            <input
+              type="text"
+              data-customer-feature-input="voice_speech"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'voice_speech'
+                )
+              )}"
+              placeholder="例：声低め"
+            >
+          </label>
+
+          <label>
+            <span>エリア</span>
+            <input
+              type="text"
+              data-customer-feature-input="area"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'area'
+                )
+              )}"
+              placeholder="住んでいる・活動エリアなど"
+            >
+          </label>
+
+          <label>
+            <span>趣味・話題</span>
+            <input
+              type="text"
+              data-customer-feature-input="hobby_topic"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'hobby_topic'
+                )
+              )}"
+              placeholder="趣味やよく話す話題"
+            >
+          </label>
+
+          <label>
+            <span>その他</span>
+            <input
+              type="text"
+              data-customer-feature-input="other"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'other'
+                )
+              )}"
+              placeholder="その他の特徴"
+            >
+          </label>
+
+          <div class="schedule-customer-actions">
+
+            <button
+              class="secondary-button"
+              type="button"
+              data-action="save-schedule-customer-identity-features"
+              data-customer-id="${escapeHtml(
+                String(customerId)
+              )}"
+            >
+              顧客特徴を保存
+            </button>
+
+          </div>
 
         </div>
 
