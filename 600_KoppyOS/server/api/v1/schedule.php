@@ -165,33 +165,6 @@ function validateCustomerIdentityState(
     }
 }
 
-    if (
-        in_array(
-            $customerStatus,
-            [
-                'new',
-                'repeat_unknown_id',
-            ],
-            true
-        )
-        && $customerId !== null
-    ) {
-        throw new RuntimeException(
-            'Unidentified customer status cannot have customer_id.'
-        );
-    }
-
-
-    if (
-        $customerStatus === 'repeat'
-        && $customerId === null
-    ) {
-        throw new RuntimeException(
-            'repeat requires customer_id.'
-        );
-    }
-}
-
 
 function validateCustomer(
     PDO $pdo,
