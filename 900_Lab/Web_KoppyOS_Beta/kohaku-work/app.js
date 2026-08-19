@@ -2376,11 +2376,21 @@ document.addEventListener(
 
     if (featureButton) {
 
+      if (
+        featureButton.hasAttribute(
+          'data-action'
+        )
+      ) {
+        return;
+      }
+
+
       const labels = {
         customer: '顧客情報',
         diary: 'お礼日記',
         sales: '売上入力',
       };
+
 
       showPlaceholder(
         labels[
