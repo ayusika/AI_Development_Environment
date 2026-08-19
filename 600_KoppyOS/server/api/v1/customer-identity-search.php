@@ -220,9 +220,8 @@ try {
     }
 
 
-    $whereConditions = [
-        'v.customer_id IS NULL',
-    ];
+    $whereConditions =
+        [];
 
 
     $parameters =
