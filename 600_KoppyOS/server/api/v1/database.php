@@ -45,6 +45,7 @@ try {
         'customers',
         'customer_names',
         'customer_identity_features',
+        'customer_acquisition_sources',
         'visits',
         'visit_change_history',
         'customer_identity_history',
