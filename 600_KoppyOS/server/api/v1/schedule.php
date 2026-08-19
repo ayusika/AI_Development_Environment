@@ -578,6 +578,7 @@ try {
                     v.booked_at,
                     v.course_minutes,
                     v.customer_status,
+                    v.visitor_type,
                     v.status,
                     v.cancelled_at,
                     v.cancel_reason,
