@@ -5164,6 +5164,24 @@ async function openScheduleCustomerPanel() {
         <div class="schedule-detail-card">
 
           <strong>
+            顧客メモ
+          </strong>
+
+          <p>
+            ${escapeHtml(
+              String(
+                customer.general_notes
+                || '未登録'
+              )
+            )}
+          </p>
+
+        </div>
+
+
+        <div class="schedule-detail-card">
+
+          <strong>
             直近の来店履歴
           </strong>
 
