@@ -57,9 +57,14 @@ jobs:
           API_SOURCE="600_KoppyOS/server/api"
           API_REMOTE="/home/users/2/her.jp-mikipiano/web/koppy/api"
 
+          MIGRATION_SOURCE="600_KoppyOS/server/database/migrate-customer-identity-history.php"
+          MIGRATION_REMOTE="/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-customer-identity-history.php"
+          DATABASE_REMOTE="/home/users/2/her.jp-mikipiano/.koppy-private/database/kohaku-work.sqlite"
+
           test -f "$SOURCE_FILE"
           test -d "$KOHAKU_WORK_SOURCE"
           test -d "$API_SOURCE"
+          test -f "$MIGRATION_SOURCE"
 
           sshpass -p "$SSH_PASSWORD" \
             ssh \
@@ -93,6 +98,28 @@ jobs:
             -o StrictHostKeyChecking=accept-new \
             "$API_SOURCE/"* \
             "$SSH_USER@$SSH_HOST:$API_REMOTE/"
+
+          sshpass -p "$SSH_PASSWORD" \
+            ssh \
+            -p "$SSH_PORT" \
+            -o StrictHostKeyChecking=accept-new \
+            "$SSH_USER@$SSH_HOST" \
+            "mkdir -p '/home/users/2/her.jp-mikipiano/.koppy-private/migrations'"
+
+          sshpass -p "$SSH_PASSWORD" \
+            scp \
+            -P "$SSH_PORT" \
+            -O \
+            -o StrictHostKeyChecking=accept-new \
+            "$MIGRATION_SOURCE" \
+            "$SSH_USER@$SSH_HOST:$MIGRATION_REMOTE"
+
+          sshpass -p "$SSH_PASSWORD" \
+            ssh \
+            -p "$SSH_PORT" \
+            -o StrictHostKeyChecking=accept-new \
+            "$SSH_USER@$SSH_HOST" \
+            "php '$MIGRATION_REMOTE' '$DATABASE_REMOTE'"
 
       - name: Deployment complete
         run: |
