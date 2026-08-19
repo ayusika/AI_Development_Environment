@@ -199,6 +199,48 @@ try {
         }
 
 
+        $acquisitionStatement =
+            $pdo->query(
+                "
+                SELECT
+                    id,
+                    customer_id,
+                    source_type,
+                    source_detail,
+                    note,
+                    created_at,
+                    updated_at
+
+                FROM customer_acquisition_sources
+
+                ORDER BY
+                    customer_id ASC,
+                    id ASC
+                "
+            );
+
+
+        $acquisitionByCustomer =
+            [];
+
+
+        foreach (
+            $acquisitionStatement->fetchAll()
+            as $acquisitionRecord
+        ) {
+
+            $customerId =
+                (int)
+                $acquisitionRecord['customer_id'];
+
+
+            $acquisitionByCustomer[
+                $customerId
+            ] =
+                $acquisitionRecord;
+        }
+
+
         $visitStatement =
             $pdo->query(
                 "
