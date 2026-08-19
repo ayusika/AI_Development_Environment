@@ -5239,6 +5239,11 @@ async function openScheduleCustomerPanel() {
           : [];
 
 
+      const acquisitionSource =
+        customer.acquisition_source
+        || null;
+
+
       const findIdentityFeature =
         (featureType) => {
 
