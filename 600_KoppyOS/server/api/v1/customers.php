@@ -922,6 +922,7 @@ try {
 
             $allowedNameTypes = [
                 'nickname',
+                'kashikoi',
                 'okini_talk',
                 'line',
                 'x',
