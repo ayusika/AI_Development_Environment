@@ -4374,6 +4374,23 @@ function selectScheduleIdentityCandidate(
             )}
           </p>
 
+          ${
+            candidateVisit.customer_id
+              ? `
+                <button
+                  class="primary-button"
+                  type="button"
+                  data-action="link-schedule-existing-customer"
+                  data-customer-id="${escapeHtml(
+                    candidateVisit.customer_id
+                  )}"
+                >
+                  この顧客に紐付ける
+                </button>
+              `
+              : ''
+          }
+
         </section>
 
       </div>
