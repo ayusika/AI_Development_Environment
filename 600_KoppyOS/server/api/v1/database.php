@@ -44,6 +44,7 @@ try {
         'work_shifts',
         'customers',
         'customer_names',
+        'customer_identity_features',
         'visits',
         'visit_change_history',
         'customer_identity_history',
