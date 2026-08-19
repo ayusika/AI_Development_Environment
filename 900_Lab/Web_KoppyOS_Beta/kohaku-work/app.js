@@ -3918,6 +3918,30 @@ function openScheduleDetail(
   }
 
 
+  if (scheduleLinkedCustomerPanel) {
+
+    scheduleLinkedCustomerPanel.hidden =
+      true;
+
+    scheduleLinkedCustomerPanel.innerHTML =
+      '';
+  }
+
+
+  if (scheduleCustomerPanel) {
+
+    scheduleCustomerPanel.hidden =
+      true;
+  }
+
+
+  scheduleState.identitySearchVisits =
+    [];
+
+  scheduleState.selectedIdentityCandidate =
+    null;
+
+
   scheduleState.selectedVisit =
     visit;
 
