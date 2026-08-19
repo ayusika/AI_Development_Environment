@@ -156,6 +156,16 @@ function validateCustomerIdentityState(
 ): void {
 
     if (
+        $customerStatus === 'repeat'
+        && $customerId === null
+    ) {
+        throw new RuntimeException(
+            'repeat requires customer_id.'
+        );
+    }
+}
+
+    if (
         in_array(
             $customerStatus,
             [
