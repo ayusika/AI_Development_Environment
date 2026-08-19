@@ -725,6 +725,14 @@ try {
                     $pdo,
                     (int) $visit['id']
                 );
+
+            $visit['customer_names'] =
+                fetchCustomerNames(
+                    $pdo,
+                    isset($visit['customer_id'])
+                        ? (int) $visit['customer_id']
+                        : null
+                );
         }
 
         unset($visit);
