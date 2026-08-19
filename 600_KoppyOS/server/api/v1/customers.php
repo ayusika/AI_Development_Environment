@@ -364,6 +364,276 @@ try {
 
         if (
             isset(
+                $payload['feature_type']
+            )
+        ) {
+
+            $featureType =
+                trim(
+                    (string)
+                    $payload['feature_type']
+                );
+
+
+            $featureValue =
+                isset(
+                    $payload['feature_value']
+                )
+                    ? trim(
+                        (string)
+                        $payload['feature_value']
+                    )
+                    : '';
+
+
+            $featureNote =
+                isset(
+                    $payload['feature_note']
+                )
+                    ? trim(
+                        (string)
+                        $payload['feature_note']
+                    )
+                    : '';
+
+
+            $allowedFeatureTypes = [
+                'age_range',
+                'height',
+                'body_type',
+                'hair',
+                'facial_hair',
+                'glasses',
+                'appearance',
+                'lookalike',
+                'occupation',
+                'voice_speech',
+                'area',
+                'hobby_topic',
+                'other',
+            ];
+
+
+            if ($customerId <= 0) {
+                throw new RuntimeException(
+                    'id is required.'
+                );
+            }
+
+
+            if (
+                !in_array(
+                    $featureType,
+                    $allowedFeatureTypes,
+                    true
+                )
+            ) {
+                throw new RuntimeException(
+                    'Invalid feature_type.'
+                );
+            }
+
+
+            $customerStatement =
+                $pdo->prepare(
+                    "
+                    SELECT id
+
+                    FROM customers
+
+                    WHERE id = ?
+
+                    LIMIT 1
+                    "
+                );
+
+
+            $customerStatement->execute([
+                $customerId,
+            ]);
+
+
+            if (
+                !$customerStatement->fetch()
+            ) {
+                throw new RuntimeException(
+                    'Customer not found.'
+                );
+            }
+
+
+            $featureStatement =
+                $pdo->prepare(
+                    "
+                    SELECT id
+
+                    FROM customer_identity_features
+
+                    WHERE
+                        customer_id = ?
+                        AND feature_type = ?
+
+                    ORDER BY id ASC
+
+                    LIMIT 1
+                    "
+                );
+
+
+            $featureStatement->execute([
+                $customerId,
+                $featureType,
+            ]);
+
+
+            $existingFeature =
+                $featureStatement->fetch();
+
+
+            if ($featureValue === '') {
+
+                if ($existingFeature) {
+
+                    $deleteStatement =
+                        $pdo->prepare(
+                            "
+                            DELETE FROM customer_identity_features
+
+                            WHERE id = ?
+                            "
+                        );
+
+
+                    $deleteStatement->execute([
+                        (int)
+                        $existingFeature['id'],
+                    ]);
+                }
+
+            } elseif ($existingFeature) {
+
+                $updateStatement =
+                    $pdo->prepare(
+                        "
+                        UPDATE customer_identity_features
+
+                        SET
+                            feature_value = ?,
+                            note = ?,
+                            updated_at =
+                                strftime(
+                                    '%Y-%m-%d %H:%M',
+                                    'now',
+                                    'localtime'
+                                )
+
+                        WHERE id = ?
+                        "
+                    );
+
+
+                $updateStatement->execute([
+                    $featureValue,
+                    $featureNote !== ''
+                        ? $featureNote
+                        : null,
+                    (int)
+                    $existingFeature['id'],
+                ]);
+
+            } else {
+
+                $insertStatement =
+                    $pdo->prepare(
+                        "
+                        INSERT INTO customer_identity_features
+                        (
+                            customer_id,
+                            feature_type,
+                            feature_value,
+                            note
+                        )
+                        VALUES
+                        (
+                            ?,
+                            ?,
+                            ?,
+                            ?
+                        )
+                        "
+                    );
+
+
+                $insertStatement->execute([
+                    $customerId,
+                    $featureType,
+                    $featureValue,
+                    $featureNote !== ''
+                        ? $featureNote
+                        : null,
+                ]);
+            }
+
+
+            $touchStatement =
+                $pdo->prepare(
+                    "
+                    UPDATE customers
+
+                    SET
+                        updated_at =
+                            strftime(
+                                '%Y-%m-%d %H:%M',
+                                'now',
+                                'localtime'
+                            )
+
+                    WHERE id = ?
+                    "
+                );
+
+
+            $touchStatement->execute([
+                $customerId,
+            ]);
+
+
+            echo json_encode(
+                [
+                    'success' =>
+                        true,
+
+                    'identity_feature' => [
+                        'customer_id' =>
+                            $customerId,
+
+                        'feature_type' =>
+                            $featureType,
+
+                        'feature_value' =>
+                            $featureValue !== ''
+                                ? $featureValue
+                                : null,
+
+                        'note' =>
+                            $featureNote !== ''
+                                ? $featureNote
+                                : null,
+                    ],
+
+                    'error' =>
+                        null,
+                ],
+                JSON_UNESCAPED_UNICODE
+            );
+
+
+            exit;
+        }
+
+
+        if (
+            isset(
                 $payload['name_type']
             )
         ) {
