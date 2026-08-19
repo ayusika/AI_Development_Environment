@@ -912,7 +912,9 @@ async function loadDatabaseViewer() {
 
                     <strong>
                       ${escapeHtml(
-                        String(column.name)
+                        databaseColumnDisplayName(
+                          String(column.name)
+                        )
                       )}
                     </strong>
 
