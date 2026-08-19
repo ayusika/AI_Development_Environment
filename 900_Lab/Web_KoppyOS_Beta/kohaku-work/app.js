@@ -5632,6 +5632,125 @@ async function saveScheduleCustomerGeneralNotes(
 }
 
 
+async function saveScheduleCustomerNames(
+  button
+) {
+
+  const customerId =
+    Number(
+      button?.dataset?.customerId
+      || 0
+    );
+
+
+  if (!customerId) {
+    return;
+  }
+
+
+  const inputs =
+    Array.from(
+      scheduleLinkedCustomerPanel
+        ?.querySelectorAll(
+          '[data-customer-name-input]'
+        )
+      || []
+    );
+
+
+  if (!inputs.length) {
+    return;
+  }
+
+
+  const originalText =
+    button.textContent;
+
+
+  button.disabled =
+    true;
+
+  button.textContent =
+    '保存中...';
+
+
+  try {
+
+    for (const input of inputs) {
+
+      const nameType =
+        input.dataset.customerNameInput;
+
+      const name =
+        input.value.trim();
+
+
+      const response =
+        await fetch(
+          customersApiUrl,
+          {
+            method: 'PATCH',
+
+            headers: {
+              'Content-Type':
+                'application/json',
+            },
+
+            body:
+              JSON.stringify({
+                id:
+                  customerId,
+
+                name_type:
+                  nameType,
+
+                name:
+                  name,
+              }),
+          }
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (
+        !response.ok
+        || !data.success
+      ) {
+
+        throw new Error(
+          data.error
+          || `${nameType} を保存できませんでした。`
+        );
+      }
+    }
+
+
+    window.alert(
+      '名義情報を保存しました。'
+    );
+
+
+  } catch (error) {
+
+    window.alert(
+      error.message
+    );
+
+
+  } finally {
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      originalText;
+  }
+}
+
+
 async function linkScheduleExistingCustomer(
   button
 ) {
