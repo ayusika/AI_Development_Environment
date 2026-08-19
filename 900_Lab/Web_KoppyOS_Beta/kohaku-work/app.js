@@ -948,7 +948,9 @@ async function loadDatabaseViewer() {
 
                 <h3>
                   ${escapeHtml(
-                    String(table.name)
+                    databaseTableDisplayName(
+                      String(table.name)
+                    )
                   )}
                 </h3>
 
