@@ -144,6 +144,61 @@ try {
             [];
 
 
+        $featureStatement =
+            $pdo->query(
+                "
+                SELECT
+                    id,
+                    customer_id,
+                    feature_type,
+                    feature_value,
+                    note,
+                    created_at,
+                    updated_at
+
+                FROM customer_identity_features
+
+                ORDER BY
+                    customer_id ASC,
+                    id ASC
+                "
+            );
+
+
+        $featuresByCustomer =
+            [];
+
+
+        foreach (
+            $featureStatement->fetchAll()
+            as $featureRecord
+        ) {
+
+            $customerId =
+                (int)
+                $featureRecord['customer_id'];
+
+
+            if (
+                !isset(
+                    $featuresByCustomer[
+                        $customerId
+                    ]
+                )
+            ) {
+                $featuresByCustomer[
+                    $customerId
+                ] = [];
+            }
+
+
+            $featuresByCustomer[
+                $customerId
+            ][] =
+                $featureRecord;
+        }
+
+
         $visitStatement =
             $pdo->query(
                 "
