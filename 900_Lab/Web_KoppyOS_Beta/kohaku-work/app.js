@@ -3971,6 +3971,21 @@ function openScheduleDetail(
     || visit.customer_code
     || status;
 
+
+  const visitorTypeLabels = {
+    local: '地元',
+    travel: '旅行',
+    business: '出張',
+  };
+
+
+  const visitorType =
+    visitorTypeLabels[
+      visit.visitor_type
+    ]
+    || '不明';
+
+
   const date =
     String(
       visit.started_at
