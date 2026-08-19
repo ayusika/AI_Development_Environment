@@ -5473,6 +5473,110 @@ async function saveScheduleCustomerFeatures() {
 }
 
 
+async function saveScheduleCustomerGeneralNotes(
+  button
+) {
+
+  const customerId =
+    Number(
+      button?.dataset?.customerId
+      || 0
+    );
+
+
+  const textarea =
+    document.getElementById(
+      'schedule-customer-general-notes'
+    );
+
+
+  if (
+    !customerId
+    || !textarea
+  ) {
+    return;
+  }
+
+
+  const generalNotes =
+    textarea.value.trim();
+
+
+  const originalText =
+    button.textContent;
+
+
+  button.disabled =
+    true;
+
+  button.textContent =
+    '保存中...';
+
+
+  try {
+
+    const response =
+      await fetch(
+        customersApiUrl,
+        {
+          method: 'PATCH',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              id:
+                customerId,
+
+              general_notes:
+                generalNotes,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+
+      throw new Error(
+        data.error
+        || '顧客メモを保存できませんでした。'
+      );
+    }
+
+
+    window.alert(
+      '顧客メモを保存しました。'
+    );
+
+
+  } catch (error) {
+
+    window.alert(
+      error.message
+    );
+
+
+  } finally {
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      originalText;
+  }
+}
+
+
 async function linkScheduleExistingCustomer(
   button
 ) {
