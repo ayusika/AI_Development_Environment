@@ -5211,14 +5211,32 @@ async function openScheduleCustomerPanel() {
             顧客メモ
           </strong>
 
-          <p>
-            ${escapeHtml(
-              String(
-                customer.general_notes
-                || '未登録'
-              )
-            )}
-          </p>
+          <textarea
+            id="schedule-customer-general-notes"
+            rows="4"
+            maxlength="2000"
+            placeholder="顧客全体に残したいメモ"
+          >${escapeHtml(
+            String(
+              customer.general_notes
+              || ''
+            )
+          )}</textarea>
+
+          <div class="schedule-customer-actions">
+
+            <button
+              class="secondary-button"
+              type="button"
+              data-action="save-schedule-customer-general-notes"
+              data-customer-id="${escapeHtml(
+                String(customerId)
+              )}"
+            >
+              顧客メモを保存
+            </button>
+
+          </div>
 
         </div>
 
