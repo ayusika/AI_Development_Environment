@@ -5429,6 +5429,20 @@ async function openScheduleCustomerPanel() {
           </label>
 
           <label>
+            <span>カシコイ</span>
+            <input
+              type="text"
+              data-customer-name-input="kashikoi"
+              value="${escapeHtml(
+                findName('kashikoi') === '未登録'
+                  ? ''
+                  : findName('kashikoi')
+              )}"
+              placeholder="カシコイ名"
+            >
+          </label>
+
+          <label>
             <span>オキニトーク</span>
             <input
               type="text"
