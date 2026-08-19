@@ -5020,9 +5020,10 @@ async function openScheduleCustomerPanel() {
               .slice(0, 5)
               .map(
                 (customerVisit) => `
-                  <div>
+                  <details class="schedule-customer-visit-detail">
 
-                    <div class="schedule-detail-row">
+                    <summary class="schedule-detail-row">
+
                       <span>
                         ${escapeHtml(
                           String(
@@ -5042,48 +5043,53 @@ async function openScheduleCustomerPanel() {
                           ? '分'
                           : ''}
                       </strong>
+
+                    </summary>
+
+                    <div class="schedule-customer-visit-detail-body">
+
+                      <p>
+                        <strong>
+                          特徴
+                        </strong>
+                        <br>
+                        ${escapeHtml(
+                          String(
+                            customerVisit.customer_features
+                            || '未登録'
+                          )
+                        )}
+                      </p>
+
+                      <p>
+                        <strong>
+                          会話メモ
+                        </strong>
+                        <br>
+                        ${escapeHtml(
+                          String(
+                            customerVisit.conversation_notes
+                            || '未登録'
+                          )
+                        )}
+                      </p>
+
+                      <p>
+                        <strong>
+                          来店メモ
+                        </strong>
+                        <br>
+                        ${escapeHtml(
+                          String(
+                            customerVisit.visit_notes
+                            || '未登録'
+                          )
+                        )}
+                      </p>
+
                     </div>
 
-                    <p>
-                      <strong>
-                        特徴
-                      </strong>
-                      <br>
-                      ${escapeHtml(
-                        String(
-                          customerVisit.customer_features
-                          || '未登録'
-                        )
-                      )}
-                    </p>
-
-                    <p>
-                      <strong>
-                        会話メモ
-                      </strong>
-                      <br>
-                      ${escapeHtml(
-                        String(
-                          customerVisit.conversation_notes
-                          || '未登録'
-                        )
-                      )}
-                    </p>
-
-                    <p>
-                      <strong>
-                        来店メモ
-                      </strong>
-                      <br>
-                      ${escapeHtml(
-                        String(
-                          customerVisit.visit_notes
-                          || '未登録'
-                        )
-                      )}
-                    </p>
-
-                  </div>
+                  </details>
                 `
               )
               .join('')
