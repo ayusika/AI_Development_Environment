@@ -5020,26 +5020,48 @@ async function openScheduleCustomerPanel() {
               .slice(0, 5)
               .map(
                 (customerVisit) => `
-                  <div class="schedule-detail-row">
-                    <span>
-                      ${escapeHtml(
-                        String(
-                          customerVisit.started_at
-                          || '日時未登録'
-                        )
-                      )}
-                    </span>
+                  <div>
 
-                    <strong>
-                      ${escapeHtml(
-                        String(
-                          customerVisit.course_minutes
-                          || ''
-                        )
-                      )}${customerVisit.course_minutes
-                        ? '分'
-                        : ''}
-                    </strong>
+                    <div class="schedule-detail-row">
+                      <span>
+                        ${escapeHtml(
+                          String(
+                            customerVisit.started_at
+                            || '日時未登録'
+                          )
+                        )}
+                      </span>
+
+                      <strong>
+                        ${escapeHtml(
+                          String(
+                            customerVisit.course_minutes
+                            || ''
+                          )
+                        )}${customerVisit.course_minutes
+                          ? '分'
+                          : ''}
+                      </strong>
+                    </div>
+
+                    ${
+                      customerVisit.customer_features
+                        ? `
+                          <p>
+                            <strong>
+                              特徴
+                            </strong>
+                            <br>
+                            ${escapeHtml(
+                              String(
+                                customerVisit.customer_features
+                              )
+                            )}
+                          </p>
+                        `
+                        : ''
+                    }
+
                   </div>
                 `
               )
