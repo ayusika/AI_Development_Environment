@@ -345,6 +345,12 @@ function handleAction(action, button) {
       );
       break;
 
+    case 'link-schedule-existing-customer':
+      linkScheduleExistingCustomer(
+        button
+      );
+      break;
+
     case 'create-schedule-customer':
       createScheduleCustomer();
       break;
