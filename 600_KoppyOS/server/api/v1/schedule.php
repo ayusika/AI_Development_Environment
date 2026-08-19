@@ -438,6 +438,14 @@ function fetchVisit(
             $visitId
         );
 
+    $visit['customer_names'] =
+        fetchCustomerNames(
+            $pdo,
+            isset($visit['customer_id'])
+                ? (int) $visit['customer_id']
+                : null
+        );
+
     return $visit;
 }
 
