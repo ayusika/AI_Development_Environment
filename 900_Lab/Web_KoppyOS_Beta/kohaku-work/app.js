@@ -4054,6 +4054,13 @@ function openScheduleDetail(
       </div>
 
       <div class="schedule-detail-row">
+        <span>来訪タイプ</span>
+        <strong>
+          ${escapeHtml(visitorType)}
+        </strong>
+      </div>
+
+      <div class="schedule-detail-row">
         <span>OP</span>
         <strong>
           ${escapeHtml(optionText)}
