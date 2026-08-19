@@ -7,7 +7,7 @@ on:
     paths:
       - "900_Lab/Web_KoppyOS_Beta/index.html"
       - "900_Lab/Web_KoppyOS_Beta/kohaku-work/**"
-      - "600_KoppyOS/server/database/migrate-customer-acquisition-source.php"
+      - "600_KoppyOS/server/api/**"
       - ".github/workflows/deploy-koppy-world-lolipop.yml"
 
   workflow_dispatch:
