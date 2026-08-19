@@ -446,6 +446,93 @@ function closeDatabaseRecords() {
 }
 
 
+const databaseTableLabels = {
+  stores: '店舗',
+  work_shifts: '勤務シフト',
+  customers: '顧客',
+  customer_names: '顧客識別名',
+  visits: '来店・予約',
+  visit_change_history: '予約変更履歴',
+  customer_identity_history: '顧客紐付け履歴',
+  options: 'オプション',
+};
+
+
+const databaseColumnLabels = {
+  id: 'ID',
+  store_id: '店舗ID',
+  customer_id: '顧客ID',
+  customer_code: '顧客コード',
+  name_type: '名前種別',
+  name: '名前',
+  is_primary: 'メイン名',
+  general_notes: '顧客メモ',
+
+  started_at: '予約日時',
+  booked_at: '予約受付日時',
+  course_minutes: 'コース時間',
+  customer_status: '顧客区分',
+  customer_features: '特徴メモ',
+  conversation_notes: '会話メモ',
+  visit_notes: '来店メモ',
+
+  status: '状態',
+  cancel_reason: 'キャンセル理由',
+  cancelled_at: 'キャンセル日時',
+  cancelled_by: 'キャンセル者',
+
+  visit_id: '来店ID',
+  requested_at: '変更受付日時',
+  change_type: '変更種別',
+  before_data: '変更前データ',
+  after_data: '変更後データ',
+
+  before_customer_id: '変更前顧客ID',
+  after_customer_id: '変更後顧客ID',
+  action_type: '紐付け操作',
+  note: 'メモ',
+
+  active: '有効',
+  sort_order: '表示順',
+  start_at: '開始日時',
+  end_at: '終了日時',
+
+  is_dummy: 'ダミー',
+  created_at: '作成日時',
+  updated_at: '更新日時',
+};
+
+
+function databaseTableDisplayName(
+  tableName
+) {
+
+  const label =
+    databaseTableLabels[
+      tableName
+    ];
+
+  return label
+    ? `${tableName}（${label}）`
+    : tableName;
+}
+
+
+function databaseColumnDisplayName(
+  columnName
+) {
+
+  const label =
+    databaseColumnLabels[
+      columnName
+    ];
+
+  return label
+    ? `${columnName}（${label}）`
+    : columnName;
+}
+
+
 function closeInlineDatabaseRecords(
   tableName
 ) {
