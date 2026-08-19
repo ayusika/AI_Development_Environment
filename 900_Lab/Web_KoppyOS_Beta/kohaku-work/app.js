@@ -4953,6 +4953,132 @@ async function saveScheduleCustomerFeatures() {
 }
 
 
+async function linkScheduleExistingCustomer(
+  button
+) {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+  const customerId =
+    Number(
+      button?.dataset?.customerId
+    );
+
+
+  if (
+    !visit
+    || !customerId
+    || Boolean(
+      Number(
+        visit.customer_linked
+      )
+    )
+  ) {
+    return;
+  }
+
+
+  const confirmed =
+    window.confirm(
+      `customer #${customerId} に現在の予約を紐付けますか？`
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  const originalText =
+    button
+      ? button.textContent
+      : '';
+
+
+  if (button) {
+
+    button.disabled =
+      true;
+
+    button.textContent =
+      '紐付け中...';
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        scheduleApiUrl,
+        {
+          method: 'PATCH',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              id:
+                Number(
+                  visit.id
+                ),
+
+              customer_id:
+                customerId,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+
+      throw new Error(
+        data.error
+        || '既存顧客への紐付けに失敗しました。'
+      );
+    }
+
+
+    closeScheduleCustomerPanel();
+    closeScheduleDetail();
+
+
+    await loadSchedule(
+      true
+    );
+
+
+  } catch (error) {
+
+    window.alert(
+      error.message
+    );
+
+
+  } finally {
+
+    if (button) {
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        originalText;
+    }
+  }
+}
+
+
 async function createScheduleCustomer() {
 
   const visit =
