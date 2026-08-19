@@ -4055,9 +4055,31 @@ function openScheduleDetail(
 
       <div class="schedule-detail-row">
         <span>来訪タイプ</span>
-        <strong>
-          ${escapeHtml(visitorType)}
-        </strong>
+
+        <select
+          id="schedule-visitor-type"
+          class="schedule-visitor-type-select"
+        >
+          <option value=""
+            ${!visit.visitor_type ? 'selected' : ''}>
+            不明
+          </option>
+
+          <option value="local"
+            ${visit.visitor_type === 'local' ? 'selected' : ''}>
+            地元
+          </option>
+
+          <option value="travel"
+            ${visit.visitor_type === 'travel' ? 'selected' : ''}>
+            旅行
+          </option>
+
+          <option value="business"
+            ${visit.visitor_type === 'business' ? 'selected' : ''}>
+            出張
+          </option>
+        </select>
       </div>
 
       <div class="schedule-detail-row">
