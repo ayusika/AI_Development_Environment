@@ -311,6 +311,13 @@ try {
                 ?? [];
 
 
+            $customer['identity_features'] =
+                $featuresByCustomer[
+                    $customerId
+                ]
+                ?? [];
+
+
             $customer['visits'] =
                 $visitsByCustomer[
                     $customerId
