@@ -5044,59 +5044,44 @@ async function openScheduleCustomerPanel() {
                       </strong>
                     </div>
 
-                    ${
-                      customerVisit.customer_features
-                        ? `
-                          <p>
-                            <strong>
-                              特徴
-                            </strong>
-                            <br>
-                            ${escapeHtml(
-                              String(
-                                customerVisit.customer_features
-                              )
-                            )}
-                          </p>
-                        `
-                        : ''
-                    }
+                    <p>
+                      <strong>
+                        特徴
+                      </strong>
+                      <br>
+                      ${escapeHtml(
+                        String(
+                          customerVisit.customer_features
+                          || '未登録'
+                        )
+                      )}
+                    </p>
 
-                    ${
-                      customerVisit.conversation_notes
-                        ? `
-                          <p>
-                            <strong>
-                              会話メモ
-                            </strong>
-                            <br>
-                            ${escapeHtml(
-                              String(
-                                customerVisit.conversation_notes
-                              )
-                            )}
-                          </p>
-                        `
-                        : ''
-                    }
+                    <p>
+                      <strong>
+                        会話メモ
+                      </strong>
+                      <br>
+                      ${escapeHtml(
+                        String(
+                          customerVisit.conversation_notes
+                          || '未登録'
+                        )
+                      )}
+                    </p>
 
-                    ${
-                      customerVisit.visit_notes
-                        ? `
-                          <p>
-                            <strong>
-                              来店メモ
-                            </strong>
-                            <br>
-                            ${escapeHtml(
-                              String(
-                                customerVisit.visit_notes
-                              )
-                            )}
-                          </p>
-                        `
-                        : ''
-                    }
+                    <p>
+                      <strong>
+                        来店メモ
+                      </strong>
+                      <br>
+                      ${escapeHtml(
+                        String(
+                          customerVisit.visit_notes
+                          || '未登録'
+                        )
+                      )}
+                    </p>
 
                   </div>
                 `
