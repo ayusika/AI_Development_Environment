@@ -1375,6 +1375,7 @@ try {
             $courseMinutes,
             $customerStatus,
             $customerFeatures,
+            $visitorType,
             $status,
             $cancelledAt,
             $cancelReason,
