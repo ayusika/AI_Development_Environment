@@ -413,6 +413,223 @@ try {
 
         if (
             isset(
+                $payload['acquisition_source_type']
+            )
+        ) {
+
+            $sourceType =
+                trim(
+                    (string)
+                    $payload[
+                        'acquisition_source_type'
+                    ]
+                );
+
+
+            $sourceDetail =
+                isset(
+                    $payload[
+                        'acquisition_source_detail'
+                    ]
+                )
+                    ? trim(
+                        (string)
+                        $payload[
+                            'acquisition_source_detail'
+                        ]
+                    )
+                    : '';
+
+
+            $allowedSourceTypes = [
+                'heaven',
+                'x',
+                'instagram',
+                'okini_talk',
+                'store_site',
+                'referral',
+                'review',
+                'store_route',
+                'other',
+                'unknown',
+            ];
+
+
+            if ($customerId <= 0) {
+                throw new RuntimeException(
+                    'id is required.'
+                );
+            }
+
+
+            if (
+                !in_array(
+                    $sourceType,
+                    $allowedSourceTypes,
+                    true
+                )
+            ) {
+                throw new RuntimeException(
+                    'Invalid acquisition_source_type.'
+                );
+            }
+
+
+            $customerStatement =
+                $pdo->prepare(
+                    "
+                    SELECT id
+                    FROM customers
+                    WHERE id = ?
+                    LIMIT 1
+                    "
+                );
+
+
+            $customerStatement->execute([
+                $customerId,
+            ]);
+
+
+            if (
+                !$customerStatement->fetch()
+            ) {
+                throw new RuntimeException(
+                    'Customer not found.'
+                );
+            }
+
+
+            $existingStatement =
+                $pdo->prepare(
+                    "
+                    SELECT id
+
+                    FROM customer_acquisition_sources
+
+                    WHERE customer_id = ?
+
+                    LIMIT 1
+                    "
+                );
+
+
+            $existingStatement->execute([
+                $customerId,
+            ]);
+
+
+            $existing =
+                $existingStatement->fetch();
+
+
+            if ($existing) {
+
+                $saveStatement =
+                    $pdo->prepare(
+                        "
+                        UPDATE customer_acquisition_sources
+
+                        SET
+                            source_type = ?,
+                            source_detail = ?,
+                            updated_at =
+                                strftime(
+                                    '%Y-%m-%d %H:%M',
+                                    'now',
+                                    'localtime'
+                                )
+
+                        WHERE id = ?
+                        "
+                    );
+
+
+                $saveStatement->execute([
+                    $sourceType,
+                    $sourceDetail !== ''
+                        ? $sourceDetail
+                        : null,
+                    (int)
+                    $existing['id'],
+                ]);
+
+            } else {
+
+                $saveStatement =
+                    $pdo->prepare(
+                        "
+                        INSERT INTO customer_acquisition_sources
+                        (
+                            customer_id,
+                            source_type,
+                            source_detail,
+                            note,
+                            created_at,
+                            updated_at
+                        )
+                        VALUES
+                        (
+                            ?,
+                            ?,
+                            ?,
+                            NULL,
+                            strftime(
+                                '%Y-%m-%d %H:%M',
+                                'now',
+                                'localtime'
+                            ),
+                            strftime(
+                                '%Y-%m-%d %H:%M',
+                                'now',
+                                'localtime'
+                            )
+                        )
+                        "
+                    );
+
+
+                $saveStatement->execute([
+                    $customerId,
+                    $sourceType,
+                    $sourceDetail !== ''
+                        ? $sourceDetail
+                        : null,
+                ]);
+            }
+
+
+            echo json_encode(
+                [
+                    'success' =>
+                        true,
+
+                    'acquisition_source' => [
+                        'customer_id' =>
+                            $customerId,
+
+                        'source_type' =>
+                            $sourceType,
+
+                        'source_detail' =>
+                            $sourceDetail !== ''
+                                ? $sourceDetail
+                                : null,
+                    ],
+
+                    'error' =>
+                        null,
+                ],
+                JSON_UNESCAPED_UNICODE
+            );
+
+
+            exit;
+        }
+
+
+        if (
+            isset(
                 $payload['feature_type']
             )
         ) {
