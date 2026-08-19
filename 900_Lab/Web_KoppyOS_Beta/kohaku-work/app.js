@@ -4151,6 +4151,95 @@ function openScheduleDetail(
 }
 
 
+async function saveScheduleVisitorType() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+  const select =
+    document.getElementById(
+      'schedule-visitor-type'
+    );
+
+
+  if (!visit || !select) {
+    return;
+  }
+
+
+  const previousValue =
+    visit.visitor_type
+    || '';
+
+  const visitorType =
+    select.value;
+
+
+  select.disabled = true;
+
+
+  try {
+
+    const response =
+      await fetch(
+        scheduleApiUrl,
+        {
+          method: 'PATCH',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              id:
+                Number(visit.id),
+
+              visitor_type:
+                visitorType,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+      throw new Error(
+        data.error
+        || '来訪タイプを保存できませんでした。'
+      );
+    }
+
+
+    visit.visitor_type =
+      data.visit?.visitor_type
+      ?? visitorType;
+
+
+  } catch (error) {
+
+    select.value =
+      previousValue;
+
+    window.alert(
+      error.message
+    );
+
+  } finally {
+
+    select.disabled =
+      false;
+  }
+}
+
+
 function updateScheduleDetailState(
   element,
   complete,
