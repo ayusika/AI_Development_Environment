@@ -119,7 +119,13 @@ jobs:
             -p "$SSH_PORT" \
             -o StrictHostKeyChecking=accept-new \
             "$SSH_USER@$SSH_HOST" \
-            "php '$MIGRATION_REMOTE' '$DATABASE_REMOTE'"
+            'PHP_BIN=$(find /usr/local/php -type f -path "*/bin/php" 2>/dev/null | sort -V | tail -n 1); \
+            if [ -z "$PHP_BIN" ]; then \
+              echo "PHP CLI was not found."; \
+              exit 1; \
+            fi; \
+            echo "Using PHP CLI: $PHP_BIN"; \
+            "$PHP_BIN" "'"$MIGRATION_REMOTE"'" "'"$DATABASE_REMOTE"'"'
 
       - name: Deployment complete
         run: |
