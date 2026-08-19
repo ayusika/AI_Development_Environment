@@ -3249,10 +3249,57 @@ function renderScheduleEvent(
       visit.customer_status
     );
 
+
+  const customerNames =
+    Array.isArray(
+      visit.customer_names
+    )
+      ? visit.customer_names
+      : [];
+
+
+  const namePrefixes = {
+    nickname: '',
+    kashikoi: 'カ:',
+    okini_talk: 'オ:',
+    line: 'L:',
+    x: 'X:',
+    instagram: 'I:',
+  };
+
+
+  const customerNameParts =
+    customerNames
+      .filter(
+        (nameRecord) =>
+          nameRecord.name
+          && Object.prototype.hasOwnProperty.call(
+            namePrefixes,
+            nameRecord.name_type
+          )
+      )
+      .map((nameRecord) => {
+
+        const prefix =
+          namePrefixes[
+            nameRecord.name_type
+          ];
+
+        return `${prefix}${String(
+          nameRecord.name
+        )}`;
+      });
+
+
   const customer =
-    visit.customer_name
-    || visit.customer_code
-    || status;
+    customerNameParts.length
+      ? customerNameParts.join(' / ')
+      : (
+          visit.customer_name
+          || visit.customer_code
+          || status
+        );
+
 
   const storeClass =
     scheduleStoreClass(
