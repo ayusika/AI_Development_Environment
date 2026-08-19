@@ -684,7 +684,9 @@ async function openDatabaseRecords(
           (columnName) => `
             <th>
               ${escapeHtml(
-                columnName
+                databaseColumnDisplayName(
+                  columnName
+                )
               )}
             </th>
           `
