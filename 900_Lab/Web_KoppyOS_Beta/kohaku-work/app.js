@@ -4347,6 +4347,17 @@ function selectScheduleIdentityCandidate(
           </p>
 
           <p>
+            顧客紐付け：
+            ${
+              candidateVisit.customer_id
+                ? `customer #${escapeHtml(
+                    candidateVisit.customer_id
+                  )}`
+                : '未紐付け'
+            }
+          </p>
+
+          <p>
             特徴メモ：
             ${escapeHtml(
               candidateVisit.customer_features
