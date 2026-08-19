@@ -5068,12 +5068,32 @@ async function openScheduleCustomerPanel() {
           : [];
 
 
-      const latestCustomerFeatures =
-        visits.find(
-          (customerVisit) =>
-            customerVisit.customer_features
-        )?.customer_features
-        || '未登録';
+      const identityFeatures =
+        Array.isArray(
+          customer.identity_features
+        )
+          ? customer.identity_features
+          : [];
+
+
+      const findIdentityFeature =
+        (featureType) => {
+
+          const feature =
+            identityFeatures.find(
+              (record) =>
+                record.feature_type
+                === featureType
+            );
+
+
+          return feature
+            ? String(
+                feature.feature_value
+                || ''
+              )
+            : '';
+        };
 
 
       const visitHistoryHtml =
