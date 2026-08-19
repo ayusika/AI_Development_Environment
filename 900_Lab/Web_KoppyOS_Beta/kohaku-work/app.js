@@ -2488,6 +2488,21 @@ document.addEventListener(
     }
 
 
+    const saveCustomerNamesButton =
+      event.target.closest(
+        '[data-action="save-schedule-customer-names"]'
+      );
+
+    if (saveCustomerNamesButton) {
+
+      saveScheduleCustomerNames(
+        saveCustomerNamesButton
+      );
+
+      return;
+    }
+
+
     const featureButton =
       event.target.closest(
         '[data-schedule-feature]'
