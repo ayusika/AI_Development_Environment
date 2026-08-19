@@ -2503,6 +2503,21 @@ document.addEventListener(
     }
 
 
+    const saveCustomerAcquisitionSourceButton =
+      event.target.closest(
+        '[data-action="save-schedule-customer-acquisition-source"]'
+      );
+
+    if (saveCustomerAcquisitionSourceButton) {
+
+      saveScheduleCustomerAcquisitionSource(
+        saveCustomerAcquisitionSourceButton
+      );
+
+      return;
+    }
+
+
     const saveCustomerIdentityFeaturesButton =
       event.target.closest(
         '[data-action="save-schedule-customer-identity-features"]'
