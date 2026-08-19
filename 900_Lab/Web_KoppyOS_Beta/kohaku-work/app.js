@@ -1953,6 +1953,11 @@ const scheduleCustomerCancelReason =
     'schedule-customer-cancel-reason'
   );
 
+const scheduleLinkedCustomerPanel =
+  document.getElementById(
+    'schedule-linked-customer-panel'
+  );
+
 const scheduleCustomerPanel =
   document.getElementById(
     'schedule-customer-panel'
