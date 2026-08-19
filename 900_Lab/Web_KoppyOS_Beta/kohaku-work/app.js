@@ -114,19 +114,39 @@ function updateBottomNav(viewName) {
 ======================================== */
 
 document.addEventListener('click', (event) => {
-  const actionButton = event.target.closest('[data-action]');
-  const navButton = event.target.closest('[data-nav]');
+  const actionButton =
+    event.target.closest(
+      '[data-action]'
+    );
 
-  if (navButton) {
-    handleNav(navButton.dataset.nav);
+  const navButton =
+    event.target.closest(
+      '[data-nav]'
+    );
+
+
+  if (actionButton) {
+
+    const action =
+      actionButton.dataset.action;
+
+    handleAction(
+      action,
+      actionButton
+    );
+
     return;
   }
 
-  if (!actionButton) return;
 
-  const action = actionButton.dataset.action;
+  if (navButton) {
 
-  handleAction(action, actionButton);
+    handleNav(
+      navButton.dataset.nav
+    );
+
+    return;
+  }
 });
 
 
