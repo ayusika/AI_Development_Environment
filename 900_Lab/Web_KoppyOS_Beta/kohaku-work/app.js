@@ -4882,14 +4882,78 @@ function openScheduleCustomerPanel() {
   if (
     !visit
     || !scheduleCustomerPanel
-    || Boolean(
-      Number(
-        visit.customer_linked
-      )
-    )
+    || !scheduleLinkedCustomerPanel
   ) {
     return;
   }
+
+
+  const customerId =
+    Number(
+      visit.customer_id
+      || 0
+    );
+
+
+  if (customerId) {
+
+    scheduleCustomerPanel.hidden =
+      true;
+
+    const customerName =
+      visit.customer_name
+      || '名前未登録';
+
+    const customerCode =
+      visit.customer_code
+      || '未登録';
+
+
+    scheduleLinkedCustomerPanel.innerHTML = `
+      <div class="schedule-detail-card">
+
+        <div class="schedule-detail-row">
+          <span>顧客名</span>
+          <strong>
+            ${escapeHtml(
+              String(customerName)
+            )}
+          </strong>
+        </div>
+
+        <div class="schedule-detail-row">
+          <span>顧客ID</span>
+          <strong>
+            #${escapeHtml(
+              String(customerId)
+            )}
+          </strong>
+        </div>
+
+        <div class="schedule-detail-row">
+          <span>顧客コード</span>
+          <strong>
+            ${escapeHtml(
+              String(customerCode)
+            )}
+          </strong>
+        </div>
+
+      </div>
+    `;
+
+    scheduleLinkedCustomerPanel.hidden =
+      false;
+
+    return;
+  }
+
+
+  scheduleLinkedCustomerPanel.hidden =
+    true;
+
+  scheduleLinkedCustomerPanel.innerHTML =
+    '';
 
 
   if (scheduleCustomerName) {
