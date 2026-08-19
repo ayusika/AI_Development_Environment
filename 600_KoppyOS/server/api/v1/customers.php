@@ -360,6 +360,13 @@ try {
                 ?? [];
 
 
+            $customer['acquisition_source'] =
+                $acquisitionByCustomer[
+                    $customerId
+                ]
+                ?? null;
+
+
             $customer['visits'] =
                 $visitsByCustomer[
                     $customerId
