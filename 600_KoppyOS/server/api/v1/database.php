@@ -46,6 +46,7 @@ try {
         'customer_names',
         'visits',
         'visit_change_history',
+        'customer_identity_history',
         'options',
     ];
 
