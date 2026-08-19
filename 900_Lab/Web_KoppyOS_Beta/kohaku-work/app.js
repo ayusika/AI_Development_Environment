@@ -6250,6 +6250,123 @@ async function saveScheduleCustomerNames(
 }
 
 
+async function saveScheduleCustomerAcquisitionSource(
+  button
+) {
+
+  const customerId =
+    Number(
+      button?.dataset?.customerId
+      || 0
+    );
+
+
+  const sourceSelect =
+    document.getElementById(
+      'schedule-customer-acquisition-source'
+    );
+
+  const detailInput =
+    document.getElementById(
+      'schedule-customer-acquisition-detail'
+    );
+
+
+  if (
+    !customerId
+    || !sourceSelect
+  ) {
+    return;
+  }
+
+
+  const sourceType =
+    sourceSelect.value;
+
+  const sourceDetail =
+    detailInput
+      ? detailInput.value.trim()
+      : '';
+
+
+  const originalText =
+    button.textContent;
+
+
+  button.disabled =
+    true;
+
+  button.textContent =
+    '保存中...';
+
+
+  try {
+
+    const response =
+      await fetch(
+        customersApiUrl,
+        {
+          method: 'PATCH',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              id:
+                customerId,
+
+              acquisition_source_type:
+                sourceType,
+
+              acquisition_source_detail:
+                sourceDetail,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+
+      throw new Error(
+        data.error
+        || '初回流入元を保存できませんでした。'
+      );
+    }
+
+
+    window.alert(
+      '初回流入元を保存しました。'
+    );
+
+
+  } catch (error) {
+
+    window.alert(
+      error.message
+    );
+
+
+  } finally {
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      originalText;
+  }
+}
+
+
 async function saveScheduleCustomerIdentityFeatures(
   button
 ) {
