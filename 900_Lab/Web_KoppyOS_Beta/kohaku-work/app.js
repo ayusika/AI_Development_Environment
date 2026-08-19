@@ -300,7 +300,13 @@ function handleAction(action, button) {
       break;
 
     case 'open-schedule-customer':
+
+      if (currentView !== 'schedule') {
+        showView('schedule');
+      }
+
       openScheduleCustomerPanel();
+
       break;
 
     case 'close-schedule-customer':
