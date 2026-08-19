@@ -2473,6 +2473,21 @@ document.addEventListener(
     }
 
 
+    const saveCustomerGeneralNotesButton =
+      event.target.closest(
+        '[data-action="save-schedule-customer-general-notes"]'
+      );
+
+    if (saveCustomerGeneralNotesButton) {
+
+      saveScheduleCustomerGeneralNotes(
+        saveCustomerGeneralNotesButton
+      );
+
+      return;
+    }
+
+
     const featureButton =
       event.target.closest(
         '[data-schedule-feature]'
