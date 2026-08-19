@@ -1019,6 +1019,51 @@ try {
                 );
 
 
+        $visitorType =
+            array_key_exists(
+                'visitor_type',
+                $payload
+            )
+                ? (
+                    $payload['visitor_type'] === null
+                    || $payload['visitor_type'] === ''
+
+                        ? null
+                        : trim(
+                            (string)
+                            $payload['visitor_type']
+                        )
+                )
+                : (
+                    $currentVisit['visitor_type'] === null
+
+                        ? null
+                        : (string)
+                            $currentVisit['visitor_type']
+                );
+
+
+        $allowedVisitorTypes = [
+            'local',
+            'travel',
+            'business',
+        ];
+
+
+        if (
+            $visitorType !== null
+            && !in_array(
+                $visitorType,
+                $allowedVisitorTypes,
+                true
+            )
+        ) {
+            throw new RuntimeException(
+                'Invalid visitor_type.'
+            );
+        }
+
+
         $customerRequestedChange =
             filter_var(
                 $payload['customer_requested_change']
