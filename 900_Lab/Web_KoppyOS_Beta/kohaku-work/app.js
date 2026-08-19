@@ -4093,6 +4093,21 @@ function openScheduleDetail(
   `;
 
 
+  const visitorTypeSelect =
+    document.getElementById(
+      'schedule-visitor-type'
+    );
+
+
+  if (visitorTypeSelect) {
+
+    visitorTypeSelect.addEventListener(
+      'change',
+      saveScheduleVisitorType
+    );
+  }
+
+
   updateScheduleDetailState(
     scheduleDetailCustomerState,
     Number(
