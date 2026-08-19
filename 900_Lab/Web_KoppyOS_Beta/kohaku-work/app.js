@@ -5062,6 +5062,42 @@ async function openScheduleCustomerPanel() {
                         : ''
                     }
 
+                    ${
+                      customerVisit.conversation_notes
+                        ? `
+                          <p>
+                            <strong>
+                              会話メモ
+                            </strong>
+                            <br>
+                            ${escapeHtml(
+                              String(
+                                customerVisit.conversation_notes
+                              )
+                            )}
+                          </p>
+                        `
+                        : ''
+                    }
+
+                    ${
+                      customerVisit.visit_notes
+                        ? `
+                          <p>
+                            <strong>
+                              来店メモ
+                            </strong>
+                            <br>
+                            ${escapeHtml(
+                              String(
+                                customerVisit.visit_notes
+                              )
+                            )}
+                          </p>
+                        `
+                        : ''
+                    }
+
                   </div>
                 `
               )
