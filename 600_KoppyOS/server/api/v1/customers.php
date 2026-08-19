@@ -287,6 +287,122 @@ try {
     }
 
 
+    if ($method === 'PATCH') {
+
+        $payload =
+            readJsonBody();
+
+
+        $customerId =
+            isset($payload['id'])
+                ? (int)
+                    $payload['id']
+                : 0;
+
+
+        $generalNotes =
+            isset($payload['general_notes'])
+                ? trim(
+                    (string)
+                    $payload['general_notes']
+                )
+                : '';
+
+
+        if ($customerId <= 0) {
+            throw new RuntimeException(
+                'id is required.'
+            );
+        }
+
+
+        $statement =
+            $pdo->prepare(
+                "
+                UPDATE customers
+
+                SET
+                    general_notes = ?,
+                    updated_at =
+                        strftime(
+                            '%Y-%m-%d %H:%M',
+                            'now',
+                            'localtime'
+                        )
+
+                WHERE id = ?
+                "
+            );
+
+
+        $statement->execute([
+            $generalNotes !== ''
+                ? $generalNotes
+                : null,
+            $customerId,
+        ]);
+
+
+        if (
+            $statement->rowCount()
+            !== 1
+        ) {
+
+            $existsStatement =
+                $pdo->prepare(
+                    "
+                    SELECT id
+
+                    FROM customers
+
+                    WHERE id = ?
+
+                    LIMIT 1
+                    "
+                );
+
+
+            $existsStatement->execute([
+                $customerId,
+            ]);
+
+
+            if (
+                !$existsStatement->fetch()
+            ) {
+                throw new RuntimeException(
+                    'Customer not found.'
+                );
+            }
+        }
+
+
+        echo json_encode(
+            [
+                'success' =>
+                    true,
+
+                'customer' => [
+                    'id' =>
+                        $customerId,
+
+                    'general_notes' =>
+                        $generalNotes !== ''
+                            ? $generalNotes
+                            : null,
+                ],
+
+                'error' =>
+                    null,
+            ],
+            JSON_UNESCAPED_UNICODE
+        );
+
+
+        exit;
+    }
+
+
     if ($method !== 'POST') {
 
         http_response_code(405);
