@@ -5226,6 +5226,23 @@ async function openScheduleCustomerPanel() {
         <div class="schedule-detail-card">
 
           <strong>
+            特徴メモ
+          </strong>
+
+          <p>
+            ${escapeHtml(
+              String(
+                latestCustomerFeatures
+              )
+            )}
+          </p>
+
+        </div>
+
+
+        <div class="schedule-detail-card">
+
+          <strong>
             直近の来店履歴
           </strong>
 
