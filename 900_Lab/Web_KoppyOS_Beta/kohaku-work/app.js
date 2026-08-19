@@ -5014,6 +5014,14 @@ async function openScheduleCustomerPanel() {
           : [];
 
 
+      const latestCustomerFeatures =
+        visits.find(
+          (customerVisit) =>
+            customerVisit.customer_features
+        )?.customer_features
+        || '未登録';
+
+
       const visitHistoryHtml =
         visits.length
           ? visits
