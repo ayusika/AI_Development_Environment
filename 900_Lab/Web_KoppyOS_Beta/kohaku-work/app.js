@@ -5058,19 +5058,6 @@ async function openScheduleCustomerPanel() {
 
                       <p>
                         <strong>
-                          特徴
-                        </strong>
-                        <br>
-                        ${escapeHtml(
-                          String(
-                            customerVisit.customer_features
-                            || '未登録'
-                          )
-                        )}
-                      </p>
-
-                      <p>
-                        <strong>
                           会話メモ
                         </strong>
                         <br>
