@@ -5172,49 +5172,89 @@ async function openScheduleCustomerPanel() {
 
         <div class="schedule-detail-card">
 
-          <div class="schedule-detail-row">
+          <label>
             <span>呼び名</span>
-            <strong>
-              ${escapeHtml(
-                findName('nickname')
-              )}
-            </strong>
-          </div>
+            <input
+              type="text"
+              data-customer-name-input="nickname"
+              value="${escapeHtml(
+                findName('nickname') === '未登録'
+                  ? ''
+                  : findName('nickname')
+              )}"
+              placeholder="呼び名"
+            >
+          </label>
 
-          <div class="schedule-detail-row">
+          <label>
             <span>オキニトーク</span>
-            <strong>
-              ${escapeHtml(
-                findName('okini_talk')
-              )}
-            </strong>
-          </div>
+            <input
+              type="text"
+              data-customer-name-input="okini_talk"
+              value="${escapeHtml(
+                findName('okini_talk') === '未登録'
+                  ? ''
+                  : findName('okini_talk')
+              )}"
+              placeholder="オキニトーク名"
+            >
+          </label>
 
-          <div class="schedule-detail-row">
+          <label>
             <span>LINE</span>
-            <strong>
-              ${escapeHtml(
-                findName('line')
-              )}
-            </strong>
-          </div>
+            <input
+              type="text"
+              data-customer-name-input="line"
+              value="${escapeHtml(
+                findName('line') === '未登録'
+                  ? ''
+                  : findName('line')
+              )}"
+              placeholder="LINE名"
+            >
+          </label>
 
-          <div class="schedule-detail-row">
+          <label>
             <span>X</span>
-            <strong>
-              ${escapeHtml(
-                findName('x')
-              )}
-            </strong>
-          </div>
+            <input
+              type="text"
+              data-customer-name-input="x"
+              value="${escapeHtml(
+                findName('x') === '未登録'
+                  ? ''
+                  : findName('x')
+              )}"
+              placeholder="X名"
+            >
+          </label>
 
-          <div class="schedule-detail-row">
+          <label>
             <span>Instagram</span>
-            <strong>
-              ${escapeHtml(
-                findName('instagram')
-              )}
-            </strong>
+            <input
+              type="text"
+              data-customer-name-input="instagram"
+              value="${escapeHtml(
+                findName('instagram') === '未登録'
+                  ? ''
+                  : findName('instagram')
+              )}"
+              placeholder="Instagram名"
+            >
+          </label>
+
+          <div class="schedule-customer-actions">
+
+            <button
+              class="secondary-button"
+              type="button"
+              data-action="save-schedule-customer-names"
+              data-customer-id="${escapeHtml(
+                String(customerId)
+              )}"
+            >
+              名義情報を保存
+            </button>
+
           </div>
 
         </div>
