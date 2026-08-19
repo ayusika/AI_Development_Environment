@@ -328,6 +328,7 @@ function fetchVisit(
                 v.course_minutes,
                 v.customer_status,
                 v.customer_features,
+                v.visitor_type,
                 v.status,
                 v.cancelled_at,
                 v.cancel_reason,
