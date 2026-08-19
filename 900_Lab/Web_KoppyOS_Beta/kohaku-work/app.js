@@ -5490,6 +5490,104 @@ async function openScheduleCustomerPanel() {
         <div class="schedule-detail-card">
 
           <strong>
+            初回流入元
+          </strong>
+
+          <label>
+            <span>きっかけ</span>
+
+            <select
+              id="schedule-customer-acquisition-source"
+            >
+              <option value="unknown"
+                ${!acquisitionSource || acquisitionSource.source_type === 'unknown' ? 'selected' : ''}>
+                不明
+              </option>
+
+              <option value="heaven"
+                ${acquisitionSource?.source_type === 'heaven' ? 'selected' : ''}>
+                ヘブン
+              </option>
+
+              <option value="x"
+                ${acquisitionSource?.source_type === 'x' ? 'selected' : ''}>
+                X
+              </option>
+
+              <option value="instagram"
+                ${acquisitionSource?.source_type === 'instagram' ? 'selected' : ''}>
+                Instagram
+              </option>
+
+              <option value="okini_talk"
+                ${acquisitionSource?.source_type === 'okini_talk' ? 'selected' : ''}>
+                オキニトーク
+              </option>
+
+              <option value="store_site"
+                ${acquisitionSource?.source_type === 'store_site' ? 'selected' : ''}>
+                店舗サイト
+              </option>
+
+              <option value="referral"
+                ${acquisitionSource?.source_type === 'referral' ? 'selected' : ''}>
+                紹介
+              </option>
+
+              <option value="review"
+                ${acquisitionSource?.source_type === 'review' ? 'selected' : ''}>
+                口コミ
+              </option>
+
+              <option value="store_route"
+                ${acquisitionSource?.source_type === 'store_route' ? 'selected' : ''}>
+                店舗経由
+              </option>
+
+              <option value="other"
+                ${acquisitionSource?.source_type === 'other' ? 'selected' : ''}>
+                その他
+              </option>
+            </select>
+          </label>
+
+          <label>
+            <span>補足</span>
+
+            <input
+              id="schedule-customer-acquisition-detail"
+              type="text"
+              value="${escapeHtml(
+                String(
+                  acquisitionSource?.source_detail
+                  || ''
+                )
+              )}"
+              placeholder="例：Xの投稿を見た、友人○○さんの紹介"
+            >
+          </label>
+
+          <div class="schedule-customer-actions">
+
+            <button
+              class="secondary-button"
+              type="button"
+              data-action="save-schedule-customer-acquisition-source"
+              data-customer-id="${escapeHtml(
+                String(customerId)
+              )}"
+            >
+              初回流入元を保存
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="schedule-detail-card">
+
+          <strong>
             顧客メモ
           </strong>
 
