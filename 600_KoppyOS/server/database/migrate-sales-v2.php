@@ -94,6 +94,165 @@ try {
 
 
     /*
+     * store_courses v2補強。
+     *
+     * course_type:
+     *   regular   通常コース
+     *   extension 延長
+     *
+     * pricing_category:
+     *   standard 通常料金
+     *   foreign  外国人料金
+     *   event    イベント料金
+     */
+    $storeCourseColumns =
+        $pdo
+            ->query(
+                "PRAGMA table_info('store_courses')"
+            )
+            ->fetchAll();
+
+
+    $storeCourseColumnNames =
+        array_column(
+            $storeCourseColumns,
+            'name'
+        );
+
+
+    if (
+        !in_array(
+            'course_type',
+            $storeCourseColumnNames,
+            true
+        )
+    ) {
+
+        $pdo->exec(
+            "
+            ALTER TABLE store_courses
+            ADD COLUMN course_type TEXT
+                NOT NULL
+                DEFAULT 'regular'
+            "
+        );
+    }
+
+
+    if (
+        !in_array(
+            'pricing_category',
+            $storeCourseColumnNames,
+            true
+        )
+    ) {
+
+        $pdo->exec(
+            "
+            ALTER TABLE store_courses
+            ADD COLUMN pricing_category TEXT
+                NOT NULL
+                DEFAULT 'standard'
+            "
+        );
+    }
+
+
+    /*
+     * 初期版では base_price が NOT NULL だったが、
+     * 未確認料金をダミー値で保存しないため NULL を許可する。
+     *
+     * 現段階のv2料金・売上テーブルが空の場合だけ安全に再構築する。
+     */
+    $rateColumns =
+        $pdo
+            ->query(
+                "PRAGMA table_info('store_course_rates_v2')"
+            )
+            ->fetchAll();
+
+
+    $basePriceColumn =
+        null;
+
+
+    foreach ($rateColumns as $column) {
+
+        if (
+            $column['name']
+            === 'base_price'
+        ) {
+
+            $basePriceColumn =
+                $column;
+
+            break;
+        }
+    }
+
+
+    if (
+        $basePriceColumn !== null
+        && (int) $basePriceColumn['notnull'] === 1
+    ) {
+
+        $rateCount =
+            (int)
+            $pdo
+                ->query(
+                    'SELECT COUNT(*)
+                     FROM store_course_rates_v2'
+                )
+                ->fetchColumn();
+
+
+        $salesCount =
+            (int)
+            $pdo
+                ->query(
+                    'SELECT COUNT(*)
+                     FROM visit_sales_v2'
+                )
+                ->fetchColumn();
+
+
+        $historyCount =
+            (int)
+            $pdo
+                ->query(
+                    'SELECT COUNT(*)
+                     FROM visit_sales_history'
+                )
+                ->fetchColumn();
+
+
+        if (
+            $rateCount !== 0
+            || $salesCount !== 0
+            || $historyCount !== 0
+        ) {
+
+            throw new RuntimeException(
+                'Cannot rebuild sales v2 tables because data already exists.'
+            );
+        }
+
+
+        $pdo->exec(
+            'DROP TABLE visit_sales_history'
+        );
+
+        $pdo->exec(
+            'DROP TABLE visit_sales_v2'
+        );
+
+        $pdo->exec(
+            'DROP TABLE store_course_rates_v2'
+        );
+    }
+
+
+    /*
      * コース料金履歴。
      * 過去料金を消さず、有効期間で管理する。
      */
