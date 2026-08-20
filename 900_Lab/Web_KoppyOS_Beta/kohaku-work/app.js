@@ -2034,6 +2034,18 @@ const scheduleZoom = {
 };
 
 let selectedScheduleCourse = 90;
+
+let selectedScheduleCourseRateId = null;
+
+let selectedScheduleCourseMaster = null;
+
+let scheduleSalesMaster = {
+  store: null,
+  courses: [],
+  options: [],
+  dailyFeeRule: null,
+};
+
 let selectedCustomerStatus =
   'repeat_unknown_id';
 
