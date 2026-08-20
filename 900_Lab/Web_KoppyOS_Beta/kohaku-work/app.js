@@ -2400,6 +2400,39 @@ if (scheduleDateInput) {
 }
 
 
+if (scheduleStore) {
+
+  scheduleStore.addEventListener(
+    'change',
+    () => {
+      loadScheduleSalesMaster();
+    }
+  );
+}
+
+
+if (scheduleFormDate) {
+
+  scheduleFormDate.addEventListener(
+    'change',
+    () => {
+      loadScheduleSalesMaster();
+    }
+  );
+}
+
+
+if (scheduleStartTime) {
+
+  scheduleStartTime.addEventListener(
+    'change',
+    () => {
+      loadScheduleSalesMaster();
+    }
+  );
+}
+
+
 if (scheduleCustomCourse) {
 
   scheduleCustomCourse.addEventListener(
