@@ -1905,6 +1905,26 @@ const scheduleStartTime =
 const scheduleCustomCourse =
   document.getElementById('schedule-custom-course');
 
+const scheduleCourseMasterList =
+  document.getElementById(
+    'schedule-course-master-list'
+  );
+
+const scheduleExtensionMasterList =
+  document.getElementById(
+    'schedule-extension-master-list'
+  );
+
+const scheduleCoursePriceSummary =
+  document.getElementById(
+    'schedule-course-price-summary'
+  );
+
+const scheduleOptionGrid =
+  document.getElementById(
+    'schedule-option-grid'
+  );
+
 const scheduleCustomOption =
   document.getElementById('schedule-custom-option');
 
