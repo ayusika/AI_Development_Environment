@@ -50,6 +50,12 @@ try {
         'visit_change_history',
         'customer_identity_history',
         'options',
+        'store_courses',
+        'store_course_rates_v2',
+        'store_option_rates_v2',
+        'store_daily_fee_rules',
+        'visit_sales_v2',
+        'visit_sales_history',
     ];
 
 
