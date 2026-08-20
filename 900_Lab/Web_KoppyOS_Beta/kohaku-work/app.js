@@ -2622,6 +2622,9 @@ async function loadScheduleSalesMaster() {
         : null;
 
 
+    renderScheduleSalesMaster();
+
+
   } catch (error) {
 
     scheduleSalesMaster = {
