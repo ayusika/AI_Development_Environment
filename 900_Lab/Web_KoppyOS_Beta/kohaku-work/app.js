@@ -2242,6 +2242,271 @@ function updateScheduleZoomLabel() {
 }
 
 
+function formatScheduleMoney(
+  value
+) {
+
+  if (
+    value === null
+    || value === undefined
+    || value === ''
+  ) {
+    return '未確認';
+  }
+
+
+  return `¥${Number(value).toLocaleString('ja-JP')}`;
+}
+
+
+function renderScheduleSalesMaster() {
+
+  const courses =
+    Array.isArray(
+      scheduleSalesMaster.courses
+    )
+      ? scheduleSalesMaster.courses
+      : [];
+
+  const options =
+    Array.isArray(
+      scheduleSalesMaster.options
+    )
+      ? scheduleSalesMaster.options
+      : [];
+
+
+  const regularCourses =
+    courses.filter(
+      (course) =>
+        course.course_type
+        === 'regular'
+    );
+
+  const extensionCourses =
+    courses.filter(
+      (course) =>
+        course.course_type
+        === 'extension'
+    );
+
+
+  if (scheduleCourseMasterList) {
+
+    if (regularCourses.length === 0) {
+
+      scheduleCourseMasterList.innerHTML = `
+        <p class="schedule-master-empty">
+          この店舗のコース料金は未登録です。
+        </p>
+      `;
+
+    } else {
+
+      scheduleCourseMasterList.innerHTML =
+        regularCourses
+          .map((course) => {
+
+            const isSelected =
+              Number(
+                selectedScheduleCourseRateId
+              )
+              === Number(
+                course.store_course_rate_id
+              );
+
+            return `
+              <button
+                class="
+                  schedule-master-course-button
+                  ${isSelected ? 'is-selected' : ''}
+                "
+                type="button"
+                data-schedule-master-course
+                data-course-rate-id="${Number(
+                  course.store_course_rate_id
+                )}"
+              >
+                <strong>
+                  ${escapeHtml(
+                    String(
+                      course.course_name
+                    )
+                  )}
+                </strong>
+
+                <small>
+                  手取り
+                  ${escapeHtml(
+                    formatScheduleMoney(
+                      course.take_home
+                    )
+                  )}
+                </small>
+              </button>
+            `;
+          })
+          .join('');
+    }
+  }
+
+
+  if (scheduleExtensionMasterList) {
+
+    if (extensionCourses.length === 0) {
+
+      scheduleExtensionMasterList.innerHTML =
+        '';
+
+      scheduleExtensionMasterList.hidden =
+        true;
+
+    } else {
+
+      scheduleExtensionMasterList.hidden =
+        false;
+
+      scheduleExtensionMasterList.innerHTML =
+        extensionCourses
+          .map((course) => `
+            <button
+              class="schedule-master-extension-button"
+              type="button"
+              data-schedule-extension-course
+              data-course-rate-id="${Number(
+                course.store_course_rate_id
+              )}"
+            >
+              + ${escapeHtml(
+                String(
+                  course.course_name
+                )
+              )}
+
+              <small>
+                ${escapeHtml(
+                  formatScheduleMoney(
+                    course.take_home
+                  )
+                )}
+              </small>
+            </button>
+          `)
+          .join('');
+    }
+  }
+
+
+  if (scheduleOptionGrid) {
+
+    if (options.length === 0) {
+
+      scheduleOptionGrid.innerHTML = `
+        <p class="schedule-master-empty">
+          この店舗のOP料金は未登録です。
+        </p>
+      `;
+
+    } else {
+
+      scheduleOptionGrid.innerHTML =
+        options
+          .map((option) => `
+            <label class="schedule-option-choice">
+              <input
+                type="checkbox"
+                value="${escapeHtml(
+                  String(option.name)
+                )}"
+                data-schedule-option
+                data-option-rate-id="${Number(
+                  option.store_option_rate_id
+                )}"
+                data-option-price="${Number(
+                  option.price
+                )}"
+                data-option-take-home="${Number(
+                  option.take_home
+                )}"
+              >
+
+              <span>
+                ${escapeHtml(
+                  String(option.name)
+                )}
+
+                <small>
+                  ${escapeHtml(
+                    formatScheduleMoney(
+                      option.take_home
+                    )
+                  )}
+                </small>
+              </span>
+            </label>
+          `)
+          .join('');
+    }
+  }
+
+
+  updateScheduleCoursePriceSummary();
+}
+
+
+function updateScheduleCoursePriceSummary() {
+
+  if (!scheduleCoursePriceSummary) {
+    return;
+  }
+
+
+  if (!selectedScheduleCourseMaster) {
+
+    scheduleCoursePriceSummary.innerHTML = `
+      <span>
+        基本料金
+        <strong>未選択</strong>
+      </span>
+
+      <span>
+        コース手取り
+        <strong>未選択</strong>
+      </span>
+    `;
+
+    return;
+  }
+
+
+  scheduleCoursePriceSummary.innerHTML = `
+    <span>
+      基本料金
+      <strong>
+        ${escapeHtml(
+          formatScheduleMoney(
+            selectedScheduleCourseMaster
+              .base_price
+          )
+        )}
+      </strong>
+    </span>
+
+    <span>
+      コース手取り
+      <strong>
+        ${escapeHtml(
+          formatScheduleMoney(
+            selectedScheduleCourseMaster
+              .take_home
+          )
+        )}
+      </strong>
+    </span>
+  `;
+}
+
+
 async function loadScheduleSalesMaster() {
 
   if (
