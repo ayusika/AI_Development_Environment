@@ -2222,6 +2222,145 @@ function updateScheduleZoomLabel() {
 }
 
 
+async function loadScheduleSalesMaster() {
+
+  if (
+    !scheduleStore
+    || !scheduleFormDate
+    || !scheduleStartTime
+  ) {
+    return;
+  }
+
+
+  const storeId =
+    Number(
+      scheduleStore.value
+    );
+
+  const date =
+    scheduleFormDate.value;
+
+  const time =
+    scheduleStartTime.value;
+
+
+  if (
+    !storeId
+    || !date
+    || !time
+  ) {
+    return;
+  }
+
+
+  const params =
+    new URLSearchParams({
+      store_id:
+        String(storeId),
+
+      at:
+        `${date} ${time}:00`,
+    });
+
+
+  try {
+
+    const response =
+      await fetch(
+        `/api/v1/sales-master.php?${params.toString()}`
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+
+      throw new Error(
+        data.error
+        || '料金マスタを取得できませんでした。'
+      );
+    }
+
+
+    scheduleSalesMaster = {
+      store:
+        data.store
+        || null,
+
+      courses:
+        Array.isArray(data.courses)
+          ? data.courses
+          : [],
+
+      options:
+        Array.isArray(data.options)
+          ? data.options
+          : [],
+
+      dailyFeeRule:
+        data.daily_fee_rule
+        || null,
+    };
+
+
+    const matchingCourse =
+      scheduleSalesMaster.courses.find(
+        (course) =>
+          Number(
+            course.course_minutes
+          )
+          === Number(
+            selectedScheduleCourse
+          )
+          && course.course_type
+            === 'regular'
+          && course.pricing_category
+            === 'standard'
+      )
+      || null;
+
+
+    selectedScheduleCourseMaster =
+      matchingCourse;
+
+    selectedScheduleCourseRateId =
+      matchingCourse
+        ? Number(
+            matchingCourse.store_course_rate_id
+          )
+        : null;
+
+
+  } catch (error) {
+
+    scheduleSalesMaster = {
+      store: null,
+      courses: [],
+      options: [],
+      dailyFeeRule: null,
+    };
+
+    selectedScheduleCourseMaster =
+      null;
+
+    selectedScheduleCourseRateId =
+      null;
+
+
+    console.error(
+      'Failed to load sales master:',
+      error
+    );
+  }
+}
+
+
 function initializeSchedule() {
 
   if (!scheduleDateInput) return;
