@@ -437,7 +437,11 @@ try {
 
             store_course_rate_id INTEGER,
 
-            base_price_snapshot INTEGER NOT NULL DEFAULT 0,
+            base_price_snapshot INTEGER
+                CHECK (
+                    base_price_snapshot IS NULL
+                    OR base_price_snapshot >= 0
+                ),
 
             course_take_home_snapshot INTEGER NOT NULL DEFAULT 0,
 
