@@ -263,8 +263,11 @@ try {
 
             store_course_id INTEGER NOT NULL,
 
-            base_price INTEGER NOT NULL
-                CHECK (base_price >= 0),
+            base_price INTEGER
+                CHECK (
+                    base_price IS NULL
+                    OR base_price >= 0
+                ),
 
             take_home INTEGER NOT NULL
                 CHECK (take_home >= 0),
