@@ -1805,34 +1805,47 @@
             <div class="schedule-choice-section">
 
               <span class="schedule-choice-label">
-                予約時間
+                コース
               </span>
 
-              <div class="schedule-choice-grid">
-
-                <button type="button" data-course="40">40</button>
-                <button type="button" data-course="60">60</button>
-                <button type="button" data-course="80">80</button>
-
-                <button
-                  type="button"
-                  data-course="90"
-                  class="is-selected"
-                >
-                  90
-                </button>
-
-                <button type="button" data-course="100">100</button>
-                <button type="button" data-course="120">120</button>
-                <button type="button" data-course="150">150</button>
-                <button type="button" data-course="180">180</button>
-
+              <div
+                class="schedule-master-course-list"
+                id="schedule-course-master-list"
+              >
+                <p class="schedule-master-empty">
+                  料金を読み込み中…
+                </p>
               </div>
+
+
+              <div
+                class="schedule-course-price-summary"
+                id="schedule-course-price-summary"
+              >
+                <span>
+                  基本料金
+                  <strong>未選択</strong>
+                </span>
+
+                <span>
+                  コース手取り
+                  <strong>未選択</strong>
+                </span>
+              </div>
+
+
+              <div
+                class="schedule-extension-master-list"
+                id="schedule-extension-master-list"
+                hidden
+              ></div>
 
 
               <label class="schedule-custom-course">
 
-                <span>その他</span>
+                <span>
+                  マスタ外の時間
+                </span>
 
                 <input
                   id="schedule-custom-course"
