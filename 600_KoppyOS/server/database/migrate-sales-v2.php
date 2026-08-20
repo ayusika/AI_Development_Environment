@@ -468,7 +468,11 @@ try {
 
             adjustment_amount INTEGER NOT NULL DEFAULT 0,
 
-            customer_payment_total INTEGER NOT NULL DEFAULT 0,
+            customer_payment_total INTEGER
+                CHECK (
+                    customer_payment_total IS NULL
+                    OR customer_payment_total >= 0
+                ),
 
             take_home_total INTEGER NOT NULL DEFAULT 0,
 
