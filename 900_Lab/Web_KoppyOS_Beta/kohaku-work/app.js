@@ -3766,6 +3766,8 @@ function openScheduleForm(
 
 
   scheduleFormCard.hidden = false;
+
+  loadScheduleSalesMaster();
 }
 
 
