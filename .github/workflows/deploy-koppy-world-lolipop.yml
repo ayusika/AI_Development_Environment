@@ -124,7 +124,7 @@ jobs:
             '/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-sales-v2.php' \
             '/home/users/2/her.jp-mikipiano/.koppy-private/database/kohaku-work.sqlite'"
 
-                      sshpass -p "$SSH_PASSWORD" \
+            sshpass -p "$SSH_PASSWORD" \
             scp \
             -O \
             -P "$SSH_PORT" \
