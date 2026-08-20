@@ -539,6 +539,102 @@ try {
     );
 
 
+    /*
+     * 新しく確認できたOPを共通OPマスタへ追加。
+     */
+    $newOptions = [
+        '顔射',
+        '動画撮影（顔なし）',
+        '動画撮影（顔あり）',
+    ];
+
+
+    $optionExistsStatement =
+        $pdo->prepare(
+            "
+            SELECT id
+
+            FROM options
+
+            WHERE name = ?
+
+            LIMIT 1
+            "
+        );
+
+
+    $optionInsertStatement =
+        $pdo->prepare(
+            "
+            INSERT INTO options
+            (
+                name,
+                active,
+                sort_order
+            )
+            VALUES
+            (
+                ?,
+                1,
+                ?
+            )
+            "
+        );
+
+
+    $nextSortOrder =
+        120;
+
+
+    foreach ($newOptions as $optionName) {
+
+        $optionExistsStatement->execute([
+            $optionName,
+        ]);
+
+
+        if (
+            !$optionExistsStatement->fetch()
+        ) {
+
+            $optionInsertStatement->execute([
+                $optionName,
+                $nextSortOrder,
+            ]);
+        }
+
+
+        $nextSortOrder += 10;
+    }
+
+
+    /*
+     * 旧「動画撮影」は顔あり / 顔なしへ分割したため、
+     * 過去データ互換のため残しつつ新規選択対象から外す。
+     */
+    $legacyVideoStatement =
+        $pdo->prepare(
+            "
+            UPDATE options
+
+            SET
+                active = 0,
+                updated_at = strftime(
+                    '%Y-%m-%d %H:%M',
+                    'now',
+                    'localtime'
+                )
+
+            WHERE name = ?
+            "
+        );
+
+
+    $legacyVideoStatement->execute([
+        '動画撮影',
+    ]);
+
+
     $pdo->exec(
         "
         CREATE INDEX IF NOT EXISTS
