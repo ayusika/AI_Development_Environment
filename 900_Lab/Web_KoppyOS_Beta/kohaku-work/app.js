@@ -2721,6 +2721,83 @@ if (scheduleStartTime) {
 }
 
 
+if (scheduleCourseMasterList) {
+
+  scheduleCourseMasterList.addEventListener(
+    'click',
+    (event) => {
+
+      const button =
+        event.target.closest(
+          '[data-schedule-master-course]'
+        );
+
+      if (!button) {
+        return;
+      }
+
+
+      const courseRateId =
+        Number(
+          button.dataset.courseRateId
+        );
+
+
+      const course =
+        scheduleSalesMaster.courses.find(
+          (item) =>
+            Number(
+              item.store_course_rate_id
+            )
+            === courseRateId
+        )
+        || null;
+
+
+      if (!course) {
+        return;
+      }
+
+
+      selectedScheduleCourseMaster =
+        course;
+
+      selectedScheduleCourseRateId =
+        courseRateId;
+
+      selectedScheduleCourse =
+        Number(
+          course.course_minutes
+        );
+
+
+      if (scheduleCustomCourse) {
+        scheduleCustomCourse.value = '';
+      }
+
+
+      scheduleCourseMasterList
+        .querySelectorAll(
+          '[data-schedule-master-course]'
+        )
+        .forEach((item) => {
+
+          item.classList.toggle(
+            'is-selected',
+            Number(
+              item.dataset.courseRateId
+            )
+            === courseRateId
+          );
+        });
+
+
+      updateScheduleCoursePriceSummary();
+    }
+  );
+}
+
+
 if (scheduleCustomCourse) {
 
   scheduleCustomCourse.addEventListener(
