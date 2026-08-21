@@ -94,6 +94,45 @@ try {
 
 
     /*
+     * visitsへ予約コース紐付けを追加。
+     *
+     * course_minutesだけでは、
+     * 通常90分 / 外国人90分などを区別できないため、
+     * store_coursesそのものを保持する。
+     */
+    $visitColumns =
+        $pdo
+            ->query(
+                "PRAGMA table_info('visits')"
+            )
+            ->fetchAll();
+
+
+    $visitColumnNames =
+        array_column(
+            $visitColumns,
+            'name'
+        );
+
+
+    if (
+        !in_array(
+            'store_course_id',
+            $visitColumnNames,
+            true
+        )
+    ) {
+
+        $pdo->exec(
+            "
+            ALTER TABLE visits
+            ADD COLUMN store_course_id INTEGER
+            "
+        );
+    }
+
+
+    /*
      * store_courses v2補強。
      *
      * course_type:
