@@ -4247,18 +4247,6 @@ function resetScheduleForm() {
 
 
   document
-    .querySelectorAll('[data-course]')
-    .forEach((button) => {
-
-      button.classList.toggle(
-        'is-selected',
-        Number(button.dataset.course)
-        === 90
-      );
-    });
-
-
-  document
     .querySelectorAll(
       '[data-customer-status]'
     )
