@@ -4180,7 +4180,15 @@ function resetScheduleForm() {
   }
 
 
-  selectedScheduleCourse = 90;
+  selectedScheduleCourse =
+    null;
+
+  selectedScheduleCourseMaster =
+    null;
+
+  selectedScheduleCourseRateId =
+    null;
+
   selectedCustomerStatus =
     'repeat_unknown_id';
 
@@ -4188,6 +4196,29 @@ function resetScheduleForm() {
   if (scheduleCustomCourse) {
     scheduleCustomCourse.value = '';
   }
+
+
+  if (scheduleCourseMasterList) {
+
+    scheduleCourseMasterList.innerHTML = `
+      <p class="schedule-master-empty">
+        料金を読み込み中…
+      </p>
+    `;
+  }
+
+
+  if (scheduleExtensionMasterList) {
+
+    scheduleExtensionMasterList.innerHTML =
+      '';
+
+    scheduleExtensionMasterList.hidden =
+      true;
+  }
+
+
+  updateScheduleCoursePriceSummary();
 
 
   if (scheduleStore) {
