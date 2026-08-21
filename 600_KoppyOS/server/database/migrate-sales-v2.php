@@ -292,6 +292,82 @@ try {
 
 
     /*
+     * 予約ごとの延長コース。
+     *
+     * 例：
+     * 120分 + 延長30分
+     * と
+     * 150分コース
+     * を別構造として保持する。
+     */
+    $pdo->exec(
+        "
+        CREATE TABLE IF NOT EXISTS visit_extensions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            visit_id INTEGER NOT NULL,
+
+            store_course_id INTEGER NOT NULL,
+
+            quantity INTEGER NOT NULL DEFAULT 1
+                CHECK (quantity >= 1),
+
+            created_at TEXT NOT NULL DEFAULT (
+                strftime(
+                    '%Y-%m-%d %H:%M',
+                    'now',
+                    'localtime'
+                )
+            ),
+
+            updated_at TEXT NOT NULL DEFAULT (
+                strftime(
+                    '%Y-%m-%d %H:%M',
+                    'now',
+                    'localtime'
+                )
+            ),
+
+            UNIQUE (
+                visit_id,
+                store_course_id
+            ),
+
+            FOREIGN KEY (visit_id)
+                REFERENCES visits(id)
+                ON DELETE CASCADE,
+
+            FOREIGN KEY (store_course_id)
+                REFERENCES store_courses(id)
+                ON DELETE RESTRICT
+        )
+        "
+    );
+
+
+    $pdo->exec(
+        "
+        CREATE INDEX IF NOT EXISTS
+            idx_visit_extensions_visit
+        ON visit_extensions (
+            visit_id
+        )
+        "
+    );
+
+
+    $pdo->exec(
+        "
+        CREATE INDEX IF NOT EXISTS
+            idx_visit_extensions_course
+        ON visit_extensions (
+            store_course_id
+        )
+        "
+    );
+
+
+    /*
      * コース料金履歴。
      * 過去料金を消さず、有効期間で管理する。
      */
