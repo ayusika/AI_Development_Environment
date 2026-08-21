@@ -2989,35 +2989,6 @@ document.addEventListener(
     }
 
 
-    const courseButton =
-      event.target.closest(
-        '[data-course]'
-      );
-
-    if (courseButton) {
-
-      selectedScheduleCourse =
-        Number(
-          courseButton.dataset.course
-        );
-
-      document
-        .querySelectorAll('[data-course]')
-        .forEach((button) => {
-          button.classList.toggle(
-            'is-selected',
-            button === courseButton
-          );
-        });
-
-      if (scheduleCustomCourse) {
-        scheduleCustomCourse.value = '';
-      }
-
-      return;
-    }
-
-
     const statusButton =
       event.target.closest(
         '[data-customer-status]'
