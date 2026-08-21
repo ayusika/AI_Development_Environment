@@ -2809,17 +2809,38 @@ if (scheduleCustomCourse) {
           scheduleCustomCourse.value
         );
 
-      if (value <= 0) return;
 
-      selectedScheduleCourse = value;
+      if (value <= 0) {
+        return;
+      }
 
-      document
-        .querySelectorAll('[data-course]')
-        .forEach((button) => {
-          button.classList.remove(
-            'is-selected'
-          );
-        });
+
+      selectedScheduleCourse =
+        value;
+
+      selectedScheduleCourseMaster =
+        null;
+
+      selectedScheduleCourseRateId =
+        null;
+
+
+      if (scheduleCourseMasterList) {
+
+        scheduleCourseMasterList
+          .querySelectorAll(
+            '[data-schedule-master-course]'
+          )
+          .forEach((button) => {
+
+            button.classList.remove(
+              'is-selected'
+            );
+          });
+      }
+
+
+      updateScheduleCoursePriceSummary();
     }
   );
 }
