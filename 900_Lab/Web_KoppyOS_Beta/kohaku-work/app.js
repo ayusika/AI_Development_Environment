@@ -10907,10 +10907,144 @@ function showShiftSavePreview(
    PREVIOUS WEEK PREVIEW
 ======================================== */
 
-function previewPreviousShiftWeek() {
+async function previewPreviousShiftWeek() {
 
   const worker =
     getSelectedShiftWorker();
+
+
+  if (!worker) {
+
+    showShiftSavePreview(
+      '担当者を取得できませんでした。',
+      true
+    );
+
+    return;
+  }
+
+
+  const targetWeekStart =
+    formatShiftDate(
+      shiftState.weekStart
+    );
+
+
+  const confirmed =
+    window.confirm(
+      `${worker.display_name} の前週シフトを ${formatShiftWeekRange(
+        shiftState.weekStart
+      )} にコピーしますか？`
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  showShiftSavePreview(
+    '前週シフトをコピーしています...'
+  );
+
+
+  try {
+
+    const response =
+      await fetch(
+        shiftsApiUrl,
+        {
+          method:
+            'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              action:
+                'copy_previous_week',
+
+              worker_id:
+                Number(
+                  worker.id
+                ),
+
+              target_week_start:
+                targetWeekStart,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      ||
+      !data.success
+    ) {
+
+      const errorMessage =
+        data.error
+        || '前週シフトをコピーできませんでした。';
+
+
+      if (
+        errorMessage
+        === 'No shifts found in previous week.'
+      ) {
+
+        throw new Error(
+          '前週にはコピーできるシフトがありません。'
+        );
+      }
+
+
+      if (
+        errorMessage
+        === 'Target week already has shifts.'
+      ) {
+
+        throw new Error(
+          'この週にはすでにシフトがあります。前週コピーは中止しました。'
+        );
+      }
+
+
+      throw new Error(
+        errorMessage
+      );
+    }
+
+
+    await loadShift();
+
+
+    showShiftSavePreview(
+      `${data.created_count || 0}件の前週シフトをコピーしました。`
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      error
+    );
+
+
+    showShiftSavePreview(
+      error instanceof Error
+        ? error.message
+        : '前週シフトをコピーできませんでした。',
+      true
+    );
+  }
+}
 
 
   if (!worker) {
