@@ -5113,7 +5113,16 @@ function openScheduleDetail(
       <div class="schedule-detail-row">
         <span>予約時間</span>
         <strong>
-          ${Number(visit.course_minutes)}分
+          ${
+            visit.pricing_category
+              === 'foreign'
+              ? `外${Number(
+                  visit.course_minutes
+                )}分`
+              : `${Number(
+                  visit.course_minutes
+                )}分`
+          }
         </strong>
       </div>
 
