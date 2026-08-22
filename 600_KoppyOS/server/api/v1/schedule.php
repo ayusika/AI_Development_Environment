@@ -1579,6 +1579,7 @@ try {
                     started_at = ?,
                     booked_at = ?,
                     course_minutes = ?,
+                    store_course_id = ?,
                     customer_status = ?,
                     customer_features = ?,
                     visitor_type = ?,
