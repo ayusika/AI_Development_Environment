@@ -9033,6 +9033,11 @@ const shiftDeleteButton =
     'shift-delete-button'
   );
 
+const shiftConfirmButton =
+  document.getElementById(
+    'shift-confirm-button'
+  );
+
 
 const shiftState = {
   workerCode: 'shii',
