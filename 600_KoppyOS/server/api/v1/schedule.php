@@ -1158,6 +1158,28 @@ try {
                     $currentVisit['course_minutes'];
 
 
+        $storeCourseId =
+            array_key_exists(
+                'store_course_id',
+                $payload
+            )
+                ? (
+                    $payload['store_course_id'] === null
+                    || $payload['store_course_id'] === ''
+
+                        ? null
+                        : (int)
+                            $payload['store_course_id']
+                )
+                : (
+                    $currentVisit['store_course_id'] === null
+
+                        ? null
+                        : (int)
+                            $currentVisit['store_course_id']
+                );
+
+
         $customerStatus =
             array_key_exists(
                 'customer_status',
