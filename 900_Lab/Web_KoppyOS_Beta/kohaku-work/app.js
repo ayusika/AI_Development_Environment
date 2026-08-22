@@ -176,6 +176,7 @@ function handleNav(navName) {
 
   if (navName === 'shift') {
     showView('shift');
+    loadShift();
     return;
   }
 
