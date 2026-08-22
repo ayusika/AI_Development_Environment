@@ -9865,6 +9865,469 @@ shiftStoreSelect
 
 
 /* ========================================
+   SAVE PREVIEW
+======================================== */
+
+function previewShiftSave() {
+
+  const preview =
+    document.getElementById(
+      'shift-save-preview'
+    );
+
+
+  if (!preview) {
+    return;
+  }
+
+
+  const worker =
+    getSelectedShiftWorker();
+
+
+  if (!worker) {
+
+    showShiftSavePreview(
+      'worker情報を取得できません。',
+      true
+    );
+
+    return;
+  }
+
+
+  const selected =
+    shiftState.days
+      .filter(
+        (day) =>
+          shiftState.selectedDates
+            .has(
+              day.date
+            )
+      );
+
+
+  if (selected.length === 0) {
+
+    showShiftSavePreview(
+      '保存する日付を選択してください。',
+      true
+    );
+
+    return;
+  }
+
+
+  const rows = [];
+
+
+  for (const day of selected) {
+
+    const row =
+      document.querySelector(
+        `[data-shift-row="${CSS.escape(
+          day.date
+        )}"]`
+      );
+
+
+    if (!row) {
+
+      showShiftSavePreview(
+        `${day.date} の入力欄を確認できません。`,
+        true
+      );
+
+      return;
+    }
+
+
+    const offButton =
+      row.querySelector(
+        '[data-shift-off]'
+      );
+
+
+    const isOff =
+      Boolean(
+        offButton
+          ?.classList
+          .contains(
+            'is-selected'
+          )
+      );
+
+
+    const startInput =
+      row.querySelector(
+        '[data-shift-start]'
+      );
+
+
+    const endInput =
+      row.querySelector(
+        '[data-shift-end]'
+      );
+
+
+    const startTime =
+      startInput
+        ?.value
+        ?.trim()
+      || '';
+
+
+    const endTime =
+      endInput
+        ?.value
+        ?.trim()
+      || '';
+
+
+    if (
+      !isOff
+      &&
+      shiftState.selectedStoreId === ''
+    ) {
+
+      showShiftSavePreview(
+        '出勤日の店舗を選択してください。',
+        true
+      );
+
+      return;
+    }
+
+
+    if (
+      !isOff
+      &&
+      (
+        !isShiftTimeValueValid(
+          startTime
+        )
+        ||
+        !isShiftTimeValueValid(
+          endTime
+        )
+      )
+    ) {
+
+      showShiftSavePreview(
+        `${formatShiftDisplayDate(
+          day.date
+        )} の勤務時間を確認してください。`,
+        true
+      );
+
+      return;
+    }
+
+
+    if (
+      !isOff
+      &&
+      shiftTimeToMinutes(
+        endTime
+      )
+      <=
+      shiftTimeToMinutes(
+        startTime
+      )
+    ) {
+
+      showShiftSavePreview(
+        `${formatShiftDisplayDate(
+          day.date
+        )} の終了時刻は開始時刻より後にしてください。`,
+        true
+      );
+
+      return;
+    }
+
+
+    const store =
+      shiftState.stores
+        .find(
+          (item) =>
+            String(
+              item.id
+            )
+            ===
+            String(
+              shiftState.selectedStoreId
+            )
+        )
+      || null;
+
+
+    rows.push({
+      worker_id:
+        Number(
+          worker.id
+        ),
+
+      worker_name:
+        worker.display_name,
+
+      shift_date:
+        day.date,
+
+      day_type:
+        day.day_type,
+
+      holiday_name:
+        day.holiday_name
+        || null,
+
+      status:
+        isOff
+          ? 'off'
+          : 'draft',
+
+      store_id:
+        isOff
+          ? null
+          : Number(
+              shiftState.selectedStoreId
+            ),
+
+      store_name:
+        isOff
+          ? null
+          : (
+              store?.name
+              || ''
+            ),
+
+      start_time:
+        isOff
+          ? null
+          : startTime,
+
+      end_time:
+        isOff
+          ? null
+          : endTime,
+    });
+  }
+
+
+  renderShiftSavePreview(
+    rows
+  );
+}
+
+
+function renderShiftSavePreview(
+  rows
+) {
+
+  const preview =
+    document.getElementById(
+      'shift-save-preview'
+    );
+
+
+  if (!preview) {
+    return;
+  }
+
+
+  preview.hidden =
+    false;
+
+
+  preview.innerHTML = `
+    <strong>
+      保存予定 ${rows.length}件
+    </strong>
+
+    <div class="shift-preview-list">
+
+      ${
+        rows
+          .map((row) => {
+
+            const dayTypeLabel =
+              row.day_type
+              === 'holiday_eve'
+                ? '休日前'
+                : '平日前';
+
+
+            const detail =
+              row.status
+              === 'off'
+                ? '休み'
+                : `${
+                    row.store_name
+                  } ${
+                    row.start_time
+                  }〜${
+                    row.end_time
+                  }`;
+
+
+            return `
+              <div class="shift-preview-row">
+
+                <span>
+                  ${escapeHtml(
+                    formatShiftDisplayDate(
+                      row.shift_date
+                    )
+                  )}
+                </span>
+
+                <span>
+                  ${escapeHtml(
+                    dayTypeLabel
+                  )}
+                </span>
+
+                <strong>
+                  ${escapeHtml(
+                    detail
+                  )}
+                </strong>
+
+              </div>
+            `;
+          })
+          .join('')
+      }
+
+    </div>
+
+    <small>
+      ※ まだDBには保存されていません。
+    </small>
+  `;
+
+
+  console.log(
+    'Shift save preview',
+    rows
+  );
+}
+
+
+function showShiftSavePreview(
+  message,
+  isError = false
+) {
+
+  const preview =
+    document.getElementById(
+      'shift-save-preview'
+    );
+
+
+  if (!preview) {
+    return;
+  }
+
+
+  preview.hidden =
+    false;
+
+
+  preview.classList.toggle(
+    'is-error',
+    isError
+  );
+
+
+  preview.textContent =
+    message;
+}
+
+
+/* ========================================
+   PREVIOUS WEEK PREVIEW
+======================================== */
+
+function previewPreviousShiftWeek() {
+
+  const worker =
+    getSelectedShiftWorker();
+
+
+  if (!worker) {
+
+    showShiftSavePreview(
+      'worker情報を取得できません。',
+      true
+    );
+
+    return;
+  }
+
+
+  showShiftSavePreview(
+    `${worker.display_name} の前週シフトコピーは、次の段階でAPIへ接続します。`
+  );
+}
+
+
+/* ========================================
+   TIME VALIDATION
+======================================== */
+
+function isShiftTimeValueValid(
+  value
+) {
+
+  const match =
+    /^(\d{1,2}):([0-5]\d)$/
+      .exec(
+        value
+      );
+
+
+  if (!match) {
+    return false;
+  }
+
+
+  const hour =
+    Number(
+      match[1]
+    );
+
+
+  return (
+    hour >= 0
+    &&
+    hour <= 47
+  );
+}
+
+
+function shiftTimeToMinutes(
+  value
+) {
+
+  const [
+    hour,
+    minute,
+  ] =
+    value
+      .split(':')
+      .map(Number);
+
+
+  return (
+    hour * 60
+    +
+    minute
+  );
+}
+
+
+/* ========================================
    DATE HELPERS
 ======================================== */
 
