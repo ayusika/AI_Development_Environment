@@ -8132,6 +8132,42 @@ function editCurrentScheduleVisit() {
     );
 
 
+  selectedScheduleCourseMaster =
+    visit.store_course_id
+      ? {
+          store_course_id:
+            Number(
+              visit.store_course_id
+            ),
+        }
+      : null;
+
+
+  selectedScheduleExtensions =
+    Array.isArray(
+      visit.extensions
+    )
+      ? visit.extensions
+          .map((extension) => ({
+            store_course_id:
+              Number(
+                extension.store_course_id
+              ),
+
+            quantity:
+              Number(
+                extension.quantity
+                || 1
+              ),
+          }))
+          .filter(
+            (extension) =>
+              extension.store_course_id > 0
+              && extension.quantity > 0
+          )
+      : [];
+
+
   const standardCourse =
     document.querySelector(
       `[data-course="${selectedScheduleCourse}"]`
