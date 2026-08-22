@@ -1124,6 +1124,14 @@ try {
                 : null;
 
 
+        $extensions =
+            isset($payload['extensions'])
+            && is_array($payload['extensions'])
+
+                ? $payload['extensions']
+                : [];
+
+
         validateStore(
             $pdo,
             $storeId
