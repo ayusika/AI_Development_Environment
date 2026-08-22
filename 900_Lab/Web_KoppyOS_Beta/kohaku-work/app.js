@@ -2263,6 +2263,17 @@ function formatScheduleMoney(
 
 function renderScheduleSalesMaster() {
 
+  const selectedOptionNames =
+    Array.from(
+      document.querySelectorAll(
+        '[data-schedule-option]:checked'
+      )
+    )
+      .map((input) =>
+        String(input.value)
+      );
+
+
   const courses =
     Array.isArray(
       scheduleSalesMaster.courses
