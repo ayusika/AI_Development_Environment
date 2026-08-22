@@ -936,63 +936,20 @@ try {
                             );
 
 
-                        $dayDifference =
-                            (int)
-                            $sourceStartAt
-                                ->diff(
-                                    $sourceEndAt
-                                )
-                                ->format(
-                                    '%a'
-                                );
-
-
                         $startAt =
-                            $targetDate
-                                ->setTime(
-                                    (int)
-                                    $sourceStartAt
-                                        ->format(
-                                            'H'
-                                        ),
-                                    (int)
-                                    $sourceStartAt
-                                        ->format(
-                                            'i'
-                                        )
+                            $sourceStartAt
+                                ->modify(
+                                    '+7 days'
                                 )
                                 ->format(
                                     'Y-m-d H:i'
                                 );
 
 
-                        $endDate =
-                            $targetDate;
-
-
-                        if ($dayDifference > 0) {
-
-                            $endDate =
-                                $endDate
-                                    ->modify(
-                                        "+{$dayDifference} day"
-                                    );
-                        }
-
-
                         $endAt =
-                            $endDate
-                                ->setTime(
-                                    (int)
-                                    $sourceEndAt
-                                        ->format(
-                                            'H'
-                                        ),
-                                    (int)
-                                    $sourceEndAt
-                                        ->format(
-                                            'i'
-                                        )
+                            $sourceEndAt
+                                ->modify(
+                                    '+7 days'
                                 )
                                 ->format(
                                     'Y-m-d H:i'
