@@ -8289,6 +8289,8 @@ function editCurrentScheduleVisit() {
 
 
   scheduleFormCard.hidden = false;
+
+  loadScheduleSalesMaster();
 }
 
 
