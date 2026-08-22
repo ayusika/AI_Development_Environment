@@ -2413,43 +2413,63 @@ function renderScheduleSalesMaster() {
             .join('');
 
 
-      scheduleCourseMasterList.innerHTML = `
-        ${
-          standardCourses.length
-            ? `
-              <div class="schedule-course-section">
-                <div class="schedule-course-grid">
-                  ${renderCourseButtons(
-                    standardCourses
-                  )}
-                </div>
-              </div>
-            `
-            : ''
-        }
+      const activeCourseList =
+        selectedSchedulePricingCategory
+          === 'foreign'
+          ? foreignCourses
+          : standardCourses;
 
+
+      scheduleCourseMasterList.innerHTML = `
         ${
           foreignCourses.length
             ? `
               <div
-                class="
-                  schedule-course-section
-                  schedule-course-section-foreign
-                "
+                class="schedule-course-category-tabs"
               >
-                <div class="schedule-course-section-title">
-                  外国人料金
-                </div>
+                <button
+                  class="
+                    schedule-course-category-tab
+                    ${
+                      selectedSchedulePricingCategory
+                        === 'standard'
+                        ? 'is-selected'
+                        : ''
+                    }
+                  "
+                  type="button"
+                  data-schedule-course-category="standard"
+                >
+                  通常
+                </button>
 
-                <div class="schedule-course-grid">
-                  ${renderCourseButtons(
-                    foreignCourses
-                  )}
-                </div>
+                <button
+                  class="
+                    schedule-course-category-tab
+                    ${
+                      selectedSchedulePricingCategory
+                        === 'foreign'
+                        ? 'is-selected'
+                        : ''
+                    }
+                  "
+                  type="button"
+                  data-schedule-course-category="foreign"
+                >
+                  外国人
+                </button>
               </div>
             `
             : ''
         }
+
+        <div class="schedule-course-section">
+          <div class="schedule-course-grid">
+            ${renderCourseButtons(
+              activeCourseList
+            )}
+          </div>
+        </div>
       `;
     }
   }
