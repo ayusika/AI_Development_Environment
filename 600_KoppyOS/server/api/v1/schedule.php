@@ -683,6 +683,9 @@ function fetchVisit(
             JOIN stores s
                 ON s.id = v.store_id
 
+            LEFT JOIN store_courses sc
+                ON sc.id = v.store_course_id
+
             LEFT JOIN customers c
                 ON c.id = v.customer_id
 
