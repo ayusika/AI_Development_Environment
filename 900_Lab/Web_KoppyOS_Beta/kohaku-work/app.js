@@ -9871,6 +9871,307 @@ shiftStoreSelect
    SAVE PREVIEW
 ======================================== */
 
+async function saveShiftBatch() {
+
+  const worker =
+    getSelectedShiftWorker();
+
+
+  if (!worker) {
+
+    showShiftSavePreview(
+      'worker情報を取得できません。',
+      true
+    );
+
+    return;
+  }
+
+
+  const selected =
+    shiftState.days
+      .filter(
+        (day) =>
+          shiftState.selectedDates
+            .has(
+              day.date
+            )
+      );
+
+
+  if (selected.length === 0) {
+
+    showShiftSavePreview(
+      '保存する日付を選択してください。',
+      true
+    );
+
+    return;
+  }
+
+
+  const rows = [];
+
+
+  for (const day of selected) {
+
+    const row =
+      document.querySelector(
+        `[data-shift-row="${CSS.escape(
+          day.date
+        )}"]`
+      );
+
+
+    if (!row) {
+
+      showShiftSavePreview(
+        `${day.date} の入力欄を確認できません。`,
+        true
+      );
+
+      return;
+    }
+
+
+    const offButton =
+      row.querySelector(
+        '[data-shift-off]'
+      );
+
+
+    const isOff =
+      Boolean(
+        offButton
+          ?.classList
+          .contains(
+            'is-selected'
+          )
+      );
+
+
+    const startInput =
+      row.querySelector(
+        '[data-shift-start]'
+      );
+
+
+    const endInput =
+      row.querySelector(
+        '[data-shift-end]'
+      );
+
+
+    const startTime =
+      startInput
+        ?.value
+        ?.trim()
+      || '';
+
+
+    const endTime =
+      endInput
+        ?.value
+        ?.trim()
+      || '';
+
+
+    if (
+      !isOff
+      &&
+      shiftState.selectedStoreId === ''
+    ) {
+
+      showShiftSavePreview(
+        '出勤日の店舗を選択してください。',
+        true
+      );
+
+      return;
+    }
+
+
+    if (
+      !isOff
+      &&
+      (
+        !isShiftTimeValueValid(
+          startTime
+        )
+        ||
+        !isShiftTimeValueValid(
+          endTime
+        )
+      )
+    ) {
+
+      showShiftSavePreview(
+        `${formatShiftDisplayDate(
+          day.date
+        )} の勤務時間を確認してください。`,
+        true
+      );
+
+      return;
+    }
+
+
+    if (
+      !isOff
+      &&
+      shiftTimeToMinutes(
+        endTime
+      )
+      <=
+      shiftTimeToMinutes(
+        startTime
+      )
+    ) {
+
+      showShiftSavePreview(
+        `${formatShiftDisplayDate(
+          day.date
+        )} の終了時刻は開始時刻より後にしてください。`,
+        true
+      );
+
+      return;
+    }
+
+
+    rows.push({
+      shift_date:
+        day.date,
+
+      status:
+        isOff
+          ? 'off'
+          : 'draft',
+
+      store_id:
+        isOff
+          ? null
+          : Number(
+              shiftState.selectedStoreId
+            ),
+
+      start_time:
+        isOff
+          ? null
+          : startTime,
+
+      end_time:
+        isOff
+          ? null
+          : endTime,
+
+      note:
+        null,
+    });
+  }
+
+
+  const saveButton =
+    document.querySelector(
+      '[data-action="preview-shift-save"]'
+    );
+
+
+  const originalText =
+    saveButton
+      ? saveButton.textContent
+      : '選択したシフトを保存';
+
+
+  if (saveButton) {
+
+    saveButton.disabled =
+      true;
+
+    saveButton.textContent =
+      '保存中…';
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        shiftsApiUrl,
+        {
+          method:
+            'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              action:
+                'create_batch',
+
+              worker_id:
+                Number(
+                  worker.id
+                ),
+
+              rows,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+      throw new Error(
+        data.error
+        || 'シフトの保存に失敗しました。'
+      );
+    }
+
+
+    shiftState.selectedDates.clear();
+
+
+    renderShiftWeek();
+    renderShiftSelectedDays();
+
+
+    showShiftSavePreview(
+      `${data.created_count || rows.length}件のシフトを保存しました。`
+    );
+
+
+  } catch (error) {
+
+    showShiftSavePreview(
+      error.message,
+      true
+    );
+
+
+  } finally {
+
+    if (saveButton) {
+
+      saveButton.disabled =
+        false;
+
+      saveButton.textContent =
+        originalText;
+    }
+  }
+}
+
+
 function previewShiftSave() {
 
   const preview =
