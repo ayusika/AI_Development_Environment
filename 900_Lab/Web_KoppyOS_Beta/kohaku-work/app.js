@@ -9039,6 +9039,9 @@ const shiftState = {
   days: [],
   shifts: [],
 
+  editingShiftId:
+    null,
+
   selectedDates:
     new Set(),
 
