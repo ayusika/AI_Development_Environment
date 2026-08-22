@@ -2821,6 +2821,68 @@ if (scheduleCourseMasterList) {
 }
 
 
+if (scheduleExtensionMasterList) {
+
+  scheduleExtensionMasterList.addEventListener(
+    'click',
+    (event) => {
+
+      const button =
+        event.target.closest(
+          '[data-schedule-extension-course]'
+        );
+
+      if (!button) {
+        return;
+      }
+
+
+      const storeCourseId =
+        Number(
+          button.dataset.storeCourseId
+        );
+
+
+      if (storeCourseId <= 0) {
+        return;
+      }
+
+
+      const existingIndex =
+        selectedScheduleExtensions
+          .findIndex(
+            (extension) =>
+              Number(
+                extension.store_course_id
+              )
+              === storeCourseId
+          );
+
+
+      if (existingIndex >= 0) {
+
+        selectedScheduleExtensions.splice(
+          existingIndex,
+          1
+        );
+
+      } else {
+
+        selectedScheduleExtensions.push({
+          store_course_id:
+            storeCourseId,
+
+          quantity: 1,
+        });
+      }
+
+
+      renderScheduleSalesMaster();
+    }
+  );
+}
+
+
 if (scheduleCustomCourse) {
 
   scheduleCustomCourse.addEventListener(
