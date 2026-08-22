@@ -2328,6 +2328,21 @@ function renderScheduleSalesMaster() {
         );
       });
 
+  const standardCourses =
+    regularCourses.filter(
+      (course) =>
+        course.pricing_category
+        === 'standard'
+    );
+
+  const foreignCourses =
+    regularCourses.filter(
+      (course) =>
+        course.pricing_category
+        === 'foreign'
+    );
+
+
   const extensionCourses =
     courses.filter(
       (course) =>
