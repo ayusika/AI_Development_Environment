@@ -174,6 +174,11 @@ function handleNav(navName) {
     return;
   }
 
+  if (navName === 'shift') {
+    showView('shift');
+    return;
+  }
+
   if (navName === 'customers') {
     showView('customers');
     loadCustomers();
