@@ -41,7 +41,10 @@ try {
 
     $allowedTables = [
         'stores',
+        'workers',
         'work_shifts',
+        'shift_default_rules',
+        'holidays',
         'customers',
         'customer_names',
         'customer_identity_features',
