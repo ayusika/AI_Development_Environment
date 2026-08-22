@@ -9778,6 +9778,13 @@ function toggleShiftDate(
       true;
   }
 
+
+  if (shiftConfirmButton) {
+    shiftConfirmButton.hidden =
+      true;
+  }
+
+
   if (
     shiftState.selectedDates
       .has(date)
