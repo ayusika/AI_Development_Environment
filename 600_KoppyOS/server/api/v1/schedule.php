@@ -989,6 +989,15 @@ try {
             );
         }
 
+
+        validateStoreCourse(
+            $pdo,
+            $storeId,
+            $storeCourseId,
+            $courseMinutes
+        );
+
+
         validateCustomerStatus(
             $customerStatus
         );
