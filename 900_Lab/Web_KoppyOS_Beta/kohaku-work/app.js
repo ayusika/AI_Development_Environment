@@ -100,6 +100,10 @@ function updateBottomNav(viewName) {
     activeNav = 'schedule';
   }
 
+  if (viewName === 'shift') {
+    activeNav = 'shift';
+  }
+
   const activeItem = document.querySelector(
     `.nav-item[data-nav="${activeNav}"]`
   );
