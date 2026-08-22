@@ -1216,6 +1216,14 @@ try {
         );
 
 
+        saveVisitExtensions(
+            $pdo,
+            $visitId,
+            $storeId,
+            $extensions
+        );
+
+
         echo json_encode(
             [
                 'success' => true,
