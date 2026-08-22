@@ -9610,6 +9610,12 @@ function openSavedShiftEditor(
     );
 
 
+  if (shiftDeleteButton) {
+    shiftDeleteButton.hidden =
+      false;
+  }
+
+
   shiftState.selectedDates.clear();
 
   shiftState.selectedDates.add(
