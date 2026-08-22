@@ -901,6 +901,7 @@ try {
                     v.started_at,
                     v.booked_at,
                     v.course_minutes,
+                    v.store_course_id,
                     v.customer_status,
                     v.visitor_type,
                     v.status,
