@@ -9141,6 +9141,67 @@ async function loadShift() {
         : [];
 
 
+    const selectedWorker =
+      shiftState.workers
+        .find(
+          (worker) =>
+            worker.worker_code
+            === shiftState.workerCode
+        )
+      || null;
+
+
+    if (selectedWorker) {
+
+      const shiftParams =
+        new URLSearchParams({
+          worker_id:
+            String(
+              selectedWorker.id
+            ),
+
+          date_from:
+            dateFrom,
+
+          date_to:
+            dateTo,
+        });
+
+
+      const shiftResponse =
+        await fetch(
+          `${shiftsApiUrl}?${shiftParams.toString()}`
+        );
+
+
+      const shiftData =
+        await shiftResponse.json();
+
+
+      if (
+        !shiftResponse.ok
+        || !shiftData.success
+      ) {
+        throw new Error(
+          shiftData.error
+          || '保存済みシフトを取得できませんでした。'
+        );
+      }
+
+
+      shiftState.shifts =
+        Array.isArray(
+          shiftData.shifts
+        )
+          ? shiftData.shifts
+          : [];
+
+    } else {
+
+      shiftState.shifts = [];
+    }
+
+
     renderShiftStoreOptions();
     renderShiftWeek();
     renderShiftSelectedDays();
