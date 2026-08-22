@@ -10228,6 +10228,195 @@ shiftStoreSelect
 
 
 /* ========================================
+   CONFIRM
+======================================== */
+
+async function toggleEditingShiftConfirmation() {
+
+  const shiftId =
+    Number(
+      shiftState.editingShiftId
+    );
+
+
+  if (!shiftId) {
+
+    showShiftSavePreview(
+      '対象のシフトが選択されていません。',
+      true
+    );
+
+    return;
+  }
+
+
+  const savedShift =
+    shiftState.shifts
+      .find(
+        (shift) =>
+          Number(
+            shift.id
+          )
+          === shiftId
+      )
+    || null;
+
+
+  if (!savedShift) {
+
+    showShiftSavePreview(
+      '対象のシフトを確認できませんでした。',
+      true
+    );
+
+    return;
+  }
+
+
+  if (
+    savedShift.status
+    === 'off'
+  ) {
+
+    showShiftSavePreview(
+      '休みは確定切替の対象外です。',
+      true
+    );
+
+    return;
+  }
+
+
+  const nextStatus =
+    savedShift.status
+    === 'confirmed'
+      ? 'draft'
+      : 'confirmed';
+
+
+  const actionLabel =
+    nextStatus
+    === 'confirmed'
+      ? '確定'
+      : '仮シフトへ変更';
+
+
+  const confirmed =
+    window.confirm(
+      `${formatShiftDisplayDate(
+        savedShift.shift_date
+      )} のシフトを${actionLabel}しますか？`
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  if (shiftConfirmButton) {
+
+    shiftConfirmButton.disabled =
+      true;
+
+    shiftConfirmButton.textContent =
+      '更新中…';
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        shiftsApiUrl,
+        {
+          method:
+            'PATCH',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              id:
+                shiftId,
+
+              status:
+                nextStatus,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      ||
+      !data.success
+    ) {
+
+      throw new Error(
+        data.error
+        || 'シフト状態を更新できませんでした。'
+      );
+    }
+
+
+    shiftState.editingShiftId =
+      null;
+
+    shiftState.selectedDates.clear();
+
+
+    if (shiftDeleteButton) {
+      shiftDeleteButton.hidden =
+        true;
+    }
+
+
+    if (shiftConfirmButton) {
+      shiftConfirmButton.hidden =
+        true;
+    }
+
+
+    await loadShift();
+
+
+    showShiftSavePreview(
+      nextStatus
+      === 'confirmed'
+        ? 'シフトを確定しました。'
+        : '仮シフトに戻しました。'
+    );
+
+
+  } catch (error) {
+
+    showShiftSavePreview(
+      error instanceof Error
+        ? error.message
+        : 'シフト状態を更新できませんでした。',
+      true
+    );
+
+
+  } finally {
+
+    if (shiftConfirmButton) {
+      shiftConfirmButton.disabled =
+        false;
+    }
+  }
+}
+
+
+/* ========================================
    DELETE
 ======================================== */
 
