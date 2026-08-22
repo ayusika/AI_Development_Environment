@@ -9495,6 +9495,18 @@ function renderShiftWeek() {
               )}
             </span>
 
+            ${
+              savedLabel
+                ? `
+                  <span class="shift-day-status">
+                    ${escapeHtml(
+                      savedLabel
+                    )}
+                  </span>
+                `
+                : ''
+            }
+
           </button>
         `;
       })
