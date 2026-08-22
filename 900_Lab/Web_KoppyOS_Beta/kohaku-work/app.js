@@ -9,6 +9,7 @@ const views = {
   diaryEdit: document.querySelector('[data-view="diary-edit"]'),
   postPrep: document.querySelector('[data-view="post-prep"]'),
   schedule: document.querySelector('[data-view="schedule"]'),
+  shift: document.querySelector('[data-view="shift"]'),
   customers: document.querySelector('[data-view="customers"]'),
   customerDetail: document.querySelector('[data-view="customer-detail"]'),
   database: document.querySelector('[data-view="database"]'),
