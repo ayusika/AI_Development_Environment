@@ -469,6 +469,160 @@ function fetchVisitExtensions(
 }
 
 
+function saveVisitExtensions(
+    PDO $pdo,
+    int $visitId,
+    int $storeId,
+    array $extensions
+): void {
+
+    $deleteStatement =
+        $pdo->prepare(
+            "
+            DELETE FROM visit_extensions
+            WHERE visit_id = ?
+            "
+        );
+
+    $deleteStatement->execute([
+        $visitId
+    ]);
+
+
+    if (!$extensions) {
+        return;
+    }
+
+
+    $courseStatement =
+        $pdo->prepare(
+            "
+            SELECT
+                id,
+                store_id,
+                course_type
+
+            FROM store_courses
+
+            WHERE id = ?
+              AND active = 1
+            "
+        );
+
+
+    $insertStatement =
+        $pdo->prepare(
+            "
+            INSERT INTO visit_extensions
+            (
+                visit_id,
+                store_course_id,
+                quantity
+            )
+            VALUES (?, ?, ?)
+            "
+        );
+
+
+    $normalized = [];
+
+
+    foreach ($extensions as $extension) {
+
+        if (!is_array($extension)) {
+            throw new RuntimeException(
+                'Invalid extension data.'
+            );
+        }
+
+
+        $storeCourseId =
+            (int) (
+                $extension['store_course_id']
+                ?? 0
+            );
+
+        $quantity =
+            (int) (
+                $extension['quantity']
+                ?? 1
+            );
+
+
+        if ($storeCourseId <= 0) {
+            throw new RuntimeException(
+                'Extension store_course_id is required.'
+            );
+        }
+
+
+        if ($quantity <= 0) {
+            throw new RuntimeException(
+                'Extension quantity must be positive.'
+            );
+        }
+
+
+        $courseStatement->execute([
+            $storeCourseId
+        ]);
+
+
+        $course =
+            $courseStatement->fetch();
+
+
+        if (!$course) {
+            throw new RuntimeException(
+                'Extension course was not found.'
+            );
+        }
+
+
+        if (
+            (int) $course['store_id']
+            !== $storeId
+        ) {
+            throw new RuntimeException(
+                'Extension course does not belong to store_id.'
+            );
+        }
+
+
+        if (
+            (string) $course['course_type']
+            !== 'extension'
+        ) {
+            throw new RuntimeException(
+                'Extension course must have course_type extension.'
+            );
+        }
+
+
+        if (!isset($normalized[$storeCourseId])) {
+            $normalized[$storeCourseId] = 0;
+        }
+
+
+        $normalized[$storeCourseId] +=
+            $quantity;
+    }
+
+
+    foreach (
+        $normalized
+        as $storeCourseId => $quantity
+    ) {
+
+        $insertStatement->execute([
+            $visitId,
+            (int) $storeCourseId,
+            (int) $quantity,
+        ]);
+    }
+}
+
+
 function fetchVisit(
     PDO $pdo,
     int $visitId
