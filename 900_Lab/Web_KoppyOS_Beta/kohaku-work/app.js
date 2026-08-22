@@ -2370,9 +2370,26 @@ function renderScheduleSalesMaster() {
 
       scheduleExtensionMasterList.innerHTML =
         extensionCourses
-          .map((course) => `
+          .map((course) => {
+
+            const isSelected =
+              selectedScheduleExtensions
+                .some(
+                  (extension) =>
+                    Number(
+                      extension.store_course_id
+                    )
+                    === Number(
+                      course.store_course_id
+                    )
+                );
+
+            return `
             <button
-              class="schedule-master-extension-button"
+              class="
+                schedule-master-extension-button
+                ${isSelected ? 'is-selected' : ''}
+              "
               type="button"
               data-schedule-extension-course
               data-course-rate-id="${Number(
