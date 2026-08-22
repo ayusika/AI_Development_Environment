@@ -122,12 +122,20 @@ try {
         }
 
 
-        $recordStatement =
-            $pdo->query(
-                'SELECT * FROM "'
-                . $requestedTable
-                . '" ORDER BY id DESC LIMIT 50'
-            );
+    $orderByColumn =
+    $requestedTable === 'holidays'
+        ? 'holiday_date'
+        : 'id';
+
+
+    $recordStatement =
+        $pdo->query(
+            'SELECT * FROM "'
+            . $requestedTable
+            . '" ORDER BY "'
+            . $orderByColumn
+            . '" DESC LIMIT 50'
+         );
 
 
         $records =
