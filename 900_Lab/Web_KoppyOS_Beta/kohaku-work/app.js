@@ -8995,6 +8995,9 @@ function escapeHtml(
 const shiftMasterApiUrl =
   '/api/v1/shift-master.php';
 
+const shiftsApiUrl =
+  '/api/v1/shifts.php';
+
 
 const shiftWeekCalendar =
   document.getElementById(
