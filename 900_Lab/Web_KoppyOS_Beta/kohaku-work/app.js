@@ -4579,6 +4579,9 @@ function resetScheduleForm() {
   selectedScheduleCourseRateId =
     null;
 
+  selectedSchedulePricingCategory =
+    'standard';
+
   selectedScheduleExtensions =
     [];
 
