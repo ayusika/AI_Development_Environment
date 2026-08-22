@@ -9917,6 +9917,21 @@ document.addEventListener(
 
     if (dateButton) {
 
+      if (
+        dateButton
+          .dataset
+          .shiftSaved
+        === '1'
+      ) {
+
+        showShiftSavePreview(
+          'この日はすでにシフト登録済みです。編集機能は次の段階で追加します。'
+        );
+
+        return;
+      }
+
+
       toggleShiftDate(
         dateButton
           .dataset
