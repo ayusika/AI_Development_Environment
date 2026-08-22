@@ -475,6 +475,12 @@ function fetchVisit(
             $visitId
         );
 
+    $visit['extensions'] =
+        fetchVisitExtensions(
+            $pdo,
+            $visitId
+        );
+
     $visit['customer_names'] =
         fetchCustomerNames(
             $pdo,
