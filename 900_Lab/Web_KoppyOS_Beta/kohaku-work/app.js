@@ -2526,6 +2526,19 @@ function renderScheduleSalesMaster() {
             </label>
           `)
           .join('');
+
+
+      scheduleOptionGrid
+        .querySelectorAll(
+          '[data-schedule-option]'
+        )
+        .forEach((input) => {
+
+          input.checked =
+            selectedOptionNames.includes(
+              String(input.value)
+            );
+        });
     }
   }
 
