@@ -10481,15 +10481,26 @@ async function saveShiftBatch() {
     }
 
 
+    const wasEditing =
+      Boolean(
+        shiftState.editingShiftId
+      );
+
+
+    shiftState.editingShiftId =
+      null;
+
+
     shiftState.selectedDates.clear();
 
 
-    renderShiftWeek();
-    renderShiftSelectedDays();
+    await loadShift();
 
 
     showShiftSavePreview(
-      `${data.created_count || rows.length}件のシフトを保存しました。`
+      wasEditing
+        ? 'シフトを更新しました。'
+        : `${data.created_count || rows.length}件のシフトを保存しました。`
     );
 
 
