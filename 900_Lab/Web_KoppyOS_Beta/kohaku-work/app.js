@@ -4508,6 +4508,21 @@ async function saveScheduleVisit() {
           )
         : null,
 
+    extensions:
+      selectedScheduleExtensions
+        .map((extension) => ({
+          store_course_id:
+            Number(
+              extension.store_course_id
+            ),
+
+          quantity:
+            Number(
+              extension.quantity
+              || 1
+            ),
+        })),
+
     customer_status:
       selectedCustomerStatus,
 
