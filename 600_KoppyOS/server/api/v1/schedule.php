@@ -1816,6 +1816,17 @@ try {
         }
 
 
+        if ($hasExtensions) {
+
+            saveVisitExtensions(
+                $pdo,
+                $visitId,
+                $storeId,
+                $extensions
+            );
+        }
+
+
         $updatedVisit =
             fetchVisit(
                 $pdo,
