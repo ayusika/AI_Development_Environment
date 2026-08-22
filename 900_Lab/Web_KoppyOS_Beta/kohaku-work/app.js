@@ -9567,6 +9567,154 @@ function selectShiftWorker(
 
 
 /* ========================================
+   SAVED SHIFT EDIT
+======================================== */
+
+function openSavedShiftEditor(
+  date
+) {
+
+  const savedShift =
+    shiftState.shifts
+      .find(
+        (shift) =>
+          shift.shift_date
+          === date
+      )
+    || null;
+
+
+  if (!savedShift) {
+
+    showShiftSavePreview(
+      '保存済みシフトを取得できませんでした。',
+      true
+    );
+
+    return;
+  }
+
+
+  shiftState.editingShiftId =
+    Number(
+      savedShift.id
+    );
+
+
+  shiftState.selectedDates.clear();
+
+  shiftState.selectedDates.add(
+    date
+  );
+
+
+  shiftState.selectedStoreId =
+    savedShift.store_id
+      ? String(
+          savedShift.store_id
+        )
+      : '';
+
+
+  if (shiftStoreSelect) {
+
+    shiftStoreSelect.value =
+      shiftState.selectedStoreId;
+  }
+
+
+  renderShiftWeek();
+  renderShiftSelectedDays();
+
+
+  const row =
+    document.querySelector(
+      `[data-shift-row="${CSS.escape(
+        date
+      )}"]`
+    );
+
+
+  if (!row) {
+    return;
+  }
+
+
+  const offButton =
+    row.querySelector(
+      '[data-shift-off]'
+    );
+
+
+  const startInput =
+    row.querySelector(
+      '[data-shift-start]'
+    );
+
+
+  const endInput =
+    row.querySelector(
+      '[data-shift-end]'
+    );
+
+
+  if (
+    savedShift.status
+    === 'off'
+  ) {
+
+    offButton
+      ?.classList
+      .add(
+        'is-selected'
+      );
+
+
+    if (startInput) {
+      startInput.disabled =
+        true;
+    }
+
+
+    if (endInput) {
+      endInput.disabled =
+        true;
+    }
+
+  } else {
+
+    if (startInput) {
+
+      startInput.value =
+        String(
+          savedShift.start_at
+          || ''
+        ).slice(
+          11,
+          16
+        );
+    }
+
+
+    if (endInput) {
+
+      endInput.value =
+        getSavedShiftEndTime(
+          savedShift
+        );
+    }
+  }
+
+
+  showShiftSavePreview(
+    `${formatShiftDisplayDate(
+      date
+    )} の保存済みシフトを編集中です。`
+  );
+}
+
+
+/* ========================================
    DATE SELECTION
 ======================================== */
 
