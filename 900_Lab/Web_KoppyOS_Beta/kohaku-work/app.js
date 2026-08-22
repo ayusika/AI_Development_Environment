@@ -10930,11 +10930,24 @@ async function previewPreviousShiftWeek() {
     );
 
 
+  const targetWeekEnd =
+    addShiftDays(
+      shiftState.weekStart,
+      6
+    );
+
+
+  const targetWeekLabel =
+    `${formatShiftDateLabel(
+      shiftState.weekStart
+    )}〜${formatShiftDateLabel(
+      targetWeekEnd
+    )}`;
+
+
   const confirmed =
     window.confirm(
-      `${worker.display_name} の前週シフトを ${formatShiftWeekRange(
-        shiftState.weekStart
-      )} にコピーしますか？`
+      `${worker.display_name} の前週シフトを ${targetWeekLabel} にコピーしますか？`
     );
 
 
