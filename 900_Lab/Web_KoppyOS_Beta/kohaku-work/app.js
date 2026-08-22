@@ -3865,6 +3865,34 @@ function renderScheduleEvent(
       - calendarStart
     ) * hourHeight / 60;
 
+  const extensionMinutes =
+    (
+      Array.isArray(
+        visit.extensions
+      )
+        ? visit.extensions
+        : []
+    )
+      .reduce(
+        (
+          total,
+          extension
+        ) =>
+          total
+          + (
+              Number(
+                extension.course_minutes
+                || 0
+              )
+              * Number(
+                  extension.quantity
+                  || 1
+                )
+            ),
+        0
+      );
+
+
   const duration =
     Math.max(
       10,
@@ -3872,6 +3900,7 @@ function renderScheduleEvent(
         visit.course_minutes
         || 0
       )
+      + extensionMinutes
     );
 
   const height =
