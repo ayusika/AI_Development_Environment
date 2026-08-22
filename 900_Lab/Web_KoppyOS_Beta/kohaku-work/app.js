@@ -2928,14 +2928,26 @@ if (scheduleExtensionMasterList) {
           );
 
 
-      if (existingIndex >= 0) {
-
-        selectedScheduleExtensions.splice(
-          existingIndex,
-          1
+      const addButton =
+        event.target.closest(
+          '[data-schedule-extension-add]'
         );
 
-      } else {
+      const plusButton =
+        event.target.closest(
+          '[data-schedule-extension-plus]'
+        );
+
+      const minusButton =
+        event.target.closest(
+          '[data-schedule-extension-minus]'
+        );
+
+
+      if (
+        addButton
+        && existingIndex < 0
+      ) {
 
         selectedScheduleExtensions.push({
           store_course_id:
@@ -2943,6 +2955,48 @@ if (scheduleExtensionMasterList) {
 
           quantity: 1,
         });
+
+      } else if (
+        plusButton
+        && existingIndex >= 0
+      ) {
+
+        selectedScheduleExtensions[
+          existingIndex
+        ].quantity += 1;
+
+      } else if (
+        minusButton
+        && existingIndex >= 0
+      ) {
+
+        const currentQuantity =
+          Number(
+            selectedScheduleExtensions[
+              existingIndex
+            ].quantity
+            || 1
+          );
+
+
+        if (currentQuantity <= 1) {
+
+          selectedScheduleExtensions.splice(
+            existingIndex,
+            1
+          );
+
+        } else {
+
+          selectedScheduleExtensions[
+            existingIndex
+          ].quantity =
+            currentQuantity - 1;
+        }
+
+      } else {
+
+        return;
       }
 
 
