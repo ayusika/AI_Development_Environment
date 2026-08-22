@@ -1574,6 +1574,20 @@ try {
                 : null;
 
 
+        $hasExtensions =
+            array_key_exists(
+                'extensions',
+                $payload
+            );
+
+        $extensions =
+            isset($payload['extensions'])
+            && is_array($payload['extensions'])
+
+                ? $payload['extensions']
+                : [];
+
+
         validateStore(
             $pdo,
             $storeId
