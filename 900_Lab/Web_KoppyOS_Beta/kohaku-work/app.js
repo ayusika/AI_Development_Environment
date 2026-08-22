@@ -212,6 +212,14 @@ function handleAction(action, button) {
       showView('diary');
       break;
 
+    case 'preview-shift-save':
+      previewShiftSave();
+      break;
+
+    case 'copy-previous-shift-week':
+      previewPreviousShiftWeek();
+      break;
+
     case 'back-to-customers':
       showView('customers');
       break;
