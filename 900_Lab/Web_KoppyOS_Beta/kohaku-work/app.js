@@ -10388,12 +10388,70 @@ async function saveShiftBatch() {
 
   try {
 
+    const isEditing =
+      Boolean(
+        shiftState.editingShiftId
+      );
+
+
+    if (
+      isEditing
+      &&
+      rows.length !== 1
+    ) {
+      throw new Error(
+        '編集時は1件のシフトだけ選択してください。'
+      );
+    }
+
+
+    const requestBody =
+      isEditing
+        ? {
+            id:
+              Number(
+                shiftState.editingShiftId
+              ),
+
+            store_id:
+              rows[0].store_id,
+
+            shift_date:
+              rows[0].shift_date,
+
+            start_time:
+              rows[0].start_time,
+
+            end_time:
+              rows[0].end_time,
+
+            status:
+              rows[0].status,
+
+            note:
+              rows[0].note,
+          }
+        : {
+            action:
+              'create_batch',
+
+            worker_id:
+              Number(
+                worker.id
+              ),
+
+            rows,
+          };
+
+
     const response =
       await fetch(
         shiftsApiUrl,
         {
           method:
-            'POST',
+            isEditing
+              ? 'PATCH'
+              : 'POST',
 
           headers: {
             'Content-Type':
@@ -10401,17 +10459,9 @@ async function saveShiftBatch() {
           },
 
           body:
-            JSON.stringify({
-              action:
-                'create_batch',
-
-              worker_id:
-                Number(
-                  worker.id
-                ),
-
-              rows,
-            }),
+            JSON.stringify(
+              requestBody
+            ),
         }
       );
 
