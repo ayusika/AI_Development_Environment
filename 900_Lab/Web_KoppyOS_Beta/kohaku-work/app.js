@@ -2413,7 +2413,8 @@ function renderScheduleSalesMaster() {
                 )}
               </small>
             </button>
-          `)
+          `;
+          })
           .join('');
     }
   }
