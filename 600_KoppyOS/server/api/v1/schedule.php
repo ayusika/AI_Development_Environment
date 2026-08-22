@@ -1604,6 +1604,7 @@ try {
             $startedAt,
             $bookedAt,
             $courseMinutes,
+            $storeCourseId,
             $customerStatus,
             $customerFeatures,
             $visitorType,
