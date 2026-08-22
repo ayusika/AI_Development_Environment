@@ -216,6 +216,10 @@ function handleAction(action, button) {
       saveShiftBatch();
       break;
 
+    case 'delete-shift':
+      deleteEditingShift();
+      break;
+
     case 'copy-previous-shift-week':
       previewPreviousShiftWeek();
       break;
