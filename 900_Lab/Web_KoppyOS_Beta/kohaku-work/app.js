@@ -2372,9 +2372,9 @@ function renderScheduleSalesMaster() {
         extensionCourses
           .map((course) => {
 
-            const isSelected =
+            const selectedExtension =
               selectedScheduleExtensions
-                .some(
+                .find(
                   (extension) =>
                     Number(
                       extension.store_course_id
@@ -2382,7 +2382,19 @@ function renderScheduleSalesMaster() {
                     === Number(
                       course.store_course_id
                     )
-                );
+                )
+              || null;
+
+            const quantity =
+              selectedExtension
+                ? Number(
+                    selectedExtension.quantity
+                    || 1
+                  )
+                : 0;
+
+            const isSelected =
+              quantity > 0;
 
             return `
             <button
