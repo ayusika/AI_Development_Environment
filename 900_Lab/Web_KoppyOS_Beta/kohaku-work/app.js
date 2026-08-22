@@ -220,6 +220,10 @@ function handleAction(action, button) {
       deleteEditingShift();
       break;
 
+    case 'toggle-shift-confirm':
+      toggleEditingShiftConfirmation();
+      break;
+
     case 'copy-previous-shift-week':
       previewPreviousShiftWeek();
       break;
