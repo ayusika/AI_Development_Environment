@@ -2290,11 +2290,43 @@ function renderScheduleSalesMaster() {
 
 
   const regularCourses =
-    courses.filter(
-      (course) =>
-        course.course_type
-        === 'regular'
-    );
+    courses
+      .filter(
+        (course) =>
+          course.course_type
+          === 'regular'
+      )
+      .sort((a, b) => {
+
+        const categoryOrder = {
+          standard: 0,
+          foreign: 1,
+        };
+
+        const categoryDifference =
+          (
+            categoryOrder[
+              a.pricing_category
+            ]
+            ?? 99
+          )
+          -
+          (
+            categoryOrder[
+              b.pricing_category
+            ]
+            ?? 99
+          );
+
+        if (categoryDifference !== 0) {
+          return categoryDifference;
+        }
+
+        return (
+          Number(a.course_minutes)
+          - Number(b.course_minutes)
+        );
+      });
 
   const extensionCourses =
     courses.filter(
