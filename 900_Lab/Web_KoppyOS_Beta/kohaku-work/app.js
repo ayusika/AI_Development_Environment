@@ -9557,7 +9557,9 @@ function selectShiftWorker(
     });
 
 
-  renderShiftSelectedDays();
+  shiftState.selectedDates.clear();
+
+  loadShift();
 }
 
 
