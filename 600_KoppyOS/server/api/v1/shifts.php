@@ -413,6 +413,291 @@ try {
 
 
         /* -------------------------------------------------
+           日別シフト一括登録
+        ------------------------------------------------- */
+
+        if ($action === 'create_batch') {
+
+            $workerId =
+                isset($body['worker_id'])
+                    ? (int)
+                        $body['worker_id']
+                    : 0;
+
+
+            $rows =
+                isset($body['rows'])
+                &&
+                is_array(
+                    $body['rows']
+                )
+                    ? $body['rows']
+                    : [];
+
+
+            if ($workerId <= 0) {
+                throw new RuntimeException(
+                    'worker_id is required.'
+                );
+            }
+
+
+            shiftAssertWorkerExists(
+                $pdo,
+                $workerId
+            );
+
+
+            if ($rows === []) {
+                throw new RuntimeException(
+                    'rows is required.'
+                );
+            }
+
+
+            if (
+                count($rows)
+                > 31
+            ) {
+                throw new RuntimeException(
+                    'Too many shift rows.'
+                );
+            }
+
+
+            $insertStatement =
+                $pdo->prepare(
+                    "
+                    INSERT INTO work_shifts
+                    (
+                        worker_id,
+                        store_id,
+                        shift_date,
+                        start_at,
+                        end_at,
+                        status,
+                        note
+                    )
+                    VALUES
+                    (
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?
+                    )
+                    "
+                );
+
+
+            $createdIds = [];
+
+
+            $pdo->beginTransaction();
+
+
+            try {
+
+                foreach (
+                    $rows as $row
+                ) {
+
+                    if (!is_array($row)) {
+                        throw new RuntimeException(
+                            'Invalid shift row.'
+                        );
+                    }
+
+
+                    $date =
+                        isset($row['shift_date'])
+                            ? trim(
+                                (string)
+                                $row['shift_date']
+                            )
+                            : '';
+
+
+                    shiftValidateDate(
+                        $date
+                    );
+
+
+                    $status =
+                        isset($row['status'])
+                            ? trim(
+                                (string)
+                                $row['status']
+                            )
+                            : 'draft';
+
+
+                    if (
+                        !in_array(
+                            $status,
+                            [
+                                'draft',
+                                'confirmed',
+                                'off',
+                            ],
+                            true
+                        )
+                    ) {
+                        throw new RuntimeException(
+                            "Invalid shift status: {$date}"
+                        );
+                    }
+
+
+                    $note =
+                        isset($row['note'])
+                            ? trim(
+                                (string)
+                                $row['note']
+                            )
+                            : null;
+
+
+                    $storeId = null;
+                    $startAt = null;
+                    $endAt = null;
+
+
+                    if ($status !== 'off') {
+
+                        $storeId =
+                            isset($row['store_id'])
+                                ? (int)
+                                    $row['store_id']
+                                : 0;
+
+
+                        if ($storeId <= 0) {
+                            throw new RuntimeException(
+                                "store_id is required: {$date}"
+                            );
+                        }
+
+
+                        shiftAssertStoreExists(
+                            $pdo,
+                            $storeId
+                        );
+
+
+                        $startTime =
+                            isset($row['start_time'])
+                                ? trim(
+                                    (string)
+                                    $row['start_time']
+                                )
+                                : '';
+
+
+                        $endTime =
+                            isset($row['end_time'])
+                                ? trim(
+                                    (string)
+                                    $row['end_time']
+                                )
+                                : '';
+
+
+                        if (
+                            $startTime === ''
+                            ||
+                            $endTime === ''
+                        ) {
+                            throw new RuntimeException(
+                                "start_time and end_time are required: {$date}"
+                            );
+                        }
+
+
+                        $startAt =
+                            shiftNormalizeTime(
+                                $date,
+                                $startTime
+                            );
+
+
+                        $endAt =
+                            shiftNormalizeTime(
+                                $date,
+                                $endTime
+                            );
+
+
+                        if (
+                            $endAt <= $startAt
+                        ) {
+                            throw new RuntimeException(
+                                "End time must be after start time: {$date}"
+                            );
+                        }
+                    }
+
+
+                    $insertStatement->execute([
+                        $workerId,
+                        $storeId,
+                        $date,
+                        $startAt,
+                        $endAt,
+                        $status,
+                        $note,
+                    ]);
+
+
+                    $createdIds[] =
+                        (int)
+                        $pdo
+                            ->lastInsertId();
+                }
+
+
+                $pdo->commit();
+
+
+            } catch (Throwable $error) {
+
+                if (
+                    $pdo->inTransaction()
+                ) {
+                    $pdo->rollBack();
+                }
+
+
+                throw $error;
+            }
+
+
+            shiftJsonResponse(
+                [
+                    'success' => true,
+
+                    'action' =>
+                        'create_batch',
+
+                    'created_count' =>
+                        count(
+                            $createdIds
+                        ),
+
+                    'created_ids' =>
+                        $createdIds,
+
+                    'error' =>
+                        null,
+                ],
+                201
+            );
+        }
+
+
+        /* -------------------------------------------------
            前週コピー
         ------------------------------------------------- */
 
