@@ -150,6 +150,89 @@ function validateStore(
 }
 
 
+function validateStoreCourse(
+    PDO $pdo,
+    int $storeId,
+    ?int $storeCourseId,
+    int $courseMinutes
+): void {
+
+    if ($storeCourseId === null) {
+        return;
+    }
+
+
+    if ($storeCourseId <= 0) {
+        throw new RuntimeException(
+            'Invalid store_course_id.'
+        );
+    }
+
+
+    $statement =
+        $pdo->prepare(
+            "
+            SELECT
+                id,
+                store_id,
+                course_minutes,
+                course_type
+
+            FROM store_courses
+
+            WHERE id = ?
+              AND active = 1
+            "
+        );
+
+
+    $statement->execute([
+        $storeCourseId
+    ]);
+
+
+    $course =
+        $statement->fetch();
+
+
+    if (!$course) {
+        throw new RuntimeException(
+            'Store course was not found.'
+        );
+    }
+
+
+    if (
+        (int) $course['store_id']
+        !== $storeId
+    ) {
+        throw new RuntimeException(
+            'store_course_id does not belong to store_id.'
+        );
+    }
+
+
+    if (
+        (string) $course['course_type']
+        !== 'regular'
+    ) {
+        throw new RuntimeException(
+            'store_course_id must be a regular course.'
+        );
+    }
+
+
+    if (
+        (int) $course['course_minutes']
+        !== $courseMinutes
+    ) {
+        throw new RuntimeException(
+            'course_minutes does not match store_course_id.'
+        );
+    }
+}
+
+
 function validateCustomerIdentityState(
     string $customerStatus,
     ?int $customerId
