@@ -5078,3 +5078,154 @@ body:has(#view-schedule.is-active) .bottom-nav {
   background-color:
     rgba(69, 185, 233, 0.035);
 }
+
+/* ========================================
+   SCHEDULE COURSE CARDS
+======================================== */
+
+.schedule-course-section {
+  margin-top: 8px;
+}
+
+.schedule-course-section + .schedule-course-section {
+  margin-top: 18px;
+}
+
+.schedule-course-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.schedule-master-course-button {
+  min-height: 66px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+
+  gap: 4px;
+
+  padding: 11px 13px;
+
+  border: 1px solid var(--line);
+  border-radius: 14px;
+
+  color: var(--text);
+  background: #ffffff;
+
+  text-align: left;
+
+  box-shadow:
+    0 3px 10px rgba(74, 148, 183, 0.05);
+
+  transition:
+    transform 120ms ease,
+    border-color 120ms ease,
+    background-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.schedule-master-course-button strong {
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 900;
+}
+
+.schedule-master-course-button small {
+  color: var(--text-soft);
+
+  font-size: 11px;
+  line-height: 1.25;
+  font-weight: 700;
+}
+
+.schedule-master-course-button:hover {
+  border-color: var(--line-strong);
+  background: var(--accent-softer);
+}
+
+.schedule-master-course-button:active {
+  transform: scale(0.985);
+}
+
+.schedule-master-course-button.is-selected {
+  color: var(--accent-deep);
+
+  background:
+    linear-gradient(
+      145deg,
+      #e9f8ff,
+      #dff5ff
+    );
+
+  border-color: var(--accent-strong);
+
+  box-shadow:
+    0 0 0 2px rgba(101, 199, 238, 0.12),
+    0 7px 18px rgba(67, 182, 229, 0.13);
+}
+
+.schedule-master-course-button.is-selected small {
+  color: #4b9fc3;
+}
+
+.schedule-course-section-title {
+  margin: 0 0 8px;
+
+  color: var(--text-soft);
+
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+.schedule-course-section-foreign {
+  padding-top: 13px;
+
+  border-top: 1px dashed var(--line-strong);
+}
+
+.schedule-course-section-foreign
+.schedule-master-course-button {
+  min-height: 58px;
+
+  background: var(--accent-softer);
+
+  box-shadow: none;
+}
+
+.schedule-course-section-foreign
+.schedule-master-course-button strong {
+  font-size: 14px;
+}
+
+.schedule-course-section-foreign
+.schedule-master-course-button small {
+  font-size: 10px;
+}
+
+.schedule-course-section-foreign
+.schedule-master-course-button.is-selected {
+  background: var(--accent-soft);
+  border-color: var(--accent-strong);
+
+  box-shadow:
+    0 0 0 2px rgba(101, 199, 238, 0.1);
+}
+
+@media (max-width: 420px) {
+  .schedule-course-grid {
+    gap: 7px;
+  }
+
+  .schedule-master-course-button {
+    min-height: 62px;
+    padding: 10px 11px;
+  }
+
+  .schedule-master-course-button strong {
+    font-size: 15px;
+  }
+}
