@@ -213,7 +213,7 @@ function handleAction(action, button) {
       break;
 
     case 'preview-shift-save':
-      previewShiftSave();
+      saveShiftBatch();
       break;
 
     case 'copy-previous-shift-week':
