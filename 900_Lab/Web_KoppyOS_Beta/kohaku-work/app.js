@@ -11054,16 +11054,6 @@ async function previewPreviousShiftWeek() {
       true
     );
 
-    return;
-  }
-
-
-  showShiftSavePreview(
-    `${worker.display_name} の前週シフトコピーは、次の段階でAPIへ接続します。`
-  );
-}
-
-
 /* ========================================
    TIME VALIDATION
 ======================================== */
