@@ -2059,6 +2059,9 @@ let selectedScheduleCourseRateId = null;
 
 let selectedScheduleCourseMaster = null;
 
+let selectedSchedulePricingCategory =
+  'standard';
+
 let selectedScheduleExtensions = [];
 
 let scheduleSalesMaster = {
