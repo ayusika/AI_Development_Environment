@@ -4415,6 +4415,14 @@ async function saveScheduleVisit() {
     course_minutes:
       selectedScheduleCourse,
 
+    store_course_id:
+      selectedScheduleCourseMaster
+        ? Number(
+            selectedScheduleCourseMaster
+              .store_course_id
+          )
+        : null,
+
     customer_status:
       selectedCustomerStatus,
 
