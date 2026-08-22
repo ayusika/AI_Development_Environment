@@ -1892,6 +1892,19 @@ try {
         if (
             $beforeChangeData['course_minutes']
             !== $afterChangeData['course_minutes']
+            ||
+            $beforeChangeData['store_course_id']
+            !== $afterChangeData['store_course_id']
+            ||
+            json_encode(
+                $beforeChangeData['extensions'],
+                JSON_UNESCAPED_UNICODE
+            )
+            !==
+            json_encode(
+                $afterChangeData['extensions'],
+                JSON_UNESCAPED_UNICODE
+            )
         ) {
             $changedTypes[] = 'course';
         }
