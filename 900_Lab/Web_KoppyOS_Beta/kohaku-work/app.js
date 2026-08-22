@@ -10670,6 +10670,12 @@ async function saveShiftBatch() {
       null;
 
 
+    if (shiftDeleteButton) {
+      shiftDeleteButton.hidden =
+        true;
+    }
+
+
     shiftState.selectedDates.clear();
 
 
