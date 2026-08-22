@@ -2411,11 +2411,13 @@ function renderScheduleSalesMaster() {
                 course.store_course_id
               )}"
             >
-              + ${escapeHtml(
-                String(
-                  course.course_name
-                )
-              )}
+              <strong>
+                ${escapeHtml(
+                  String(
+                    course.course_name
+                  )
+                )}
+              </strong>
 
               <small>
                 ${escapeHtml(
@@ -2424,6 +2426,38 @@ function renderScheduleSalesMaster() {
                   )
                 )}
               </small>
+
+              ${
+                isSelected
+                  ? `
+                    <span
+                      class="schedule-extension-quantity"
+                    >
+                      <span
+                        data-schedule-extension-minus
+                      >
+                        −
+                      </span>
+
+                      <strong>
+                        ${quantity}
+                      </strong>
+
+                      <span
+                        data-schedule-extension-plus
+                      >
+                        ＋
+                      </span>
+                    </span>
+                  `
+                  : `
+                    <span
+                      data-schedule-extension-add
+                    >
+                      ＋追加
+                    </span>
+                  `
+              }
             </button>
           `;
           })
