@@ -2363,50 +2363,91 @@ function renderScheduleSalesMaster() {
 
     } else {
 
-      scheduleCourseMasterList.innerHTML =
-        regularCourses
-          .map((course) => {
+      const renderCourseButtons =
+        (courseList) =>
+          courseList
+            .map((course) => {
 
-            const isSelected =
-              Number(
-                selectedScheduleCourseRateId
-              )
-              === Number(
-                course.store_course_rate_id
-              );
-
-            return `
-              <button
-                class="
-                  schedule-master-course-button
-                  ${isSelected ? 'is-selected' : ''}
-                "
-                type="button"
-                data-schedule-master-course
-                data-course-rate-id="${Number(
+              const isSelected =
+                Number(
+                  selectedScheduleCourseRateId
+                )
+                === Number(
                   course.store_course_rate_id
-                )}"
-              >
-                <strong>
-                  ${escapeHtml(
-                    String(
-                      course.course_name
-                    )
-                  )}
-                </strong>
+                );
 
-                <small>
-                  手取り
-                  ${escapeHtml(
-                    formatScheduleMoney(
-                      course.take_home
-                    )
+              return `
+                <button
+                  class="
+                    schedule-master-course-button
+                    ${isSelected ? 'is-selected' : ''}
+                  "
+                  type="button"
+                  data-schedule-master-course
+                  data-course-rate-id="${Number(
+                    course.store_course_rate_id
+                  )}"
+                >
+                  <strong>
+                    ${escapeHtml(
+                      String(
+                        course.course_name
+                      )
+                    )}
+                  </strong>
+
+                  <small>
+                    手取り
+                    ${escapeHtml(
+                      formatScheduleMoney(
+                        course.take_home
+                      )
+                    )}
+                  </small>
+                </button>
+              `;
+            })
+            .join('');
+
+
+      scheduleCourseMasterList.innerHTML = `
+        ${
+          standardCourses.length
+            ? `
+              <div class="schedule-course-section">
+                <div class="schedule-course-grid">
+                  ${renderCourseButtons(
+                    standardCourses
                   )}
-                </small>
-              </button>
-            `;
-          })
-          .join('');
+                </div>
+              </div>
+            `
+            : ''
+        }
+
+        ${
+          foreignCourses.length
+            ? `
+              <div
+                class="
+                  schedule-course-section
+                  schedule-course-section-foreign
+                "
+              >
+                <div class="schedule-course-section-title">
+                  外国人料金
+                </div>
+
+                <div class="schedule-course-grid">
+                  ${renderCourseButtons(
+                    foreignCourses
+                  )}
+                </div>
+              </div>
+            `
+            : ''
+        }
+      `;
     }
   }
 
