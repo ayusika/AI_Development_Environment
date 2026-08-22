@@ -8419,7 +8419,21 @@ function editCurrentScheduleVisit() {
 
   scheduleFormCard.hidden = false;
 
-  loadScheduleSalesMaster();
+  loadScheduleSalesMaster()
+    .then(() => {
+
+      document
+        .querySelectorAll(
+          '[data-schedule-option]'
+        )
+        .forEach((input) => {
+
+          input.checked =
+            standardOptionNames.includes(
+              String(input.value)
+            );
+        });
+    });
 }
 
 
