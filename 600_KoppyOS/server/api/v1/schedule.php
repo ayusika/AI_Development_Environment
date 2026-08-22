@@ -944,6 +944,7 @@ try {
             $startedAt,
             $bookedAt,
             $courseMinutes,
+            $storeCourseId,
             $customerStatus,
             'scheduled',
         ]);
