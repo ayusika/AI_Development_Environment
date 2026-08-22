@@ -2954,6 +2954,24 @@ if (scheduleCourseMasterList) {
     'click',
     (event) => {
 
+      const categoryButton =
+        event.target.closest(
+          '[data-schedule-course-category]'
+        );
+
+
+      if (categoryButton) {
+
+        selectedSchedulePricingCategory =
+          categoryButton.dataset
+            .scheduleCourseCategory;
+
+        renderScheduleSalesMaster();
+
+        return;
+      }
+
+
       const button =
         event.target.closest(
           '[data-schedule-master-course]'
