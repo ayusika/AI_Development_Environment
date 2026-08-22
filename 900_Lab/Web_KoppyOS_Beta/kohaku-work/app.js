@@ -9737,6 +9737,15 @@ function toggleShiftDate(
   date
 ) {
 
+  shiftState.editingShiftId =
+    null;
+
+
+  if (shiftDeleteButton) {
+    shiftDeleteButton.hidden =
+      true;
+  }
+
   if (
     shiftState.selectedDates
       .has(date)
