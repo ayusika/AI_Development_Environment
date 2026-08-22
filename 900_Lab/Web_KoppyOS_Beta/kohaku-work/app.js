@@ -9390,6 +9390,45 @@ function renderShiftWeek() {
             : '平日前';
 
 
+        const savedShift =
+          shiftState.shifts
+            .find(
+              (shift) =>
+                shift.shift_date
+                === day.date
+            )
+          || null;
+
+
+        const todayText =
+          formatShiftDate(
+            new Date()
+          );
+
+
+        const isFuture =
+          day.date > todayText;
+
+
+        const savedLabel =
+          savedShift
+            ? (
+                savedShift.status
+                === 'off'
+                  ? '休み'
+                  : `${savedShift.store_name || ''} ${
+                      formatSavedShiftTime(
+                        savedShift
+                      )
+                    }`
+              )
+            : (
+                isFuture
+                  ? 'シフト未確定'
+                  : ''
+              );
+
+
         return `
           <button
             class="
