@@ -398,6 +398,7 @@ function fetchVisit(
                 v.started_at,
                 v.booked_at,
                 v.course_minutes,
+                v.store_course_id,
                 v.customer_status,
                 v.customer_features,
                 v.visitor_type,
