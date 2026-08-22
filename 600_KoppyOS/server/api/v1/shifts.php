@@ -1000,17 +1000,34 @@ try {
                     }
 
 
+                    $targetStatus =
+                        $row['status']
+                        === 'off'
+                            ? 'off'
+                            : 'draft';
+
+
                     $insertStatement->execute([
                         $workerId,
-                        $row['store_id'],
-                        $targetDateString,
-                        $startAt,
-                        $endAt,
 
-                        /*
-                         * コピー先は必ずdraft。
-                         */
-                        'draft',
+                        $targetStatus
+                        === 'off'
+                            ? null
+                            : $row['store_id'],
+
+                        $targetDateString,
+
+                        $targetStatus
+                        === 'off'
+                            ? null
+                            : $startAt,
+
+                        $targetStatus
+                        === 'off'
+                            ? null
+                            : $endAt,
+
+                        $targetStatus,
 
                         $row['note'],
                     ]);
