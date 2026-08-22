@@ -1872,6 +1872,9 @@ try {
 
             'options' =>
                 $updatedVisit['options'],
+
+            'extensions' =>
+                $updatedVisit['extensions'],
         ];
 
 
