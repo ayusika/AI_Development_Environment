@@ -11,10 +11,8 @@ declare(strict_types=1);
  *
  * php import-holidays.php <database-path> <csv-path>
  *
- * CSV format:
- *
- * 2026-01-01,元日
- * 2026-01-12,成人の日
+ * Supported source:
+ * Japanese Cabinet Office holiday CSV
  */
 
 
@@ -77,9 +75,7 @@ $tableExists =
         ->query(
             "
             SELECT COUNT(*)
-
             FROM sqlite_master
-
             WHERE
                 type = 'table'
                 AND name = 'holidays'
@@ -118,11 +114,45 @@ if ($handle === false) {
 
 $holidays = [];
 
+$isFirstRow = true;
+
 
 while (
     ($row = fgetcsv($handle))
     !== false
 ) {
+
+    $row =
+        array_map(
+            static function ($value): string {
+
+                $value =
+                    (string)
+                    $value;
+
+
+                $converted =
+                    iconv(
+                        'SJIS-win',
+                        'UTF-8//IGNORE',
+                        $value
+                    );
+
+
+                return
+                    $converted !== false
+                        ? $converted
+                        : $value;
+            },
+            $row
+        );
+
+
+    if ($isFirstRow) {
+        $isFirstRow = false;
+        continue;
+    }
+
 
     if (count($row) < 2) {
         continue;
@@ -143,17 +173,6 @@ while (
         );
 
 
-    /*
-     * UTF-8 BOM対策
-     */
-    $date =
-        preg_replace(
-            '/^\xEF\xBB\xBF/',
-            '',
-            $date
-        );
-
-
     if (
         $date === ''
         ||
@@ -164,11 +183,12 @@ while (
 
 
     /*
-     * YYYY-MM-DD のみ許可
+     * Cabinet Office CSV:
+     * YYYY/M/D
      */
     $dateObject =
         DateTimeImmutable::createFromFormat(
-            '!Y-m-d',
+            '!Y/n/j',
             $date
         );
 
@@ -188,10 +208,7 @@ while (
                 &&
                 $dateErrors['error_count'] === 0
             )
-        )
-        &&
-        $dateObject->format('Y-m-d')
-            === $date;
+        );
 
 
     if (!$dateIsValid) {
@@ -201,7 +218,13 @@ while (
     }
 
 
-    $holidays[$date] =
+    $normalizedDate =
+        $dateObject->format(
+            'Y-m-d'
+        );
+
+
+    $holidays[$normalizedDate] =
         $name;
 }
 
@@ -238,7 +261,6 @@ try {
                 imported_at,
                 updated_at
             )
-
             VALUES
             (
                 ?,
@@ -255,7 +277,6 @@ try {
                     'localtime'
                 )
             )
-
             ON CONFLICT(holiday_date)
             DO UPDATE SET
                 name =
