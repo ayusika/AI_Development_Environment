@@ -1881,8 +1881,14 @@ if (customerSearchInput) {
    WORK SCHEDULE
 ======================================== */
 
-const scheduleApiUrl =
-  '/api/v1/schedule.php';
+const scheduleState = {
+  view: 'two-weeks',
+  anchorDate: null,
+  visits: [],
+  selectedVisit: null,
+  identitySearchVisits: [],
+  selectedIdentityCandidate: null,
+};
 
 const visitIdentityFeaturesApiUrl =
   '/api/v1/visit-identity-features.php';
