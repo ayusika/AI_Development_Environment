@@ -11047,13 +11047,6 @@ async function previewPreviousShiftWeek() {
 }
 
 
-  if (!worker) {
-
-    showShiftSavePreview(
-      'worker情報を取得できません。',
-      true
-    );
-
 /* ========================================
    TIME VALIDATION
 ======================================== */
