@@ -350,6 +350,42 @@ function saveVisitOptions(
 }
 
 
+function fetchVisitExtensions(
+    PDO $pdo,
+    int $visitId
+): array {
+    $statement =
+        $pdo->prepare(
+            "
+            SELECT
+                ve.store_course_id,
+                ve.quantity,
+                sc.course_code,
+                sc.course_name,
+                sc.course_minutes
+
+            FROM visit_extensions ve
+
+            JOIN store_courses sc
+                ON sc.id = ve.store_course_id
+
+            WHERE ve.visit_id = ?
+
+            ORDER BY
+                sc.sort_order ASC,
+                ve.id ASC
+            "
+        );
+
+    $statement->execute([
+        $visitId
+    ]);
+
+    return
+        $statement->fetchAll();
+}
+
+
 function fetchVisit(
     PDO $pdo,
     int $visitId
