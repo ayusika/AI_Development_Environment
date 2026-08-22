@@ -1007,6 +1007,12 @@ try {
                     (int) $visit['id']
                 );
 
+            $visit['extensions'] =
+                fetchVisitExtensions(
+                    $pdo,
+                    (int) $visit['id']
+                );
+
             $visit['customer_names'] =
                 fetchCustomerNames(
                     $pdo,
