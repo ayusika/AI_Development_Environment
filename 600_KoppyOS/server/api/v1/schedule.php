@@ -840,6 +840,16 @@ try {
                 ?? 0
             );
 
+
+        $storeCourseId =
+            isset($payload['store_course_id'])
+            && $payload['store_course_id'] !== ''
+            && $payload['store_course_id'] !== null
+
+                ? (int) $payload['store_course_id']
+                : null;
+
+
         $customerStatus =
             trim(
                 (string) (
