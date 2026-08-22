@@ -9028,6 +9028,11 @@ const shiftSelectedDays =
     'shift-selected-days'
   );
 
+const shiftDeleteButton =
+  document.getElementById(
+    'shift-delete-button'
+  );
+
 
 const shiftState = {
   workerCode: 'shii',
