@@ -9626,6 +9626,28 @@ function openSavedShiftEditor(
   }
 
 
+  if (shiftConfirmButton) {
+
+    const canConfirm =
+      savedShift.status
+      !== 'off';
+
+
+    shiftConfirmButton.hidden =
+      !canConfirm;
+
+
+    if (canConfirm) {
+
+      shiftConfirmButton.textContent =
+        savedShift.status
+        === 'confirmed'
+          ? '仮シフトに戻す'
+          : 'このシフトを確定';
+    }
+  }
+
+
   shiftState.selectedDates.clear();
 
   shiftState.selectedDates.add(
