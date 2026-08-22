@@ -2378,6 +2378,9 @@ function renderScheduleSalesMaster() {
               data-course-rate-id="${Number(
                 course.store_course_rate_id
               )}"
+              data-store-course-id="${Number(
+                course.store_course_id
+              )}"
             >
               + ${escapeHtml(
                 String(
