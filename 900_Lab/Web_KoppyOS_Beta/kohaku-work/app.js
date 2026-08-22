@@ -10775,6 +10775,85 @@ function shiftTimeToMinutes(
    DATE HELPERS
 ======================================== */
 
+function formatSavedShiftTime(
+  shift
+) {
+
+  if (
+    !shift.start_at
+    || !shift.end_at
+  ) {
+    return '';
+  }
+
+
+  const startDate =
+    String(
+      shift.start_at
+    ).slice(
+      0,
+      10
+    );
+
+
+  const endDate =
+    String(
+      shift.end_at
+    ).slice(
+      0,
+      10
+    );
+
+
+  const startTime =
+    String(
+      shift.start_at
+    ).slice(
+      11,
+      16
+    );
+
+
+  let endHour =
+    Number(
+      String(
+        shift.end_at
+      ).slice(
+        11,
+        13
+      )
+    );
+
+
+  const endMinute =
+    String(
+      shift.end_at
+    ).slice(
+      14,
+      16
+    );
+
+
+  if (
+    endDate > startDate
+  ) {
+    endHour += 24;
+  }
+
+
+  const endTime =
+    `${String(
+      endHour
+    ).padStart(
+      2,
+      '0'
+    )}:${endMinute}`;
+
+
+  return `${startTime}〜${endTime}`;
+}
+
+
 function parseShiftDate(
   value
 ) {
