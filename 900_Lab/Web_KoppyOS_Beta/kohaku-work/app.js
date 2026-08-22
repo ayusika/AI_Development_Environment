@@ -8451,6 +8451,13 @@ function editCurrentScheduleVisit() {
       : null;
 
 
+  selectedSchedulePricingCategory =
+    String(
+      visit.pricing_category
+      || 'standard'
+    );
+
+
   selectedScheduleExtensions =
     Array.isArray(
       visit.extensions
