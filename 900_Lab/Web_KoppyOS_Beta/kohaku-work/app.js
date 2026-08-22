@@ -9037,6 +9037,7 @@ const shiftState = {
   stores: [],
   defaultRules: [],
   days: [],
+  shifts: [],
 
   selectedDates:
     new Set(),
