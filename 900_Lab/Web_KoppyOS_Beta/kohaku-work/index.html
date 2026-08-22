@@ -2393,6 +2393,195 @@
       <!-- WRITER:WORK_SCHEDULE_VIEW:END -->
 
 
+      <!-- WRITER:SHIFT_VIEW:START -->
+
+      <!-- ======================================
+           SHIFT VIEW
+      ======================================= -->
+
+      <section
+        class="view"
+        id="view-shift"
+        data-view="shift"
+      >
+
+        <div class="shift-page">
+
+          <div class="shift-page-header">
+
+            <button
+              class="back-button"
+              type="button"
+              data-action="go-home"
+            >
+              ←
+            </button>
+
+            <div>
+              <p class="eyebrow">WORK SHIFT</p>
+              <h1>シフト</h1>
+            </div>
+
+          </div>
+
+
+          <section class="content-card shift-control-card">
+
+            <div class="shift-worker-switcher">
+
+              <button
+                class="shift-worker-button is-selected"
+                type="button"
+                data-shift-worker="shii"
+              >
+                しい
+              </button>
+
+              <button
+                class="shift-worker-button"
+                type="button"
+                data-shift-worker="ui"
+              >
+                うい
+              </button>
+
+            </div>
+
+
+            <div class="shift-week-navigation">
+
+              <button
+                class="shift-week-nav-button"
+                type="button"
+                data-shift-week-move="-1"
+                aria-label="前週"
+              >
+                ‹
+              </button>
+
+              <button
+                class="shift-week-today-button"
+                type="button"
+                data-shift-week-today
+              >
+                今週
+              </button>
+
+              <button
+                class="shift-week-nav-button"
+                type="button"
+                data-shift-week-move="1"
+                aria-label="次週"
+              >
+                ›
+              </button>
+
+            </div>
+
+
+            <div class="shift-week-heading">
+
+              <strong id="shift-week-title">
+                読み込み中
+              </strong>
+
+              <span id="shift-selection-count">
+                0日選択
+              </span>
+
+            </div>
+
+          </section>
+
+
+          <section class="content-card shift-calendar-card">
+
+            <div
+              id="shift-week-calendar"
+              class="shift-week-calendar"
+            >
+              <p class="shift-loading">
+                シフト情報を読み込み中…
+              </p>
+            </div>
+
+          </section>
+
+
+          <section
+            class="content-card shift-entry-card"
+            id="shift-entry-card"
+          >
+
+            <div class="section-heading">
+
+              <div>
+                <p class="eyebrow">SHIFT INPUT</p>
+                <h2>選択日のシフト</h2>
+              </div>
+
+            </div>
+
+
+            <label class="shift-field">
+
+              <span>店舗</span>
+
+              <select id="shift-store-select">
+                <option value="">
+                  店舗を選択
+                </option>
+              </select>
+
+            </label>
+
+
+            <div
+              id="shift-selected-days"
+              class="shift-selected-days"
+            >
+              <p class="shift-empty-message">
+                日付を選択してください。
+              </p>
+            </div>
+
+
+            <div class="shift-entry-actions">
+
+              <button
+                class="secondary-button"
+                type="button"
+                data-action="copy-previous-shift-week"
+              >
+                前週をコピー
+              </button>
+
+              <button
+                class="primary-button"
+                type="button"
+                data-action="preview-shift-save"
+              >
+                選択したシフトを保存
+              </button>
+
+            </div>
+
+
+            <div
+              id="shift-save-preview"
+              class="shift-save-preview"
+              hidden
+            ></div>
+
+          </section>
+
+        </div>
+
+      </section>
+
+      <!-- WRITER:SHIFT_VIEW:END -->
+
+
       <!-- ======================================
            DATABASE VIEW
       ======================================= -->
