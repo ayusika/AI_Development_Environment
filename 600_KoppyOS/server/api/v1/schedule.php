@@ -1761,6 +1761,9 @@ try {
 
             'options' =>
                 $currentVisit['options'],
+
+            'extensions' =>
+                $currentVisit['extensions'],
         ];
 
 
