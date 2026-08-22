@@ -2849,6 +2849,20 @@ async function loadScheduleSalesMaster() {
         : null;
 
 
+    if (
+      matchingCourse
+      && (
+        matchingCourse.pricing_category
+        === 'standard'
+        || matchingCourse.pricing_category
+        === 'foreign'
+      )
+    ) {
+      selectedSchedulePricingCategory =
+        matchingCourse.pricing_category;
+    }
+
+
     renderScheduleSalesMaster();
 
 
