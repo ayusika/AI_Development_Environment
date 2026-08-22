@@ -798,6 +798,61 @@ try {
                     ->fetchAll();
 
 
+            if ($sourceRows === []) {
+                throw new RuntimeException(
+                    'No shifts found in previous week.'
+                );
+            }
+
+
+            $targetEnd =
+                $targetStart
+                    ->modify(
+                        '+6 days'
+                    );
+
+
+            $targetCheckStatement =
+                $pdo->prepare(
+                    "
+                    SELECT COUNT(*)
+
+                    FROM work_shifts
+
+                    WHERE
+                        worker_id = ?
+                        AND shift_date
+                            BETWEEN ? AND ?
+                    "
+                );
+
+
+            $targetCheckStatement->execute([
+                $workerId,
+
+                $targetStart->format(
+                    'Y-m-d'
+                ),
+
+                $targetEnd->format(
+                    'Y-m-d'
+                ),
+            ]);
+
+
+            $targetShiftCount =
+                (int)
+                $targetCheckStatement
+                    ->fetchColumn();
+
+
+            if ($targetShiftCount > 0) {
+                throw new RuntimeException(
+                    'Target week already has shifts.'
+                );
+            }
+
+
             $insertStatement =
                 $pdo->prepare(
                     "
