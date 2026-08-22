@@ -9448,11 +9448,21 @@ function renderShiftWeek() {
                   ? 'is-holiday'
                   : ''
               }
+              ${
+                savedShift
+                  ? 'is-saved'
+                  : ''
+              }
             "
             type="button"
             data-shift-date="${escapeHtml(
               day.date
             )}"
+            ${
+              savedShift
+                ? 'data-shift-saved="1"'
+                : ''
+            }
           >
 
             <span class="shift-day-weekday">
