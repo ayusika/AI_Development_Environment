@@ -2617,8 +2617,31 @@ async function loadScheduleSalesMaster() {
     };
 
 
+    const selectedStoreCourseId =
+      Number(
+        selectedScheduleCourseMaster
+          ?.store_course_id
+        || 0
+      );
+
+
+    const matchingCourseById =
+      selectedStoreCourseId > 0
+        ? scheduleSalesMaster.courses.find(
+            (course) =>
+              Number(
+                course.store_course_id
+              )
+              === selectedStoreCourseId
+              && course.course_type
+                === 'regular'
+          )
+        : null;
+
+
     const matchingCourse =
-      scheduleSalesMaster.courses.find(
+      matchingCourseById
+      || scheduleSalesMaster.courses.find(
         (course) =>
           Number(
             course.course_minutes
