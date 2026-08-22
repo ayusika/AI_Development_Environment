@@ -1652,6 +1652,11 @@ try {
             'course_minutes' =>
                 (int) $updatedVisit['course_minutes'],
 
+            'store_course_id' =>
+                $updatedVisit['store_course_id'] === null
+                    ? null
+                    : (int) $updatedVisit['store_course_id'],
+
             'customer_status' =>
                 $updatedVisit['customer_status'],
 
