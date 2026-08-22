@@ -9433,7 +9433,12 @@ function renderShiftWeek() {
                 savedShift.status
                 === 'off'
                   ? '休み'
-                  : `${savedShift.store_name || ''} ${
+                  : `${
+                      savedShift.status
+                      === 'confirmed'
+                        ? '確定 '
+                        : ''
+                    }${savedShift.store_name || ''} ${
                       formatSavedShiftTime(
                         savedShift
                       )
