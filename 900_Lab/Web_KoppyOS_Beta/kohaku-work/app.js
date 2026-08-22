@@ -4341,7 +4341,16 @@ function renderScheduleEvent(
       <span class="schedule-event-meta">
 
         <span class="schedule-event-status">
-          ${Number(visit.course_minutes)}分
+          ${
+            visit.pricing_category
+              === 'foreign'
+              ? `外${Number(
+                  visit.course_minutes
+                )}分`
+              : `${Number(
+                  visit.course_minutes
+                )}分`
+          }
         </span>
 
       </span>
