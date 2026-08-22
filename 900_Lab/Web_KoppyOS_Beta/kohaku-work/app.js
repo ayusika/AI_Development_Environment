@@ -10185,6 +10185,161 @@ shiftStoreSelect
 
 
 /* ========================================
+   DELETE
+======================================== */
+
+async function deleteEditingShift() {
+
+  const shiftId =
+    Number(
+      shiftState.editingShiftId
+    );
+
+
+  if (!shiftId) {
+
+    showShiftSavePreview(
+      '削除するシフトが選択されていません。',
+      true
+    );
+
+    return;
+  }
+
+
+  const savedShift =
+    shiftState.shifts
+      .find(
+        (shift) =>
+          Number(
+            shift.id
+          )
+          === shiftId
+      )
+    || null;
+
+
+  if (!savedShift) {
+
+    showShiftSavePreview(
+      '削除対象のシフトを確認できませんでした。',
+      true
+    );
+
+    return;
+  }
+
+
+  const confirmed =
+    window.confirm(
+      `${formatShiftDisplayDate(
+        savedShift.shift_date
+      )} のシフトを削除しますか？`
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  if (shiftDeleteButton) {
+
+    shiftDeleteButton.disabled =
+      true;
+
+    shiftDeleteButton.textContent =
+      '削除中…';
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        shiftsApiUrl,
+        {
+          method:
+            'DELETE',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              id:
+                shiftId,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      ||
+      !data.success
+    ) {
+      throw new Error(
+        data.error
+        || 'シフトを削除できませんでした。'
+      );
+    }
+
+
+    shiftState.editingShiftId =
+      null;
+
+    shiftState.selectedDates.clear();
+
+    shiftState.selectedStoreId =
+      '';
+
+
+    if (shiftDeleteButton) {
+      shiftDeleteButton.hidden =
+        true;
+    }
+
+
+    await loadShift();
+
+
+    showShiftSavePreview(
+      'シフトを削除しました。'
+    );
+
+
+  } catch (error) {
+
+    showShiftSavePreview(
+      error instanceof Error
+        ? error.message
+        : 'シフトを削除できませんでした。',
+      true
+    );
+
+
+  } finally {
+
+    if (shiftDeleteButton) {
+
+      shiftDeleteButton.disabled =
+        false;
+
+      shiftDeleteButton.textContent =
+        'このシフトを削除';
+    }
+  }
+}
+
+
+/* ========================================
    SAVE PREVIEW
 ======================================== */
 
