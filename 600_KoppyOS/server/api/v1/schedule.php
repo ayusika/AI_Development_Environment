@@ -930,11 +930,12 @@ try {
                     started_at,
                     booked_at,
                     course_minutes,
+                    store_course_id,
                     customer_status,
                     is_dummy,
                     status
                 )
-                VALUES (?, ?, ?, ?, ?, ?, 0, ?)'
+                VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)'
             );
 
         $statement->execute([
