@@ -2393,9 +2393,14 @@ function renderScheduleSalesMaster() {
                 >
                   <strong>
                     ${escapeHtml(
-                      String(
-                        course.course_name
-                      )
+                      course.pricing_category
+                        === 'foreign'
+                        ? `外${Number(
+                            course.course_minutes
+                          )}分`
+                        : `${Number(
+                            course.course_minutes
+                          )}分`
                     )}
                   </strong>
 
