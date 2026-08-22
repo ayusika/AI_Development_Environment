@@ -10931,16 +10931,20 @@ async function previewPreviousShiftWeek() {
 
 
   const targetWeekEnd =
-    addShiftDays(
-      shiftState.weekStart,
-      6
+    new Date(
+      shiftState.weekStart
     );
 
 
+  targetWeekEnd.setDate(
+    targetWeekEnd.getDate() + 6
+  );
+
+
   const targetWeekLabel =
-    `${formatShiftDateLabel(
+    `${formatShiftMonthDay(
       shiftState.weekStart
-    )}〜${formatShiftDateLabel(
+    )}〜${formatShiftMonthDay(
       targetWeekEnd
     )}`;
 
