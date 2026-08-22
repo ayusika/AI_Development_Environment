@@ -8978,6 +8978,971 @@ function escapeHtml(
 // WRITER:WORK_SCHEDULE_LOGIC:END
 
 
+// WRITER:WORK_SHIFT_LOGIC:START
+
+/* ========================================
+   WORK SHIFT
+======================================== */
+
+const shiftMasterApiUrl =
+  '/api/v1/shift-master.php';
+
+
+const shiftWeekCalendar =
+  document.getElementById(
+    'shift-week-calendar'
+  );
+
+const shiftWeekTitle =
+  document.getElementById(
+    'shift-week-title'
+  );
+
+const shiftSelectionCount =
+  document.getElementById(
+    'shift-selection-count'
+  );
+
+const shiftStoreSelect =
+  document.getElementById(
+    'shift-store-select'
+  );
+
+const shiftSelectedDays =
+  document.getElementById(
+    'shift-selected-days'
+  );
+
+
+const shiftState = {
+  workerCode: 'shii',
+
+  weekStart:
+    getShiftWeekStart(
+      new Date()
+    ),
+
+  workers: [],
+  stores: [],
+  defaultRules: [],
+  days: [],
+
+  selectedDates:
+    new Set(),
+
+  selectedStoreId: '',
+};
+
+
+/* ========================================
+   LOAD
+======================================== */
+
+async function loadShift() {
+
+  if (!shiftWeekCalendar) {
+    return;
+  }
+
+
+  shiftWeekCalendar.innerHTML =
+    '<p class="shift-loading">シフト情報を読み込み中…</p>';
+
+
+  const weekEnd =
+    new Date(
+      shiftState.weekStart
+    );
+
+  weekEnd.setDate(
+    weekEnd.getDate() + 6
+  );
+
+
+  const dateFrom =
+    formatShiftDate(
+      shiftState.weekStart
+    );
+
+  const dateTo =
+    formatShiftDate(
+      weekEnd
+    );
+
+
+  try {
+
+    const params =
+      new URLSearchParams({
+        date_from:
+          dateFrom,
+
+        date_to:
+          dateTo,
+      });
+
+
+    const response =
+      await fetch(
+        `${shiftMasterApiUrl}?${params.toString()}`
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+      throw new Error(
+        data.error
+        || 'シフト情報を取得できませんでした。'
+      );
+    }
+
+
+    shiftState.workers =
+      Array.isArray(data.workers)
+        ? data.workers
+        : [];
+
+
+    shiftState.stores =
+      Array.isArray(data.stores)
+        ? data.stores
+        : [];
+
+
+    shiftState.defaultRules =
+      Array.isArray(
+        data.default_rules
+      )
+        ? data.default_rules
+        : [];
+
+
+    shiftState.days =
+      Array.isArray(data.days)
+        ? data.days
+        : [];
+
+
+    renderShiftStoreOptions();
+    renderShiftWeek();
+    renderShiftSelectedDays();
+
+
+  } catch (error) {
+
+    shiftWeekCalendar.innerHTML = `
+      <p class="shift-loading">
+        ${escapeHtml(
+          error.message
+        )}
+      </p>
+    `;
+  }
+}
+
+
+/* ========================================
+   WEEK
+======================================== */
+
+function getShiftWeekStart(
+  sourceDate
+) {
+
+  const date =
+    new Date(
+      sourceDate
+    );
+
+
+  date.setHours(
+    12,
+    0,
+    0,
+    0
+  );
+
+
+  const weekday =
+    date.getDay();
+
+
+  const mondayOffset =
+    weekday === 0
+      ? -6
+      : 1 - weekday;
+
+
+  date.setDate(
+    date.getDate()
+    + mondayOffset
+  );
+
+
+  return date;
+}
+
+
+function moveShiftWeek(
+  amount
+) {
+
+  const next =
+    new Date(
+      shiftState.weekStart
+    );
+
+
+  next.setDate(
+    next.getDate()
+    + (amount * 7)
+  );
+
+
+  shiftState.weekStart =
+    next;
+
+
+  shiftState.selectedDates.clear();
+
+
+  loadShift();
+}
+
+
+function resetShiftWeekToToday() {
+
+  shiftState.weekStart =
+    getShiftWeekStart(
+      new Date()
+    );
+
+
+  shiftState.selectedDates.clear();
+
+
+  loadShift();
+}
+
+
+/* ========================================
+   WEEK RENDER
+======================================== */
+
+function renderShiftWeek() {
+
+  if (
+    !shiftWeekCalendar
+    || !shiftWeekTitle
+  ) {
+    return;
+  }
+
+
+  const weekEnd =
+    new Date(
+      shiftState.weekStart
+    );
+
+
+  weekEnd.setDate(
+    weekEnd.getDate() + 6
+  );
+
+
+  shiftWeekTitle.textContent =
+    `${formatShiftMonthDay(
+      shiftState.weekStart
+    )} 〜 ${formatShiftMonthDay(
+      weekEnd
+    )}`;
+
+
+  const weekdayLabels = [
+    '日',
+    '月',
+    '火',
+    '水',
+    '木',
+    '金',
+    '土',
+  ];
+
+
+  shiftWeekCalendar.innerHTML =
+    shiftState.days
+      .map((day) => {
+
+        const date =
+          parseShiftDate(
+            day.date
+          );
+
+
+        const isSelected =
+          shiftState.selectedDates
+            .has(
+              day.date
+            );
+
+
+        const holidayName =
+          day.holiday_name
+            ? String(
+                day.holiday_name
+              )
+            : '';
+
+
+        const isHoliday =
+          holidayName !== '';
+
+
+        const weekday =
+          weekdayLabels[
+            date.getDay()
+          ];
+
+
+        const dayTypeLabel =
+          day.day_type
+          === 'holiday_eve'
+            ? '休日前'
+            : '平日前';
+
+
+        return `
+          <button
+            class="
+              shift-day-button
+              ${
+                isSelected
+                  ? 'is-selected'
+                  : ''
+              }
+              ${
+                day.is_weekend
+                  ? 'is-weekend'
+                  : ''
+              }
+              ${
+                isHoliday
+                  ? 'is-holiday'
+                  : ''
+              }
+            "
+            type="button"
+            data-shift-date="${escapeHtml(
+              day.date
+            )}"
+          >
+
+            <span class="shift-day-weekday">
+              ${escapeHtml(
+                weekday
+              )}
+            </span>
+
+            <strong class="shift-day-date">
+              ${escapeHtml(
+                `${date.getMonth() + 1}/${date.getDate()}`
+              )}
+            </strong>
+
+            ${
+              isHoliday
+                ? `
+                  <span class="shift-day-holiday">
+                    ${escapeHtml(
+                      holidayName
+                    )}
+                  </span>
+                `
+                : ''
+            }
+
+            <span class="shift-day-type">
+              ${escapeHtml(
+                dayTypeLabel
+              )}
+            </span>
+
+          </button>
+        `;
+      })
+      .join('');
+
+
+  updateShiftSelectionCount();
+}
+
+
+/* ========================================
+   WORKER
+======================================== */
+
+function selectShiftWorker(
+  workerCode
+) {
+
+  const worker =
+    shiftState.workers
+      .find(
+        (item) =>
+          item.worker_code
+          === workerCode
+      );
+
+
+  if (!worker) {
+    return;
+  }
+
+
+  shiftState.workerCode =
+    workerCode;
+
+
+  document
+    .querySelectorAll(
+      '[data-shift-worker]'
+    )
+    .forEach((button) => {
+
+      button.classList.toggle(
+        'is-selected',
+        button.dataset.shiftWorker
+        === workerCode
+      );
+    });
+
+
+  renderShiftSelectedDays();
+}
+
+
+/* ========================================
+   DATE SELECTION
+======================================== */
+
+function toggleShiftDate(
+  date
+) {
+
+  if (
+    shiftState.selectedDates
+      .has(date)
+  ) {
+
+    shiftState.selectedDates
+      .delete(date);
+
+  } else {
+
+    shiftState.selectedDates
+      .add(date);
+  }
+
+
+  renderShiftWeek();
+  renderShiftSelectedDays();
+}
+
+
+function updateShiftSelectionCount() {
+
+  if (!shiftSelectionCount) {
+    return;
+  }
+
+
+  shiftSelectionCount.textContent =
+    `${shiftState.selectedDates.size}日選択`;
+}
+
+
+/* ========================================
+   STORES
+======================================== */
+
+function renderShiftStoreOptions() {
+
+  if (!shiftStoreSelect) {
+    return;
+  }
+
+
+  const previousValue =
+    shiftState.selectedStoreId;
+
+
+  shiftStoreSelect.innerHTML =
+    `
+      <option value="">
+        店舗を選択
+      </option>
+    `
+    +
+    shiftState.stores
+      .map((store) => `
+        <option
+          value="${escapeHtml(
+            store.id
+          )}"
+        >
+          ${escapeHtml(
+            store.name
+          )}
+        </option>
+      `)
+      .join('');
+
+
+  if (
+    previousValue
+    &&
+    shiftState.stores.some(
+      (store) =>
+        String(store.id)
+        === String(previousValue)
+    )
+  ) {
+
+    shiftStoreSelect.value =
+      String(
+        previousValue
+      );
+  }
+}
+
+
+/* ========================================
+   DEFAULT RULE
+======================================== */
+
+function getSelectedShiftWorker() {
+
+  return shiftState.workers
+    .find(
+      (worker) =>
+        worker.worker_code
+        === shiftState.workerCode
+    )
+    || null;
+}
+
+
+function getShiftDefaultRule(
+  dayType
+) {
+
+  const worker =
+    getSelectedShiftWorker();
+
+
+  if (!worker) {
+    return null;
+  }
+
+
+  return shiftState.defaultRules
+    .find(
+      (rule) =>
+        Number(
+          rule.worker_id
+        )
+        === Number(
+          worker.id
+        )
+        &&
+        rule.day_type
+        === dayType
+    )
+    || null;
+}
+
+
+/* ========================================
+   SELECTED DAY LIST
+======================================== */
+
+function renderShiftSelectedDays() {
+
+  if (!shiftSelectedDays) {
+    return;
+  }
+
+
+  const selected =
+    shiftState.days
+      .filter(
+        (day) =>
+          shiftState.selectedDates
+            .has(
+              day.date
+            )
+      );
+
+
+  if (selected.length === 0) {
+
+    shiftSelectedDays.innerHTML =
+      `
+        <p class="shift-empty-message">
+          日付を選択してください。
+        </p>
+      `;
+
+    return;
+  }
+
+
+  shiftSelectedDays.innerHTML =
+    selected
+      .map((day) => {
+
+        const rule =
+          getShiftDefaultRule(
+            day.day_type
+          );
+
+
+        const dayTypeLabel =
+          day.day_type
+          === 'holiday_eve'
+            ? '休日前'
+            : '平日前';
+
+
+        const holidayName =
+          day.holiday_name
+            ? `・${day.holiday_name}`
+            : '';
+
+
+        return `
+          <div
+            class="shift-day-row"
+            data-shift-row="${escapeHtml(
+              day.date
+            )}"
+          >
+
+            <div class="shift-day-row-date">
+
+              <strong>
+                ${escapeHtml(
+                  formatShiftDisplayDate(
+                    day.date
+                  )
+                )}
+              </strong>
+
+              <small>
+                ${escapeHtml(
+                  holidayName
+                )}
+              </small>
+
+            </div>
+
+
+            <span class="shift-day-row-type">
+              ${escapeHtml(
+                dayTypeLabel
+              )}
+            </span>
+
+
+            <input
+              type="text"
+              inputmode="numeric"
+              value="${escapeHtml(
+                rule?.start_time
+                || ''
+              )}"
+              placeholder="開始"
+              data-shift-start
+            >
+
+
+            <input
+              type="text"
+              inputmode="numeric"
+              value="${escapeHtml(
+                rule?.end_time
+                || ''
+              )}"
+              placeholder="終了"
+              data-shift-end
+            >
+
+
+            <button
+              class="shift-day-off-button"
+              type="button"
+              data-shift-off="${escapeHtml(
+                day.date
+              )}"
+            >
+              休み
+            </button>
+
+          </div>
+        `;
+      })
+      .join('');
+}
+
+
+/* ========================================
+   OFF
+======================================== */
+
+function toggleShiftDayOff(
+  date
+) {
+
+  const row =
+    document.querySelector(
+      `[data-shift-row="${CSS.escape(
+        date
+      )}"]`
+    );
+
+
+  if (!row) {
+    return;
+  }
+
+
+  const button =
+    row.querySelector(
+      '[data-shift-off]'
+    );
+
+
+  const inputs =
+    row.querySelectorAll(
+      'input'
+    );
+
+
+  const isOff =
+    button.classList.toggle(
+      'is-selected'
+    );
+
+
+  inputs.forEach(
+    (input) => {
+      input.disabled =
+        isOff;
+    }
+  );
+}
+
+
+/* ========================================
+   EVENTS
+======================================== */
+
+document.addEventListener(
+  'click',
+  (event) => {
+
+    const workerButton =
+      event.target.closest(
+        '[data-shift-worker]'
+      );
+
+
+    if (workerButton) {
+
+      selectShiftWorker(
+        workerButton
+          .dataset
+          .shiftWorker
+      );
+
+      return;
+    }
+
+
+    const dateButton =
+      event.target.closest(
+        '[data-shift-date]'
+      );
+
+
+    if (dateButton) {
+
+      toggleShiftDate(
+        dateButton
+          .dataset
+          .shiftDate
+      );
+
+      return;
+    }
+
+
+    const weekMoveButton =
+      event.target.closest(
+        '[data-shift-week-move]'
+      );
+
+
+    if (weekMoveButton) {
+
+      moveShiftWeek(
+        Number(
+          weekMoveButton
+            .dataset
+            .shiftWeekMove
+        )
+      );
+
+      return;
+    }
+
+
+    const todayButton =
+      event.target.closest(
+        '[data-shift-week-today]'
+      );
+
+
+    if (todayButton) {
+
+      resetShiftWeekToToday();
+
+      return;
+    }
+
+
+    const offButton =
+      event.target.closest(
+        '[data-shift-off]'
+      );
+
+
+    if (offButton) {
+
+      toggleShiftDayOff(
+        offButton
+          .dataset
+          .shiftOff
+      );
+    }
+  }
+);
+
+
+shiftStoreSelect
+  ?.addEventListener(
+    'change',
+    () => {
+
+      shiftState.selectedStoreId =
+        shiftStoreSelect.value;
+    }
+  );
+
+
+/* ========================================
+   DATE HELPERS
+======================================== */
+
+function parseShiftDate(
+  value
+) {
+
+  return new Date(
+    `${value}T12:00:00`
+  );
+}
+
+
+function formatShiftDate(
+  date
+) {
+
+  const year =
+    date.getFullYear();
+
+
+  const month =
+    String(
+      date.getMonth() + 1
+    ).padStart(
+      2,
+      '0'
+    );
+
+
+  const day =
+    String(
+      date.getDate()
+    ).padStart(
+      2,
+      '0'
+    );
+
+
+  return `${year}-${month}-${day}`;
+}
+
+
+function formatShiftMonthDay(
+  date
+) {
+
+  return `${
+    date.getMonth() + 1
+  }/${date.getDate()}`;
+}
+
+
+function formatShiftDisplayDate(
+  value
+) {
+
+  const date =
+    parseShiftDate(
+      value
+    );
+
+
+  const labels = [
+    '日',
+    '月',
+    '火',
+    '水',
+    '木',
+    '金',
+    '土',
+  ];
+
+
+  return `${
+    date.getMonth() + 1
+  }/${date.getDate()}（${
+    labels[
+      date.getDay()
+    ]
+  }）`;
+}
+
+// WRITER:WORK_SHIFT_LOGIC:END
+
+
 /* ========================================
    DUMMY DIARY LITE
 ======================================== */
