@@ -4274,6 +4274,9 @@ function resetScheduleForm() {
   selectedScheduleCourseRateId =
     null;
 
+  selectedScheduleExtensions =
+    [];
+
   selectedCustomerStatus =
     'repeat_unknown_id';
 
