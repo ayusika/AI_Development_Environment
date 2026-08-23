@@ -437,36 +437,48 @@ try {
 
 
             if ($startTime === '') {
-                throw new RuntimeException(
-                    'start_time is required.'
-                );
-            }
+
+                if ($endTime !== '') {
+                    throw new RuntimeException(
+                        'start_time is required when end_time is set.'
+                    );
+                }
 
 
-            $startAt =
-                calendarEventNormalizeTime(
-                    $eventDate,
-                    $startTime
-                );
+                $startAt =
+                    $eventDate
+                    . ' 00:00';
 
+                $endAt =
+                    null;
 
-            $endAt =
-                $endTime === ''
-                    ? null
-                    : calendarEventNormalizeTime(
+            } else {
+
+                $startAt =
+                    calendarEventNormalizeTime(
                         $eventDate,
-                        $endTime
+                        $startTime
                     );
 
 
-            if (
-                $endAt !== null
-                &&
-                $endAt < $startAt
-            ) {
-                throw new RuntimeException(
-                    'end_time must not be before start_time.'
-                );
+                $endAt =
+                    $endTime === ''
+                        ? null
+                        : calendarEventNormalizeTime(
+                            $eventDate,
+                            $endTime
+                        );
+
+
+                if (
+                    $endAt !== null
+                    &&
+                    $endAt < $startAt
+                ) {
+                    throw new RuntimeException(
+                        'end_time must not be before start_time.'
+                    );
+                }
             }
         }
 
