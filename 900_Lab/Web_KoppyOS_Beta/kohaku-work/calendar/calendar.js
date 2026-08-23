@@ -554,6 +554,242 @@ function shiftsContinue(
 }
 
 
+function openEventModal(
+  dateKey,
+  ownerCode
+) {
+  eventForm.reset();
+
+  eventDateInput.value =
+    dateKey;
+
+  eventDateLabel.textContent =
+    dateKey.replace(
+      /^(\d{4})-(\d{2})-(\d{2})$/,
+      '$1年 $2月 $3日'
+    );
+
+  eventOwnerSelect.value =
+    ownerCode;
+
+  eventStartTimeInput.disabled =
+    false;
+
+  eventEndTimeInput.disabled =
+    false;
+
+  eventMessage.textContent =
+    '';
+
+  eventModal.hidden =
+    false;
+
+  document.body.style.overflow =
+    'hidden';
+
+
+  const titleInput =
+    eventForm.querySelector(
+      '[name="title"]'
+    );
+
+  window.setTimeout(
+    () => {
+      titleInput?.focus();
+    },
+    0
+  );
+}
+
+
+function closeEventModal() {
+  eventModal.hidden =
+    true;
+
+  document.body.style.overflow =
+    '';
+}
+
+
+eventModalCloseButtons.forEach(
+  (button) => {
+
+    button.addEventListener(
+      'click',
+      () => {
+        closeEventModal();
+      }
+    );
+  }
+);
+
+
+eventAllDayInput.addEventListener(
+  'change',
+  () => {
+
+    const disabled =
+      eventAllDayInput.checked;
+
+    eventStartTimeInput.disabled =
+      disabled;
+
+    eventEndTimeInput.disabled =
+      disabled;
+
+    if (disabled) {
+      eventStartTimeInput.value =
+        '';
+
+      eventEndTimeInput.value =
+        '';
+    }
+  }
+);
+
+
+eventForm.addEventListener(
+  'submit',
+  async (event) => {
+
+    event.preventDefault();
+
+
+    const formData =
+      new FormData(
+        eventForm
+      );
+
+
+    const payload = {
+      event_date:
+        String(
+          formData.get(
+            'event_date'
+          )
+          || ''
+        ),
+
+      owner_code:
+        String(
+          formData.get(
+            'owner_code'
+          )
+          || ''
+        ),
+
+      title:
+        String(
+          formData.get(
+            'title'
+          )
+          || ''
+        ),
+
+      all_day:
+        eventAllDayInput.checked,
+
+      start_time:
+        eventAllDayInput.checked
+          ? ''
+          : String(
+              formData.get(
+                'start_time'
+              )
+              || ''
+            ),
+
+      end_time:
+        eventAllDayInput.checked
+          ? ''
+          : String(
+              formData.get(
+                'end_time'
+              )
+              || ''
+            ),
+
+      category:
+        String(
+          formData.get(
+            'category'
+          )
+          || ''
+        ),
+
+      memo:
+        String(
+          formData.get(
+            'memo'
+          )
+          || ''
+        ),
+    };
+
+
+    eventMessage.textContent =
+      '保存しています…';
+
+
+    try {
+
+      const response =
+        await fetch(
+          CALENDAR_EVENTS_API_URL,
+          {
+            method:
+              'POST',
+
+            credentials:
+              'same-origin',
+
+            headers: {
+              'Content-Type':
+                'application/json',
+            },
+
+            body:
+              JSON.stringify(
+                payload
+              ),
+          }
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (
+        !response.ok
+        || data.success !== true
+      ) {
+        throw new Error(
+          data.error
+          || '予定を保存できませんでした。'
+        );
+      }
+
+
+      closeEventModal();
+
+      await loadMonthShifts();
+
+
+    } catch (error) {
+
+      console.error(
+        error
+      );
+
+      eventMessage.textContent =
+        error.message
+        || '予定を保存できませんでした。';
+    }
+  }
+);
+
+
 function renderMonthCalendar() {
   const currentMonth =
     calendarState.currentMonth;
