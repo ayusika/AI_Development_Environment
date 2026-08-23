@@ -1945,3 +1945,25 @@ button {
       2px 5px;
   }
 }
+
+/* =====================================================
+   Quiet empty work lines
+===================================================== */
+
+.calendar-shift.is-empty {
+  background:
+    rgba(228, 247, 235, 0.18);
+
+  border-color:
+    rgba(201, 231, 213, 0.28);
+}
+
+
+.calendar-day-lane:hover
+.calendar-shift.is-empty {
+  background:
+    rgba(228, 247, 235, 0.62);
+
+  border-color:
+    rgba(201, 231, 213, 0.78);
+}
