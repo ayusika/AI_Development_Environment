@@ -4043,6 +4043,174 @@ function scrollScheduleToToday() {
 }
 
 
+function renderScheduleShiftForDate(
+  date,
+  hourHeight
+) {
+
+  const shift =
+    scheduleState.shifts
+      .find(
+        (item) =>
+          item.shift_date
+          === date
+      )
+    || null;
+
+
+  if (
+    !shift
+    || !shift.start_at
+    || !shift.end_at
+  ) {
+    return '';
+  }
+
+
+  const startHour =
+    Number(
+      String(
+        shift.start_at
+      ).slice(
+        11,
+        13
+      )
+    );
+
+  const startMinute =
+    Number(
+      String(
+        shift.start_at
+      ).slice(
+        14,
+        16
+      )
+    );
+
+
+  const startDate =
+    String(
+      shift.start_at
+    ).slice(
+      0,
+      10
+    );
+
+  const endDate =
+    String(
+      shift.end_at
+    ).slice(
+      0,
+      10
+    );
+
+
+  let endHour =
+    Number(
+      String(
+        shift.end_at
+      ).slice(
+        11,
+        13
+      )
+    );
+
+  const endMinute =
+    Number(
+      String(
+        shift.end_at
+      ).slice(
+        14,
+        16
+      )
+    );
+
+
+  if (
+    endDate > startDate
+  ) {
+    endHour += 24;
+  }
+
+
+  const startTotalMinutes =
+    startHour * 60
+    + startMinute;
+
+  const endTotalMinutes =
+    endHour * 60
+    + endMinute;
+
+
+  const calendarStartMinutes =
+    scheduleStartHour * 60;
+
+  const calendarEndMinutes =
+    scheduleEndHour * 60;
+
+
+  const visibleStart =
+    Math.max(
+      startTotalMinutes,
+      calendarStartMinutes
+    );
+
+  const visibleEnd =
+    Math.min(
+      endTotalMinutes,
+      calendarEndMinutes
+    );
+
+
+  if (
+    visibleEnd
+    <= visibleStart
+  ) {
+    return '';
+  }
+
+
+  const top =
+    (
+      visibleStart
+      - calendarStartMinutes
+    )
+    * hourHeight
+    / 60;
+
+
+  const height =
+    (
+      visibleEnd
+      - visibleStart
+    )
+    * hourHeight
+    / 60;
+
+
+  return `
+    <div
+      class="schedule-shift-band"
+      style="
+        top:${top}px;
+        height:${height}px;
+      "
+    >
+      <span>
+        確定シフト
+      </span>
+
+      <strong>
+        ${escapeHtml(
+          shift.store_name
+          || ''
+        )}
+      </strong>
+    </div>
+  `;
+}
+
+
 function renderScheduleSlots(
   date,
   totalHeight,
