@@ -4,6 +4,9 @@
 const SHIFTS_API_URL =
   '/api/v1/shifts.php';
 
+const HOLIDAYS_API_URL =
+  'https://holidays-jp.github.io/api/v1/date.json';
+
 
 const calendarState = {
   currentMonth:
@@ -13,6 +16,7 @@ const calendarState = {
       1
     ),
   shifts: [],
+  holidays: {},
 };
 
 
