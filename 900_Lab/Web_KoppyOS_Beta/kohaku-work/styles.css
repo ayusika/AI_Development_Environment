@@ -3157,6 +3157,59 @@ body:has(#view-schedule.is-active) .bottom-nav {
 
 
 /* ========================================
+   CONFIRMED SHIFT BAND
+======================================== */
+
+.schedule-shift-band {
+  position: absolute;
+
+  left: 3px;
+  right: 3px;
+
+  z-index: 2;
+
+  padding: 5px 6px;
+
+  overflow: hidden;
+
+  border:
+    1px solid
+    rgba(101, 189, 229, 0.28);
+
+  border-radius: 8px;
+
+  background:
+    rgba(101, 189, 229, 0.10);
+
+  pointer-events: none;
+}
+
+
+.schedule-shift-band span,
+.schedule-shift-band strong {
+  display: block;
+}
+
+
+.schedule-shift-band span {
+  color: var(--accent-deep);
+
+  font-size: 8px;
+  font-weight: 900;
+}
+
+
+.schedule-shift-band strong {
+  margin-top: 2px;
+
+  color: var(--text-soft);
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+
+/* ========================================
    CURRENT TIME
 ======================================== */
 
