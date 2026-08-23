@@ -4,6 +4,9 @@
 const SHIFTS_API_URL =
   '/api/v1/shifts.php';
 
+const CALENDAR_EVENTS_API_URL =
+  '/api/v1/calendar-events.php';
+
 const HOLIDAYS_API_URL =
   'https://holidays-jp.github.io/api/v1/date.json';
 
@@ -16,6 +19,7 @@ const calendarState = {
       1
     ),
   shifts: [],
+  events: [],
   holidays: {},
 };
 
