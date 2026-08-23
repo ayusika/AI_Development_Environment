@@ -60,9 +60,24 @@ const eventDateInput =
     '[data-event-date]'
   );
 
+const eventIdInput =
+  document.querySelector(
+    '[data-event-id]'
+  );
+
 const eventDateLabel =
   document.querySelector(
     '[data-event-date-label]'
+  );
+
+const eventDialogTitle =
+  document.getElementById(
+    'calendar-event-dialog-title'
+  );
+
+const eventDeleteButton =
+  document.querySelector(
+    '[data-event-delete]'
   );
 
 const eventOwnerSelect =
