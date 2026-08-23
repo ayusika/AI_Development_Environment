@@ -1175,6 +1175,49 @@ function renderMonthCalendar() {
       || [];
 
 
+    const sharedEvents =
+      dayEvents.filter(
+        (event) =>
+          event.owner_code
+          === 'shared'
+      );
+
+
+    if (sharedEvents.length > 0) {
+
+      const sharedEventsElement =
+        document.createElement('div');
+
+      sharedEventsElement.className =
+        'calendar-shared-events';
+
+
+      sharedEvents.forEach(
+        (event) => {
+
+          const eventElement =
+            createCalendarEventElement(
+              event
+            );
+
+          eventElement.classList.add(
+            'is-shared'
+          );
+
+
+          sharedEventsElement.appendChild(
+            eventElement
+          );
+        }
+      );
+
+
+      dayElement.appendChild(
+        sharedEventsElement
+      );
+    }
+
+
     const previousDate =
       new Date(
         date.getFullYear(),
