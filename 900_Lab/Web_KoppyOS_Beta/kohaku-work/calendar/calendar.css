@@ -485,11 +485,11 @@ button {
     8px;
 
   border-right:
-    1px solid
+    2px solid
     var(--calendar-line);
 
   border-bottom:
-    1px solid
+    2px solid
     var(--calendar-line);
 
   background:
