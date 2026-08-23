@@ -3911,11 +3911,28 @@ function renderScheduleCalendar(
             new Date()
           );
 
+
+        const dayShift =
+          scheduleState.shifts
+            .find(
+              (shift) =>
+                shift.shift_date
+                === date
+            )
+          || null;
+
+
+        const isOff =
+          dayShift?.status
+          === 'off';
+
+
         return `
           <div
             class="
               schedule-day-column
               ${isToday ? 'is-today' : ''}
+              ${isOff ? 'is-off' : ''}
             "
             data-schedule-day="${date}"
             style="height:${totalHeight}px"
