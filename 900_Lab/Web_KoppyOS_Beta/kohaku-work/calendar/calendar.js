@@ -641,16 +641,77 @@ function renderMonthCalendar() {
     }
 
 
+    const weekday =
+      date.getDay();
+
+    const holidayName =
+      calendarState.holidays[
+        dateKey
+      ]
+      || '';
+
+
+    if (weekday === 0) {
+      dayElement.classList.add(
+        'is-sunday'
+      );
+    }
+
+
+    if (weekday === 6) {
+      dayElement.classList.add(
+        'is-saturday'
+      );
+    }
+
+
+    if (holidayName !== '') {
+      dayElement.classList.add(
+        'is-holiday'
+      );
+    }
+
+
     const dateElement =
       document.createElement('div');
 
     dateElement.className =
       'calendar-date';
 
-    dateElement.textContent =
+
+    const dateNumberElement =
+      document.createElement('span');
+
+    dateNumberElement.className =
+      'calendar-date-number';
+
+    dateNumberElement.textContent =
       String(
         date.getDate()
       );
+
+
+    dateElement.appendChild(
+      dateNumberElement
+    );
+
+
+    if (holidayName !== '') {
+
+      const holidayElement =
+        document.createElement('span');
+
+      holidayElement.className =
+        'calendar-holiday-name';
+
+      holidayElement.textContent =
+        holidayName;
+
+
+      dateElement.appendChild(
+        holidayElement
+      );
+    }
 
 
     dayElement.appendChild(
