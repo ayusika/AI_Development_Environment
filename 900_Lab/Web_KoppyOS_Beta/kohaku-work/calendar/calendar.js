@@ -1532,39 +1532,51 @@ function renderMonthCalendar() {
       );
 
 
-    if (sharedEvents.length > 0) {
+    const sharedZoneElement =
+      document.createElement('div');
 
-      const sharedEventsElement =
-        document.createElement('div');
+    sharedZoneElement.className =
+      'calendar-zone calendar-zone-shared';
 
-      sharedEventsElement.className =
-        'calendar-shared-events';
+    sharedZoneElement.dataset.ownerCode =
+      'shared';
 
 
-      sharedEvents.forEach(
-        (event) => {
+    sharedZoneElement.addEventListener(
+      'click',
+      () => {
 
-          const eventElement =
-            createCalendarEventElement(
-              event
-            );
+        openEventModal(
+          dateKey,
+          'shared'
+        );
+      }
+    );
 
-          eventElement.classList.add(
-            'is-shared'
+
+    sharedEvents.forEach(
+      (event) => {
+
+        const eventElement =
+          createCalendarEventElement(
+            event
           );
 
-
-          sharedEventsElement.appendChild(
-            eventElement
-          );
-        }
-      );
+        eventElement.classList.add(
+          'is-shared'
+        );
 
 
-      dayElement.appendChild(
-        sharedEventsElement
-      );
-    }
+        sharedZoneElement.appendChild(
+          eventElement
+        );
+      }
+    );
+
+
+    dayElement.appendChild(
+      sharedZoneElement
+    );
 
 
     const previousDate =
