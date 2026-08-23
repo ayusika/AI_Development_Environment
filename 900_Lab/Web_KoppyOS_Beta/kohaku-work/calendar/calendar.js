@@ -269,7 +269,14 @@ function createShiftElement(shift) {
     null;
 
 
-  if (workerCode === 'shii') {
+  const isSapporo =
+    shift.store_name === '札幌';
+
+
+  if (
+    isSapporo
+    && workerCode === 'shii'
+  ) {
     defaultStartMinutes =
       14 * 60;
 
@@ -278,7 +285,10 @@ function createShiftElement(shift) {
   }
 
 
-  if (workerCode === 'ui') {
+  if (
+    isSapporo
+    && workerCode === 'ui'
+  ) {
     defaultStartMinutes =
       15 * 60;
 
