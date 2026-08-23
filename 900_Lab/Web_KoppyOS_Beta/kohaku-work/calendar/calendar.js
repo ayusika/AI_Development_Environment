@@ -476,8 +476,8 @@ async function loadMonthShifts() {
     calendarState.shifts =
       data.shifts.filter(
         (shift) =>
-          shift.status
-          === 'confirmed'
+          shift.status === 'confirmed'
+          || shift.status === 'off'
       );
 
 
