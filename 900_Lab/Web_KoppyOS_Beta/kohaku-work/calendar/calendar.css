@@ -578,20 +578,14 @@ button {
   align-items:
     center;
 
-  justify-content:
-    center;
+  gap:
+    6px;
 
-  width:
-    32px;
-
-  height:
+  min-height:
     32px;
 
   margin-bottom:
     5px;
-
-  border-radius:
-    999px;
 
   font-size:
     15px;
@@ -601,8 +595,69 @@ button {
 }
 
 
+.calendar-date-number {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  width:
+    32px;
+
+  height:
+    32px;
+
+  flex:
+    0 0 32px;
+
+  border-radius:
+    999px;
+}
+
+
+.calendar-day.is-sunday
+.calendar-date-number,
+.calendar-day.is-holiday
+.calendar-date-number {
+  color:
+    #df7180;
+}
+
+
+.calendar-day.is-saturday
+.calendar-date-number {
+  color:
+    #5d9fd0;
+}
+
+
+.calendar-holiday-name {
+  overflow:
+    hidden;
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+
+  color:
+    #df7180;
+
+  font-size:
+    10px;
+
+  font-weight:
+    700;
+}
+
+
 .calendar-day.is-today
-.calendar-date {
+.calendar-date-number {
   background:
     var(--calendar-accent);
 
