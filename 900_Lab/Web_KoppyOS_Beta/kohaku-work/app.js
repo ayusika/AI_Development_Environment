@@ -3924,6 +3924,11 @@ function renderScheduleCalendar(
               hourHeight
             )}
 
+            ${renderScheduleShiftForDate(
+              date,
+              hourHeight
+            )}
+
             ${renderScheduleEventsForDate(
               date,
               hourHeight
