@@ -1342,3 +1342,33 @@ button {
   background:
     rgba(72, 181, 223, 0.035);
 }
+
+.calendar-shared-events {
+  display:
+    grid;
+
+  gap:
+    3px;
+
+  margin:
+    0 4px 4px;
+}
+
+
+.calendar-event.is-shared {
+  max-width:
+    none;
+
+  margin:
+    0;
+
+  background:
+    rgba(130, 142, 151, 0.13);
+
+  color:
+    #556973;
+
+  border:
+    1px solid
+    rgba(114, 137, 149, 0.14);
+}
