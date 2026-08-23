@@ -441,12 +441,33 @@ function getShiftContinuationKey(
     ].join('|');
   }
 
+
+  const shiftDate =
+    String(
+      shift.shift_date
+      || ''
+    );
+
+
+  const startTime =
+    getExtendedShiftTime(
+      shift.start_at,
+      shiftDate
+    );
+
+  const endTime =
+    getExtendedShiftTime(
+      shift.end_at,
+      shiftDate
+    );
+
+
   return [
     shift.worker_code,
     shift.status,
     shift.store_name || '',
-    shift.start_at || '',
-    shift.end_at || '',
+    startTime,
+    endTime,
   ].join('|');
 }
 
