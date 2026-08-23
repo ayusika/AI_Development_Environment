@@ -944,6 +944,122 @@ eventModalCloseButtons.forEach(
 );
 
 
+eventDeleteButton.addEventListener(
+  'click',
+  async () => {
+
+    const eventId =
+      Number(
+        eventIdInput.value
+        || 0
+      );
+
+
+    if (eventId <= 0) {
+      return;
+    }
+
+
+    const titleInput =
+      eventForm.querySelector(
+        '[name="title"]'
+      );
+
+
+    const title =
+      String(
+        titleInput?.value
+        || 'この予定'
+      );
+
+
+    const confirmed =
+      window.confirm(
+        `「${title}」を削除しますか？`
+      );
+
+
+    if (!confirmed) {
+      return;
+    }
+
+
+    eventMessage.textContent =
+      '削除しています…';
+
+
+    eventDeleteButton.disabled =
+      true;
+
+
+    try {
+
+      const response =
+        await fetch(
+          CALENDAR_EVENTS_API_URL,
+          {
+            method:
+              'DELETE',
+
+            credentials:
+              'same-origin',
+
+            headers: {
+              'Content-Type':
+                'application/json',
+            },
+
+            body:
+              JSON.stringify({
+                id:
+                  eventId,
+              }),
+          }
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (
+        !response.ok
+        || data.success !== true
+      ) {
+        throw new Error(
+          data.error
+          || '予定を削除できませんでした。'
+        );
+      }
+
+
+      closeEventModal();
+
+
+      await loadMonthShifts();
+
+
+    } catch (error) {
+
+      console.error(
+        error
+      );
+
+
+      eventMessage.textContent =
+        error.message
+        || '予定を削除できませんでした。';
+
+
+    } finally {
+
+      eventDeleteButton.disabled =
+        false;
+    }
+  }
+);
+
+
 eventAllDayInput.addEventListener(
   'change',
   () => {
