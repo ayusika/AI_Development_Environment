@@ -3762,8 +3762,13 @@ async function loadSchedule(
       )
         ? shiftData.shifts.filter(
             (shift) =>
-              shift.status
-              === 'confirmed'
+              (
+                shift.status
+                === 'confirmed'
+                ||
+                shift.status
+                === 'off'
+              )
               &&
               Number(
                 shift.is_reservation_owner
