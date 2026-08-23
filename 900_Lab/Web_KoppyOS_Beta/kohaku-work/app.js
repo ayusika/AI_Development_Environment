@@ -1881,15 +1881,6 @@ if (customerSearchInput) {
    WORK SCHEDULE
 ======================================== */
 
-const scheduleState = {
-  view: 'two-weeks',
-  anchorDate: null,
-  visits: [],
-  selectedVisit: null,
-  identitySearchVisits: [],
-  selectedIdentityCandidate: null,
-};
-
 const visitIdentityFeaturesApiUrl =
   '/api/v1/visit-identity-features.php';
 
