@@ -10127,6 +10127,37 @@ function renderShiftStoreOptions() {
       String(
         previousValue
       );
+
+    return;
+  }
+
+
+  if (
+    !shiftState.editingShiftId
+  ) {
+
+    const sapporoStore =
+      shiftState.stores
+        .find(
+          (store) =>
+            store.name
+            === '札幌'
+        )
+      || null;
+
+
+    if (sapporoStore) {
+
+      shiftState.selectedStoreId =
+        String(
+          sapporoStore.id
+        );
+
+      shiftStoreSelect.value =
+        String(
+          sapporoStore.id
+        );
+    }
   }
 }
 
