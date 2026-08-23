@@ -716,12 +716,28 @@ function createCalendarEventElement(
 
 function openEventModal(
   dateKey,
-  ownerCode
+  ownerCode,
+  calendarEvent = null
 ) {
   eventForm.reset();
 
+
+  const isEdit =
+    calendarEvent !== null;
+
+
+  eventIdInput.value =
+    isEdit
+      ? String(
+          calendarEvent.id
+          || ''
+        )
+      : '';
+
+
   eventDateInput.value =
     dateKey;
+
 
   eventDateLabel.textContent =
     dateKey.replace(
@@ -729,29 +745,140 @@ function openEventModal(
       '$1年 $2月 $3日'
     );
 
+
+  eventDialogTitle.textContent =
+    isEdit
+      ? '予定を編集'
+      : '予定を追加';
+
+
+  eventDeleteButton.hidden =
+    !isEdit;
+
+
   eventOwnerSelect.value =
-    ownerCode;
-
-  eventStartTimeInput.disabled =
-    false;
-
-  eventEndTimeInput.disabled =
-    false;
-
-  eventMessage.textContent =
-    '';
-
-  eventModal.hidden =
-    false;
-
-  document.body.style.overflow =
-    'hidden';
+    isEdit
+      ? String(
+          calendarEvent.owner_code
+          || ownerCode
+        )
+      : ownerCode;
 
 
   const titleInput =
     eventForm.querySelector(
       '[name="title"]'
     );
+
+  const categoryInput =
+    eventForm.querySelector(
+      '[name="category"]'
+    );
+
+  const memoInput =
+    eventForm.querySelector(
+      '[name="memo"]'
+    );
+
+
+  if (isEdit) {
+
+    titleInput.value =
+      String(
+        calendarEvent.title
+        || ''
+      );
+
+
+    categoryInput.value =
+      String(
+        calendarEvent.category
+        || ''
+      );
+
+
+    memoInput.value =
+      String(
+        calendarEvent.memo
+        || ''
+      );
+
+
+    const allDay =
+      Number(
+        calendarEvent.all_day
+        || 0
+      ) === 1;
+
+
+    eventAllDayInput.checked =
+      allDay;
+
+
+    eventStartTimeInput.disabled =
+      allDay;
+
+    eventEndTimeInput.disabled =
+      allDay;
+
+
+    const startMatch =
+      String(
+        calendarEvent.start_at
+        || ''
+      ).match(
+        /\s(\d{2}):(\d{2})/
+      );
+
+
+    const endMatch =
+      String(
+        calendarEvent.end_at
+        || ''
+      ).match(
+        /\s(\d{2}):(\d{2})/
+      );
+
+
+    if (
+      !allDay
+      && startMatch
+      && startMatch[1] !== '00'
+    ) {
+      eventStartTimeInput.value =
+        `${startMatch[1]}:${startMatch[2]}`;
+    }
+
+
+    if (
+      !allDay
+      && endMatch
+    ) {
+      eventEndTimeInput.value =
+        `${endMatch[1]}:${endMatch[2]}`;
+    }
+
+  } else {
+
+    eventStartTimeInput.disabled =
+      false;
+
+    eventEndTimeInput.disabled =
+      false;
+  }
+
+
+  eventMessage.textContent =
+    '';
+
+
+  eventModal.hidden =
+    false;
+
+
+  document.body.style.overflow =
+    'hidden';
+
 
   window.setTimeout(
     () => {
