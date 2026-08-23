@@ -45,6 +45,57 @@ const moveButtons =
   );
 
 
+const eventModal =
+  document.querySelector(
+    '[data-event-modal]'
+  );
+
+const eventForm =
+  document.querySelector(
+    '[data-event-form]'
+  );
+
+const eventDateInput =
+  document.querySelector(
+    '[data-event-date]'
+  );
+
+const eventDateLabel =
+  document.querySelector(
+    '[data-event-date-label]'
+  );
+
+const eventOwnerSelect =
+  document.querySelector(
+    '[data-event-owner]'
+  );
+
+const eventAllDayInput =
+  document.querySelector(
+    '[data-event-all-day]'
+  );
+
+const eventStartTimeInput =
+  document.querySelector(
+    '[data-event-start-time]'
+  );
+
+const eventEndTimeInput =
+  document.querySelector(
+    '[data-event-end-time]'
+  );
+
+const eventMessage =
+  document.querySelector(
+    '[data-event-message]'
+  );
+
+const eventModalCloseButtons =
+  document.querySelectorAll(
+    '[data-event-modal-close]'
+  );
+
+
 function padNumber(value) {
   return String(value).padStart(
     2,
