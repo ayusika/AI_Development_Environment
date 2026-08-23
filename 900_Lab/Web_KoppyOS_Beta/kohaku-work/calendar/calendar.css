@@ -31,8 +31,20 @@
   --calendar-shift-shii:
     #dff3ff;
 
+  --calendar-shift-shii-extended:
+    #bfe7fa;
+
   --calendar-shift-ui:
-    #f7e4f1;
+    #ffe7dc;
+
+  --calendar-shift-ui-late:
+    #ffcbb7;
+
+  --calendar-shift-off:
+    #e8edf0;
+
+  --calendar-shift-off-border:
+    #cbd5da;
 
   --calendar-shadow:
     0 12px 32px
