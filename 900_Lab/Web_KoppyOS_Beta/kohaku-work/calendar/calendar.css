@@ -232,6 +232,23 @@ button {
 }
 
 
+.calendar-month-heading {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  gap:
+    18px;
+
+  min-width: 0;
+}
+
+
 .calendar-toolbar h2 {
   margin: 0;
 
@@ -247,6 +264,73 @@ button {
 
   font-weight:
     800;
+}
+
+
+.calendar-person-legend {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    8px;
+}
+
+
+.calendar-person-legend-item {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  min-width:
+    58px;
+
+  min-height:
+    30px;
+
+  padding:
+    4px 12px;
+
+  border:
+    1px solid transparent;
+
+  border-radius:
+    999px;
+
+  font-size:
+    13px;
+
+  font-weight:
+    800;
+}
+
+
+.calendar-person-legend-item[
+  data-worker-code="ui"
+] {
+  background:
+    var(--calendar-shift-ui);
+
+  border-color:
+    rgba(214, 143, 106, 0.22);
+}
+
+
+.calendar-person-legend-item[
+  data-worker-code="shii"
+] {
+  background:
+    var(--calendar-shift-shii);
+
+  border-color:
+    rgba(93, 161, 191, 0.18);
 }
 
 
