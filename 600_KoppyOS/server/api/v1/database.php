@@ -49,6 +49,7 @@ try {
         'work_shifts',
         'shift_default_rules',
         'holidays',
+        'calendar_events',
         'customers',
         'customer_names',
         'customer_identity_features',
