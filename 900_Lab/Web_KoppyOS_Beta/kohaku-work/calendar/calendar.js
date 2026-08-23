@@ -297,17 +297,6 @@ function createShiftElement(shift) {
   }
 
 
-  const workerElement =
-    document.createElement('strong');
-
-  workerElement.className =
-    'calendar-shift-worker';
-
-  workerElement.textContent =
-    shift.display_name
-    || '名前未設定';
-
-
   const detailElement =
     document.createElement('span');
 
