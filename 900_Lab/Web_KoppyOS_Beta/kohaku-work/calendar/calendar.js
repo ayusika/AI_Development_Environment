@@ -1168,6 +1168,13 @@ function renderMonthCalendar() {
       || [];
 
 
+    const dayEvents =
+      eventsByDate.get(
+        dateKey
+      )
+      || [];
+
+
     const previousDate =
       new Date(
         date.getFullYear(),
