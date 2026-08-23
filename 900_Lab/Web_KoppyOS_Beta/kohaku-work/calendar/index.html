@@ -105,6 +105,188 @@
   </main>
 
 
+  <div
+    class="calendar-event-modal"
+    data-event-modal
+    hidden
+  >
+    <div
+      class="calendar-event-modal-backdrop"
+      data-event-modal-close
+    ></div>
+
+    <section
+      class="calendar-event-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="calendar-event-dialog-title"
+    >
+
+      <header class="calendar-event-dialog-header">
+
+        <div>
+          <p class="calendar-event-dialog-date">
+            <span data-event-date-label></span>
+          </p>
+
+          <h2 id="calendar-event-dialog-title">
+            予定を追加
+          </h2>
+        </div>
+
+        <button
+          type="button"
+          class="calendar-event-close"
+          data-event-modal-close
+          aria-label="閉じる"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <form
+        class="calendar-event-form"
+        data-event-form
+      >
+
+        <input
+          type="hidden"
+          name="event_date"
+          data-event-date
+        >
+
+
+        <label class="calendar-event-field">
+          <span>だれの予定？</span>
+
+          <select
+            name="owner_code"
+            data-event-owner
+            required
+          >
+            <option value="ui">
+              うい
+            </option>
+
+            <option value="shii">
+              しい
+            </option>
+
+            <option value="shared">
+              共通
+            </option>
+          </select>
+        </label>
+
+
+        <label class="calendar-event-field">
+          <span>予定</span>
+
+          <input
+            type="text"
+            name="title"
+            maxlength="120"
+            placeholder="美容室、病院、荷物受取など"
+            required
+          >
+        </label>
+
+
+        <label class="calendar-event-all-day">
+          <input
+            type="checkbox"
+            name="all_day"
+            value="1"
+            data-event-all-day
+          >
+
+          <span>
+            終日
+          </span>
+        </label>
+
+
+        <div class="calendar-event-time-row">
+
+          <label class="calendar-event-field">
+            <span>開始</span>
+
+            <input
+              type="time"
+              name="start_time"
+              data-event-start-time
+            >
+          </label>
+
+
+          <label class="calendar-event-field">
+            <span>終了</span>
+
+            <input
+              type="time"
+              name="end_time"
+              data-event-end-time
+            >
+          </label>
+
+        </div>
+
+
+        <label class="calendar-event-field">
+          <span>カテゴリ</span>
+
+          <input
+            type="text"
+            name="category"
+            placeholder="任意"
+          >
+        </label>
+
+
+        <label class="calendar-event-field">
+          <span>メモ</span>
+
+          <textarea
+            name="memo"
+            rows="3"
+            placeholder="任意"
+          ></textarea>
+        </label>
+
+
+        <p
+          class="calendar-event-form-message"
+          data-event-message
+        ></p>
+
+
+        <div class="calendar-event-form-actions">
+
+          <button
+            type="button"
+            class="calendar-event-cancel"
+            data-event-modal-close
+          >
+            キャンセル
+          </button>
+
+          <button
+            type="submit"
+            class="calendar-event-save"
+          >
+            保存
+          </button>
+
+        </div>
+
+      </form>
+
+    </section>
+  </div>
+
+
   <script src="./calendar.js"></script>
 
 </body>
