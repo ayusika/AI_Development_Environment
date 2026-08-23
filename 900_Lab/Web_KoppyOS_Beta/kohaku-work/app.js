@@ -4831,6 +4831,57 @@ function openScheduleForm(
   }
 
 
+  if (scheduleStore) {
+
+    const confirmedShift =
+      scheduleState.shifts
+        .find(
+          (shift) =>
+            shift.shift_date
+            === targetDate
+            &&
+            shift.status
+            === 'confirmed'
+        )
+      || null;
+
+
+    if (
+      confirmedShift
+      &&
+      confirmedShift.store_id
+    ) {
+
+      scheduleStore.value =
+        String(
+          confirmedShift.store_id
+        );
+
+    } else {
+
+      const sapporoStore =
+        Array.from(
+          scheduleStore.options
+        )
+          .find(
+            (option) =>
+              option.textContent
+                ?.trim()
+              === '札幌'
+          )
+        || null;
+
+
+      if (sapporoStore) {
+        scheduleStore.value =
+          String(
+            sapporoStore.value
+          );
+      }
+    }
+  }
+
+
   if (scheduleStartTime) {
     scheduleStartTime.value =
       targetTime;
