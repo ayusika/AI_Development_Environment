@@ -654,7 +654,7 @@ function createEmptyShiftElement(
     'calendar-shift-detail';
 
   detailElement.textContent =
-    '未入力';
+    '';
 
 
   shiftElement.appendChild(
