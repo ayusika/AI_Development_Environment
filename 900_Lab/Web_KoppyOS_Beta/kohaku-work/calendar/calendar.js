@@ -1628,7 +1628,13 @@ function renderMonthCalendar() {
           document.createElement('div');
 
         laneElement.className =
-          'calendar-day-lane';
+          'calendar-day-lane calendar-zone';
+
+        laneElement.classList.add(
+          workerCode === 'ui'
+            ? 'calendar-zone-ui'
+            : 'calendar-zone-shii'
+        );
 
         laneElement.dataset.workerCode =
           workerCode;
