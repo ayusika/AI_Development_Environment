@@ -1687,3 +1687,88 @@ button {
   margin-top:
     2px;
 }
+
+/* =====================================================
+   Date + shared zone
+===================================================== */
+
+.calendar-day-top {
+  display:
+    grid;
+
+  grid-template-columns:
+    auto minmax(0, 1fr);
+
+  align-items:
+    start;
+
+  gap:
+    6px;
+
+  min-height:
+    34px;
+
+  margin:
+    0 -6px;
+
+  padding:
+    4px 6px 5px;
+
+  border-bottom:
+    1px dotted
+    rgba(105, 145, 166, 0.34);
+}
+
+
+.calendar-day-top
+.calendar-date {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    4px;
+
+  min-width:
+    24px;
+
+  margin:
+    0;
+
+  padding:
+    1px 0;
+}
+
+
+.calendar-day-top
+.calendar-zone-shared {
+  min-width:
+    0;
+
+  min-height:
+    24px;
+
+  margin:
+    0;
+
+  padding:
+    0;
+
+  border-bottom:
+    0;
+}
+
+
+.calendar-day-top
+.calendar-event.is-shared {
+  min-height:
+    20px;
+
+  padding:
+    2px 5px;
+
+  border-radius:
+    5px;
+}
