@@ -1072,6 +1072,27 @@ function renderMonthCalendar() {
           workerCode;
 
 
+        laneElement.addEventListener(
+          'click',
+          (event) => {
+
+            if (
+              event.target.closest(
+                '.calendar-shift'
+              )
+            ) {
+              return;
+            }
+
+
+            openEventModal(
+              dateKey,
+              workerCode
+            );
+          }
+        );
+
+
         const currentShift =
           findWorkerShift(
             dayShifts,
