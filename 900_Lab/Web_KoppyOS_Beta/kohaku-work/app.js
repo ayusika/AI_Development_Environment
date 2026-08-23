@@ -2071,6 +2071,7 @@ const scheduleState = {
   view: 'two-weeks',
   anchorDate: null,
   visits: [],
+  shifts: [],
   selectedVisit: null,
   identitySearchVisits: [],
   selectedIdentityCandidate: null,
