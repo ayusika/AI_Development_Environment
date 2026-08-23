@@ -369,7 +369,6 @@ function createShiftElement(shift) {
 
 
   shiftElement.append(
-    workerElement,
     detailElement
   );
 
