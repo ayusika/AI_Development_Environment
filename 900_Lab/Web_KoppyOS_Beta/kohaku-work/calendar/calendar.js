@@ -602,6 +602,103 @@ function shiftsContinue(
 }
 
 
+function createCalendarEventElement(
+  event
+) {
+  const eventElement =
+    document.createElement('div');
+
+  eventElement.className =
+    'calendar-event';
+
+
+  const ownerCode =
+    String(
+      event.owner_code
+      || ''
+    );
+
+  if (ownerCode !== '') {
+    eventElement.dataset.ownerCode =
+      ownerCode;
+  }
+
+
+  const startAt =
+    String(
+      event.start_at
+      || ''
+    );
+
+  const allDay =
+    Number(
+      event.all_day
+      || 0
+    ) === 1;
+
+
+  let timeLabel =
+    '';
+
+
+  if (!allDay) {
+
+    const match =
+      startAt.match(
+        /\s(\d{2}):(\d{2})/
+      );
+
+
+    if (
+      match
+      && match[1] !== '00'
+    ) {
+      timeLabel =
+        `${match[1]}:${match[2]}`;
+    }
+  }
+
+
+  if (timeLabel !== '') {
+
+    const timeElement =
+      document.createElement('span');
+
+    timeElement.className =
+      'calendar-event-time';
+
+    timeElement.textContent =
+      timeLabel;
+
+
+    eventElement.appendChild(
+      timeElement
+    );
+  }
+
+
+  const titleElement =
+    document.createElement('span');
+
+  titleElement.className =
+    'calendar-event-title';
+
+  titleElement.textContent =
+    String(
+      event.title
+      || ''
+    );
+
+
+  eventElement.appendChild(
+    titleElement
+  );
+
+
+  return eventElement;
+}
+
+
 function openEventModal(
   dateKey,
   ownerCode
