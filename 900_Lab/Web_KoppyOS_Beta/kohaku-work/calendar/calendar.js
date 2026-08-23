@@ -594,24 +594,38 @@ function getShiftContinuationKey(
 }
 
 
-function shiftsContinue(
-  currentShift,
-  adjacentShift
+function getWorkLineContinuationKey(
+  shift,
+  workerCode
 ) {
-  if (
-    !currentShift
-    || !adjacentShift
-  ) {
-    return false;
+  if (!shift) {
+    return [
+      workerCode,
+      'empty',
+    ].join('|');
   }
 
+
+  return getShiftContinuationKey(
+    shift
+  );
+}
+
+
+function workLinesContinue(
+  currentShift,
+  adjacentShift,
+  workerCode
+) {
   return (
-    getShiftContinuationKey(
-      currentShift
+    getWorkLineContinuationKey(
+      currentShift,
+      workerCode
     )
     ===
-    getShiftContinuationKey(
-      adjacentShift
+    getWorkLineContinuationKey(
+      adjacentShift,
+      workerCode
     )
   );
 }
