@@ -617,6 +617,41 @@ function shiftsContinue(
 }
 
 
+function createEmptyShiftElement(
+  workerCode
+) {
+  const shiftElement =
+    document.createElement('div');
+
+  shiftElement.className =
+    'calendar-shift is-empty';
+
+  shiftElement.dataset.workerCode =
+    workerCode;
+
+  shiftElement.dataset.shiftKind =
+    'empty';
+
+
+  const detailElement =
+    document.createElement('span');
+
+  detailElement.className =
+    'calendar-shift-detail';
+
+  detailElement.textContent =
+    '未入力';
+
+
+  shiftElement.appendChild(
+    detailElement
+  );
+
+
+  return shiftElement;
+}
+
+
 function createCalendarEventElement(
   event
 ) {
