@@ -640,15 +640,128 @@ function renderMonthCalendar() {
       || [];
 
 
-    dayShifts.forEach(
-      (shift) => {
+    const previousDate =
+      new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate() - 1
+      );
 
-        dayElement.appendChild(
-          createShiftElement(
-            shift
-          )
+    const nextDate =
+      new Date(
+        date.getFullYear(),
+        date.getMonth(),
+        date.getDate() + 1
+      );
+
+
+    const previousShifts =
+      shiftsByDate.get(
+        formatDateKey(
+          previousDate
+        )
+      )
+      || [];
+
+    const nextShifts =
+      shiftsByDate.get(
+        formatDateKey(
+          nextDate
+        )
+      )
+      || [];
+
+
+    const lanesElement =
+      document.createElement('div');
+
+    lanesElement.className =
+      'calendar-day-lanes';
+
+
+    [
+      'ui',
+      'shii',
+    ].forEach(
+      (workerCode) => {
+
+        const laneElement =
+          document.createElement('div');
+
+        laneElement.className =
+          'calendar-day-lane';
+
+        laneElement.dataset.workerCode =
+          workerCode;
+
+
+        const currentShift =
+          findWorkerShift(
+            dayShifts,
+            workerCode
+          );
+
+
+        if (currentShift) {
+
+          const shiftElement =
+            createShiftElement(
+              currentShift
+            );
+
+
+          const previousShift =
+            findWorkerShift(
+              previousShifts,
+              workerCode
+            );
+
+          const nextShift =
+            findWorkerShift(
+              nextShifts,
+              workerCode
+            );
+
+
+          if (
+            shiftsContinue(
+              currentShift,
+              previousShift
+            )
+          ) {
+            shiftElement.classList.add(
+              'is-connected-left'
+            );
+          }
+
+
+          if (
+            shiftsContinue(
+              currentShift,
+              nextShift
+            )
+          ) {
+            shiftElement.classList.add(
+              'is-connected-right'
+            );
+          }
+
+
+          laneElement.appendChild(
+            shiftElement
+          );
+        }
+
+
+        lanesElement.appendChild(
+          laneElement
         );
       }
+    );
+
+
+    dayElement.appendChild(
+      lanesElement
     );
 
 
