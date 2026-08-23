@@ -706,13 +706,13 @@ button {
 
 .calendar-shift.is-connected-left {
   width:
-    calc(100% + 8px);
+    calc(100% + 10px);
 
   margin-left:
-    -8px;
+    -10px;
 
   padding-left:
-    15px;
+    17px;
 
   border-left-color:
     transparent;
@@ -725,13 +725,13 @@ button {
 
 .calendar-shift.is-connected-right {
   width:
-    calc(100% + 8px);
+    calc(100% + 10px);
 
   margin-right:
-    -8px;
+    -10px;
 
   padding-right:
-    15px;
+    17px;
 
   border-right-color:
     transparent;
@@ -744,13 +744,13 @@ button {
 
 .calendar-shift.is-connected-left.is-connected-right {
   width:
-    calc(100% + 16px);
+    calc(100% + 20px);
 
   margin-left:
-    -8px;
+    -10px;
 
   margin-right:
-    -8px;
+    -10px;
 }
 
 
