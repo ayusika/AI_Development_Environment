@@ -6,6 +6,10 @@ header(
     'Content-Type: application/json; charset=utf-8'
 );
 
+require_once __DIR__ . '/../../auth/auth.php';
+
+koppyRequireApiAuth();
+
 require_once __DIR__ . '/lib/database.php';
 
 
