@@ -415,6 +415,65 @@ function groupShiftsByDate(shifts) {
 }
 
 
+function findWorkerShift(
+  shifts,
+  workerCode
+) {
+  return shifts.find(
+    (shift) =>
+      shift.worker_code
+      === workerCode
+  ) || null;
+}
+
+
+function getShiftContinuationKey(
+  shift
+) {
+  if (!shift) {
+    return '';
+  }
+
+  if (shift.status === 'off') {
+    return [
+      shift.worker_code,
+      'off',
+    ].join('|');
+  }
+
+  return [
+    shift.worker_code,
+    shift.status,
+    shift.store_name || '',
+    shift.start_at || '',
+    shift.end_at || '',
+  ].join('|');
+}
+
+
+function shiftsContinue(
+  currentShift,
+  adjacentShift
+) {
+  if (
+    !currentShift
+    || !adjacentShift
+  ) {
+    return false;
+  }
+
+  return (
+    getShiftContinuationKey(
+      currentShift
+    )
+    ===
+    getShiftContinuationKey(
+      adjacentShift
+    )
+  );
+}
+
+
 function renderMonthCalendar() {
   const currentMonth =
     calendarState.currentMonth;
