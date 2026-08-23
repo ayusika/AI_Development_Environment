@@ -3728,6 +3728,54 @@ async function loadSchedule(
       data.visits || [];
 
 
+    const shiftParams =
+      new URLSearchParams({
+        date_from:
+          period.start,
+
+        date_to:
+          period.end,
+      });
+
+
+    const shiftResponse =
+      await fetch(
+        `${scheduleShiftsApiUrl}?${shiftParams.toString()}`
+      );
+
+
+    const shiftData =
+      await shiftResponse.json();
+
+
+    if (
+      !shiftResponse.ok
+      || !shiftData.success
+    ) {
+      throw new Error(
+        shiftData.error
+        || '確定シフトの取得に失敗しました。'
+      );
+    }
+
+
+    scheduleState.shifts =
+      Array.isArray(
+        shiftData.shifts
+      )
+        ? shiftData.shifts.filter(
+            (shift) =>
+              shift.status
+              === 'confirmed'
+              &&
+              Number(
+                shift.is_reservation_owner
+              )
+              === 1
+          )
+        : [];
+
+
     if (scheduleVisitCount) {
 
       scheduleVisitCount.textContent =
