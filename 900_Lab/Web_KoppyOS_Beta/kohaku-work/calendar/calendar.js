@@ -262,25 +262,28 @@ function createShiftElement(shift) {
     );
 
 
-  if (!isOff) {
+  let defaultStartMinutes =
+    null;
 
-    if (
-      workerCode === 'shii'
-      && endMinutes === 25 * 60
-    ) {
-      shiftElement.dataset.shiftVariant =
-        'extended';
-    }
+  let defaultEndMinutes =
+    null;
 
 
-    if (
-      workerCode === 'ui'
-      && startMinutes !== null
-      && startMinutes > 15 * 60
-    ) {
-      shiftElement.dataset.shiftVariant =
-        'late';
-    }
+  if (workerCode === 'shii') {
+    defaultStartMinutes =
+      14 * 60;
+
+    defaultEndMinutes =
+      24 * 60;
+  }
+
+
+  if (workerCode === 'ui') {
+    defaultStartMinutes =
+      15 * 60;
+
+    defaultEndMinutes =
+      25 * 60;
   }
 
 
@@ -309,37 +312,60 @@ function createShiftElement(shift) {
 
   } else {
 
-    const timeText =
-      `${startTime}〜${endTime}`;
+    const startElement =
+      document.createElement('span');
 
-    const storeText =
-      shift.store_name
-        ? ` ${shift.store_name}`
-        : '';
+    startElement.textContent =
+      startTime;
 
-    let variantText =
-      '';
 
     if (
-      shiftElement.dataset.shiftVariant
-      === 'extended'
+      defaultStartMinutes !== null
+      && startMinutes !== null
+      && startMinutes
+        !== defaultStartMinutes
     ) {
-      variantText =
-        ' +1h';
+      startElement.className =
+        'calendar-shift-time-changed';
     }
+
+
+    const separatorElement =
+      document.createTextNode('〜');
+
+
+    const endElement =
+      document.createElement('span');
+
+    endElement.textContent =
+      endTime;
+
 
     if (
-      shiftElement.dataset.shiftVariant
-      === 'late'
+      defaultEndMinutes !== null
+      && endMinutes !== null
+      && endMinutes
+        !== defaultEndMinutes
     ) {
-      variantText =
-        ' 遅出';
+      endElement.className =
+        'calendar-shift-time-changed';
     }
 
-    detailElement.textContent =
-      timeText
-      + storeText
-      + variantText;
+
+    detailElement.append(
+      startElement,
+      separatorElement,
+      endElement
+    );
+
+
+    if (shift.store_name) {
+      detailElement.append(
+        document.createTextNode(
+          ` ${shift.store_name}`
+        )
+      );
+    }
   }
 
 
