@@ -1027,6 +1027,12 @@ function renderMonthCalendar() {
     );
 
 
+  const eventsByDate =
+    groupEventsByDate(
+      calendarState.events
+    );
+
+
   const todayKey =
     formatDateKey(
       new Date()
