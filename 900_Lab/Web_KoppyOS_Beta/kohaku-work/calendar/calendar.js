@@ -1659,13 +1659,17 @@ function renderMonthCalendar() {
           );
 
 
+        const shiftElement =
+          currentShift
+            ? createShiftElement(
+                currentShift
+              )
+            : createEmptyShiftElement(
+                workerCode
+              );
+
+
         if (currentShift) {
-
-          const shiftElement =
-            createShiftElement(
-              currentShift
-            );
-
 
           const previousShift =
             findWorkerShift(
@@ -1702,12 +1706,12 @@ function renderMonthCalendar() {
               'is-connected-right'
             );
           }
-
-
-          laneElement.appendChild(
-            shiftElement
-          );
         }
+
+
+        laneElement.appendChild(
+          shiftElement
+        );
 
 
         const workerEvents =
