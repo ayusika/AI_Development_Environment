@@ -1519,7 +1519,14 @@ function renderMonthCalendar() {
     }
 
 
-    dayElement.appendChild(
+    const dayTopElement =
+      document.createElement('div');
+
+    dayTopElement.className =
+      'calendar-day-top';
+
+
+    dayTopElement.appendChild(
       dateElement
     );
 
