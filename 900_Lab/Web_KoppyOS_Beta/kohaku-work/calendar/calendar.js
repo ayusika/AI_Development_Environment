@@ -1300,6 +1300,30 @@ function renderMonthCalendar() {
         }
 
 
+        const workerEvents =
+          dayEvents.filter(
+            (event) =>
+              event.owner_code
+              === workerCode
+          );
+
+
+        workerEvents.forEach(
+          (event) => {
+
+            const eventElement =
+              createCalendarEventElement(
+                event
+              );
+
+
+            laneElement.appendChild(
+              eventElement
+            );
+          }
+        );
+
+
         lanesElement.appendChild(
           laneElement
         );
