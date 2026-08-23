@@ -952,3 +952,36 @@ button {
       9px;
   }
 }
+
+.calendar-person-legend-item[
+  data-worker-code="ui"
+]::before {
+  content:
+    "↑";
+
+  margin-right:
+    4px;
+
+  opacity:
+    0.55;
+
+  font-size:
+    10px;
+}
+
+
+.calendar-person-legend-item[
+  data-worker-code="shii"
+]::before {
+  content:
+    "↓";
+
+  margin-right:
+    4px;
+
+  opacity:
+    0.55;
+
+  font-size:
+    10px;
+}
