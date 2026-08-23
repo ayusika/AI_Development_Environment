@@ -1625,3 +1625,75 @@ button {
   color:
     #596b74;
 }
+
+/* =====================================================
+   Work line polish
+===================================================== */
+
+.calendar-shift {
+  flex:
+    0 0 22px;
+
+  height:
+    22px;
+
+  min-height:
+    22px;
+
+  max-height:
+    22px;
+}
+
+
+.calendar-shift.is-empty {
+  background:
+    #f3fbf6;
+
+  border-color:
+    #deeee4;
+}
+
+
+.calendar-shift.is-empty
+.calendar-shift-detail {
+  opacity:
+    0.55;
+
+  font-size:
+    8px;
+
+  letter-spacing:
+    0.02em;
+}
+
+
+.calendar-zone-ui
+.calendar-shift:not(
+  [data-shift-kind="off"]
+):not(
+  [data-shift-kind="empty"]
+) {
+  background:
+    var(--calendar-shift-ui);
+}
+
+
+.calendar-zone-shii
+.calendar-shift:not(
+  [data-shift-kind="off"]
+):not(
+  [data-shift-kind="empty"]
+) {
+  background:
+    var(--calendar-shift-shii);
+}
+
+
+/* 予定欄と仕事ラインを少し分離 */
+
+.calendar-day-lane
+.calendar-shift
++ .calendar-event {
+  margin-top:
+    2px;
+}
