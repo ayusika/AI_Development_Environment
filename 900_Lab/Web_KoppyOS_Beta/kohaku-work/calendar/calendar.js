@@ -1683,43 +1683,42 @@ function renderMonthCalendar() {
               );
 
 
-        if (currentShift) {
+        const previousShift =
+          findWorkerShift(
+            previousShifts,
+            workerCode
+          );
 
-          const previousShift =
-            findWorkerShift(
-              previousShifts,
-              workerCode
-            );
-
-          const nextShift =
-            findWorkerShift(
-              nextShifts,
-              workerCode
-            );
+        const nextShift =
+          findWorkerShift(
+            nextShifts,
+            workerCode
+          );
 
 
-          if (
-            shiftsContinue(
-              currentShift,
-              previousShift
-            )
-          ) {
-            shiftElement.classList.add(
-              'is-connected-left'
-            );
-          }
+        if (
+          workLinesContinue(
+            currentShift,
+            previousShift,
+            workerCode
+          )
+        ) {
+          shiftElement.classList.add(
+            'is-connected-left'
+          );
+        }
 
 
-          if (
-            shiftsContinue(
-              currentShift,
-              nextShift
-            )
-          ) {
-            shiftElement.classList.add(
-              'is-connected-right'
-            );
-          }
+        if (
+          workLinesContinue(
+            currentShift,
+            nextShift,
+            workerCode
+          )
+        ) {
+          shiftElement.classList.add(
+            'is-connected-right'
+          );
         }
 
 
