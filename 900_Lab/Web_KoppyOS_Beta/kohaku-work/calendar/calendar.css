@@ -1759,3 +1759,189 @@ button {
   border-radius:
     5px;
 }
+
+/* =====================================================
+   Compact dynamic calendar rows
+===================================================== */
+
+.month-calendar {
+  min-height:
+    0;
+}
+
+
+.calendar-grid {
+  grid-template-rows:
+    repeat(
+      6,
+      minmax(78px, auto)
+    );
+}
+
+
+/* 日付 + 共通ゾーン */
+
+.calendar-day-top {
+  min-height:
+    30px;
+
+  padding:
+    2px 6px 3px;
+}
+
+
+.calendar-day-top
+.calendar-date {
+  min-height:
+    26px;
+
+  padding:
+    0;
+}
+
+
+.calendar-day-top
+.calendar-date-number {
+  width:
+    28px;
+
+  height:
+    28px;
+
+  flex-basis:
+    28px;
+}
+
+
+.calendar-day-top
+.calendar-zone-shared {
+  min-height:
+    26px;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  justify-content:
+    center;
+
+  gap:
+    2px;
+}
+
+
+/* うい + しい */
+
+.calendar-day-lanes {
+  min-height:
+    0;
+
+  grid-template-rows:
+    repeat(
+      2,
+      minmax(27px, auto)
+    );
+}
+
+
+.calendar-day-lane {
+  min-height:
+    27px;
+
+  gap:
+    2px;
+
+  padding:
+    2px 8px 3px;
+}
+
+
+/* 仕事ライン */
+
+.calendar-shift {
+  flex-basis:
+    20px;
+
+  height:
+    20px;
+
+  min-height:
+    20px;
+
+  max-height:
+    20px;
+
+  padding-top:
+    2px;
+
+  padding-bottom:
+    2px;
+}
+
+
+/* 個人予定がある時だけ少し空間を追加 */
+
+.calendar-day-lane
+.calendar-event {
+  min-height:
+    18px;
+}
+
+
+.calendar-day-lane
+.calendar-shift
++ .calendar-event {
+  margin-top:
+    1px;
+}
+
+
+/* 共通予定もコンパクト */
+
+.calendar-day-top
+.calendar-event.is-shared {
+  min-height:
+    18px;
+
+  padding:
+    2px 5px;
+}
+
+
+/* 画面が狭くても同じ思想を維持 */
+
+@media (
+  max-width: 900px
+) {
+
+  .calendar-grid {
+    grid-template-rows:
+      repeat(
+        6,
+        minmax(72px, auto)
+      );
+  }
+
+
+  .calendar-day-lanes {
+    min-height:
+      0;
+
+    grid-template-rows:
+      repeat(
+        2,
+        minmax(25px, auto)
+      );
+  }
+
+
+  .calendar-day-lane {
+    min-height:
+      25px;
+
+    padding:
+      2px 5px;
+  }
+}
