@@ -4928,7 +4928,7 @@ function resetScheduleForm() {
 
 
   if (scheduleStore) {
-    scheduleStore.value = '2';
+    scheduleStore.value = '';
   }
 
 
