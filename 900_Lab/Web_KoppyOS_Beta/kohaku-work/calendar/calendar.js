@@ -1074,16 +1074,7 @@ function renderMonthCalendar() {
 
         laneElement.addEventListener(
           'click',
-          (event) => {
-
-            if (
-              event.target.closest(
-                '.calendar-shift'
-              )
-            ) {
-              return;
-            }
-
+          () => {
 
             openEventModal(
               dateKey,
