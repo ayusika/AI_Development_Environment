@@ -1595,8 +1595,13 @@ function renderMonthCalendar() {
     );
 
 
-    dayElement.appendChild(
+    dayTopElement.appendChild(
       sharedZoneElement
+    );
+
+
+    dayElement.appendChild(
+      dayTopElement
     );
 
 
