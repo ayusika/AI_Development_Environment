@@ -98,19 +98,107 @@ function getMonthRange(monthDate) {
 }
 
 
-function formatShiftTime(value) {
+function getShiftTimeParts(value) {
   if (!value) {
-    return '';
+    return null;
   }
 
   const match =
     String(value).match(
-      /(\d{2}:\d{2})/
+      /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/
     );
 
-  return match
-    ? match[1]
-    : String(value);
+  if (!match) {
+    return null;
+  }
+
+  return {
+    dateKey:
+      `${match[1]}-${match[2]}-${match[3]}`,
+    hour:
+      Number(match[4]),
+    minute:
+      Number(match[5]),
+  };
+}
+
+
+function getExtendedShiftTime(
+  value,
+  shiftDate
+) {
+  const parts =
+    getShiftTimeParts(value);
+
+  if (!parts) {
+    return '';
+  }
+
+  let hour =
+    parts.hour;
+
+  if (
+    shiftDate
+    && parts.dateKey !== shiftDate
+  ) {
+    const shiftDateObject =
+      parseDateKey(
+        shiftDate
+      );
+
+    const valueDateObject =
+      parseDateKey(
+        parts.dateKey
+      );
+
+    const dayDifference =
+      Math.round(
+        (
+          valueDateObject
+            - shiftDateObject
+        )
+        / 86400000
+      );
+
+    if (dayDifference > 0) {
+      hour +=
+        dayDifference * 24;
+    }
+  }
+
+  return (
+    `${padNumber(hour)}:`
+    + `${padNumber(parts.minute)}`
+  );
+}
+
+
+function getShiftMinutes(
+  value,
+  shiftDate
+) {
+  const time =
+    getExtendedShiftTime(
+      value,
+      shiftDate
+    );
+
+  if (time === '') {
+    return null;
+  }
+
+  const [
+    hour,
+    minute,
+  ] =
+    time
+      .split(':')
+      .map(Number);
+
+  return (
+    hour * 60
+    + minute
+  );
 }
 
 
@@ -121,11 +209,78 @@ function createShiftElement(shift) {
   shiftElement.className =
     'calendar-shift';
 
-  if (shift.worker_code) {
+
+  const workerCode =
+    String(
+      shift.worker_code
+      || ''
+    );
+
+  if (workerCode !== '') {
     shiftElement.dataset.workerCode =
-      String(
-        shift.worker_code
-      );
+      workerCode;
+  }
+
+
+  const isOff =
+    shift.status === 'off';
+
+  if (isOff) {
+    shiftElement.dataset.shiftKind =
+      'off';
+  }
+
+
+  const shiftDate =
+    String(
+      shift.shift_date
+      || ''
+    );
+
+  const startTime =
+    getExtendedShiftTime(
+      shift.start_at,
+      shiftDate
+    );
+
+  const endTime =
+    getExtendedShiftTime(
+      shift.end_at,
+      shiftDate
+    );
+
+  const startMinutes =
+    getShiftMinutes(
+      shift.start_at,
+      shiftDate
+    );
+
+  const endMinutes =
+    getShiftMinutes(
+      shift.end_at,
+      shiftDate
+    );
+
+
+  if (!isOff) {
+
+    if (
+      workerCode === 'shii'
+      && endMinutes === 25 * 60
+    ) {
+      shiftElement.dataset.shiftVariant =
+        'extended';
+    }
+
+
+    if (
+      workerCode === 'ui'
+      && startMinutes !== null
+      && startMinutes > 15 * 60
+    ) {
+      shiftElement.dataset.shiftVariant =
+        'late';
+    }
   }
 
 
@@ -147,24 +302,13 @@ function createShiftElement(shift) {
     'calendar-shift-detail';
 
 
-  const startTime =
-    formatShiftTime(
-      shift.start_at
-    );
+  if (isOff) {
 
-  const endTime =
-    formatShiftTime(
-      shift.end_at
-    );
-
-
-  if (
-    startTime === ''
-    && endTime === ''
-  ) {
     detailElement.textContent =
       '休み';
+
   } else {
+
     const timeText =
       `${startTime}〜${endTime}`;
 
@@ -173,8 +317,29 @@ function createShiftElement(shift) {
         ? ` ${shift.store_name}`
         : '';
 
+    let variantText =
+      '';
+
+    if (
+      shiftElement.dataset.shiftVariant
+      === 'extended'
+    ) {
+      variantText =
+        ' +1h';
+    }
+
+    if (
+      shiftElement.dataset.shiftVariant
+      === 'late'
+    ) {
+      variantText =
+        ' 遅出';
+    }
+
     detailElement.textContent =
-      timeText + storeText;
+      timeText
+      + storeText
+      + variantText;
   }
 
 
