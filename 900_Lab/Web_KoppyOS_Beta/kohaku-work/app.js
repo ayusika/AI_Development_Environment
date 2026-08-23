@@ -10740,6 +10740,173 @@ async function confirmCurrentShiftWeek() {
 
 
 /* ========================================
+   WEEK CONFIRM
+======================================== */
+
+async function confirmCurrentShiftWeek() {
+
+  const weekStart =
+    new Date(
+      shiftState.weekStart
+    );
+
+
+  const weekEnd =
+    new Date(
+      shiftState.weekStart
+    );
+
+
+  weekEnd.setDate(
+    weekEnd.getDate() + 6
+  );
+
+
+  const weekStartText =
+    formatShiftDate(
+      weekStart
+    );
+
+  const weekEndText =
+    formatShiftDate(
+      weekEnd
+    );
+
+
+  const draftShifts =
+    shiftState.shifts
+      .filter(
+        (shift) =>
+          shift.status
+          === 'draft'
+          &&
+          shift.shift_date
+          >= weekStartText
+          &&
+          shift.shift_date
+          <= weekEndText
+      );
+
+
+  if (
+    draftShifts.length
+    === 0
+  ) {
+
+    showShiftSavePreview(
+      'この週に確定する仮シフトはありません。'
+    );
+
+    return;
+  }
+
+
+  const confirmed =
+    window.confirm(
+      `この週の仮シフト${draftShifts.length}件をまとめて確定しますか？`
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  showShiftSavePreview(
+    `${draftShifts.length}件のシフトを確定しています...`
+  );
+
+
+  try {
+
+    for (
+      const shift
+      of draftShifts
+    ) {
+
+      const response =
+        await fetch(
+          shiftsApiUrl,
+          {
+            method:
+              'PATCH',
+
+            headers: {
+              'Content-Type':
+                'application/json',
+            },
+
+            body:
+              JSON.stringify({
+                id:
+                  Number(
+                    shift.id
+                  ),
+
+                status:
+                  'confirmed',
+              }),
+          }
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (
+        !response.ok
+        ||
+        !data.success
+      ) {
+
+        throw new Error(
+          data.error
+          || `${shift.shift_date} のシフトを確定できませんでした。`
+        );
+      }
+    }
+
+
+    shiftState.editingShiftId =
+      null;
+
+    shiftState.selectedDates.clear();
+
+
+    if (shiftDeleteButton) {
+      shiftDeleteButton.hidden =
+        true;
+    }
+
+
+    if (shiftConfirmButton) {
+      shiftConfirmButton.hidden =
+        true;
+    }
+
+
+    await loadShift();
+
+
+    showShiftSavePreview(
+      `${draftShifts.length}件のシフトをまとめて確定しました。`
+    );
+
+
+  } catch (error) {
+
+    showShiftSavePreview(
+      error instanceof Error
+        ? error.message
+        : '週のシフトをまとめて確定できませんでした。',
+      true
+    );
+  }
+}
+
+
+/* ========================================
    CONFIRM
 ======================================== */
 
