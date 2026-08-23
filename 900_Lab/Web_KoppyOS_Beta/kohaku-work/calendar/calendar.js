@@ -944,40 +944,77 @@ async function loadMonthShifts() {
 
   try {
 
-    const response =
-      await fetch(
-        `${SHIFTS_API_URL}?${query.toString()}`,
-        {
-          credentials:
-            'same-origin',
-        }
-      );
+    const [
+      shiftsResponse,
+      eventsResponse,
+    ] =
+      await Promise.all([
+        fetch(
+          `${SHIFTS_API_URL}?${query.toString()}`,
+          {
+            credentials:
+              'same-origin',
+          }
+        ),
+
+        fetch(
+          `${CALENDAR_EVENTS_API_URL}?${query.toString()}`,
+          {
+            credentials:
+              'same-origin',
+          }
+        ),
+      ]);
 
 
-    const data =
-      await response.json();
+    const [
+      shiftsData,
+      eventsData,
+    ] =
+      await Promise.all([
+        shiftsResponse.json(),
+        eventsResponse.json(),
+      ]);
 
 
     if (
-      !response.ok
-      || data.success !== true
+      !shiftsResponse.ok
+      || shiftsData.success !== true
       || !Array.isArray(
-        data.shifts
+        shiftsData.shifts
       )
     ) {
       throw new Error(
-        data.error
+        shiftsData.error
         || 'シフトを読み込めませんでした。'
       );
     }
 
 
+    if (
+      !eventsResponse.ok
+      || eventsData.success !== true
+      || !Array.isArray(
+        eventsData.events
+      )
+    ) {
+      throw new Error(
+        eventsData.error
+        || '予定を読み込めませんでした。'
+      );
+    }
+
+
     calendarState.shifts =
-      data.shifts.filter(
+      shiftsData.shifts.filter(
         (shift) =>
           shift.status === 'confirmed'
           || shift.status === 'off'
       );
+
+
+    calendarState.events =
+      eventsData.events;
 
 
     renderMonthCalendar();
