@@ -1432,20 +1432,7 @@ button {
 }
 
 
-.calendar-zone-shared {
-  min-height:
-    26px;
 
-  margin:
-    0 -6px;
-
-  padding:
-    2px 8px 4px;
-
-  border-bottom:
-    1px dotted
-    rgba(105, 145, 166, 0.34);
-}
 
 
 .calendar-day-lanes {
