@@ -802,6 +802,54 @@ function renderMonthCalendar() {
 }
 
 
+async function loadHolidayData() {
+  try {
+
+    const response =
+      await fetch(
+        HOLIDAYS_API_URL
+      );
+
+
+    if (!response.ok) {
+      throw new Error(
+        '祝日データを取得できませんでした。'
+      );
+    }
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !data
+      || typeof data !== 'object'
+      || Array.isArray(data)
+    ) {
+      throw new Error(
+        '祝日データの形式が不正です。'
+      );
+    }
+
+
+    calendarState.holidays =
+      data;
+
+  } catch (error) {
+
+    console.warn(
+      '祝日表示をスキップします。',
+      error
+    );
+
+
+    calendarState.holidays =
+      {};
+  }
+}
+
+
 async function loadMonthShifts() {
   const {
     firstDate,
