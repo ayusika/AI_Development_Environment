@@ -710,6 +710,39 @@ function createCalendarEventElement(
   );
 
 
+  eventElement.addEventListener(
+    'click',
+    (clickEvent) => {
+
+      clickEvent.stopPropagation();
+
+
+      const startAt =
+        String(
+          event.start_at
+          || ''
+        );
+
+      const dateMatch =
+        startAt.match(
+          /^(\d{4}-\d{2}-\d{2})/
+        );
+
+
+      if (!dateMatch) {
+        return;
+      }
+
+
+      openEventModal(
+        dateMatch[1],
+        ownerCode,
+        event
+      );
+    }
+  );
+
+
   return eventElement;
 }
 
