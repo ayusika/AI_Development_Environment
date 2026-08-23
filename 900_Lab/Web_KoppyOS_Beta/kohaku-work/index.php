@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 
 require_once __DIR__
-    . '/../../../600_KoppyOS/server/auth/auth.php';
+    . '/../auth/auth.php';
 
 
 koppyRequirePageAuth(
