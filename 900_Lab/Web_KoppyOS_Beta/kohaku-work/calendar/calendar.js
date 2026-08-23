@@ -1047,8 +1047,29 @@ eventForm.addEventListener(
     };
 
 
+    const eventId =
+      Number(
+        formData.get(
+          'event_id'
+        )
+        || 0
+      );
+
+
+    const isEdit =
+      eventId > 0;
+
+
+    if (isEdit) {
+      payload.id =
+        eventId;
+    }
+
+
     eventMessage.textContent =
-      '保存しています…';
+      isEdit
+        ? '更新しています…'
+        : '保存しています…';
 
 
     try {
@@ -1058,7 +1079,9 @@ eventForm.addEventListener(
           CALENDAR_EVENTS_API_URL,
           {
             method:
-              'POST',
+              isEdit
+                ? 'PATCH'
+                : 'POST',
 
             credentials:
               'same-origin',
