@@ -3943,10 +3943,18 @@ function renderScheduleCalendar(
               hourHeight
             )}
 
-            ${renderScheduleShiftForDate(
-              date,
-              hourHeight
-            )}
+            ${
+              isOff
+                ? `
+                  <div class="schedule-day-off-label">
+                    休み
+                  </div>
+                `
+                : renderScheduleShiftForDate(
+                    date,
+                    hourHeight
+                  )
+            }
 
             ${renderScheduleEventsForDate(
               date,
