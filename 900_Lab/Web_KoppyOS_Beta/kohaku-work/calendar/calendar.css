@@ -509,12 +509,61 @@ button {
 }
 
 
+.calendar-shift[data-worker-code="shii"] {
+  background:
+    var(--calendar-shift-shii);
+
+  border-color:
+    rgba(93, 161, 191, 0.18);
+}
+
+
+.calendar-shift[
+  data-worker-code="shii"
+][
+  data-shift-variant="extended"
+] {
+  background:
+    var(--calendar-shift-shii-extended);
+
+  border-color:
+    rgba(67, 153, 195, 0.34);
+}
+
+
 .calendar-shift[data-worker-code="ui"] {
   background:
     var(--calendar-shift-ui);
 
   border-color:
-    rgba(196, 116, 164, 0.18);
+    rgba(214, 143, 106, 0.22);
+}
+
+
+.calendar-shift[
+  data-worker-code="ui"
+][
+  data-shift-variant="late"
+] {
+  background:
+    var(--calendar-shift-ui-late);
+
+  border-color:
+    rgba(215, 116, 75, 0.34);
+}
+
+
+.calendar-shift[
+  data-shift-kind="off"
+] {
+  background:
+    var(--calendar-shift-off);
+
+  border-color:
+    var(--calendar-shift-off-border);
+
+  color:
+    #667780;
 }
 
 
