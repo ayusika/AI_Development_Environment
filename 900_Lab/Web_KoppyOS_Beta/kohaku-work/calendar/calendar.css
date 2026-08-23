@@ -1967,3 +1967,33 @@ button {
   border-color:
     rgba(201, 231, 213, 0.78);
 }
+
+/* =====================================================
+   Event readability polish
+===================================================== */
+
+.calendar-event {
+  font-size:
+    10.5px;
+
+  font-weight:
+    650;
+}
+
+
+.calendar-event-time {
+  font-size:
+    9px;
+
+  font-weight:
+    800;
+
+  opacity:
+    0.78;
+}
+
+
+.calendar-event-title {
+  line-height:
+    1.25;
+}
