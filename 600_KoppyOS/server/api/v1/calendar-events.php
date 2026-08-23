@@ -595,6 +595,356 @@ try {
     }
 
 
+    /* =====================================================
+       PATCH
+       予定編集
+    ===================================================== */
+
+    if ($method === 'PATCH') {
+
+        $body =
+            calendarEventReadJsonBody();
+
+
+        $eventId =
+            isset($body['id'])
+                ? (int)
+                    $body['id']
+                : 0;
+
+
+        if ($eventId <= 0) {
+            throw new RuntimeException(
+                'id is required.'
+            );
+        }
+
+
+        $existsStatement =
+            $pdo->prepare(
+                "
+                SELECT COUNT(*)
+                FROM calendar_events
+                WHERE id = ?
+                "
+            );
+
+
+        $existsStatement->execute([
+            $eventId
+        ]);
+
+
+        if (
+            (int)
+            $existsStatement->fetchColumn()
+            === 0
+        ) {
+            throw new RuntimeException(
+                'Calendar event not found.'
+            );
+        }
+
+
+        $ownerCode =
+            isset($body['owner_code'])
+                ? trim(
+                    (string)
+                    $body['owner_code']
+                )
+                : '';
+
+
+        calendarEventValidateOwnerCode(
+            $ownerCode
+        );
+
+
+        $title =
+            isset($body['title'])
+                ? trim(
+                    (string)
+                    $body['title']
+                )
+                : '';
+
+
+        if ($title === '') {
+            throw new RuntimeException(
+                'title is required.'
+            );
+        }
+
+
+        if (
+            mb_strlen(
+                $title
+            ) > 120
+        ) {
+            throw new RuntimeException(
+                'title is too long.'
+            );
+        }
+
+
+        $eventDate =
+            isset($body['event_date'])
+                ? trim(
+                    (string)
+                    $body['event_date']
+                )
+                : '';
+
+
+        calendarEventValidateDate(
+            $eventDate
+        );
+
+
+        $allDay =
+            !empty(
+                $body['all_day']
+            );
+
+
+        if ($allDay) {
+
+            $startAt =
+                $eventDate
+                . ' 00:00';
+
+            $endAt =
+                $eventDate
+                . ' 23:59';
+
+        } else {
+
+            $startTime =
+                isset($body['start_time'])
+                    ? trim(
+                        (string)
+                        $body['start_time']
+                    )
+                    : '';
+
+            $endTime =
+                isset($body['end_time'])
+                    ? trim(
+                        (string)
+                        $body['end_time']
+                    )
+                    : '';
+
+
+            if ($startTime === '') {
+
+                if ($endTime !== '') {
+                    throw new RuntimeException(
+                        'start_time is required when end_time is set.'
+                    );
+                }
+
+
+                $startAt =
+                    $eventDate
+                    . ' 00:00';
+
+                $endAt =
+                    null;
+
+            } else {
+
+                $startAt =
+                    calendarEventNormalizeTime(
+                        $eventDate,
+                        $startTime
+                    );
+
+
+                $endAt =
+                    $endTime === ''
+                        ? null
+                        : calendarEventNormalizeTime(
+                            $eventDate,
+                            $endTime
+                        );
+
+
+                if (
+                    $endAt !== null
+                    &&
+                    $endAt < $startAt
+                ) {
+                    throw new RuntimeException(
+                        'end_time must not be before start_time.'
+                    );
+                }
+            }
+        }
+
+
+        $category =
+            isset($body['category'])
+                ? trim(
+                    (string)
+                    $body['category']
+                )
+                : '';
+
+        $memo =
+            isset($body['memo'])
+                ? trim(
+                    (string)
+                    $body['memo']
+                )
+                : '';
+
+
+        $statement =
+            $pdo->prepare(
+                "
+                UPDATE calendar_events
+
+                SET
+                    owner_code = ?,
+                    title = ?,
+                    start_at = ?,
+                    end_at = ?,
+                    all_day = ?,
+                    category = ?,
+                    memo = ?,
+                    updated_at = CURRENT_TIMESTAMP
+
+                WHERE id = ?
+                "
+            );
+
+
+        $statement->execute([
+            $ownerCode,
+            $title,
+            $startAt,
+            $endAt,
+            $allDay ? 1 : 0,
+            $category !== ''
+                ? $category
+                : null,
+            $memo !== ''
+                ? $memo
+                : null,
+            $eventId,
+        ]);
+
+
+        $recordStatement =
+            $pdo->prepare(
+                "
+                SELECT
+                    id,
+                    owner_code,
+                    title,
+                    start_at,
+                    end_at,
+                    all_day,
+                    category,
+                    memo,
+                    source,
+                    external_id,
+                    created_at,
+                    updated_at
+
+                FROM calendar_events
+
+                WHERE id = ?
+                "
+            );
+
+
+        $recordStatement->execute([
+            $eventId
+        ]);
+
+
+        calendarEventJsonResponse(
+            [
+                'success' =>
+                    true,
+
+                'event' =>
+                    $recordStatement
+                        ->fetch(),
+
+                'error' =>
+                    null,
+            ]
+        );
+    }
+
+
+    /* =====================================================
+       DELETE
+       予定削除
+    ===================================================== */
+
+    if ($method === 'DELETE') {
+
+        $body =
+            calendarEventReadJsonBody();
+
+
+        $eventId =
+            isset($body['id'])
+                ? (int)
+                    $body['id']
+                : 0;
+
+
+        if ($eventId <= 0) {
+            throw new RuntimeException(
+                'id is required.'
+            );
+        }
+
+
+        $statement =
+            $pdo->prepare(
+                "
+                DELETE FROM calendar_events
+                WHERE id = ?
+                "
+            );
+
+
+        $statement->execute([
+            $eventId
+        ]);
+
+
+        if (
+            $statement->rowCount()
+            === 0
+        ) {
+            throw new RuntimeException(
+                'Calendar event not found.'
+            );
+        }
+
+
+        calendarEventJsonResponse(
+            [
+                'success' =>
+                    true,
+
+                'deleted_id' =>
+                    $eventId,
+
+                'error' =>
+                    null,
+            ]
+        );
+    }
+
+
     calendarEventJsonResponse(
         [
             'success' => false,
