@@ -1372,3 +1372,38 @@ button {
     1px solid
     rgba(114, 137, 149, 0.14);
 }
+
+.calendar-event-delete {
+  border:
+    1px solid
+    rgba(210, 85, 85, 0.28);
+
+  background:
+    rgba(225, 92, 92, 0.08);
+
+  color:
+    #c64e4e;
+}
+
+
+.calendar-event-delete:hover {
+  background:
+    rgba(225, 92, 92, 0.14);
+}
+
+
+.calendar-event-delete:disabled {
+  opacity:
+    0.5;
+
+  cursor:
+    wait;
+}
+
+
+.calendar-event-form-actions:has(
+  .calendar-event-delete:not([hidden])
+) {
+  grid-template-columns:
+    auto 1fr 1fr;
+}
