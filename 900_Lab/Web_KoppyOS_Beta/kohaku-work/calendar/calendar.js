@@ -474,6 +474,54 @@ function groupShiftsByDate(shifts) {
 }
 
 
+function groupEventsByDate(events) {
+  const grouped =
+    new Map();
+
+
+  events.forEach(
+    (event) => {
+
+      const startAt =
+        String(
+          event.start_at
+          || ''
+        );
+
+      const match =
+        startAt.match(
+          /^(\d{4}-\d{2}-\d{2})/
+        );
+
+
+      if (!match) {
+        return;
+      }
+
+
+      const dateKey =
+        match[1];
+
+
+      if (!grouped.has(dateKey)) {
+        grouped.set(
+          dateKey,
+          []
+        );
+      }
+
+
+      grouped
+        .get(dateKey)
+        .push(event);
+    }
+  );
+
+
+  return grouped;
+}
+
+
 function findWorkerShift(
   shifts,
   workerCode
