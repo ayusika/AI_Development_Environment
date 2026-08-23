@@ -232,6 +232,10 @@ function handleAction(action, button) {
       confirmCurrentShiftWeek();
       break;
 
+    case 'confirm-shift-week':
+      confirmCurrentShiftWeek();
+      break;
+
     case 'back-to-customers':
       showView('customers');
       break;
