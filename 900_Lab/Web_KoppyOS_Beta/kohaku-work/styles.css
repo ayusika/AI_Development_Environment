@@ -3104,6 +3104,53 @@ body:has(#view-schedule.is-active) .bottom-nav {
 }
 
 
+.schedule-day-column.is-off {
+  background:
+    rgba(226, 232, 236, 0.58);
+}
+
+
+.schedule-day-column.is-off
+.schedule-time-slot {
+  border-top-color:
+    rgba(170, 182, 190, 0.32);
+}
+
+
+.schedule-day-off-label {
+  position: absolute;
+
+  top: 18px;
+  left: 50%;
+
+  z-index: 3;
+
+  transform:
+    translateX(-50%);
+
+  padding:
+    5px 9px;
+
+  border-radius:
+    999px;
+
+  color:
+    #72818a;
+
+  background:
+    rgba(255, 255, 255, 0.78);
+
+  font-size:
+    9px;
+
+  font-weight:
+    900;
+
+  pointer-events:
+    none;
+}
+
+
 .schedule-time-slot {
   position: absolute;
   left: 0;
