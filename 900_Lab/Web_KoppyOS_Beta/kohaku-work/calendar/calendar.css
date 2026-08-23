@@ -1647,10 +1647,10 @@ button {
 
 .calendar-shift.is-empty {
   background:
-    #f3fbf6;
+    rgba(228, 247, 235, 0.55);
 
   border-color:
-    #deeee4;
+    rgba(201, 231, 213, 0.65);
 }
 
 
