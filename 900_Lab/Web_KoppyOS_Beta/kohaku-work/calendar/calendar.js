@@ -999,4 +999,9 @@ moveButtons.forEach(
 );
 
 
-loadMonthShifts();
+loadHolidayData()
+  .finally(
+    () => {
+      loadMonthShifts();
+    }
+  );
