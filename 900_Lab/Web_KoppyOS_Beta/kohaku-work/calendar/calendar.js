@@ -992,6 +992,316 @@ function createCalendarEventElement(
 }
 
 
+function createMultiDayOverlayElement(
+  event
+) {
+  const overlayElement =
+    document.createElement(
+      'button'
+    );
+
+  overlayElement.type =
+    'button';
+
+  overlayElement.className =
+    'calendar-multi-day-overlay';
+
+
+  const ownerCode =
+    String(
+      event.owner_code
+      || ''
+    );
+
+  overlayElement.dataset.ownerCode =
+    ownerCode;
+
+
+  const textColor =
+    String(
+      event.text_color
+      || ''
+    );
+
+  if (
+    /^#[0-9A-Fa-f]{6}$/.test(
+      textColor
+    )
+  ) {
+    overlayElement.style.color =
+      textColor;
+  }
+
+
+  const titleElement =
+    document.createElement(
+      'span'
+    );
+
+  titleElement.className =
+    'calendar-multi-day-title';
+
+  titleElement.textContent =
+    String(
+      event.title
+      || ''
+    );
+
+
+  overlayElement.appendChild(
+    titleElement
+  );
+
+
+  overlayElement.addEventListener(
+    'click',
+    (clickEvent) => {
+
+      clickEvent.stopPropagation();
+
+
+      const range =
+        getCalendarEventDateRange(
+          event
+        );
+
+
+      if (range === null) {
+        return;
+      }
+
+
+      openEventModal(
+        range.startDateKey,
+        ownerCode,
+        event
+      );
+    }
+  );
+
+
+  return overlayElement;
+}
+
+
+function renderMultiDayEventOverlays(
+  gridElement,
+  gridStartDate,
+  events
+) {
+  gridElement
+    .querySelectorAll(
+      '.calendar-multi-day-overlay'
+    )
+    .forEach(
+      (element) => {
+        element.remove();
+      }
+    );
+
+
+  const gridEndDate =
+    new Date(
+      gridStartDate.getFullYear(),
+      gridStartDate.getMonth(),
+      gridStartDate.getDate() + 41
+    );
+
+
+  events
+    .filter(
+      (event) =>
+        isMultiDayCalendarEvent(
+          event
+        )
+    )
+    .forEach(
+      (event) => {
+
+        const range =
+          getCalendarEventDateRange(
+            event
+          );
+
+
+        if (range === null) {
+          return;
+        }
+
+
+        let segmentStart =
+          new Date(
+            Math.max(
+              range.startDate.getTime(),
+              gridStartDate.getTime()
+            )
+          );
+
+        const visibleEnd =
+          new Date(
+            Math.min(
+              range.endDate.getTime(),
+              gridEndDate.getTime()
+            )
+          );
+
+
+        while (
+          segmentStart <= visibleEnd
+        ) {
+          const weekEnd =
+            new Date(
+              segmentStart.getFullYear(),
+              segmentStart.getMonth(),
+              segmentStart.getDate()
+                + (
+                  6
+                  - segmentStart.getDay()
+                )
+            );
+
+
+          const segmentEnd =
+            new Date(
+              Math.min(
+                weekEnd.getTime(),
+                visibleEnd.getTime()
+              )
+            );
+
+
+          const startKey =
+            formatDateKey(
+              segmentStart
+            );
+
+          const endKey =
+            formatDateKey(
+              segmentEnd
+            );
+
+
+          const startDayElement =
+            gridElement.querySelector(
+              `[data-date-key="${startKey}"]`
+            );
+
+          const endDayElement =
+            gridElement.querySelector(
+              `[data-date-key="${endKey}"]`
+            );
+
+
+          if (
+            startDayElement
+            &&
+            endDayElement
+          ) {
+            const ownerCode =
+              String(
+                event.owner_code
+                || ''
+              );
+
+
+            const zoneSelector =
+              ownerCode === 'shared'
+                ? '.calendar-zone-shared'
+                : ownerCode === 'ui'
+                  ? '.calendar-person-events'
+                  : '.calendar-person-events';
+
+
+            let targetZone =
+              null;
+
+
+            if (ownerCode === 'shared') {
+              targetZone =
+                startDayElement.querySelector(
+                  zoneSelector
+                );
+
+            } else {
+              const laneSelector =
+                ownerCode === 'ui'
+                  ? '.calendar-zone-ui'
+                  : '.calendar-zone-shii';
+
+              targetZone =
+                startDayElement
+                  .querySelector(
+                    laneSelector
+                  )
+                  ?.querySelector(
+                    zoneSelector
+                  );
+            }
+
+
+            if (targetZone) {
+              const gridRect =
+                gridElement
+                  .getBoundingClientRect();
+
+              const startDayRect =
+                startDayElement
+                  .getBoundingClientRect();
+
+              const endDayRect =
+                endDayElement
+                  .getBoundingClientRect();
+
+              const zoneRect =
+                targetZone
+                  .getBoundingClientRect();
+
+
+              const overlayElement =
+                createMultiDayOverlayElement(
+                  event
+                );
+
+
+              overlayElement.style.left =
+                `${
+                  startDayRect.left
+                  - gridRect.left
+                }px`;
+
+              overlayElement.style.width =
+                `${
+                  endDayRect.right
+                  - startDayRect.left
+                }px`;
+
+              overlayElement.style.top =
+                `${
+                  zoneRect.top
+                  - gridRect.top
+                  + 1
+                }px`;
+
+
+              gridElement.appendChild(
+                overlayElement
+              );
+            }
+          }
+
+
+          segmentStart =
+            new Date(
+              segmentEnd.getFullYear(),
+              segmentEnd.getMonth(),
+              segmentEnd.getDate() + 1
+            );
+        }
+      }
+    );
+}
+
+
 function openEventModal(
   dateKey,
   ownerCode,
