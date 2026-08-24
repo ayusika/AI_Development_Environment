@@ -2010,3 +2010,37 @@ button {
     inset 0 0 0 1px
     rgba(72, 181, 223, 0.44);
 }
+
+/* =====================================================
+   Final calendar visual polish
+===================================================== */
+
+.calendar-shift.is-empty {
+  background:
+    rgba(228, 247, 235, 0.08);
+
+  border-color:
+    rgba(201, 231, 213, 0.16);
+}
+
+
+/* 未入力は操作時だけ見える */
+
+.calendar-day-lane:hover
+.calendar-shift.is-empty {
+  background:
+    rgba(228, 247, 235, 0.5);
+
+  border-color:
+    rgba(201, 231, 213, 0.68);
+}
+
+
+/* 仕事と生活予定を視覚的に分離 */
+
+.calendar-day-lane
+.calendar-shift
++ .calendar-event {
+  margin-top:
+    3px;
+}
