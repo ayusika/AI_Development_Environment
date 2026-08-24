@@ -1734,9 +1734,28 @@ function renderMonthCalendar() {
         }
 
 
-        laneElement.appendChild(
+        const workLineElement =
+          document.createElement('div');
+
+        workLineElement.className =
+          'calendar-work-line';
+
+
+        workLineElement.appendChild(
           shiftElement
         );
+
+
+        laneElement.appendChild(
+          workLineElement
+        );
+
+
+        const eventsElement =
+          document.createElement('div');
+
+        eventsElement.className =
+          'calendar-person-events';
 
 
         const workerEvents =
@@ -1756,10 +1775,15 @@ function renderMonthCalendar() {
               );
 
 
-            laneElement.appendChild(
+            eventsElement.appendChild(
               eventElement
             );
           }
+        );
+
+
+        laneElement.appendChild(
+          eventsElement
         );
 
 
