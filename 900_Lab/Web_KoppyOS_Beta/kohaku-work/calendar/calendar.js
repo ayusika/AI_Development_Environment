@@ -499,6 +499,74 @@ function groupShiftsByDate(shifts) {
 }
 
 
+function getCalendarEventDateRange(
+  event
+) {
+  const startMatch =
+    String(
+      event.start_at
+      || ''
+    ).match(
+      /^(\d{4}-\d{2}-\d{2})/
+    );
+
+  if (!startMatch) {
+    return null;
+  }
+
+
+  const endMatch =
+    String(
+      event.end_at
+      || ''
+    ).match(
+      /^(\d{4}-\d{2}-\d{2})/
+    );
+
+
+  const startDate =
+    parseDateKey(
+      startMatch[1]
+    );
+
+  const endDate =
+    endMatch
+      ? parseDateKey(
+          endMatch[1]
+        )
+      : startDate;
+
+
+  return {
+    startDate,
+    endDate,
+    startDateKey:
+      startMatch[1],
+    endDateKey:
+      endMatch
+        ? endMatch[1]
+        : startMatch[1],
+  };
+}
+
+
+function isMultiDayCalendarEvent(
+  event
+) {
+  const range =
+    getCalendarEventDateRange(
+      event
+    );
+
+  return (
+    range !== null
+    &&
+    range.endDateKey
+      > range.startDateKey
+  );
+}
+
+
 function groupEventsByDate(events) {
   const grouped =
     new Map();
@@ -507,75 +575,38 @@ function groupEventsByDate(events) {
   events.forEach(
     (event) => {
 
-      const startMatch =
-        String(
-          event.start_at
-          || ''
-        ).match(
-          /^(\d{4}-\d{2}-\d{2})/
+      const range =
+        getCalendarEventDateRange(
+          event
         );
 
-      if (!startMatch) {
+
+      if (
+        range === null
+        ||
+        isMultiDayCalendarEvent(
+          event
+        )
+      ) {
         return;
       }
 
 
-      const endMatch =
-        String(
-          event.end_at
-          || ''
-        ).match(
-          /^(\d{4}-\d{2}-\d{2})/
-        );
+      const dateKey =
+        range.startDateKey;
 
 
-      const startDate =
-        parseDateKey(
-          startMatch[1]
-        );
-
-      const endDate =
-        endMatch
-          ? parseDateKey(
-              endMatch[1]
-            )
-          : startDate;
-
-
-      const cursor =
-        new Date(
-          startDate.getFullYear(),
-          startDate.getMonth(),
-          startDate.getDate()
-        );
-
-
-      while (
-        cursor <= endDate
-      ) {
-        const dateKey =
-          formatDateKey(
-            cursor
-          );
-
-
-        if (!grouped.has(dateKey)) {
-          grouped.set(
-            dateKey,
-            []
-          );
-        }
-
-
-        grouped
-          .get(dateKey)
-          .push(event);
-
-
-        cursor.setDate(
-          cursor.getDate() + 1
+      if (!grouped.has(dateKey)) {
+        grouped.set(
+          dateKey,
+          []
         );
       }
+
+
+      grouped
+        .get(dateKey)
+        .push(event);
     }
   );
 
