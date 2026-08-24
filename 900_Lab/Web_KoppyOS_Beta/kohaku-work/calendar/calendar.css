@@ -2266,3 +2266,49 @@ button {
   border-bottom-left-radius:
     0;
 }
+
+/* =====================================================
+   True seamless shift connection
+===================================================== */
+
+.calendar-shift.is-connected-right {
+  position:
+    relative;
+
+  z-index:
+    3;
+}
+
+
+.calendar-shift.is-connected-right::after {
+  content:
+    "";
+
+  position:
+    absolute;
+
+  top:
+    -1px;
+
+  right:
+    -2px;
+
+  bottom:
+    -1px;
+
+  width:
+    3px;
+
+  background:
+    inherit;
+
+  pointer-events:
+    none;
+}
+
+
+.calendar-shift.is-connected-left,
+.calendar-shift.is-connected-right {
+  box-shadow:
+    none;
+}
