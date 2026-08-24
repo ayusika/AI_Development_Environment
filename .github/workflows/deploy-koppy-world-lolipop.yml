@@ -13,6 +13,12 @@ on:
       - ".github/workflows/deploy-koppy-world-lolipop.yml"
 
   workflow_dispatch:
+    inputs:
+      run_migrations:
+        description: "Run Kohaku Work database migrations"
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -41,12 +47,15 @@ jobs:
 
           timeout 120s sudo apt-get update -o Acquire::Retries=2
           timeout 120s sudo apt-get install -y sshpass
+
       - name: Deploy Koppy World
         env:
           SSH_HOST: ${{ secrets.LOLIPOP_SSH_HOST }}
           SSH_USER: ${{ secrets.LOLIPOP_SSH_USER }}
           SSH_PASSWORD: ${{ secrets.LOLIPOP_SSH_PASSWORD }}
           SSH_PORT: ${{ secrets.LOLIPOP_SSH_PORT }}
+          RUN_MIGRATIONS: ${{ github.event_name == 'workflow_dispatch' && inputs.run_migrations }}
+
         run: |
           set -euo pipefail
 
@@ -95,67 +104,52 @@ jobs:
             -o StrictHostKeyChecking=accept-new \
             "$API_SOURCE/"* \
             "$SSH_USER@$SSH_HOST:$API_REMOTE/"
-          sshpass -p "$SSH_PASSWORD" \
-            ssh \
-            -p "$SSH_PORT" \
-            -o StrictHostKeyChecking=accept-new \
-            "$SSH_USER@$SSH_HOST" \
-            "mkdir -p '/home/users/2/her.jp-mikipiano/.koppy-private/migrations'"
 
-
-          sshpass -p "$SSH_PASSWORD" \
-            scp \
-            -O \
-            -P "$SSH_PORT" \
-            -o StrictHostKeyChecking=accept-new \
-            "600_KoppyOS/server/database/migrate-sales-v2.php" \
-            "$SSH_USER@$SSH_HOST:/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-sales-v2.php"
-
-
-          sshpass -p "$SSH_PASSWORD" \
-            ssh \
-            -p "$SSH_PORT" \
-            -o StrictHostKeyChecking=accept-new \
-            "$SSH_USER@$SSH_HOST" \
-
+          if [ "$RUN_MIGRATIONS" = "true" ]; then
 
             sshpass -p "$SSH_PASSWORD" \
-            scp \
-            -O \
-            -P "$SSH_PORT" \
-            -o StrictHostKeyChecking=accept-new \
-            "600_KoppyOS/server/database/migrate-sapporo-rates-v2.php" \
-            "$SSH_USER@$SSH_HOST:/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-sapporo-rates-v2.php"
-            "PHP_BIN='/usr/local/php/8.5/bin/php'; \
-            if [ ! -x \"\$PHP_BIN\" ]; then \
-              PHP_BIN=\$(find /usr/local/php -type f -path '*/bin/php' 2>/dev/null | sort -V | tail -n 1); \
-            fi; \
-            if [ -z \"\$PHP_BIN\" ] || [ ! -x \"\$PHP_BIN\" ]; then \
-              echo 'PHP CLI was not found.'; \
-              exit 1; \
-            fi; \
-            echo \"Using PHP CLI: \$PHP_BIN\"; \
-            \"\$PHP_BIN\" \
-            '/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-sales-v2.php' \
-            '/home/users/2/her.jp-mikipiano/.koppy-private/database/kohaku-work.sqlite'"
+              ssh \
+              -p "$SSH_PORT" \
+              -o StrictHostKeyChecking=accept-new \
+              "$SSH_USER@$SSH_HOST" \
+              "mkdir -p '/home/users/2/her.jp-mikipiano/.koppy-private/migrations'"
 
-          sshpass -p "$SSH_PASSWORD" \
-            ssh \
-            -p "$SSH_PORT" \
-            -o StrictHostKeyChecking=accept-new \
-            "$SSH_USER@$SSH_HOST" \
-            "PHP_BIN='/usr/local/php/8.5/bin/php'; \
-            if [ ! -x \"\$PHP_BIN\" ]; then \
-            PHP_BIN=\$(find /usr/local/php -type f -path '*/bin/php' 2>/dev/null | sort -V | tail -n 1); \
-            fi; \
-            if [ -z \"\$PHP_BIN\" ] || [ ! -x \"\$PHP_BIN\" ]; then \
-             echo 'PHP CLI was not found.'; \
-             exit 1; \
-            fi; \
-            echo \"Using PHP CLI: \$PHP_BIN\";
-            \"\$PHP_BIN\" \
-            '/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-sapporo-rates-v2.php' \
-            '/home/users/2/her.jp-mikipiano/.koppy-private/database/kohaku-work.sqlite'"
+            sshpass -p "$SSH_PASSWORD" \
+              scp \
+              -O \
+              -P "$SSH_PORT" \
+              -o StrictHostKeyChecking=accept-new \
+              "600_KoppyOS/server/database/migrate-sales-v2.php" \
+              "$SSH_USER@$SSH_HOST:/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-sales-v2.php"
+
+            sshpass -p "$SSH_PASSWORD" \
+              ssh \
+              -p "$SSH_PORT" \
+              -o StrictHostKeyChecking=accept-new \
+              "$SSH_USER@$SSH_HOST" \
+              "'/usr/local/php/8.5/bin/php' \
+              '/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-sales-v2.php' \
+              '/home/users/2/her.jp-mikipiano/.koppy-private/database/kohaku-work.sqlite'"
+
+            sshpass -p "$SSH_PASSWORD" \
+              scp \
+              -O \
+              -P "$SSH_PORT" \
+              -o StrictHostKeyChecking=accept-new \
+              "600_KoppyOS/server/database/migrate-sapporo-rates-v2.php" \
+              "$SSH_USER@$SSH_HOST:/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-sapporo-rates-v2.php"
+
+            sshpass -p "$SSH_PASSWORD" \
+              ssh \
+              -p "$SSH_PORT" \
+              -o StrictHostKeyChecking=accept-new \
+              "$SSH_USER@$SSH_HOST" \
+              "'/usr/local/php/8.5/bin/php' \
+              '/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-sapporo-rates-v2.php' \
+              '/home/users/2/her.jp-mikipiano/.koppy-private/database/kohaku-work.sqlite'"
+
+          fi
+
       - name: Deployment complete
         run: |
           echo "Koppy World deployed successfully."
