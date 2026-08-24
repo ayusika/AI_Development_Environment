@@ -1199,6 +1199,22 @@ eventForm.addEventListener(
           || ''
         ),
 
+      end_date:
+        String(
+          formData.get(
+            'end_date'
+          )
+          || ''
+        ),
+
+      text_color:
+        String(
+          formData.get(
+            'text_color'
+          )
+          || '#29485a'
+        ),
+
       title:
         String(
           formData.get(
