@@ -839,6 +839,251 @@ function createCalendarEventElement(
   );
 
 
+function createCalendarEventElement(
+  event,
+  dateKey
+) {
+  const eventElement =
+    document.createElement('div');
+
+  eventElement.className =
+    'calendar-event';
+
+
+  const ownerCode =
+    String(
+      event.owner_code
+      || ''
+    );
+
+  if (ownerCode !== '') {
+    eventElement.dataset.ownerCode =
+      ownerCode;
+  }
+
+
+  const textColor =
+    String(
+      event.text_color
+      || ''
+    );
+
+  if (
+    /^#[0-9A-Fa-f]{6}$/.test(
+      textColor
+    )
+  ) {
+    eventElement.style.color =
+      textColor;
+  }
+
+
+  const startAt =
+    String(
+      event.start_at
+      || ''
+    );
+
+  const endAt =
+    String(
+      event.end_at
+      || ''
+    );
+
+
+  const startDateMatch =
+    startAt.match(
+      /^(\d{4}-\d{2}-\d{2})/
+    );
+
+  const endDateMatch =
+    endAt.match(
+      /^(\d{4}-\d{2}-\d{2})/
+    );
+
+
+  const startDateKey =
+    startDateMatch
+      ? startDateMatch[1]
+      : dateKey;
+
+  const endDateKey =
+    endDateMatch
+      ? endDateMatch[1]
+      : startDateKey;
+
+
+  const isMultiDay =
+    endDateKey > startDateKey;
+
+  const allDay =
+    Number(
+      event.all_day
+      || 0
+    ) === 1;
+
+
+  if (isMultiDay) {
+    eventElement.classList.add(
+      'is-multi-day'
+    );
+
+
+    if (dateKey === startDateKey) {
+      eventElement.classList.add(
+        'is-multi-day-start'
+      );
+    }
+
+
+    if (dateKey === endDateKey) {
+      eventElement.classList.add(
+        'is-multi-day-end'
+      );
+    }
+
+
+    if (
+      dateKey !== startDateKey
+      &&
+      dateKey !== endDateKey
+    ) {
+      eventElement.classList.add(
+        'is-multi-day-middle'
+      );
+    }
+
+  } else if (allDay) {
+
+    eventElement.classList.add(
+      'is-all-day-single'
+    );
+
+  } else {
+
+    eventElement.classList.add(
+      'is-timed-single'
+    );
+  }
+
+
+  let showTitle =
+    true;
+
+
+  if (isMultiDay) {
+    const startDate =
+      parseDateKey(
+        startDateKey
+      );
+
+    const endDate =
+      parseDateKey(
+        endDateKey
+      );
+
+    const dayCount =
+      Math.round(
+        (
+          endDate
+          - startDate
+        )
+        / 86400000
+      );
+
+    const middleDate =
+      new Date(
+        startDate.getFullYear(),
+        startDate.getMonth(),
+        startDate.getDate()
+          + Math.floor(
+              dayCount / 2
+            )
+      );
+
+    showTitle =
+      dateKey
+      === formatDateKey(
+        middleDate
+      );
+  }
+
+
+  if (
+    !allDay
+    &&
+    !isMultiDay
+  ) {
+    const match =
+      startAt.match(
+        /\s(\d{2}):(\d{2})/
+      );
+
+    if (
+      match
+      &&
+      match[1] !== '00'
+    ) {
+      const timeElement =
+        document.createElement(
+          'span'
+        );
+
+      timeElement.className =
+        'calendar-event-time';
+
+      timeElement.textContent =
+        `${match[1]}:${match[2]}`;
+
+      eventElement.appendChild(
+        timeElement
+      );
+    }
+  }
+
+
+  if (showTitle) {
+    const titleElement =
+      document.createElement(
+        'span'
+      );
+
+    titleElement.className =
+      'calendar-event-title';
+
+    titleElement.textContent =
+      String(
+        event.title
+        || ''
+      );
+
+    eventElement.appendChild(
+      titleElement
+    );
+  }
+
+
+  eventElement.addEventListener(
+    'click',
+    (clickEvent) => {
+
+      clickEvent.stopPropagation();
+
+
+      if (!startDateMatch) {
+        return;
+      }
+
+
+      openEventModal(
+        startDateKey,
+        ownerCode,
+        event
+      );
+    }
+  );
+
+
   return eventElement;
 }
 
