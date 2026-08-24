@@ -148,6 +148,22 @@ jobs:
               '/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-sapporo-rates-v2.php' \
               '/home/users/2/her.jp-mikipiano/.koppy-private/database/kohaku-work.sqlite'"
 
+            sshpass -p "$SSH_PASSWORD" \
+              scp \
+              -O \
+              -P "$SSH_PORT" \
+              -o StrictHostKeyChecking=accept-new \
+              "900_Lab/Web_KoppyOS_Beta/kohaku-work/migrate-calendar-events.php" \
+              "$SSH_USER@$SSH_HOST:/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-calendar-events.php"
+
+            sshpass -p "$SSH_PASSWORD" \
+              ssh \
+              -p "$SSH_PORT" \
+              -o StrictHostKeyChecking=accept-new \
+              "$SSH_USER@$SSH_HOST" \
+              "'/usr/local/php/8.5/bin/php' \
+              '/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-calendar-events.php'"
+
           fi
 
       - name: Deployment complete
