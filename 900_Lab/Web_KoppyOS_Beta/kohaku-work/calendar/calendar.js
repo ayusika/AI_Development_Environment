@@ -2106,7 +2106,8 @@ function renderMonthCalendar() {
 
             const eventElement =
               createCalendarEventElement(
-                event
+                event,
+                dateKey
               );
 
 
