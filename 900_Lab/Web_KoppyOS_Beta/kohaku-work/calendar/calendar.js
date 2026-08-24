@@ -1914,7 +1914,8 @@ function renderMonthCalendar() {
 
         const eventElement =
           createCalendarEventElement(
-            event
+            event,
+            dateKey
           );
 
         eventElement.classList.add(
