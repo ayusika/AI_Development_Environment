@@ -1664,6 +1664,9 @@ function renderMonthCalendar() {
     dayElement.className =
       'calendar-day';
 
+    dayElement.dataset.dateKey =
+      dateKey;
+
 
     if (
       date.getMonth()
