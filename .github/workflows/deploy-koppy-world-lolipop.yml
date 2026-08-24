@@ -138,9 +138,15 @@ jobs:
             -p "$SSH_PORT" \
             -o StrictHostKeyChecking=accept-new \
             "$SSH_USER@$SSH_HOST" \
-            "PHP_BIN=\$(find /usr/local/php -type f -path '*/bin/php' 2>/dev/null | sort -V | tail -n 1); \
-            if [ -z \"\$PHP_BIN\" ]; then echo 'PHP CLI was not found.'; exit 1; fi; \
-            echo \"Using PHP CLI: \$PHP_BIN\"; \
+            "PHP_BIN='/usr/local/php/8.5/bin/php'; \
+            if [ ! -x \"\$PHP_BIN\" ]; then \
+            PHP_BIN=\$(find /usr/local/php -type f -path '*/bin/php' 2>/dev/null | sort -V | tail -n 1); \
+            fi; \
+            if [ -z \"\$PHP_BIN\" ] || [ ! -x \"\$PHP_BIN\" ]; then \
+             echo 'PHP CLI was not found.'; \
+             exit 1; \
+            fi; \
+            echo \"Using PHP CLI: \$PHP_BIN\";
             \"\$PHP_BIN\" \
             '/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-sapporo-rates-v2.php' \
             '/home/users/2/her.jp-mikipiano/.koppy-private/database/kohaku-work.sqlite'"
