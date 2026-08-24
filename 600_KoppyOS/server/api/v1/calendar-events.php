@@ -730,6 +730,33 @@ try {
         );
 
 
+        $endDate =
+            isset($body['end_date'])
+                ? trim(
+                    (string)
+                    $body['end_date']
+                )
+                : $eventDate;
+
+
+        if ($endDate === '') {
+            $endDate =
+                $eventDate;
+        }
+
+
+        calendarEventValidateDate(
+            $endDate
+        );
+
+
+        if ($endDate < $eventDate) {
+            throw new RuntimeException(
+                'end_date must not be before event_date.'
+            );
+        }
+
+
         $allDay =
             !empty(
                 $body['all_day']
