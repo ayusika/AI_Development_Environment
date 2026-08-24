@@ -507,38 +507,75 @@ function groupEventsByDate(events) {
   events.forEach(
     (event) => {
 
-      const startAt =
+      const startMatch =
         String(
           event.start_at
           || ''
-        );
-
-      const match =
-        startAt.match(
+        ).match(
           /^(\d{4}-\d{2}-\d{2})/
         );
 
-
-      if (!match) {
+      if (!startMatch) {
         return;
       }
 
 
-      const dateKey =
-        match[1];
+      const endMatch =
+        String(
+          event.end_at
+          || ''
+        ).match(
+          /^(\d{4}-\d{2}-\d{2})/
+        );
 
 
-      if (!grouped.has(dateKey)) {
-        grouped.set(
-          dateKey,
-          []
+      const startDate =
+        parseDateKey(
+          startMatch[1]
+        );
+
+      const endDate =
+        endMatch
+          ? parseDateKey(
+              endMatch[1]
+            )
+          : startDate;
+
+
+      const cursor =
+        new Date(
+          startDate.getFullYear(),
+          startDate.getMonth(),
+          startDate.getDate()
+        );
+
+
+      while (
+        cursor <= endDate
+      ) {
+        const dateKey =
+          formatDateKey(
+            cursor
+          );
+
+
+        if (!grouped.has(dateKey)) {
+          grouped.set(
+            dateKey,
+            []
+          );
+        }
+
+
+        grouped
+          .get(dateKey)
+          .push(event);
+
+
+        cursor.setDate(
+          cursor.getDate() + 1
         );
       }
-
-
-      grouped
-        .get(dateKey)
-        .push(event);
     }
   );
 
