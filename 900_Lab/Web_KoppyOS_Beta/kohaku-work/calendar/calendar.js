@@ -2358,7 +2358,20 @@ function renderMonthCalendar() {
   }
 
 
-  return eventElement;
+  monthCalendarElement.appendChild(
+    gridElement
+  );
+
+
+  window.requestAnimationFrame(
+    () => {
+      renderMultiDayEventOverlays(
+        gridElement,
+        gridStartDate,
+        calendarState.events
+      );
+    }
+  );
 }
 
 
