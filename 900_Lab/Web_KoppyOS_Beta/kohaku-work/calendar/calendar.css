@@ -2044,3 +2044,112 @@ button {
   margin-top:
     3px;
 }
+
+/* =====================================================
+   Fixed work-line layout
+===================================================== */
+
+.calendar-day-lanes {
+  display:
+    grid;
+
+  grid-template-rows:
+    1fr 1fr;
+
+  min-height:
+    72px;
+}
+
+
+.calendar-day-lane {
+  display:
+    grid;
+
+  grid-template-rows:
+    20px minmax(0, 1fr);
+
+  align-content:
+    start;
+
+  gap:
+    3px;
+
+  min-height:
+    36px;
+}
+
+
+.calendar-work-line {
+  width:
+    100%;
+
+  height:
+    20px;
+
+  min-height:
+    20px;
+
+  max-height:
+    20px;
+}
+
+
+.calendar-work-line
+.calendar-shift {
+  width:
+    100%;
+
+  height:
+    20px;
+
+  min-height:
+    20px;
+
+  max-height:
+    20px;
+
+  margin-top:
+    0;
+
+  margin-bottom:
+    0;
+}
+
+
+.calendar-person-events {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  gap:
+    2px;
+
+  min-width:
+    0;
+
+  min-height:
+    0;
+}
+
+
+.calendar-person-events:empty {
+  display:
+    block;
+
+  min-height:
+    0;
+}
+
+
+/* 予定が増えても仕事バーは動かさない */
+
+.calendar-person-events
+.calendar-event {
+  flex:
+    0 0 auto;
+
+  margin:
+    0;
+}
