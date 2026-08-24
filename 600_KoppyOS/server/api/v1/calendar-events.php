@@ -562,6 +562,7 @@ try {
                     all_day,
                     category,
                     memo,
+                    text_color,
                     source,
                     external_id,
                     created_at,
