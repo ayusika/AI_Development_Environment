@@ -2239,8 +2239,7 @@ button {
 
 /* 始点だけ左角丸 */
 
-.calendar-shift:not(.is-connected-left)
-.is-connected-right {
+.calendar-shift.is-connected-right:not(.is-connected-left) {
   border-top-right-radius:
     0;
 
