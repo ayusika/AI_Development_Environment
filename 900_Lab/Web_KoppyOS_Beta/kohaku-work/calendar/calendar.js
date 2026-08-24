@@ -830,6 +830,12 @@ function openEventModal(
   eventDateInput.value =
     dateKey;
 
+  eventEndDateInput.value =
+    dateKey;
+
+  eventTextColorInput.value =
+    '#29485a';
+
 
   eventDateLabel.textContent =
     dateKey.replace(
