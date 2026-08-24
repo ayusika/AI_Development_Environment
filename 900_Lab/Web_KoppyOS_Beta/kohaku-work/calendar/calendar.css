@@ -2549,6 +2549,9 @@ button {
   position:
     absolute;
 
+  transform:
+    translateY(-3px);
+
   z-index:
     20;
 
