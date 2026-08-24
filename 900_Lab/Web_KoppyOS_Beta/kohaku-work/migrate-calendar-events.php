@@ -51,6 +51,8 @@ try {
             category TEXT,
             memo TEXT,
 
+            text_color TEXT,
+
             source TEXT NOT NULL DEFAULT 'manual',
 
             external_id TEXT,
