@@ -67,6 +67,44 @@ try {
     );
 
 
+    $columns =
+        $pdo->query(
+            "
+            PRAGMA table_info(
+                calendar_events
+            )
+            "
+        )
+        ->fetchAll();
+
+
+    $columnNames =
+        array_map(
+            static fn (
+                array $column
+            ): string =>
+                (string)
+                $column['name'],
+            $columns
+        );
+
+
+    if (
+        !in_array(
+            'text_color',
+            $columnNames,
+            true
+        )
+    ) {
+        $pdo->exec(
+            "
+            ALTER TABLE calendar_events
+            ADD COLUMN text_color TEXT
+            "
+        );
+    }
+
+
     $pdo->exec(
         "
         CREATE INDEX IF NOT EXISTS
