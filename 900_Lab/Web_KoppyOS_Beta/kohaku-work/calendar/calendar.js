@@ -100,6 +100,16 @@ const eventEndTimeInput =
     '[data-event-end-time]'
   );
 
+const eventEndDateInput =
+  document.querySelector(
+    '[data-event-end-date]'
+  );
+
+const eventTextColorInput =
+  document.querySelector(
+    '[data-event-text-color]'
+  );
+
 const eventMessage =
   document.querySelector(
     '[data-event-message]'
