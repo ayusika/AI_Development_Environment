@@ -2153,3 +2153,108 @@ button {
   margin:
     0;
 }
+
+/* =====================================================
+   Seamless connected work lines
+===================================================== */
+
+.calendar-work-line {
+  margin-left:
+    -8px;
+
+  margin-right:
+    -8px;
+
+  width:
+    calc(100% + 16px);
+}
+
+
+.calendar-work-line
+.calendar-shift {
+  width:
+    100%;
+}
+
+
+/* 左側と接続 */
+
+.calendar-shift.is-connected-left {
+  margin-left:
+    0;
+
+  padding-left:
+    8px;
+
+  border-left:
+    0;
+
+  border-top-left-radius:
+    0;
+
+  border-bottom-left-radius:
+    0;
+}
+
+
+/* 右側と接続 */
+
+.calendar-shift.is-connected-right {
+  margin-right:
+    0;
+
+  padding-right:
+    8px;
+
+  border-right:
+    0;
+
+  border-top-right-radius:
+    0;
+
+  border-bottom-right-radius:
+    0;
+}
+
+
+/* 両側接続の中間セル */
+
+.calendar-shift.is-connected-left.is-connected-right {
+  margin-left:
+    0;
+
+  margin-right:
+    0;
+
+  border-left:
+    0;
+
+  border-right:
+    0;
+
+  border-radius:
+    0;
+}
+
+
+/* 始点だけ左角丸 */
+
+.calendar-shift:not(.is-connected-left)
+.is-connected-right {
+  border-top-right-radius:
+    0;
+
+  border-bottom-right-radius:
+    0;
+}
+
+
+/* 終点だけ右角丸 */
+
+.calendar-shift.is-connected-left:not(.is-connected-right) {
+  border-top-left-radius:
+    0;
+
+  border-bottom-left-radius:
+    0;
+}
