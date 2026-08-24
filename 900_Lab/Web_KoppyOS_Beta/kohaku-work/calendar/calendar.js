@@ -938,6 +938,26 @@ function openEventModal(
       );
 
 
+    const endDateMatch =
+      String(
+        calendarEvent.end_at
+        || ''
+      ).match(
+        /^(\d{4}-\d{2}-\d{2})/
+      );
+
+
+    eventEndDateInput.value =
+      endDateMatch
+        ? endDateMatch[1]
+        : dateKey;
+
+
+    eventTextColorInput.value =
+      calendarEvent.text_color
+        || '#29485a';
+
+
     if (
       !allDay
       && startMatch
