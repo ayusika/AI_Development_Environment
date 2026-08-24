@@ -2312,3 +2312,225 @@ button {
   box-shadow:
     none;
 }
+
+/* =====================================================
+   Calendar event display modes
+   timed = text only
+   all-day = framed
+   multi-day = continuous line
+===================================================== */
+
+
+/* ----- 時間あり：文字だけ ----- */
+
+.calendar-event.is-timed-single {
+  min-height:
+    18px;
+
+  padding:
+    1px 3px;
+
+  border:
+    0;
+
+  border-radius:
+    0;
+
+  background:
+    transparent !important;
+
+  box-shadow:
+    none;
+}
+
+
+.calendar-event.is-timed-single
+.calendar-event-time {
+  display:
+    inline;
+
+  margin-right:
+    4px;
+}
+
+
+.calendar-event.is-timed-single
+.calendar-event-title {
+  display:
+    inline;
+}
+
+
+/* ----- 終日：枠あり ----- */
+
+.calendar-event.is-all-day-single {
+  min-height:
+    20px;
+
+  padding:
+    2px 5px;
+
+  border:
+    1px solid
+    currentColor;
+
+  border-radius:
+    5px;
+
+  background:
+    rgba(255, 255, 255, 0.42);
+}
+
+
+/* ----- 複数日：一本線 ----- */
+
+.calendar-event.is-multi-day {
+  position:
+    relative;
+
+  z-index:
+    5;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  min-height:
+    18px;
+
+  padding:
+    0;
+
+  border:
+    0;
+
+  border-radius:
+    0;
+
+  background:
+    transparent !important;
+
+  overflow:
+    visible;
+}
+
+
+.calendar-event.is-multi-day::before {
+  content:
+    "";
+
+  position:
+    absolute;
+
+  left:
+    -8px;
+
+  right:
+    -8px;
+
+  top:
+    50%;
+
+  height:
+    2px;
+
+  transform:
+    translateY(-50%);
+
+  background:
+    currentColor;
+
+  opacity:
+    0.72;
+}
+
+
+.calendar-event.is-multi-day
+.calendar-event-title {
+  position:
+    relative;
+
+  z-index:
+    1;
+
+  display:
+    inline-block;
+
+  width:
+    auto;
+
+  max-width:
+    calc(100% - 8px);
+
+  padding:
+    0 5px;
+
+  background:
+    #ffffff;
+
+  overflow:
+    hidden;
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+
+  font-weight:
+    800;
+
+  text-align:
+    center;
+}
+
+
+/* 開始地点 */
+
+.calendar-event.is-multi-day-start::before {
+  left:
+    2px;
+}
+
+
+/* 終了地点 */
+
+.calendar-event.is-multi-day-end::before {
+  right:
+    2px;
+}
+
+
+/* 個人ゾーンはセル端まで接続 */
+
+.calendar-day-lane
+.calendar-event.is-multi-day {
+  margin-left:
+    -8px;
+
+  margin-right:
+    -8px;
+
+  width:
+    calc(100% + 16px);
+
+  max-width:
+    none;
+}
+
+
+/* 共通ゾーン */
+
+.calendar-zone-shared
+.calendar-event.is-multi-day {
+  width:
+    100%;
+
+  max-width:
+    none;
+}
