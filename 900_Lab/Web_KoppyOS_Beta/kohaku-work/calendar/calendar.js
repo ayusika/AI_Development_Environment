@@ -126,6 +126,88 @@ const eventModalCloseButtons =
   );
 
 
+function renderColorPalette() {
+  if (!colorPaletteItems) {
+    return;
+  }
+
+
+  colorPaletteItems.textContent =
+    '';
+
+
+  const colors =
+    [
+      ...new Set(
+        calendarState.events
+          .map(
+            (event) =>
+              String(
+                event.text_color
+                || ''
+              ).toLowerCase()
+          )
+          .filter(
+            (color) =>
+              /^#[0-9a-f]{6}$/.test(
+                color
+              )
+          )
+      ),
+    ]
+      .slice(
+        0,
+        8
+      );
+
+
+  colors.forEach(
+    (color) => {
+
+      const button =
+        document.createElement(
+          'button'
+        );
+
+      button.type =
+        'button';
+
+      button.className =
+        'calendar-color-palette-button';
+
+      button.style.backgroundColor =
+        color;
+
+      button.dataset.color =
+        color;
+
+      button.setAttribute(
+        'aria-label',
+        `文字色 ${color}`
+      );
+
+      button.title =
+        color;
+
+
+      button.addEventListener(
+        'click',
+        () => {
+
+          eventTextColorInput.value =
+            color;
+        }
+      );
+
+
+      colorPaletteItems.appendChild(
+        button
+      );
+    }
+  );
+}
+
+
 function padNumber(value) {
   return String(value).padStart(
     2,
