@@ -7,6 +7,9 @@ const SHIFTS_API_URL =
 const CALENDAR_EVENTS_API_URL =
   '/api/v1/calendar-events.php';
 
+const CALENDAR_COLOR_PALETTE_API_URL =
+  '/api/v1/calendar-color-palette.php';
+
 const HOLIDAYS_API_URL =
   'https://holidays-jp.github.io/api/v1/date.json';
 
