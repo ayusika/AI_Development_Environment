@@ -115,6 +115,11 @@ const colorPaletteItems =
     '[data-color-palette-items]'
   );
 
+const colorPaletteAddButton =
+  document.querySelector(
+    '[data-color-palette-add]'
+  );
+
 const eventMessage =
   document.querySelector(
     '[data-event-message]'
