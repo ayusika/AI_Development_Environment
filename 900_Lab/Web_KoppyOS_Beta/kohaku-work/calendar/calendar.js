@@ -2778,6 +2778,7 @@ function openEventModal(
   calendarEvent = null
 ) {
   eventForm.reset();
+    renderColorPalette();
 
 
   const isEdit =
