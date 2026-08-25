@@ -227,9 +227,149 @@ async function renderColorPalette() {
           color;
 
 
+        let longPressTimer =
+          null;
+
+        let longPressTriggered =
+          false;
+
+
+        const startLongPress =
+          () => {
+
+            longPressTriggered =
+              false;
+
+            longPressTimer =
+              window.setTimeout(
+                async () => {
+
+                  longPressTriggered =
+                    true;
+
+
+                  const shouldDelete =
+                    window.confirm(
+                      `${color} を登録パレットから削除しますか？`
+                    );
+
+
+                  if (!shouldDelete) {
+                    return;
+                  }
+
+
+                  try {
+
+                    const response =
+                      await fetch(
+                        CALENDAR_COLOR_PALETTE_API_URL,
+                        {
+                          method:
+                            'DELETE',
+
+                          credentials:
+                            'same-origin',
+
+                          headers: {
+                            'Content-Type':
+                              'application/json',
+                          },
+
+                          body:
+                            JSON.stringify({
+                              color,
+                            }),
+                        }
+                      );
+
+
+                    const data =
+                      await response.json();
+
+
+                    if (
+                      !response.ok
+                      ||
+                      data.success !== true
+                    ) {
+                      throw new Error(
+                        data.error
+                        || '登録色を削除できませんでした。'
+                      );
+                    }
+
+
+                    await renderColorPalette();
+
+                  } catch (error) {
+
+                    console.error(
+                      'Failed to delete palette color.',
+                      error
+                    );
+
+                    if (eventMessage) {
+                      eventMessage.textContent =
+                        error.message
+                        || '登録色を削除できませんでした。';
+                    }
+                  }
+                },
+                600
+              );
+          };
+
+
+        const cancelLongPress =
+          () => {
+
+            if (longPressTimer !== null) {
+              window.clearTimeout(
+                longPressTimer
+              );
+
+              longPressTimer =
+                null;
+            }
+          };
+
+
+        button.addEventListener(
+          'pointerdown',
+          startLongPress
+        );
+
+
+        button.addEventListener(
+          'pointerup',
+          cancelLongPress
+        );
+
+
+        button.addEventListener(
+          'pointerleave',
+          cancelLongPress
+        );
+
+
+        button.addEventListener(
+          'pointercancel',
+          cancelLongPress
+        );
+
+
         button.addEventListener(
           'click',
           () => {
+
+            if (longPressTriggered) {
+              longPressTriggered =
+                false;
+
+              return;
+            }
+
 
             eventTextColorInput.value =
               color;
