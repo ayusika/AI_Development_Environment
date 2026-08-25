@@ -182,7 +182,7 @@ async function loadSavedColorPalette() {
 }
 
 
-function renderColorPalette() {
+async function renderColorPalette() {
   if (!colorPaletteItems) {
     return;
   }
@@ -192,75 +192,64 @@ function renderColorPalette() {
     '';
 
 
-  const colors =
-    [
-      ...new Set(
-        calendarState.events
-          .map(
-            (event) =>
-              String(
-                event.text_color
-                || ''
-              ).toLowerCase()
-          )
-          .filter(
-            (color) =>
-              /^#[0-9a-f]{6}$/.test(
-                color
-              )
-          )
-      ),
-    ]
-      .slice(
-        0,
-        8
-      );
+  try {
+
+    const colors =
+      await loadSavedColorPalette();
 
 
-  colors.forEach(
-    (color) => {
+    colors.forEach(
+      (color) => {
 
-      const button =
-        document.createElement(
-          'button'
+        const button =
+          document.createElement(
+            'button'
+          );
+
+        button.type =
+          'button';
+
+        button.className =
+          'calendar-color-palette-button';
+
+        button.style.backgroundColor =
+          color;
+
+        button.dataset.color =
+          color;
+
+        button.setAttribute(
+          'aria-label',
+          `文字色 ${color}`
         );
 
-      button.type =
-        'button';
-
-      button.className =
-        'calendar-color-palette-button';
-
-      button.style.backgroundColor =
-        color;
-
-      button.dataset.color =
-        color;
-
-      button.setAttribute(
-        'aria-label',
-        `文字色 ${color}`
-      );
-
-      button.title =
-        color;
+        button.title =
+          color;
 
 
-      button.addEventListener(
-        'click',
-        () => {
+        button.addEventListener(
+          'click',
+          () => {
 
-          eventTextColorInput.value =
-            color;
-        }
-      );
+            eventTextColorInput.value =
+              color;
+          }
+        );
 
 
-      colorPaletteItems.appendChild(
-        button
-      );
-    }
-  );
+        colorPaletteItems.appendChild(
+          button
+        );
+      }
+    );
+
+  } catch (error) {
+
+    console.error(
+      'Failed to load saved color palette.',
+      error
+    );
+  }
 }
 
 
