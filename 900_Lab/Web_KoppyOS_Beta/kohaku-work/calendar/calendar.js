@@ -3259,3 +3259,97 @@ loadHolidayData()
       loadMonthShifts();
     }
   );
+
+if (
+  colorPaletteAddButton
+  &&
+  eventTextColorInput
+) {
+  colorPaletteAddButton.addEventListener(
+    'click',
+    async () => {
+
+      const color =
+        String(
+          eventTextColorInput.value
+          || ''
+        ).toLowerCase();
+
+
+      if (
+        !/^#[0-9a-f]{6}$/.test(
+          color
+        )
+      ) {
+        return;
+      }
+
+
+      colorPaletteAddButton.disabled =
+        true;
+
+
+      try {
+
+        const response =
+          await fetch(
+            CALENDAR_COLOR_PALETTE_API_URL,
+            {
+              method:
+                'POST',
+
+              credentials:
+                'same-origin',
+
+              headers: {
+                'Content-Type':
+                  'application/json',
+              },
+
+              body:
+                JSON.stringify({
+                  color,
+                }),
+            }
+          );
+
+
+        const data =
+          await response.json();
+
+
+        if (
+          !response.ok
+          ||
+          data.success !== true
+        ) {
+          throw new Error(
+            data.error
+            || '文字色を登録できませんでした。'
+          );
+        }
+
+
+        await renderColorPalette();
+
+      } catch (error) {
+
+        console.error(
+          'Failed to save color palette.',
+          error
+        );
+
+        if (eventMessage) {
+          eventMessage.textContent =
+            error.message
+            || '文字色を登録できませんでした。';
+        }
+
+      } finally {
+
+        colorPaletteAddButton.disabled =
+          false;
+      }
+    }
+  );
+}
