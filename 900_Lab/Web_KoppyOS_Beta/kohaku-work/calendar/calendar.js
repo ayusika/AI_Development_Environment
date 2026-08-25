@@ -134,6 +134,54 @@ const eventModalCloseButtons =
   );
 
 
+async function loadSavedColorPalette() {
+  const response =
+    await fetch(
+      CALENDAR_COLOR_PALETTE_API_URL,
+      {
+        credentials:
+          'same-origin',
+      }
+    );
+
+
+  const data =
+    await response.json();
+
+
+  if (
+    !response.ok
+    ||
+    data.success !== true
+    ||
+    !Array.isArray(
+      data.colors
+    )
+  ) {
+    throw new Error(
+      data.error
+      || '登録パレットを読み込めませんでした。'
+    );
+  }
+
+
+  return data.colors
+    .map(
+      (item) =>
+        String(
+          item.color
+          || ''
+        ).toLowerCase()
+    )
+    .filter(
+      (color) =>
+        /^#[0-9a-f]{6}$/.test(
+          color
+        )
+    );
+}
+
+
 function renderColorPalette() {
   if (!colorPaletteItems) {
     return;
