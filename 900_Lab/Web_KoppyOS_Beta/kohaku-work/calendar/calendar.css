@@ -2669,3 +2669,86 @@ button {
   opacity:
     0.76;
 }
+
+/* =====================================================
+   Event text color palette
+===================================================== */
+
+.calendar-color-palette {
+  display:
+    grid;
+
+  gap:
+    8px;
+}
+
+.calendar-color-palette-label {
+  color:
+    #29485a;
+
+  font-size:
+    14px;
+
+  font-weight:
+    700;
+}
+
+.calendar-color-palette-items {
+  display:
+    flex;
+
+  flex-wrap:
+    wrap;
+
+  gap:
+    10px;
+
+  min-height:
+    30px;
+
+  align-items:
+    center;
+}
+
+.calendar-color-palette-button {
+  width:
+    30px;
+
+  height:
+    30px;
+
+  padding:
+    0;
+
+  border:
+    3px solid #ffffff;
+
+  border-radius:
+    50%;
+
+  box-shadow:
+    0 0 0 1px rgba(41, 72, 90, 0.18);
+
+  cursor:
+    pointer;
+
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease;
+}
+
+.calendar-color-palette-button:hover {
+  transform:
+    scale(1.1);
+
+  box-shadow:
+    0 0 0 2px rgba(41, 72, 90, 0.28);
+}
+
+.calendar-color-palette-button:focus-visible {
+  outline:
+    2px solid #49b6df;
+
+  outline-offset:
+    3px;
+}
