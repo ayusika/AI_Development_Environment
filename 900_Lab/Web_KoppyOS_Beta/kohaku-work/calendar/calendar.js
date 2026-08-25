@@ -110,6 +110,11 @@ const eventTextColorInput =
     '[data-event-text-color]'
   );
 
+const colorPaletteItems =
+  document.querySelector(
+    '[data-color-palette-items]'
+  );
+
 const eventMessage =
   document.querySelector(
     '[data-event-message]'
