@@ -14747,5 +14747,5 @@ function openScheduleDiary() {
   closeScheduleDetail();
 
 
-  startNukinaviDiary();
+  startHeavenDiary();
 }
