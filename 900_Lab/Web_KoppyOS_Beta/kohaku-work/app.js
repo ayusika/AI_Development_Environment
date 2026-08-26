@@ -12987,8 +12987,203 @@ function adoptCustomerIdea(button) {
 ======================================== */
 
 function startNukinaviDiary() {
+
   restoreDraftToCreateScreen();
+
+
+  if (diaryState.sourceVisit) {
+    renderScheduleVisitInDiary(
+      diaryState.sourceVisit
+    );
+  }
+
+
   showView('nukinaviCreate');
+}
+
+
+function renderScheduleVisitInDiary(
+  visit
+) {
+
+  const visitList =
+    document.getElementById(
+      'diary-visit-list'
+    );
+
+  const visitCount =
+    document.getElementById(
+      'diary-visit-count'
+    );
+
+
+  if (
+    !visitList
+    || !visitCount
+    || !visit
+  ) {
+    return;
+  }
+
+
+  const startedAt =
+    String(
+      visit.started_at
+      || ''
+    );
+
+
+  const time =
+    startedAt.includes(' ')
+      ? startedAt
+          .split(' ')[1]
+          .slice(0, 5)
+      : (
+          startedAt.includes('T')
+            ? startedAt
+                .split('T')[1]
+                .slice(0, 5)
+            : '--:--'
+        );
+
+
+  const customerNames =
+    Array.isArray(
+      visit.customer_names
+    )
+      ? visit.customer_names
+      : [];
+
+
+  const nickname =
+    customerNames.find(
+      (record) =>
+        record.name_type === 'nickname'
+        && record.name
+    );
+
+
+  const kashikoi =
+    customerNames.find(
+      (record) =>
+        record.name_type === 'kashikoi'
+        && record.name
+    );
+
+
+  const anyName =
+    customerNames.find(
+      (record) =>
+        record.name
+    );
+
+
+  let customerName =
+    visit.customer_name
+    || visit.customer_code
+    || '名前未登録';
+
+
+  if (nickname) {
+
+    customerName =
+      String(
+        nickname.name
+      );
+
+  } else if (kashikoi) {
+
+    customerName =
+      `カ:${String(
+        kashikoi.name
+      )}`;
+
+  } else if (anyName) {
+
+    customerName =
+      String(
+        anyName.name
+      );
+  }
+
+
+  const statusLabel =
+    scheduleCustomerStatusLabel(
+      visit.customer_status
+    );
+
+
+  const courseMinutes =
+    Number(
+      visit.course_minutes
+      || 0
+    );
+
+
+  visitCount.textContent =
+    '1名';
+
+
+  visitList.innerHTML = `
+    <div
+      class="customer-check-row timeline-entry"
+    >
+
+      <label class="customer-select">
+
+        <input
+          type="checkbox"
+          name="visit"
+          value="${escapeHtml(
+            String(
+              visit.id
+            )
+          )}"
+          checked
+        >
+
+        <span class="custom-check"></span>
+
+      </label>
+
+
+      <span class="visit-time">
+        ${escapeHtml(time)}
+      </span>
+
+
+      <span class="visit-info">
+
+        <strong>
+          ${escapeHtml(
+            customerName
+          )}
+        </strong>
+
+        <small>
+          ${escapeHtml(
+            `${courseMinutes}分｜${statusLabel}`
+          )}
+        </small>
+
+      </span>
+
+
+      <button
+        class="customer-edit-button"
+        type="button"
+        data-action="edit-customer-diary"
+        data-visit-id="${escapeHtml(
+          String(
+            visit.id
+          )
+        )}"
+      >
+        個別編集
+      </button>
+
+    </div>
+  `;
 }
 
 
