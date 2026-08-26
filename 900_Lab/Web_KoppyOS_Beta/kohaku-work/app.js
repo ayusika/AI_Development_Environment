@@ -358,6 +358,10 @@ function handleAction(action, button) {
       openScheduleCustomerPanel();
       break;
 
+    case 'open-schedule-diary':
+      openScheduleDiary();
+      break;
+
     case 'close-schedule-customer':
       closeScheduleCustomerPanel();
       break;
