@@ -6,6 +6,7 @@ const views = {
   home: document.querySelector('[data-view="home"]'),
   diary: document.querySelector('[data-view="diary"]'),
   nukinaviCreate: document.querySelector('[data-view="nukinavi-create"]'),
+  heavenCreate: document.querySelector('[data-view="heaven-create"]'),
   diaryEdit: document.querySelector('[data-view="diary-edit"]'),
   postPrep: document.querySelector('[data-view="post-prep"]'),
   schedule: document.querySelector('[data-view="schedule"]'),
