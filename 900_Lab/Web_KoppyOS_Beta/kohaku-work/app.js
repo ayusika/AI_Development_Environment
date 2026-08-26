@@ -258,6 +258,10 @@ function handleAction(action, button) {
       generateDiary();
       break;
 
+    case 'copy-heaven-diary':
+      copyHeavenDiary();
+      break;
+
     case 'edit-customer-diary':
       openCustomerEditor(button);
       break;
