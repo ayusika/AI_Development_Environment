@@ -14518,27 +14518,31 @@ function scrollScheduleToNow(
 
 function openScheduleDiary() {
 
-  if (!currentScheduleVisit) {
+  const visit =
+    scheduleState.selectedVisit;
+
+
+  if (!visit) {
     return;
   }
 
 
   diaryState.sourceVisitId =
     Number(
-      currentScheduleVisit.id
+      visit.id
     );
 
 
   diaryState.sourceCustomerId =
-    currentScheduleVisit.customer_id
+    visit.customer_id
       ? Number(
-          currentScheduleVisit.customer_id
+          visit.customer_id
         )
       : null;
 
 
   diaryState.sourceVisit =
-    currentScheduleVisit;
+    visit;
 
 
   closeScheduleDetail();
