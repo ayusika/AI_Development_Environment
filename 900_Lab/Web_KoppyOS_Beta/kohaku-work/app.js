@@ -216,6 +216,10 @@ function handleAction(action, button) {
       showView('diary');
       break;
 
+    case 'back-to-schedule':
+      showView('schedule');
+      break;
+
     case 'preview-shift-save':
       saveShiftBatch();
       break;
