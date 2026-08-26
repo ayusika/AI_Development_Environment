@@ -13163,8 +13163,34 @@ function generateHeavenDiary() {
   }
 
 
+  const noteElement =
+    document.getElementById(
+      'heaven-diary-note'
+    );
+
+
+  const extraNoteElement =
+    document.getElementById(
+      'heaven-diary-extra-note'
+    );
+
+
+  const note =
+    noteElement
+      ? noteElement.value.trim()
+      : '';
+
+
+  const extraNote =
+    extraNoteElement
+      ? extraNoteElement.value.trim()
+      : '';
+
+
   renderHeavenDiaryBody(
-    visit
+    visit,
+    note,
+    extraNote
   );
 }
 
