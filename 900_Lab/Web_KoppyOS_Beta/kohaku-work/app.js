@@ -13302,10 +13302,22 @@ function renderHeavenDiaryBody(
       : '';
 
 
+  const selectedPlace =
+    document.querySelector(
+      'input[name="heaven-place"]:checked'
+    );
+
+
+  const placeText =
+    selectedPlace?.value === 'room'
+      ? 'Rで'
+      : 'ホテルで';
+
+
   const opening =
     optionText
-      ? `さっき${courseMinutes}分${optionText}希望の${repeatText}お兄さん♡`
-      : `さっき${courseMinutes}分の${repeatText}お兄さん♡`;
+      ? `さっき${placeText}${courseMinutes}分${optionText}希望の${repeatText}お兄さん♡`
+      : `さっき${placeText}${courseMinutes}分の${repeatText}お兄さん♡`;
 
 
   bodyElement.value =
