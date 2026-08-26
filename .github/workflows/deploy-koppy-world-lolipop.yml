@@ -10,8 +10,9 @@ on:
       - "600_KoppyOS/server/api/**"
       - "600_KoppyOS/server/database/migrate-sales-v2.php"
       - "600_KoppyOS/server/database/migrate-sapporo-rates-v2.php"
+      - "600_KoppyOS/server/database/migrate-customer-name-kashikoi.php"
       - ".github/workflows/deploy-koppy-world-lolipop.yml"
-
+      
   workflow_dispatch:
     inputs:
       run_migrations:
@@ -164,7 +165,24 @@ jobs:
               "'/usr/local/php/8.5/bin/php' \
               '/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-calendar-events.php'"
 
-          fi
+            sshpass -p "$SSH_PASSWORD" \
+              scp \
+              -O \
+              -P "$SSH_PORT" \
+              -o StrictHostKeyChecking=accept-new \
+              "600_KoppyOS/server/database/migrate-customer-name-kashikoi.php" \
+              "$SSH_USER@$SSH_HOST:/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-customer-name-kashikoi.php"
+
+            sshpass -p "$SSH_PASSWORD" \
+              ssh \
+              -p "$SSH_PORT" \
+              -o StrictHostKeyChecking=accept-new \
+              "$SSH_USER@$SSH_HOST" \
+              "'/usr/local/php/8.5/bin/php' \
+              '/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-customer-name-kashikoi.php' \
+              '/home/users/2/her.jp-mikipiano/.koppy-private/database/kohaku-work.sqlite'"
+
+          fi            
 
       - name: Deployment complete
         run: |
