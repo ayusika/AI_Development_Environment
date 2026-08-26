@@ -13143,6 +13143,62 @@ function renderHeavenDiaryVisit(
 }
 
 
+async function copyHeavenDiary() {
+
+  const bodyElement =
+    document.getElementById(
+      'heaven-diary-body'
+    );
+
+
+  if (!bodyElement) {
+    return;
+  }
+
+
+  const text =
+    bodyElement.value;
+
+
+  if (!text.trim()) {
+
+    window.alert(
+      'コピーする本文がありません。'
+    );
+
+    return;
+  }
+
+
+  try {
+
+    await navigator.clipboard.writeText(
+      text
+    );
+
+
+    window.alert(
+      'ヘブン投稿本文をコピーしました。'
+    );
+
+
+  } catch (error) {
+
+    bodyElement.focus();
+    bodyElement.select();
+
+    document.execCommand(
+      'copy'
+    );
+
+
+    window.alert(
+      'ヘブン投稿本文をコピーしました。'
+    );
+  }
+}
+
+
 function renderHeavenDiaryBody(
   visit
 ) {
