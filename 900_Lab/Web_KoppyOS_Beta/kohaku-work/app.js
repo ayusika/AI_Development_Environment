@@ -13131,6 +13131,75 @@ function renderHeavenDiaryVisit(
 
   metaElement.textContent =
     `${time}｜${courseMinutes}分｜${statusLabel}`;
+
+
+  renderHeavenDiaryBody(
+    visit
+  );
+}
+
+
+function renderHeavenDiaryBody(
+  visit
+) {
+
+  const bodyElement =
+    document.getElementById(
+      'heaven-diary-body'
+    );
+
+
+  if (!bodyElement) {
+    return;
+  }
+
+
+  const courseMinutes =
+    Number(
+      visit.course_minutes
+      || 0
+    );
+
+
+  let optionText =
+    String(
+      visit.options_text
+      || visit.option_text
+      || visit.options
+      || ''
+    ).trim();
+
+
+  if (
+    optionText
+    && optionText !== '-'
+    && optionText !== 'なし'
+  ) {
+
+    optionText =
+      optionText
+        .split(/[\/／,、]/)
+        .map(
+          (item) =>
+            item.trim()
+        )
+        .filter(Boolean)
+        .join('、');
+  } else {
+
+    optionText =
+      '';
+  }
+
+
+  const opening =
+    optionText
+      ? `さっき${courseMinutes}分${optionText}希望のお兄さん♡`
+      : `さっき${courseMinutes}分のお兄さん♡`;
+
+
+  bodyElement.value =
+    `${opening}\n\n\n\n❄︎こはく❄︎`;
 }
 
 
