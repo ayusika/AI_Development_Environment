@@ -258,6 +258,10 @@ function handleAction(action, button) {
       generateDiary();
       break;
 
+    case 'generate-heaven-diary':
+      generateHeavenDiary();
+      break;
+
     case 'copy-heaven-diary':
       copyHeavenDiary();
       break;
