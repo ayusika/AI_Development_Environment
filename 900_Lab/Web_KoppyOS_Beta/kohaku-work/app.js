@@ -13252,7 +13252,9 @@ async function copyHeavenDiary() {
 
 
 function renderHeavenDiaryBody(
-  visit
+  visit,
+  note = '',
+  extraNote = ''
 ) {
 
   const bodyElement =
