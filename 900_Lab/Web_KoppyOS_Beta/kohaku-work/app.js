@@ -13374,8 +13374,27 @@ function renderHeavenDiaryBody(
       : `さっき${placeText}${courseMinutes}分の${repeatText}お兄さん♡`;
 
 
+  const bodyParts = [
+    opening,
+  ];
+
+
+  if (note) {
+    bodyParts.push(
+      note
+    );
+  }
+
+
+  bodyParts.push(
+    '❄︎こはく❄︎'
+  );
+
+
   bodyElement.value =
-    `${opening}\n\n\n\n❄︎こはく❄︎`;
+    bodyParts.join(
+      '\n\n\n'
+    );
 }
 
 
