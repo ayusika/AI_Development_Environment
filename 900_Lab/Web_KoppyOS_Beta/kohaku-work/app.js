@@ -5386,6 +5386,16 @@ function openScheduleDetail(
       : [];
 
 
+  const namePrefixes = {
+    nickname: '',
+    kashikoi: 'カ:',
+    okini_talk: 'オ:',
+    line: 'L:',
+    x: 'X:',
+    instagram: 'I:',
+  };
+
+
   const preferredCustomerName =
     customerNames.find(
       (nameRecord) =>
@@ -5409,9 +5419,14 @@ function openScheduleDetail(
 
   const customer =
     preferredCustomerName
-      ? String(
+      ? `${
+          namePrefixes[
+            preferredCustomerName.name_type
+          ]
+          || ''
+        }${String(
           preferredCustomerName.name
-        )
+        )}`
       : (
           visit.customer_name
           || visit.customer_code
