@@ -5378,10 +5378,45 @@ function openScheduleDetail(
       visit.customer_status
     );
 
+  const customerNames =
+    Array.isArray(
+      visit.customer_names
+    )
+      ? visit.customer_names
+      : [];
+
+
+  const preferredCustomerName =
+    customerNames.find(
+      (nameRecord) =>
+        nameRecord.name_type ===
+          'nickname'
+        && nameRecord.name
+    )
+    ||
+    customerNames.find(
+      (nameRecord) =>
+        nameRecord.name_type ===
+          'kashikoi'
+        && nameRecord.name
+    )
+    ||
+    customerNames.find(
+      (nameRecord) =>
+        nameRecord.name
+    );
+
+
   const customer =
-    visit.customer_name
-    || visit.customer_code
-    || status;
+    preferredCustomerName
+      ? String(
+          preferredCustomerName.name
+        )
+      : (
+          visit.customer_name
+          || visit.customer_code
+          || status
+        );
 
 
   const visitorTypeLabels = {
