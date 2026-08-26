@@ -13231,10 +13231,21 @@ function renderHeavenDiaryBody(
   }
 
 
+  const isRepeat =
+    visit.customer_status ===
+      'repeat';
+
+
+  const repeatText =
+    isRepeat
+      ? 'リピの'
+      : '';
+
+
   const opening =
     optionText
-      ? `さっき${courseMinutes}分${optionText}希望のお兄さん♡`
-      : `さっき${courseMinutes}分のお兄さん♡`;
+      ? `さっき${courseMinutes}分${optionText}希望の${repeatText}お兄さん♡`
+      : `さっき${courseMinutes}分の${repeatText}お兄さん♡`;
 
 
   bodyElement.value =
