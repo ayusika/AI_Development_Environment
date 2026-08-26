@@ -13162,33 +13162,72 @@ function renderHeavenDiaryBody(
 
 
   let optionText =
-    String(
-      visit.options_text
-      || visit.option_text
-      || visit.options
-      || ''
-    ).trim();
+    '';
 
 
   if (
-    optionText
-    && optionText !== '-'
-    && optionText !== 'なし'
+    Array.isArray(
+      visit.options
+    )
   ) {
 
     optionText =
-      optionText
-        .split(/[\/／,、]/)
+      visit.options
         .map(
-          (item) =>
-            item.trim()
+          (option) => {
+
+            if (!option) {
+              return '';
+            }
+
+
+            if (
+              option.custom_name
+              && String(
+                option.custom_name
+              ).trim()
+            ) {
+              return String(
+                option.custom_name
+              ).trim();
+            }
+
+
+            if (
+              option.name
+              && String(
+                option.name
+              ).trim()
+            ) {
+              return String(
+                option.name
+              ).trim();
+            }
+
+
+            return '';
+          }
         )
         .filter(Boolean)
         .join('、');
+
   } else {
 
     optionText =
-      '';
+      String(
+        visit.options_text
+        || visit.option_text
+        || ''
+      ).trim();
+
+
+    if (
+      optionText === '-'
+      || optionText === 'なし'
+    ) {
+      optionText =
+        '';
+    }
   }
 
 
