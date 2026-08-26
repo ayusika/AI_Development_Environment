@@ -12987,6 +12987,149 @@ function adoptCustomerIdea(button) {
    DIARY CREATE
 ======================================== */
 
+function startHeavenDiary() {
+
+  const visit =
+    diaryState.sourceVisit;
+
+
+  if (!visit) {
+    return;
+  }
+
+
+  renderHeavenDiaryVisit(
+    visit
+  );
+
+
+  showView(
+    'heavenCreate'
+  );
+}
+
+
+function renderHeavenDiaryVisit(
+  visit
+) {
+
+  const customerElement =
+    document.getElementById(
+      'heaven-diary-customer'
+    );
+
+  const metaElement =
+    document.getElementById(
+      'heaven-diary-meta'
+    );
+
+
+  if (
+    !customerElement
+    || !metaElement
+  ) {
+    return;
+  }
+
+
+  const customerNames =
+    Array.isArray(
+      visit.customer_names
+    )
+      ? visit.customer_names
+      : [];
+
+
+  const nickname =
+    customerNames.find(
+      (record) =>
+        record.name_type === 'nickname'
+        && record.name
+    );
+
+
+  const kashikoi =
+    customerNames.find(
+      (record) =>
+        record.name_type === 'kashikoi'
+        && record.name
+    );
+
+
+  const anyName =
+    customerNames.find(
+      (record) =>
+        record.name
+    );
+
+
+  let customerName =
+    visit.customer_name
+    || visit.customer_code
+    || '名前未登録';
+
+
+  if (nickname) {
+
+    customerName =
+      String(
+        nickname.name
+      );
+
+  } else if (kashikoi) {
+
+    customerName =
+      `カ:${String(
+        kashikoi.name
+      )}`;
+
+  } else if (anyName) {
+
+    customerName =
+      String(
+        anyName.name
+      );
+  }
+
+
+  const startedAt =
+    String(
+      visit.started_at
+      || ''
+    );
+
+
+  const time =
+    startedAt.length >= 16
+      ? startedAt.slice(
+          11,
+          16
+        )
+      : '--:--';
+
+
+  const courseMinutes =
+    Number(
+      visit.course_minutes
+      || 0
+    );
+
+
+  const statusLabel =
+    scheduleCustomerStatusLabel(
+      visit.customer_status
+    );
+
+
+  customerElement.textContent =
+    customerName;
+
+
+  metaElement.textContent =
+    `${time}｜${courseMinutes}分｜${statusLabel}`;
+}
+
+
 function startNukinaviDiary() {
 
   restoreDraftToCreateScreen();
