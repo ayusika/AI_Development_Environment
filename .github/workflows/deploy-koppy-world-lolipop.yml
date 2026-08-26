@@ -100,12 +100,10 @@ jobs:
             .
 
           retry_command() {
-
             local attempt=1
             local max_attempts=3
 
             until "$@"; do
-
               if [ "$attempt" -ge "$max_attempts" ]; then
                 echo "Command failed after ${max_attempts} attempts."
                 return 1
@@ -114,7 +112,6 @@ jobs:
               echo "Command failed. Retry ${attempt}/${max_attempts} in 5 seconds..."
 
               attempt=$((attempt + 1))
-
               sleep 5
             done
           }
@@ -125,6 +122,7 @@ jobs:
             -P "$SSH_PORT" \
             -O \
             -o StrictHostKeyChecking=accept-new \
+            -o UpdateHostKeys=no \
             -o ConnectTimeout=20 \
             -o ServerAliveInterval=15 \
             -o ServerAliveCountMax=3 \
@@ -136,6 +134,7 @@ jobs:
             ssh \
             -p "$SSH_PORT" \
             -o StrictHostKeyChecking=accept-new \
+            -o UpdateHostKeys=no \
             -o ConnectTimeout=20 \
             -o ServerAliveInterval=15 \
             -o ServerAliveCountMax=3 \
@@ -154,6 +153,7 @@ jobs:
               ssh \
               -p "$SSH_PORT" \
               -o StrictHostKeyChecking=accept-new \
+              -o UpdateHostKeys=no \
               "$SSH_USER@$SSH_HOST" \
               "mkdir -p '/home/users/2/her.jp-mikipiano/.koppy-private/migrations'"
 
@@ -162,6 +162,7 @@ jobs:
               -O \
               -P "$SSH_PORT" \
               -o StrictHostKeyChecking=accept-new \
+              -o UpdateHostKeys=no \
               "600_KoppyOS/server/database/migrate-sales-v2.php" \
               "$SSH_USER@$SSH_HOST:/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-sales-v2.php"
 
@@ -169,6 +170,7 @@ jobs:
               ssh \
               -p "$SSH_PORT" \
               -o StrictHostKeyChecking=accept-new \
+              -o UpdateHostKeys=no \
               "$SSH_USER@$SSH_HOST" \
               "'/usr/local/php/8.5/bin/php' \
               '/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-sales-v2.php' \
@@ -179,6 +181,7 @@ jobs:
               -O \
               -P "$SSH_PORT" \
               -o StrictHostKeyChecking=accept-new \
+              -o UpdateHostKeys=no \
               "600_KoppyOS/server/database/migrate-sapporo-rates-v2.php" \
               "$SSH_USER@$SSH_HOST:/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-sapporo-rates-v2.php"
 
@@ -186,6 +189,7 @@ jobs:
               ssh \
               -p "$SSH_PORT" \
               -o StrictHostKeyChecking=accept-new \
+              -o UpdateHostKeys=no \
               "$SSH_USER@$SSH_HOST" \
               "'/usr/local/php/8.5/bin/php' \
               '/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-sapporo-rates-v2.php' \
@@ -196,6 +200,7 @@ jobs:
               -O \
               -P "$SSH_PORT" \
               -o StrictHostKeyChecking=accept-new \
+              -o UpdateHostKeys=no \
               "600_KoppyOS/server/database/migrate-customer-name-kashikoi.php" \
               "$SSH_USER@$SSH_HOST:/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-customer-name-kashikoi.php"
 
@@ -203,6 +208,7 @@ jobs:
               ssh \
               -p "$SSH_PORT" \
               -o StrictHostKeyChecking=accept-new \
+              -o UpdateHostKeys=no \
               "$SSH_USER@$SSH_HOST" \
               "'/usr/local/php/8.5/bin/php' \
               '/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-customer-name-kashikoi.php' \
