@@ -13147,7 +13147,7 @@ function renderHeavenDiaryVisit(
 }
 
 
-function generateHeavenDiary() {
+async function generateHeavenDiary() {
 
   const visit =
     diaryState.sourceVisit;
@@ -13175,6 +13175,24 @@ function generateHeavenDiary() {
     );
 
 
+  const bodyElement =
+    document.getElementById(
+      'heaven-diary-body'
+    );
+
+
+  const generateButton =
+    document.querySelector(
+      '[data-action="generate-heaven-diary"]'
+    );
+
+
+  const selectedPlace =
+    document.querySelector(
+      'input[name="heaven-place"]:checked'
+    );
+
+
   const note =
     noteElement
       ? noteElement.value.trim()
@@ -13187,11 +13205,175 @@ function generateHeavenDiary() {
       : '';
 
 
-  renderHeavenDiaryBody(
-    visit,
-    note,
-    extraNote
-  );
+  if (!note) {
+
+    window.alert(
+      '接客で書きたいことを入力してください。'
+    );
+
+    if (noteElement) {
+      noteElement.focus();
+    }
+
+    return;
+  }
+
+
+  const optionNames =
+    Array.isArray(
+      visit.options
+    )
+      ? visit.options
+          .map(
+            (option) => {
+
+              if (!option) {
+                return '';
+              }
+
+
+              if (
+                option.custom_name
+                && String(
+                  option.custom_name
+                ).trim()
+              ) {
+                return String(
+                  option.custom_name
+                ).trim();
+              }
+
+
+              if (
+                option.name
+                && String(
+                  option.name
+                ).trim()
+              ) {
+                return String(
+                  option.name
+                ).trim();
+              }
+
+
+              return '';
+            }
+          )
+          .filter(Boolean)
+      : [];
+
+
+  if (generateButton) {
+
+    generateButton.disabled =
+      true;
+
+    generateButton.textContent =
+      'Koppyが日記を作成中...';
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        '/api/v1/heaven-diary.php',
+        {
+          method:
+            'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              note:
+                note,
+
+              extra_note:
+                extraNote,
+
+              course_minutes:
+                Number(
+                  visit.course_minutes
+                  || 0
+                ),
+
+              customer_status:
+                String(
+                  visit.customer_status
+                  || ''
+                ),
+
+              place:
+                selectedPlace
+                  ? selectedPlace.value
+                  : 'hotel',
+
+              options:
+                optionNames,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+
+      throw new Error(
+        data.error
+        || '日記生成に失敗しました。'
+      );
+    }
+
+
+    renderHeavenDiaryBody(
+      visit,
+      data.data?.reply
+      || data.reply
+      || ''
+    );
+
+
+    if (bodyElement) {
+
+      bodyElement.scrollIntoView({
+        behavior:
+          'smooth',
+
+        block:
+          'center',
+      });
+    }
+
+
+  } catch (error) {
+
+    window.alert(
+      error.message
+      || '日記生成に失敗しました。'
+    );
+
+
+  } finally {
+
+    if (generateButton) {
+
+      generateButton.disabled =
+        false;
+
+      generateButton.textContent =
+        'このお客様の日記を作る';
+    }
+  }
 }
 
 
