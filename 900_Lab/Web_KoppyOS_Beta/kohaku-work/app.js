@@ -13147,6 +13147,28 @@ function renderHeavenDiaryVisit(
 }
 
 
+function generateHeavenDiary() {
+
+  const visit =
+    diaryState.sourceVisit;
+
+
+  if (!visit) {
+
+    window.alert(
+      '予約情報を確認できませんでした。'
+    );
+
+    return;
+  }
+
+
+  renderHeavenDiaryBody(
+    visit
+  );
+}
+
+
 async function copyHeavenDiary() {
 
   const bodyElement =
