@@ -5,14 +5,24 @@ on:
     branches:
       - main
     paths:
-      - "900_Lab/Web_KoppyOS_Beta/index.html"
-      - "900_Lab/Web_KoppyOS_Beta/kohaku-work/**"
-      - "600_KoppyOS/server/api/**"
-      - "600_KoppyOS/server/database/migrate-sales-v2.php"
-      - "600_KoppyOS/server/database/migrate-sapporo-rates-v2.php"
-      - "600_KoppyOS/server/database/migrate-customer-name-kashikoi.php"
-      - ".github/workflows/deploy-koppy-world-lolipop.yml"
-      
+
+      sshpass -p "$SSH_PASSWORD" \
+        scp \
+        -O \
+        -P "$SSH_PORT" \
+        -o StrictHostKeyChecking=accept-new \
+        "600_KoppyOS/server/database/migrate-customer-name-kashikoi.php" \
+        "$SSH_USER@$SSH_HOST:/home/users/2/${{ secrets.LOLIPOP_ACCOUNT }}/.koppy-private/migrations/migrate-customer-name-kashikoi.php"
+
+      sshpass -p "$SSH_PASSWORD" \
+        ssh \
+        -p "$SSH_PORT" \
+        -o StrictHostKeyChecking=accept-new \
+        "$SSH_USER@$SSH_HOST" \
+        "'/usr/local/php/8.5/bin/php' \
+        '/home/users/2/${{ secrets.LOLIPOP_ACCOUNT }}/.koppy-private/migrations/migrate-customer-name-kashikoi.php' \
+        '/home/users/2/${{ secrets.LOLIPOP_ACCOUNT }}/.koppy-private/database/kohaku-work.sqlite'"
+              
   workflow_dispatch:
     inputs:
       run_migrations:
