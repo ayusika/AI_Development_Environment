@@ -14515,3 +14515,34 @@ function scrollScheduleToNow(
       )
     );
 }
+
+function openScheduleDiary() {
+
+  if (!currentScheduleVisit) {
+    return;
+  }
+
+
+  diaryState.sourceVisitId =
+    Number(
+      currentScheduleVisit.id
+    );
+
+
+  diaryState.sourceCustomerId =
+    currentScheduleVisit.customer_id
+      ? Number(
+          currentScheduleVisit.customer_id
+        )
+      : null;
+
+
+  diaryState.sourceVisit =
+    currentScheduleVisit;
+
+
+  closeScheduleDetail();
+
+
+  startNukinaviDiary();
+}
