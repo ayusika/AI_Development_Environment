@@ -266,6 +266,10 @@ function handleAction(action, button) {
       copyHeavenDiary();
       break;
 
+    case 'save-heaven-diary':
+      saveHeavenDiary();
+      break;
+
     case 'edit-customer-diary':
       openCustomerEditor(button);
       break;
