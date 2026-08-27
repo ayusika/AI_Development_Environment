@@ -3437,3 +3437,456 @@ async function saveScheduleVisit() {
         : 'この予約を登録';
   }
 }
+
+/* ========================================
+   DETAIL
+======================================== */
+
+function openScheduleDetail(
+  visit
+) {
+
+  if (
+    !scheduleDetailDrawer
+    || !scheduleDetailBody
+  ) {
+    return;
+  }
+
+
+  if (scheduleLinkedCustomerPanel) {
+
+    scheduleLinkedCustomerPanel.hidden =
+      true;
+
+    scheduleLinkedCustomerPanel.innerHTML =
+      '';
+  }
+
+
+  if (scheduleCustomerPanel) {
+
+    scheduleCustomerPanel.hidden =
+      true;
+  }
+
+
+  scheduleState.identitySearchVisits =
+    [];
+
+  scheduleState.selectedIdentityCandidate =
+    null;
+
+
+  scheduleState.selectedVisit =
+    visit;
+
+
+  const status =
+    scheduleCustomerStatusLabel(
+      visit.customer_status
+    );
+
+  const customerNames =
+    Array.isArray(
+      visit.customer_names
+    )
+      ? visit.customer_names
+      : [];
+
+
+  const namePrefixes = {
+    nickname: '',
+    kashikoi: 'カ:',
+    okini_talk: 'オ:',
+    line: 'L:',
+    x: 'X:',
+    instagram: 'I:',
+  };
+
+
+  const preferredCustomerName =
+    customerNames.find(
+      (nameRecord) =>
+        nameRecord.name_type ===
+          'nickname'
+        && nameRecord.name
+    )
+    ||
+    customerNames.find(
+      (nameRecord) =>
+        nameRecord.name_type ===
+          'kashikoi'
+        && nameRecord.name
+    )
+    ||
+    customerNames.find(
+      (nameRecord) =>
+        nameRecord.name
+    );
+
+
+  const customer =
+    preferredCustomerName
+      ? `${
+          namePrefixes[
+            preferredCustomerName.name_type
+          ]
+          || ''
+        }${String(
+          preferredCustomerName.name
+        )}`
+      : (
+          visit.customer_name
+          || visit.customer_code
+          || status
+        );
+
+
+  const visitorTypeLabels = {
+    local: '地元',
+    travel: '旅行',
+    business: '出張',
+  };
+
+
+  const visitorType =
+    visitorTypeLabels[
+      visit.visitor_type
+    ]
+    || '不明';
+
+
+  const date =
+    String(
+      visit.started_at
+    ).slice(0, 10);
+
+  const time =
+    String(
+      visit.started_at
+    ).slice(11, 16);
+
+
+  if (scheduleDetailTitle) {
+    scheduleDetailTitle.textContent =
+      customer;
+  }
+
+
+  const optionNames =
+    Array.isArray(visit.options)
+      ? visit.options
+          .map((option) =>
+            option.name
+            || option.custom_name
+            || ''
+          )
+          .filter(Boolean)
+      : [];
+
+
+  const optionText =
+    optionNames.length
+      ? optionNames.join(' / ')
+      : 'なし';
+
+
+  scheduleDetailBody.innerHTML = `
+    <div class="schedule-detail-card">
+
+      <div class="schedule-detail-row">
+        <span>日時</span>
+        <strong>
+          ${escapeHtml(date)}
+          ${escapeHtml(time)}
+        </strong>
+      </div>
+
+      <div class="schedule-detail-row">
+        <span>店舗</span>
+        <strong>
+          ${escapeHtml(visit.store_name)}
+        </strong>
+      </div>
+
+      <div class="schedule-detail-row">
+        <span>予約時間</span>
+        <strong>
+          ${
+            visit.pricing_category
+              === 'foreign'
+              ? `外${Number(
+                  visit.course_minutes
+                )}分`
+              : `${Number(
+                  visit.course_minutes
+                )}分`
+          }
+        </strong>
+      </div>
+
+      <div class="schedule-detail-row">
+        <span>区分</span>
+        <strong>
+          ${escapeHtml(status)}
+        </strong>
+      </div>
+
+      <div class="schedule-detail-row">
+        <span>来訪タイプ</span>
+
+        <select
+          id="schedule-visitor-type"
+          class="schedule-visitor-type-select"
+        >
+          <option value=""
+            ${!visit.visitor_type ? 'selected' : ''}>
+            不明
+          </option>
+
+          <option value="local"
+            ${visit.visitor_type === 'local' ? 'selected' : ''}>
+            地元
+          </option>
+
+          <option value="travel"
+            ${visit.visitor_type === 'travel' ? 'selected' : ''}>
+            旅行
+          </option>
+
+          <option value="business"
+            ${visit.visitor_type === 'business' ? 'selected' : ''}>
+            出張
+          </option>
+        </select>
+      </div>
+
+      <div class="schedule-detail-row">
+        <span>OP</span>
+        <strong>
+          ${escapeHtml(optionText)}
+        </strong>
+      </div>
+
+    </div>
+  `;
+
+
+  const visitorTypeSelect =
+    document.getElementById(
+      'schedule-visitor-type'
+    );
+
+
+  if (visitorTypeSelect) {
+
+    visitorTypeSelect.addEventListener(
+      'change',
+      saveScheduleVisitorType
+    );
+  }
+
+
+  updateScheduleDetailState(
+    scheduleDetailCustomerState,
+    Number(
+      visit.customer_linked
+    ),
+    '紐付け済',
+    '未紐付け'
+  );
+
+
+  updateScheduleDetailState(
+    scheduleDetailDiaryState,
+    Number(
+      visit.diary_linked
+    ),
+    '完了',
+    '未入力'
+  );
+
+
+  updateScheduleDetailState(
+    scheduleDetailSalesState,
+    Number(
+      visit.sales_entered
+    ),
+    '入力済',
+    '未入力'
+  );
+
+
+  if (scheduleCustomerCancelButton) {
+
+    scheduleCustomerCancelButton.hidden =
+      !Boolean(
+        Number(
+          visit.customer_linked
+        )
+      );
+  }
+
+
+  if (scheduleDrawerBackdrop) {
+    scheduleDrawerBackdrop.hidden =
+      false;
+  }
+
+
+  scheduleDetailDrawer.classList.add(
+    'is-open'
+  );
+
+  scheduleDetailDrawer.setAttribute(
+    'aria-hidden',
+    'false'
+  );
+}
+
+
+async function saveScheduleVisitorType() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+  const select =
+    document.getElementById(
+      'schedule-visitor-type'
+    );
+
+
+  if (!visit || !select) {
+    return;
+  }
+
+
+  const previousValue =
+    visit.visitor_type
+    || '';
+
+  const visitorType =
+    select.value;
+
+
+  select.disabled = true;
+
+
+  try {
+
+    const response =
+      await fetch(
+        scheduleApiUrl,
+        {
+          method: 'PATCH',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              id:
+                Number(visit.id),
+
+              visitor_type:
+                visitorType,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+      throw new Error(
+        data.error
+        || '来訪タイプを保存できませんでした。'
+      );
+    }
+
+
+    visit.visitor_type =
+      data.visit?.visitor_type
+      ?? visitorType;
+
+
+  } catch (error) {
+
+    select.value =
+      previousValue;
+
+    window.alert(
+      error.message
+    );
+
+  } finally {
+
+    select.disabled =
+      false;
+  }
+}
+
+
+function updateScheduleDetailState(
+  element,
+  complete,
+  completeText,
+  incompleteText
+) {
+
+  if (!element) return;
+
+
+  element.textContent =
+    complete
+      ? completeText
+      : incompleteText;
+
+
+  const button =
+    element.closest('button');
+
+  if (button) {
+
+    button.classList.toggle(
+      'is-complete',
+      Boolean(complete)
+    );
+  }
+}
+
+
+function getIdentityFeatureLabel(
+  featureType
+) {
+
+  const labels = {
+    age_range: '年代',
+    height: '身長',
+    body_type: '体格',
+    hair: '髪',
+    facial_hair: 'ヒゲ',
+    glasses: '眼鏡',
+    appearance: '見た目',
+    lookalike: '似てる人',
+    occupation: '職業',
+    voice_speech: '声・話し方',
+    area: 'エリア',
+    hobby_topic: '趣味・話題',
+    other: 'その他',
+  };
+
+
+  return (
+    labels[featureType]
+    || featureType
+  );
+}
