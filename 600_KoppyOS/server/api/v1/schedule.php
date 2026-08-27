@@ -955,6 +955,11 @@ try {
                             FROM diary_visits dv
                             WHERE dv.visit_id = v.id
                         )
+                        OR EXISTS (
+                            SELECT 1
+                            FROM heaven_diaries hd
+                            WHERE hd.visit_id = v.id
+                        )
                         THEN 1
                         ELSE 0
                     END AS diary_linked
