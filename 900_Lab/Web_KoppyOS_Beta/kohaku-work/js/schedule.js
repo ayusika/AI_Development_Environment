@@ -4298,3 +4298,235 @@ function selectScheduleIdentityCandidate(
     </div>
   `;
 }
+
+async function searchScheduleIdentity() {
+
+  if (
+    !scheduleIdentitySearchKeyword
+    || !scheduleIdentitySearchStatus
+    || !scheduleIdentitySearchStore
+    || !scheduleIdentitySearchResults
+  ) {
+    return;
+  }
+
+
+  const params =
+    new URLSearchParams();
+
+
+  const keyword =
+    scheduleIdentitySearchKeyword.value.trim();
+
+  const customerStatus =
+    scheduleIdentitySearchStatus.value;
+
+  const storeId =
+    scheduleIdentitySearchStore.value;
+
+
+  if (keyword !== '') {
+    params.set(
+      'keyword',
+      keyword
+    );
+  }
+
+
+  if (customerStatus !== '') {
+    params.set(
+      'customer_status',
+      customerStatus
+    );
+  }
+
+
+  if (storeId !== '') {
+    params.set(
+      'store_id',
+      storeId
+    );
+  }
+
+
+  scheduleIdentitySearchResults.innerHTML =
+    '<p>検索中...</p>';
+
+
+  try {
+
+    const response =
+      await fetch(
+        `${customerIdentitySearchApiUrl}?${params.toString()}`
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+      throw new Error(
+        data.error
+        || 'ID不明客を検索できませんでした。'
+      );
+    }
+
+
+    const visits =
+      (
+        Array.isArray(
+          data.data?.visits
+        )
+          ? data.data.visits
+          : []
+      )
+        .filter(
+          (visit) =>
+            Number(visit.id)
+            !== Number(
+              scheduleState.selectedVisit?.id
+            )
+        );
+
+
+    scheduleState.identitySearchVisits =
+      visits;
+
+    scheduleState.selectedIdentityCandidate =
+      null;
+
+
+    if (visits.length === 0) {
+
+      scheduleIdentitySearchResults.innerHTML =
+        '<p>候補は見つかりませんでした。</p>';
+
+      return;
+    }
+
+
+    scheduleIdentitySearchResults.innerHTML =
+      visits
+        .map((visit) => {
+
+          const features =
+            Array.isArray(
+              visit.identity_features
+            )
+              ? visit.identity_features
+              : [];
+
+
+          const featureHtml =
+            features.length
+              ? features
+                  .map((feature) => {
+
+                    const label =
+                      getIdentityFeatureLabel(
+                        feature.feature_type
+                      );
+
+                    return `
+                      <span>
+                        ${escapeHtml(label)}:
+                        ${escapeHtml(
+                          feature.feature_value
+                        )}
+                      </span>
+                    `;
+                  })
+                  .join('')
+              : '<span>構造化特徴なし</span>';
+
+
+          const customerStatusLabels = {
+            new: '新規',
+            repeat: 'リピ',
+            other_store_repeat: '他店リピ',
+            repeat_unknown_id: 'リピ・ID不明',
+          };
+
+
+          const statusLabel =
+            customerStatusLabels[
+              visit.customer_status
+            ]
+            || visit.customer_status;
+
+
+          return `
+            <article class="schedule-identity-search-result">
+
+              <div>
+                <strong>
+                  ${escapeHtml(
+                    visit.started_at
+                  )}
+                </strong>
+
+                <span>
+                  ${escapeHtml(
+                    visit.store_name
+                    || ''
+                  )}
+                </span>
+
+                <span>
+                  ${escapeHtml(
+                    statusLabel
+                  )}
+                </span>
+              </div>
+
+              <div>
+                ${featureHtml}
+              </div>
+
+              ${
+                visit.customer_features
+                  ? `
+                    <p>
+                      ${escapeHtml(
+                        visit.customer_features
+                      )}
+                    </p>
+                  `
+                  : ''
+              }
+
+              <small>
+                visit #${escapeHtml(
+                  visit.id
+                )}
+              </small>
+
+              <button
+                class="secondary-button"
+                type="button"
+                data-action="select-schedule-identity-candidate"
+                data-visit-id="${escapeHtml(
+                  visit.id
+                )}"
+              >
+                この人を確認
+              </button>
+
+            </article>
+          `;
+        })
+        .join('');
+
+
+  } catch (error) {
+
+    scheduleIdentitySearchResults.innerHTML =
+      `<p>${escapeHtml(
+        error.message
+      )}</p>`;
+  }
+}
