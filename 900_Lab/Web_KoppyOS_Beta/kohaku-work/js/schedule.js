@@ -2880,3 +2880,560 @@ function updateSchedulePeriodTitle(
   schedulePeriodTitle.textContent =
     `${start.getMonth() + 1}/${start.getDate()} 〜 ${end.getMonth() + 1}/${end.getDate()}`;
 }
+
+/* ========================================
+   ADD / EDIT FORM
+======================================== */
+
+function openScheduleForm(
+  date = null,
+  time = null
+) {
+
+  if (!scheduleFormCard) return;
+
+
+  closeScheduleDetail();
+
+
+  let targetDate =
+    date
+    || scheduleState.anchorDate
+    || scheduleFormatDate(
+      new Date()
+    );
+
+
+  let targetTime =
+    time || '12:00';
+
+
+  if (targetTime) {
+
+    const [
+      hourText,
+      minuteText,
+    ] = targetTime.split(':');
+
+    const hour =
+      Number(hourText);
+
+    if (hour >= 24) {
+
+      const nextDate =
+        scheduleParseDate(
+          targetDate
+        );
+
+      nextDate.setDate(
+        nextDate.getDate() + 1
+      );
+
+      targetDate =
+        scheduleFormatDate(
+          nextDate
+        );
+
+      targetTime =
+        `${String(hour - 24).padStart(2, '0')}:${minuteText}`;
+    }
+  }
+
+
+  resetScheduleForm();
+
+
+  if (scheduleFormDate) {
+    scheduleFormDate.value =
+      targetDate;
+  }
+
+
+  if (scheduleStore) {
+
+    const confirmedShift =
+      scheduleState.shifts
+        .find(
+          (shift) =>
+            shift.shift_date
+            === targetDate
+            &&
+            shift.status
+            === 'confirmed'
+        )
+      || null;
+
+
+    if (
+      confirmedShift
+      &&
+      confirmedShift.store_id
+    ) {
+
+      scheduleStore.value =
+        String(
+          confirmedShift.store_id
+        );
+
+    } else {
+
+      const sapporoStore =
+        Array.from(
+          scheduleStore.options
+        )
+          .find(
+            (option) =>
+              option.textContent
+                ?.trim()
+              === '札幌'
+          )
+        || null;
+
+
+      if (sapporoStore) {
+        scheduleStore.value =
+          String(
+            sapporoStore.value
+          );
+      }
+    }
+  }
+
+
+  if (scheduleStartTime) {
+    scheduleStartTime.value =
+      targetTime;
+  }
+
+
+  const bookedNow =
+    new Date();
+
+
+  if (scheduleBookedDate) {
+    scheduleBookedDate.value =
+      scheduleFormatDate(
+        bookedNow
+      );
+  }
+
+
+  if (scheduleBookedTime) {
+    scheduleBookedTime.value =
+      `${String(bookedNow.getHours()).padStart(2, '0')}:${String(bookedNow.getMinutes()).padStart(2, '0')}`;
+  }
+
+
+  scheduleFormCard.hidden = false;
+
+  loadScheduleSalesMaster();
+}
+
+
+function resetScheduleForm() {
+
+  if (scheduleEditId) {
+    scheduleEditId.value = '';
+  }
+
+
+  if (scheduleFormTitle) {
+    scheduleFormTitle.textContent =
+      '予約を追加';
+  }
+
+
+  if (scheduleSaveButton) {
+    scheduleSaveButton.textContent =
+      'この予約を登録';
+  }
+
+
+  selectedScheduleCourse =
+    null;
+
+  selectedScheduleCourseMaster =
+    null;
+
+  selectedScheduleCourseRateId =
+    null;
+
+  selectedSchedulePricingCategory =
+    'standard';
+
+  selectedScheduleExtensions =
+    [];
+
+  selectedCustomerStatus =
+    'repeat_unknown_id';
+
+
+  if (scheduleCustomCourse) {
+    scheduleCustomCourse.value = '';
+  }
+
+
+  if (scheduleCourseMasterList) {
+
+    scheduleCourseMasterList.innerHTML = `
+      <p class="schedule-master-empty">
+        料金を読み込み中…
+      </p>
+    `;
+  }
+
+
+  if (scheduleExtensionMasterList) {
+
+    scheduleExtensionMasterList.innerHTML =
+      '';
+
+    scheduleExtensionMasterList.hidden =
+      true;
+  }
+
+
+  updateScheduleCoursePriceSummary();
+
+
+  if (scheduleStore) {
+    scheduleStore.value = '';
+  }
+
+
+  if (scheduleCustomerChange) {
+    scheduleCustomerChange.checked =
+      false;
+  }
+
+
+  document
+    .querySelectorAll(
+      '[data-schedule-option]'
+    )
+    .forEach((input) => {
+      input.checked = false;
+    });
+
+
+  if (scheduleCustomOption) {
+    scheduleCustomOption.value = '';
+  }
+
+
+  document
+    .querySelectorAll(
+      '[data-customer-status]'
+    )
+    .forEach((button) => {
+
+      button.classList.toggle(
+        'is-selected',
+        button.dataset.customerStatus
+        === 'repeat_unknown_id'
+      );
+    });
+
+
+  hideScheduleMessage();
+}
+
+
+function closeScheduleForm() {
+
+  if (!scheduleFormCard) return;
+
+  scheduleFormCard.hidden = true;
+
+  hideScheduleMessage();
+}
+
+
+async function saveScheduleVisit() {
+
+  if (
+    !scheduleFormDate
+    || !scheduleStore
+    || !scheduleStartTime
+    || !scheduleSaveButton
+  ) {
+    return;
+  }
+
+
+  const date =
+    scheduleFormDate.value;
+
+  const time =
+    scheduleStartTime.value;
+
+  const editId =
+    Number(
+      scheduleEditId?.value
+      || 0
+    );
+
+
+  if (!date || !time) {
+
+    showScheduleMessage(
+      '日付と開始時間を入れてね。',
+      true
+    );
+
+    return;
+  }
+
+
+  if (
+    !selectedScheduleCourse
+    || selectedScheduleCourse <= 0
+  ) {
+
+    showScheduleMessage(
+      '予約時間を選んでね。',
+      true
+    );
+
+    return;
+  }
+
+
+  scheduleSaveButton.disabled = true;
+
+  scheduleSaveButton.textContent =
+    editId
+      ? '更新中…'
+      : '登録中…';
+
+
+  hideScheduleMessage();
+
+
+  const selectedOptions =
+    Array.from(
+      document.querySelectorAll(
+        '[data-schedule-option]:checked'
+      )
+    )
+      .map((input) =>
+        String(input.value).trim()
+      )
+      .filter(Boolean);
+
+
+  const customOption =
+    scheduleCustomOption
+      ? scheduleCustomOption.value.trim()
+      : '';
+
+
+  const bookedDate =
+    scheduleBookedDate
+      ? scheduleBookedDate.value
+      : '';
+
+  const bookedTime =
+    scheduleBookedTime
+      ? scheduleBookedTime.value
+      : '';
+
+
+  if (
+    (bookedDate && !bookedTime)
+    || (!bookedDate && bookedTime)
+  ) {
+
+    showScheduleMessage(
+      '予約受付日は日付と時刻を両方入れてね。',
+      true
+    );
+
+    scheduleSaveButton.disabled =
+      false;
+
+    scheduleSaveButton.textContent =
+      editId
+        ? '変更を保存'
+        : 'この予約を登録';
+
+    return;
+  }
+
+
+  const bookedAt =
+    bookedDate && bookedTime
+      ? `${bookedDate} ${bookedTime}`
+      : null;
+
+
+  const customerRequestedChange =
+    Boolean(
+      editId
+      && scheduleCustomerChange
+      && scheduleCustomerChange.checked
+    );
+
+
+  const payload = {
+    store_id:
+      Number(
+        scheduleStore.value
+      ),
+
+    started_at:
+      `${date} ${time}`,
+
+    booked_at:
+      bookedAt,
+
+    course_minutes:
+      selectedScheduleCourse,
+
+    store_course_id:
+      selectedScheduleCourseMaster
+        ? Number(
+            selectedScheduleCourseMaster
+              .store_course_id
+          )
+        : null,
+
+    extensions:
+      selectedScheduleExtensions
+        .map((extension) => ({
+          store_course_id:
+            Number(
+              extension.store_course_id
+            ),
+
+          quantity:
+            Number(
+              extension.quantity
+              || 1
+            ),
+        })),
+
+    customer_status:
+      selectedCustomerStatus,
+
+    options:
+      selectedOptions,
+
+    custom_option:
+      customOption,
+
+    customer_requested_change:
+      customerRequestedChange,
+  };
+
+
+  if (editId) {
+    payload.id = editId;
+  }
+
+
+  const calendarShell =
+    document.querySelector(
+      '.schedule-calendar-shell'
+    );
+
+  const previousScrollLeft =
+    calendarShell
+      ? calendarShell.scrollLeft
+      : 0;
+
+  const previousScrollTop =
+    calendarShell
+      ? calendarShell.scrollTop
+      : 0;
+
+  const previousAnchorDate =
+    scheduleState.anchorDate;
+
+
+  try {
+
+    const response =
+      await fetch(
+        scheduleApiUrl,
+        {
+          method:
+            editId
+              ? 'PATCH'
+              : 'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify(
+              payload
+            ),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+      throw new Error(
+        data.error
+        || '予約の保存に失敗しました。'
+      );
+    }
+
+
+    scheduleState.anchorDate =
+      previousAnchorDate;
+
+    if (scheduleDateInput) {
+      scheduleDateInput.value =
+        previousAnchorDate;
+    }
+
+
+    closeScheduleForm();
+
+    await loadSchedule(
+      true
+    );
+
+
+    if (
+      editId
+      && calendarShell
+    ) {
+
+      calendarShell.scrollLeft =
+        previousScrollLeft;
+
+      calendarShell.scrollTop =
+        previousScrollTop;
+    }
+
+
+  } catch (error) {
+
+    showScheduleMessage(
+      error.message,
+      true
+    );
+
+  } finally {
+
+    scheduleSaveButton.disabled =
+      false;
+
+    scheduleSaveButton.textContent =
+      editId
+        ? '変更を保存'
+        : 'この予約を登録';
+  }
+}
