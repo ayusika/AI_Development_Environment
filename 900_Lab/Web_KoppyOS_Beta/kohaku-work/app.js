@@ -13437,6 +13437,174 @@ async function copyHeavenDiary() {
 }
 
 
+async function saveHeavenDiary() {
+
+  const visit =
+    diaryState.sourceVisit;
+
+
+  const bodyElement =
+    document.getElementById(
+      'heaven-diary-saved-body'
+    );
+
+
+  const statusElement =
+    document.getElementById(
+      'heaven-diary-save-status'
+    );
+
+
+  const saveButton =
+    document.querySelector(
+      '[data-action="save-heaven-diary"]'
+    );
+
+
+  if (
+    !visit
+    || !visit.id
+  ) {
+
+    window.alert(
+      '保存対象の予約を確認できませんでした。'
+    );
+
+    return;
+  }
+
+
+  if (!bodyElement) {
+    return;
+  }
+
+
+  const body =
+    bodyElement.value.trim();
+
+
+  if (!body) {
+
+    window.alert(
+      '実際に投稿した日記を貼り付けてください。'
+    );
+
+    bodyElement.focus();
+
+    return;
+  }
+
+
+  if (saveButton) {
+
+    saveButton.disabled =
+      true;
+
+    saveButton.textContent =
+      '保存中...';
+  }
+
+
+  if (statusElement) {
+
+    statusElement.hidden =
+      true;
+
+    statusElement.textContent =
+      '';
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        '/api/v1/heaven-diaries.php',
+        {
+          method:
+            'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              visit_id:
+                Number(
+                  visit.id
+                ),
+
+              body:
+                body,
+
+              source:
+                'manual',
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+
+      throw new Error(
+        data.error
+        || '日記を保存できませんでした。'
+      );
+    }
+
+
+    if (statusElement) {
+
+      statusElement.hidden =
+        false;
+
+      statusElement.textContent =
+        '✓ DBに保存しました';
+    }
+
+
+  } catch (error) {
+
+    if (statusElement) {
+
+      statusElement.hidden =
+        false;
+
+      statusElement.textContent =
+        error.message
+        || '日記を保存できませんでした。';
+    }
+
+
+    window.alert(
+      error.message
+      || '日記を保存できませんでした。'
+    );
+
+
+  } finally {
+
+    if (saveButton) {
+
+      saveButton.disabled =
+        false;
+
+      saveButton.textContent =
+        '💾 この日記をDBに保存';
+    }
+  }
+}
+
+
 function renderHeavenDiaryBody(
   visit,
   note = '',
