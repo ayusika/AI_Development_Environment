@@ -289,3 +289,130 @@ function initializeScheduleResize() {
         event.pointerId
       );
     }
+  );
+
+
+  handle.addEventListener(
+    'pointermove',
+    (event) => {
+
+      if (
+        !handle.classList.contains(
+          'is-dragging'
+        )
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+
+      const deltaY =
+        event.clientY - startY;
+
+      const maxHeight =
+        Math.max(
+          420,
+          window.innerHeight - 120
+        );
+
+      const nextHeight =
+        Math.min(
+          maxHeight,
+          Math.max(
+            360,
+            startHeight + deltaY
+          )
+        );
+
+      shell.style.height =
+        `${nextHeight}px`;
+    }
+  );
+
+
+  handle.addEventListener(
+    'pointerup',
+    stopResize
+  );
+
+
+  handle.addEventListener(
+    'pointercancel',
+    stopResize
+  );
+}
+
+
+function setScheduleZoom(
+  nextHeight
+) {
+
+  const page =
+    document.querySelector(
+      '.schedule-page'
+    );
+
+  if (!page) return;
+
+  const clampedHeight =
+    Math.min(
+      scheduleZoom.maxHourHeight,
+      Math.max(
+        scheduleZoom.minHourHeight,
+        nextHeight
+      )
+    );
+
+  page.style.setProperty(
+    '--schedule-hour-height',
+    `${clampedHeight}px`
+  );
+
+  const period =
+    getSchedulePeriod();
+
+  renderScheduleCalendar(
+    period
+  );
+
+  updateScheduleZoomLabel();
+}
+
+
+function updateScheduleZoomLabel() {
+
+  const label =
+    document.getElementById(
+      'schedule-zoom-label'
+    );
+
+  if (!label) return;
+
+  const currentHeight =
+    getScheduleHourHeight();
+
+  const percent =
+    Math.round(
+      currentHeight / 96 * 100
+    );
+
+  label.textContent =
+    `${percent}%`;
+}
+
+
+function formatScheduleMoney(
+  value
+) {
+
+  if (
+    value === null
+    || value === undefined
+    || value === ''
+  ) {
+    return '未確認';
+  }
+
+
+  return `¥${Number(value).toLocaleString('ja-JP')}`;
+}
