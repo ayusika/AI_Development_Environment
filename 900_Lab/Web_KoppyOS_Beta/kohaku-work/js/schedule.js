@@ -1065,3 +1065,267 @@ function initializeSchedule() {
     scheduleFormDate.value = today;
   }
 }
+
+/* ========================================
+   SCHEDULE EVENTS
+======================================== */
+
+if (scheduleDateInput) {
+
+  scheduleDateInput.addEventListener(
+    'change',
+    () => {
+
+      if (!scheduleDateInput.value) return;
+
+      scheduleState.anchorDate =
+        scheduleDateInput.value;
+
+      loadSchedule();
+    }
+  );
+}
+
+
+if (scheduleStore) {
+
+  scheduleStore.addEventListener(
+    'change',
+    () => {
+      loadScheduleSalesMaster();
+    }
+  );
+}
+
+
+if (scheduleFormDate) {
+
+  scheduleFormDate.addEventListener(
+    'change',
+    () => {
+      loadScheduleSalesMaster();
+    }
+  );
+}
+
+
+if (scheduleStartTime) {
+
+  scheduleStartTime.addEventListener(
+    'change',
+    () => {
+      loadScheduleSalesMaster();
+    }
+  );
+}
+
+
+if (scheduleCourseMasterList) {
+
+  scheduleCourseMasterList.addEventListener(
+    'click',
+    (event) => {
+
+      const categoryButton =
+        event.target.closest(
+          '[data-schedule-course-category]'
+        );
+
+
+      if (categoryButton) {
+
+        selectedSchedulePricingCategory =
+          categoryButton.dataset
+            .scheduleCourseCategory;
+
+        renderScheduleSalesMaster();
+
+        return;
+      }
+
+
+      const button =
+        event.target.closest(
+          '[data-schedule-master-course]'
+        );
+
+      if (!button) {
+        return;
+      }
+
+
+      const courseRateId =
+        Number(
+          button.dataset.courseRateId
+        );
+
+
+      const course =
+        scheduleSalesMaster.courses.find(
+          (item) =>
+            Number(
+              item.store_course_rate_id
+            )
+            === courseRateId
+        )
+        || null;
+
+
+      if (!course) {
+        return;
+      }
+
+
+      selectedScheduleCourseMaster =
+        course;
+
+      selectedScheduleCourseRateId =
+        courseRateId;
+
+      selectedScheduleCourse =
+        Number(
+          course.course_minutes
+        );
+
+
+      if (scheduleCustomCourse) {
+        scheduleCustomCourse.value = '';
+      }
+
+
+      scheduleCourseMasterList
+        .querySelectorAll(
+          '[data-schedule-master-course]'
+        )
+        .forEach((item) => {
+
+          item.classList.toggle(
+            'is-selected',
+            Number(
+              item.dataset.courseRateId
+            )
+            === courseRateId
+          );
+        });
+
+
+      updateScheduleCoursePriceSummary();
+    }
+  );
+}
+
+
+if (scheduleExtensionMasterList) {
+
+  scheduleExtensionMasterList.addEventListener(
+    'click',
+    (event) => {
+
+      const button =
+        event.target.closest(
+          '[data-schedule-extension-course]'
+        );
+
+      if (!button) {
+        return;
+      }
+
+
+      const storeCourseId =
+        Number(
+          button.dataset.storeCourseId
+        );
+
+
+      if (storeCourseId <= 0) {
+        return;
+      }
+
+
+      const existingIndex =
+        selectedScheduleExtensions
+          .findIndex(
+            (extension) =>
+              Number(
+                extension.store_course_id
+              )
+              === storeCourseId
+          );
+
+
+      const addButton =
+        event.target.closest(
+          '[data-schedule-extension-add]'
+        );
+
+      const plusButton =
+        event.target.closest(
+          '[data-schedule-extension-plus]'
+        );
+
+      const minusButton =
+        event.target.closest(
+          '[data-schedule-extension-minus]'
+        );
+
+
+      if (
+        addButton
+        && existingIndex < 0
+      ) {
+
+        selectedScheduleExtensions.push({
+          store_course_id:
+            storeCourseId,
+
+          quantity: 1,
+        });
+
+      } else if (
+        plusButton
+        && existingIndex >= 0
+      ) {
+
+        selectedScheduleExtensions[
+          existingIndex
+        ].quantity += 1;
+
+      } else if (
+        minusButton
+        && existingIndex >= 0
+      ) {
+
+        const currentQuantity =
+          Number(
+            selectedScheduleExtensions[
+              existingIndex
+            ].quantity
+            || 1
+          );
+
+
+        if (currentQuantity <= 1) {
+
+          selectedScheduleExtensions.splice(
+            existingIndex,
+            1
+          );
+
+        } else {
+
+          selectedScheduleExtensions[
+            existingIndex
+          ].quantity =
+            currentQuantity - 1;
+        }
+
+      } else {
+
+        return;
+      }
+
+
+      renderScheduleSalesMaster();
+    }
+  );
+}
