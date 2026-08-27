@@ -1329,3 +1329,193 @@ if (scheduleExtensionMasterList) {
     }
   );
 }
+
+if (scheduleCustomCourse) {
+
+  scheduleCustomCourse.addEventListener(
+    'input',
+    () => {
+
+      const value =
+        Number(
+          scheduleCustomCourse.value
+        );
+
+
+      if (value <= 0) {
+        return;
+      }
+
+
+      selectedScheduleCourse =
+        value;
+
+      selectedScheduleCourseMaster =
+        null;
+
+      selectedScheduleCourseRateId =
+        null;
+
+
+      if (scheduleCourseMasterList) {
+
+        scheduleCourseMasterList
+          .querySelectorAll(
+            '[data-schedule-master-course]'
+          )
+          .forEach((button) => {
+
+            button.classList.remove(
+              'is-selected'
+            );
+          });
+      }
+
+
+      updateScheduleCoursePriceSummary();
+    }
+  );
+}
+
+
+document.addEventListener(
+  'click',
+  (event) => {
+
+    const zoomButton =
+      event.target.closest(
+        '[data-schedule-zoom]'
+      );
+
+    if (zoomButton) {
+
+      const action =
+        zoomButton.dataset.scheduleZoom;
+
+      const currentHeight =
+        getScheduleHourHeight();
+
+      if (action === 'in') {
+        setScheduleZoom(
+          currentHeight
+          + scheduleZoom.step
+        );
+      }
+
+      if (action === 'out') {
+        setScheduleZoom(
+          currentHeight
+          - scheduleZoom.step
+        );
+      }
+
+      if (action === 'reset') {
+        setScheduleZoom(96);
+      }
+
+      return;
+    }
+
+
+    const viewButton =
+      event.target.closest(
+        '[data-schedule-view]'
+      );
+
+    if (viewButton) {
+
+      scheduleState.view =
+        viewButton.dataset.scheduleView;
+
+      document
+        .querySelectorAll(
+          '[data-schedule-view]'
+        )
+        .forEach((button) => {
+          button.classList.toggle(
+            'is-selected',
+            button === viewButton
+          );
+        });
+
+      loadSchedule();
+      return;
+    }
+
+
+    const moveButton =
+      event.target.closest(
+        '[data-schedule-move]'
+      );
+
+    if (moveButton) {
+
+      const direction =
+        Number(
+          moveButton.dataset.scheduleMove
+        );
+
+      moveSchedulePeriod(direction);
+      return;
+    }
+
+
+    const todayButton =
+      event.target.closest(
+        '[data-schedule-today]'
+      );
+
+    if (todayButton) {
+
+      const today =
+        scheduleFormatDate(
+          new Date()
+        );
+
+      scheduleState.anchorDate = today;
+
+      if (scheduleDateInput) {
+        scheduleDateInput.value = today;
+      }
+
+      loadSchedule();
+      return;
+    }
+
+
+    const slotButton =
+      event.target.closest(
+        '[data-schedule-slot]'
+      );
+
+    if (slotButton) {
+
+      openScheduleForm(
+        slotButton.dataset.date,
+        slotButton.dataset.time
+      );
+
+      return;
+    }
+
+
+    const eventButton =
+      event.target.closest(
+        '[data-schedule-event]'
+      );
+
+    if (eventButton) {
+
+      const visit =
+        scheduleState.visits.find(
+          (item) =>
+            Number(item.id) ===
+            Number(eventButton.dataset.scheduleEvent)
+        );
+
+      if (visit) {
+        openScheduleDetail(visit);
+      }
+
+      return;
+    }
