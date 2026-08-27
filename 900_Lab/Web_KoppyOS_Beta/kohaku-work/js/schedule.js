@@ -1519,3 +1519,630 @@ document.addEventListener(
 
       return;
     }
+
+    const statusButton =
+      event.target.closest(
+        '[data-customer-status]'
+      );
+
+    if (statusButton) {
+
+      selectedCustomerStatus =
+        statusButton.dataset.customerStatus;
+
+      document
+        .querySelectorAll(
+          '[data-customer-status]'
+        )
+        .forEach((button) => {
+          button.classList.toggle(
+            'is-selected',
+            button === statusButton
+          );
+        });
+
+      return;
+    }
+
+
+    const saveCustomerGeneralNotesButton =
+      event.target.closest(
+        '[data-action="save-schedule-customer-general-notes"]'
+      );
+
+    if (saveCustomerGeneralNotesButton) {
+
+      saveScheduleCustomerGeneralNotes(
+        saveCustomerGeneralNotesButton
+      );
+
+      return;
+    }
+
+
+    const saveCustomerNamesButton =
+      event.target.closest(
+        '[data-action="save-schedule-customer-names"]'
+      );
+
+    if (saveCustomerNamesButton) {
+
+      saveScheduleCustomerNames(
+        saveCustomerNamesButton
+      );
+
+      return;
+    }
+
+
+    const saveCustomerAcquisitionSourceButton =
+      event.target.closest(
+        '[data-action="save-schedule-customer-acquisition-source"]'
+      );
+
+    if (saveCustomerAcquisitionSourceButton) {
+
+      saveScheduleCustomerAcquisitionSource(
+        saveCustomerAcquisitionSourceButton
+      );
+
+      return;
+    }
+
+
+    const saveCustomerIdentityFeaturesButton =
+      event.target.closest(
+        '[data-action="save-schedule-customer-identity-features"]'
+      );
+
+    if (saveCustomerIdentityFeaturesButton) {
+
+      saveScheduleCustomerIdentityFeatures(
+        saveCustomerIdentityFeaturesButton
+      );
+
+      return;
+    }
+
+
+    const featureButton =
+      event.target.closest(
+        '[data-schedule-feature]'
+      );
+
+    if (featureButton) {
+
+      if (
+        featureButton.hasAttribute(
+          'data-action'
+        )
+      ) {
+        return;
+      }
+
+
+      const labels = {
+        customer: '顧客情報',
+        diary: 'お礼日記',
+        sales: '売上入力',
+      };
+
+
+      showPlaceholder(
+        labels[
+          featureButton.dataset.scheduleFeature
+        ] || '準備中'
+      );
+    }
+  }
+);
+
+
+if (scheduleDrawerBackdrop) {
+
+  scheduleDrawerBackdrop.addEventListener(
+    'click',
+    () => {
+      closeScheduleDetail();
+    }
+  );
+}
+
+
+/* ========================================
+   PERIOD
+======================================== */
+
+function getSchedulePeriod() {
+
+  const anchor =
+    scheduleParseDate(
+      scheduleState.anchorDate
+      || scheduleFormatDate(new Date())
+    );
+
+  let start =
+    new Date(anchor);
+
+  let days = 1;
+
+
+  if (
+    scheduleState.view === 'week'
+    || scheduleState.view === 'two-weeks'
+  ) {
+
+    const day =
+      start.getDay();
+
+    const mondayOffset =
+      day === 0
+        ? -6
+        : 1 - day;
+
+    start.setDate(
+      start.getDate() + mondayOffset
+    );
+
+    days =
+      scheduleState.view === 'week'
+        ? 7
+        : 14;
+  }
+
+
+  const end =
+    new Date(start);
+
+  end.setDate(
+    end.getDate() + days - 1
+  );
+
+
+  const dates = [];
+
+  for (
+    let index = 0;
+    index < days;
+    index += 1
+  ) {
+
+    const date =
+      new Date(start);
+
+    date.setDate(
+      start.getDate() + index
+    );
+
+    dates.push(
+      scheduleFormatDate(date)
+    );
+  }
+
+
+  return {
+    start:
+      scheduleFormatDate(start),
+
+    end:
+      scheduleFormatDate(end),
+
+    dates,
+  };
+}
+
+
+function moveSchedulePeriod(
+  direction
+) {
+
+  const current =
+    scheduleParseDate(
+      scheduleState.anchorDate
+    );
+
+  let amount = 1;
+
+  if (scheduleState.view === 'week') {
+    amount = 7;
+  }
+
+  if (
+    scheduleState.view === 'two-weeks'
+  ) {
+    amount = 14;
+  }
+
+  current.setDate(
+    current.getDate()
+    + amount * direction
+  );
+
+  scheduleState.anchorDate =
+    scheduleFormatDate(current);
+
+  if (scheduleDateInput) {
+    scheduleDateInput.value =
+      scheduleState.anchorDate;
+  }
+
+  loadSchedule();
+}
+
+
+/* ========================================
+   LOAD
+======================================== */
+
+async function loadSchedule(
+  preserveScroll = false
+) {
+
+  if (!scheduleCalendar) {
+    return;
+  }
+
+
+  if (!scheduleState.anchorDate) {
+
+    scheduleState.anchorDate =
+      scheduleFormatDate(
+        new Date()
+      );
+  }
+
+
+  const period =
+    getSchedulePeriod();
+
+
+  scheduleCalendar.innerHTML = `
+    <div class="schedule-loading">
+      予定を読み込み中…
+    </div>
+  `;
+
+
+  updateSchedulePeriodTitle(
+    period
+  );
+
+
+  try {
+
+    const params =
+      new URLSearchParams({
+        date_from:
+          period.start,
+
+        date_to:
+          period.end,
+      });
+
+
+    const response =
+      await fetch(
+        `${scheduleApiUrl}?${params.toString()}`
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+      throw new Error(
+        data.error
+        || '予定の取得に失敗しました。'
+      );
+    }
+
+
+    scheduleState.visits =
+      data.visits || [];
+
+
+    const shiftParams =
+      new URLSearchParams({
+        date_from:
+          period.start,
+
+        date_to:
+          period.end,
+      });
+
+
+    const shiftResponse =
+      await fetch(
+        `${scheduleShiftsApiUrl}?${shiftParams.toString()}`
+      );
+
+
+    const shiftData =
+      await shiftResponse.json();
+
+
+    if (
+      !shiftResponse.ok
+      || !shiftData.success
+    ) {
+      throw new Error(
+        shiftData.error
+        || '確定シフトの取得に失敗しました。'
+      );
+    }
+
+
+    scheduleState.shifts =
+      Array.isArray(
+        shiftData.shifts
+      )
+        ? shiftData.shifts.filter(
+            (shift) =>
+              (
+                shift.status
+                === 'confirmed'
+                ||
+                shift.status
+                === 'off'
+              )
+              &&
+              Number(
+                shift.is_reservation_owner
+              )
+              === 1
+          )
+        : [];
+
+
+    if (scheduleVisitCount) {
+
+      scheduleVisitCount.textContent =
+        `${scheduleState.visits.length}件`;
+    }
+
+
+    renderScheduleCalendar(
+      period,
+      preserveScroll
+    );
+
+
+  } catch (error) {
+
+    scheduleCalendar.innerHTML = `
+      <div class="schedule-error">
+        <strong>予定を読み込めなかった</strong>
+        <span>
+          ${escapeHtml(error.message)}
+        </span>
+      </div>
+    `;
+  }
+}
+
+
+/* ========================================
+   RENDER
+======================================== */
+
+function renderScheduleCalendar(
+  period,
+  preserveScroll = false
+) {
+
+  const days =
+    period.dates.length;
+
+  const hourHeight =
+    getScheduleHourHeight();
+
+  const totalMinutes =
+    (
+      scheduleEndHour
+      - scheduleStartHour
+    ) * 60;
+
+  const totalHeight =
+    totalMinutes
+    * hourHeight
+    / 60;
+
+
+  const columns =
+    `var(--schedule-time-width) repeat(${days}, minmax(0, 1fr))`;
+
+
+  const headerHtml =
+    period.dates
+      .map((date) => {
+
+        const object =
+          scheduleParseDate(date);
+
+        const weekday =
+          [
+            '日',
+            '月',
+            '火',
+            '水',
+            '木',
+            '金',
+            '土',
+          ][object.getDay()];
+
+        const isToday =
+          date ===
+          scheduleFormatDate(
+            new Date()
+          );
+
+        return `
+          <div
+            class="
+              schedule-day-header
+              ${isToday ? 'is-today' : ''}
+            "
+          >
+            <strong>
+              ${object.getMonth() + 1}/${object.getDate()}(${weekday})
+            </strong>
+          </div>
+        `;
+      })
+      .join('');
+
+
+  const timeLabels = [];
+
+  for (
+    let hour = scheduleStartHour;
+    hour <= scheduleEndHour;
+    hour += 1
+  ) {
+
+    const top =
+      (
+        hour
+        - scheduleStartHour
+      ) * hourHeight;
+
+    timeLabels.push(`
+      <span
+        class="schedule-time-label"
+        style="top:${top}px"
+      >
+        ${String(hour).padStart(2, '0')}:00
+      </span>
+    `);
+  }
+
+
+  const dayColumns =
+    period.dates
+      .map((date) => {
+
+        const isToday =
+          date ===
+          scheduleFormatDate(
+            new Date()
+          );
+
+
+        const dayShift =
+          scheduleState.shifts
+            .find(
+              (shift) =>
+                shift.shift_date
+                === date
+            )
+          || null;
+
+
+        const isOff =
+          dayShift?.status
+          === 'off';
+
+
+        return `
+          <div
+            class="
+              schedule-day-column
+              ${isToday ? 'is-today' : ''}
+              ${isOff ? 'is-off' : ''}
+            "
+            data-schedule-day="${date}"
+            style="height:${totalHeight}px"
+          >
+            ${renderScheduleSlots(
+              date,
+              totalHeight,
+              hourHeight
+            )}
+
+            ${
+              isOff
+                ? `
+                  <div class="schedule-day-off-label">
+                    休み
+                  </div>
+                `
+                : renderScheduleShiftForDate(
+                    date,
+                    hourHeight
+                  )
+            }
+
+            ${renderScheduleEventsForDate(
+              date,
+              hourHeight
+            )}
+
+            ${isToday
+              ? renderScheduleNowLine(
+                  hourHeight
+                )
+              : ''
+            }
+          </div>
+        `;
+      })
+      .join('');
+
+
+  scheduleCalendar.innerHTML = `
+    <div
+      class="schedule-grid"
+      data-view="${escapeHtml(
+        scheduleState.view
+      )}"
+    >
+
+      <div
+        class="schedule-grid-header"
+        style="grid-template-columns:${columns}"
+      >
+
+        <div
+          class="schedule-grid-header-spacer"
+        ></div>
+
+        ${headerHtml}
+
+      </div>
+
+
+      <div
+        class="schedule-grid-body"
+        style="
+          grid-template-columns:${columns};
+          height:${totalHeight}px;
+        "
+      >
+
+        <div
+          class="schedule-time-axis"
+          style="height:${totalHeight}px"
+        >
+          ${timeLabels.join('')}
+        </div>
+
+        ${dayColumns}
+
+      </div>
+
+    </div>
+  `;
+
+
+  if (!preserveScroll) {
+
+    scrollScheduleToNow(
+      period,
+      hourHeight
+    );
+  }
+}
