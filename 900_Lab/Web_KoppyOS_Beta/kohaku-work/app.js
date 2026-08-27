@@ -13148,6 +13148,126 @@ function renderHeavenDiaryVisit(
   renderHeavenDiaryBody(
     visit
   );
+
+
+  loadSavedHeavenDiary(
+    visit
+  );
+}
+
+
+async function loadSavedHeavenDiary(
+  visit
+) {
+
+  const bodyElement =
+    document.getElementById(
+      'heaven-diary-saved-body'
+    );
+
+
+  const statusElement =
+    document.getElementById(
+      'heaven-diary-save-status'
+    );
+
+
+  if (
+    !visit
+    || !visit.id
+    || !bodyElement
+  ) {
+    return;
+  }
+
+
+  bodyElement.value =
+    '';
+
+
+  if (statusElement) {
+
+    statusElement.hidden =
+      true;
+
+    statusElement.textContent =
+      '';
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        `/api/v1/heaven-diaries.php?visit_id=${encodeURIComponent(
+          String(
+            visit.id
+          )
+        )}`
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+
+      throw new Error(
+        data.error
+        || '保存済み日記を読み込めませんでした。'
+      );
+    }
+
+
+    const diary =
+      data.data?.diary
+      || data.diary
+      || null;
+
+
+    if (!diary) {
+      return;
+    }
+
+
+    bodyElement.value =
+      String(
+        diary.body
+        || ''
+      );
+
+
+    if (statusElement) {
+
+      statusElement.hidden =
+        false;
+
+      statusElement.textContent =
+        '✓ 保存済み日記を読み込みました';
+    }
+
+
+  } catch (error) {
+
+    console.error(
+      'Failed to load saved Heaven diary:',
+      error
+    );
+
+
+    if (statusElement) {
+
+      statusElement.hidden =
+        false;
+
+      statusElement.textContent =
+        '保存済み日記の読み込みに失敗しました';
+    }
+  }
 }
 
 
