@@ -3500,7 +3500,7 @@ body:has(#view-schedule.is-active) .bottom-nav {
 
 
 .schedule-event-progress .is-incomplete {
-  opacity: 0.42;
+  opacity: 0.2;
 }
 
 
