@@ -815,3 +815,253 @@ function renderScheduleSalesMaster() {
 
   updateScheduleCoursePriceSummary();
 }
+
+
+function updateScheduleCoursePriceSummary() {
+
+  if (!scheduleCoursePriceSummary) {
+    return;
+  }
+
+
+  if (!selectedScheduleCourseMaster) {
+
+    scheduleCoursePriceSummary.innerHTML = `
+      <span>
+        基本料金
+        <strong>未選択</strong>
+      </span>
+
+      <span>
+        コース手取り
+        <strong>未選択</strong>
+      </span>
+    `;
+
+    return;
+  }
+
+
+  scheduleCoursePriceSummary.innerHTML = `
+    <span>
+      基本料金
+      <strong>
+        ${escapeHtml(
+          formatScheduleMoney(
+            selectedScheduleCourseMaster
+              .base_price
+          )
+        )}
+      </strong>
+    </span>
+
+    <span>
+      コース手取り
+      <strong>
+        ${escapeHtml(
+          formatScheduleMoney(
+            selectedScheduleCourseMaster
+              .take_home
+          )
+        )}
+      </strong>
+    </span>
+  `;
+}
+
+
+async function loadScheduleSalesMaster() {
+
+  if (
+    !scheduleStore
+    || !scheduleFormDate
+    || !scheduleStartTime
+  ) {
+    return;
+  }
+
+
+  const storeId =
+    Number(
+      scheduleStore.value
+    );
+
+  const date =
+    scheduleFormDate.value;
+
+  const time =
+    scheduleStartTime.value;
+
+
+  if (
+    !storeId
+    || !date
+    || !time
+  ) {
+    return;
+  }
+
+
+  const params =
+    new URLSearchParams({
+      store_id:
+        String(storeId),
+
+      at:
+        `${date} ${time}:00`,
+    });
+
+
+  try {
+
+    const response =
+      await fetch(
+        `/api/v1/sales-master.php?${params.toString()}`
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+
+      throw new Error(
+        data.error
+        || '料金マスタを取得できませんでした。'
+      );
+    }
+
+
+    scheduleSalesMaster = {
+      store:
+        data.store
+        || null,
+
+      courses:
+        Array.isArray(data.courses)
+          ? data.courses
+          : [],
+
+      options:
+        Array.isArray(data.options)
+          ? data.options
+          : [],
+
+      dailyFeeRule:
+        data.daily_fee_rule
+        || null,
+    };
+
+
+    const selectedStoreCourseId =
+      Number(
+        selectedScheduleCourseMaster
+          ?.store_course_id
+        || 0
+      );
+
+
+    const matchingCourseById =
+      selectedStoreCourseId > 0
+        ? scheduleSalesMaster.courses.find(
+            (course) =>
+              Number(
+                course.store_course_id
+              )
+              === selectedStoreCourseId
+              && course.course_type
+                === 'regular'
+          )
+        : null;
+
+
+    const matchingCourse =
+      matchingCourseById
+      || scheduleSalesMaster.courses.find(
+        (course) =>
+          Number(
+            course.course_minutes
+          )
+          === Number(
+            selectedScheduleCourse
+          )
+          && course.course_type
+            === 'regular'
+          && course.pricing_category
+            === 'standard'
+      )
+      || null;
+
+
+    selectedScheduleCourseMaster =
+      matchingCourse;
+
+    selectedScheduleCourseRateId =
+      matchingCourse
+        ? Number(
+            matchingCourse.store_course_rate_id
+          )
+        : null;
+
+
+    if (
+      matchingCourse
+      && (
+        matchingCourse.pricing_category
+        === 'standard'
+        || matchingCourse.pricing_category
+        === 'foreign'
+      )
+    ) {
+      selectedSchedulePricingCategory =
+        matchingCourse.pricing_category;
+    }
+
+
+    renderScheduleSalesMaster();
+
+
+  } catch (error) {
+
+    scheduleSalesMaster = {
+      store: null,
+      courses: [],
+      options: [],
+      dailyFeeRule: null,
+    };
+
+    selectedScheduleCourseMaster =
+      null;
+
+    selectedScheduleCourseRateId =
+      null;
+
+
+    console.error(
+      'Failed to load sales master:',
+      error
+    );
+  }
+}
+
+
+function initializeSchedule() {
+
+  if (!scheduleDateInput) return;
+
+  const today =
+    scheduleFormatDate(
+      new Date()
+    );
+
+  scheduleState.anchorDate = today;
+  scheduleDateInput.value = today;
+
+  if (scheduleFormDate) {
+    scheduleFormDate.value = today;
+  }
+}
