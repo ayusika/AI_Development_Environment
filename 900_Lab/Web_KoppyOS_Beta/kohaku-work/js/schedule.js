@@ -416,3 +416,402 @@ function formatScheduleMoney(
 
   return `¥${Number(value).toLocaleString('ja-JP')}`;
 }
+
+
+function renderScheduleSalesMaster() {
+
+  const selectedOptionNames =
+    Array.from(
+      document.querySelectorAll(
+        '[data-schedule-option]:checked'
+      )
+    )
+      .map((input) =>
+        String(input.value)
+      );
+
+
+  const courses =
+    Array.isArray(
+      scheduleSalesMaster.courses
+    )
+      ? scheduleSalesMaster.courses
+      : [];
+
+  const options =
+    Array.isArray(
+      scheduleSalesMaster.options
+    )
+      ? scheduleSalesMaster.options
+      : [];
+
+
+  const regularCourses =
+    courses
+      .filter(
+        (course) =>
+          course.course_type
+          === 'regular'
+      )
+      .sort((a, b) => {
+
+        const categoryOrder = {
+          standard: 0,
+          foreign: 1,
+        };
+
+        const categoryDifference =
+          (
+            categoryOrder[
+              a.pricing_category
+            ]
+            ?? 99
+          )
+          -
+          (
+            categoryOrder[
+              b.pricing_category
+            ]
+            ?? 99
+          );
+
+        if (categoryDifference !== 0) {
+          return categoryDifference;
+        }
+
+        return (
+          Number(a.course_minutes)
+          - Number(b.course_minutes)
+        );
+      });
+
+  const standardCourses =
+    regularCourses.filter(
+      (course) =>
+        course.pricing_category
+        === 'standard'
+    );
+
+  const foreignCourses =
+    regularCourses.filter(
+      (course) =>
+        course.pricing_category
+        === 'foreign'
+    );
+
+
+  const extensionCourses =
+    courses.filter(
+      (course) =>
+        course.course_type
+        === 'extension'
+    );
+
+
+  if (scheduleCourseMasterList) {
+
+    if (regularCourses.length === 0) {
+
+      scheduleCourseMasterList.innerHTML = `
+        <p class="schedule-master-empty">
+          この店舗のコース料金は未登録です。
+        </p>
+      `;
+
+    } else {
+
+      const renderCourseButtons =
+        (courseList) =>
+          courseList
+            .map((course) => {
+
+              const isSelected =
+                Number(
+                  selectedScheduleCourseRateId
+                )
+                === Number(
+                  course.store_course_rate_id
+                );
+
+              return `
+                <button
+                  class="
+                    schedule-master-course-button
+                    ${isSelected ? 'is-selected' : ''}
+                  "
+                  type="button"
+                  data-schedule-master-course
+                  data-course-rate-id="${Number(
+                    course.store_course_rate_id
+                  )}"
+                >
+                  <strong>
+                    ${escapeHtml(
+                      course.pricing_category
+                        === 'foreign'
+                        ? `外${Number(
+                            course.course_minutes
+                          )}分`
+                        : `${Number(
+                            course.course_minutes
+                          )}分`
+                    )}
+                  </strong>
+
+                  <small>
+                    手取り
+                    ${escapeHtml(
+                      formatScheduleMoney(
+                        course.take_home
+                      )
+                    )}
+                  </small>
+                </button>
+              `;
+            })
+            .join('');
+
+
+      const activeCourseList =
+        selectedSchedulePricingCategory
+          === 'foreign'
+          ? foreignCourses
+          : standardCourses;
+
+
+      scheduleCourseMasterList.innerHTML = `
+        ${
+          foreignCourses.length
+            ? `
+              <div
+                class="schedule-course-category-tabs"
+              >
+                <button
+                  class="
+                    schedule-course-category-tab
+                    ${
+                      selectedSchedulePricingCategory
+                        === 'standard'
+                        ? 'is-selected'
+                        : ''
+                    }
+                  "
+                  type="button"
+                  data-schedule-course-category="standard"
+                >
+                  通常
+                </button>
+
+                <button
+                  class="
+                    schedule-course-category-tab
+                    ${
+                      selectedSchedulePricingCategory
+                        === 'foreign'
+                        ? 'is-selected'
+                        : ''
+                    }
+                  "
+                  type="button"
+                  data-schedule-course-category="foreign"
+                >
+                  外国人
+                </button>
+              </div>
+            `
+            : ''
+        }
+
+        <div class="schedule-course-section">
+          <div class="schedule-course-grid">
+            ${renderCourseButtons(
+              activeCourseList
+            )}
+          </div>
+        </div>
+      `;
+    }
+  }
+
+
+  if (scheduleExtensionMasterList) {
+
+    if (extensionCourses.length === 0) {
+
+      scheduleExtensionMasterList.innerHTML =
+        '';
+
+      scheduleExtensionMasterList.hidden =
+        true;
+
+    } else {
+
+      scheduleExtensionMasterList.hidden =
+        false;
+
+      scheduleExtensionMasterList.innerHTML =
+        extensionCourses
+          .map((course) => {
+
+            const selectedExtension =
+              selectedScheduleExtensions
+                .find(
+                  (extension) =>
+                    Number(
+                      extension.store_course_id
+                    )
+                    === Number(
+                      course.store_course_id
+                    )
+                )
+              || null;
+
+            const quantity =
+              selectedExtension
+                ? Number(
+                    selectedExtension.quantity
+                    || 1
+                  )
+                : 0;
+
+            const isSelected =
+              quantity > 0;
+
+            return `
+            <button
+              class="
+                schedule-master-extension-button
+                ${isSelected ? 'is-selected' : ''}
+              "
+              type="button"
+              data-schedule-extension-course
+              data-course-rate-id="${Number(
+                course.store_course_rate_id
+              )}"
+              data-store-course-id="${Number(
+                course.store_course_id
+              )}"
+            >
+              <strong>
+                ${escapeHtml(
+                  String(
+                    course.course_name
+                  )
+                )}
+              </strong>
+
+              <small>
+                ${escapeHtml(
+                  formatScheduleMoney(
+                    course.take_home
+                  )
+                )}
+              </small>
+
+              ${
+                isSelected
+                  ? `
+                    <span
+                      class="schedule-extension-quantity"
+                    >
+                      <span
+                        data-schedule-extension-minus
+                      >
+                        −
+                      </span>
+
+                      <strong>
+                        ${quantity}
+                      </strong>
+
+                      <span
+                        data-schedule-extension-plus
+                      >
+                        ＋
+                      </span>
+                    </span>
+                  `
+                  : `
+                    <span
+                      data-schedule-extension-add
+                    >
+                      ＋追加
+                    </span>
+                  `
+              }
+            </button>
+          `;
+          })
+          .join('');
+    }
+  }
+
+
+  if (scheduleOptionGrid) {
+
+    if (options.length === 0) {
+
+      scheduleOptionGrid.innerHTML = `
+        <p class="schedule-master-empty">
+          この店舗のOP料金は未登録です。
+        </p>
+      `;
+
+    } else {
+
+      scheduleOptionGrid.innerHTML =
+        options
+          .map((option) => `
+            <label class="schedule-option-choice">
+              <input
+                type="checkbox"
+                value="${escapeHtml(
+                  String(option.name)
+                )}"
+                data-schedule-option
+                data-option-rate-id="${Number(
+                  option.store_option_rate_id
+                )}"
+                data-option-price="${Number(
+                  option.price
+                )}"
+                data-option-take-home="${Number(
+                  option.take_home
+                )}"
+              >
+
+              <span>
+                ${escapeHtml(
+                  String(option.name)
+                )}
+
+                <small>
+                  ${escapeHtml(
+                    formatScheduleMoney(
+                      option.take_home
+                    )
+                  )}
+                </small>
+              </span>
+            </label>
+          `)
+          .join('');
+
+
+      scheduleOptionGrid
+        .querySelectorAll(
+          '[data-schedule-option]'
+        )
+        .forEach((input) => {
+
+          input.checked =
+            selectedOptionNames.includes(
+              String(input.value)
+            );
+        });
+    }
+  }
+
+
+  updateScheduleCoursePriceSummary();
+}
