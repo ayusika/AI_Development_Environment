@@ -2146,3 +2146,737 @@ function renderScheduleCalendar(
     );
   }
 }
+
+function scrollScheduleToToday() {
+
+  const shell =
+    document.querySelector(
+      '.schedule-calendar-shell'
+    );
+
+  const todayColumn =
+    document.querySelector(
+      '.schedule-day-column.is-today'
+    );
+
+  if (!shell || !todayColumn) {
+    return;
+  }
+
+  const columnCenter =
+    todayColumn.offsetLeft
+    + todayColumn.offsetWidth / 2;
+
+  const targetLeft =
+    columnCenter
+    - shell.clientWidth / 2;
+
+  const maxLeft =
+    Math.max(
+      0,
+      shell.scrollWidth
+      - shell.clientWidth
+    );
+
+  shell.scrollLeft =
+    Math.min(
+      maxLeft,
+      Math.max(
+        0,
+        targetLeft
+      )
+    );
+}
+
+
+function renderScheduleShiftForDate(
+  date,
+  hourHeight
+) {
+
+  const shift =
+    scheduleState.shifts
+      .find(
+        (item) =>
+          item.shift_date
+          === date
+      )
+    || null;
+
+
+  if (
+    !shift
+    || !shift.start_at
+    || !shift.end_at
+  ) {
+    return '';
+  }
+
+
+  const startHour =
+    Number(
+      String(
+        shift.start_at
+      ).slice(
+        11,
+        13
+      )
+    );
+
+  const startMinute =
+    Number(
+      String(
+        shift.start_at
+      ).slice(
+        14,
+        16
+      )
+    );
+
+
+  const startDate =
+    String(
+      shift.start_at
+    ).slice(
+      0,
+      10
+    );
+
+  const endDate =
+    String(
+      shift.end_at
+    ).slice(
+      0,
+      10
+    );
+
+
+  let endHour =
+    Number(
+      String(
+        shift.end_at
+      ).slice(
+        11,
+        13
+      )
+    );
+
+  const endMinute =
+    Number(
+      String(
+        shift.end_at
+      ).slice(
+        14,
+        16
+      )
+    );
+
+
+  if (
+    endDate > startDate
+  ) {
+    endHour += 24;
+  }
+
+
+  const startTotalMinutes =
+    startHour * 60
+    + startMinute;
+
+  const endTotalMinutes =
+    endHour * 60
+    + endMinute;
+
+
+  const calendarStartMinutes =
+    scheduleStartHour * 60;
+
+  const calendarEndMinutes =
+    scheduleEndHour * 60;
+
+
+  const visibleStart =
+    Math.max(
+      startTotalMinutes,
+      calendarStartMinutes
+    );
+
+  const visibleEnd =
+    Math.min(
+      endTotalMinutes,
+      calendarEndMinutes
+    );
+
+
+  if (
+    visibleEnd
+    <= visibleStart
+  ) {
+    return '';
+  }
+
+
+  const top =
+    (
+      visibleStart
+      - calendarStartMinutes
+    )
+    * hourHeight
+    / 60;
+
+
+  const height =
+    (
+      visibleEnd
+      - visibleStart
+    )
+    * hourHeight
+    / 60;
+
+
+  return `
+    <div
+      class="schedule-shift-band"
+      style="
+        top:${top}px;
+        height:${height}px;
+      "
+    >
+      <span>
+        確定シフト
+      </span>
+
+      <strong>
+        ${escapeHtml(
+          shift.store_name
+          || ''
+        )}
+      </strong>
+    </div>
+  `;
+}
+
+
+function renderScheduleSlots(
+  date,
+  totalHeight,
+  hourHeight
+) {
+
+  const slotMinutes = 10;
+
+  const slotCount =
+    (
+      (
+        scheduleEndHour
+        - scheduleStartHour
+      ) * 60
+    ) / slotMinutes;
+
+  const slots = [];
+
+
+  for (
+    let index = 0;
+    index < slotCount;
+    index += 1
+  ) {
+
+    const minutes =
+      index * slotMinutes;
+
+    const absoluteMinutes =
+      scheduleStartHour * 60
+      + minutes;
+
+    const hour =
+      Math.floor(
+        absoluteMinutes / 60
+      );
+
+    const minute =
+      absoluteMinutes % 60;
+
+    const time =
+      `${String(hour).padStart(2, '0')}:${String(minute).padStart(2, '0')}`;
+
+    const top =
+      minutes
+      * hourHeight
+      / 60;
+
+    let slotClass =
+      'is-ten-minute';
+
+    if (minute === 0) {
+      slotClass = 'is-hour';
+    } else if (minute === 30) {
+      slotClass = 'is-half-hour';
+    }
+
+
+    slots.push(`
+      <button
+        class="schedule-time-slot ${slotClass}"
+        type="button"
+        data-schedule-slot
+        data-date="${date}"
+        data-time="${time}"
+        style="
+          top:${top}px;
+        "
+        aria-label="${date} ${time}に予約を追加"
+      ></button>
+    `);
+  }
+
+
+  return slots.join('');
+}
+
+
+function renderScheduleEventsForDate(
+  date,
+  hourHeight
+) {
+
+  return scheduleState.visits
+    .filter((visit) => {
+
+      if (
+        visit.status === 'cancelled'
+      ) {
+        return false;
+      }
+
+
+      const startedAt =
+        String(
+          visit.started_at
+          || ''
+        );
+
+      const startedDate =
+        startedAt.slice(0, 10);
+
+      const startedHour =
+        Number(
+          startedAt.slice(11, 13)
+        );
+
+
+      if (
+        startedHour >= 0
+        && startedHour < 3
+      ) {
+
+        const previousDate =
+          scheduleParseDate(
+            startedDate
+          );
+
+        previousDate.setDate(
+          previousDate.getDate() - 1
+        );
+
+        return (
+          scheduleFormatDate(
+            previousDate
+          ) === date
+        );
+      }
+
+
+      return startedDate === date;
+    })
+    .map((visit) =>
+      renderScheduleEvent(
+        visit,
+        hourHeight
+      )
+    )
+    .join('');
+}
+
+
+function renderScheduleEvent(
+  visit,
+  hourHeight
+) {
+
+  const time =
+    String(
+      visit.started_at
+      || ''
+    ).slice(11, 16);
+
+  const [
+    hourText,
+    minuteText,
+  ] = time.split(':');
+
+  let startMinutes =
+    Number(hourText) * 60
+    + Number(minuteText);
+
+
+  if (
+    Number(hourText) >= 0
+    && Number(hourText) < 3
+  ) {
+    startMinutes +=
+      24 * 60;
+  }
+
+
+  const calendarStart =
+    scheduleStartHour * 60;
+
+  const top =
+    (
+      startMinutes
+      - calendarStart
+    ) * hourHeight / 60;
+
+  const extensionMinutes =
+    (
+      Array.isArray(
+        visit.extensions
+      )
+        ? visit.extensions
+        : []
+    )
+      .reduce(
+        (
+          total,
+          extension
+        ) =>
+          total
+          + (
+              Number(
+                extension.course_minutes
+                || 0
+              )
+              * Number(
+                  extension.quantity
+                  || 1
+                )
+            ),
+        0
+      );
+
+
+  const duration =
+    Math.max(
+      10,
+      Number(
+        visit.course_minutes
+        || 0
+      )
+      + extensionMinutes
+    );
+
+  const height =
+    Math.max(
+      28,
+      duration
+      * hourHeight
+      / 60
+      - 3
+    );
+
+
+  if (
+    top < 0
+    || startMinutes
+      >= scheduleEndHour * 60
+  ) {
+    return '';
+  }
+
+
+  const status =
+    scheduleCustomerStatusLabel(
+      visit.customer_status
+    );
+
+
+  const customerNames =
+    Array.isArray(
+      visit.customer_names
+    )
+      ? visit.customer_names
+      : [];
+
+
+  const namePrefixes = {
+    nickname: '',
+    kashikoi: 'カ:',
+    okini_talk: 'オ:',
+    line: 'L:',
+    x: 'X:',
+    instagram: 'I:',
+  };
+
+
+  const customerNameParts =
+    customerNames
+      .filter(
+        (nameRecord) =>
+          nameRecord.name
+          && Object.prototype.hasOwnProperty.call(
+            namePrefixes,
+            nameRecord.name_type
+          )
+      )
+      .map((nameRecord) => {
+
+        const prefix =
+          namePrefixes[
+            nameRecord.name_type
+          ];
+
+        return `${prefix}${String(
+          nameRecord.name
+        )}`;
+      });
+
+
+  const customer =
+    customerNameParts.length
+      ? customerNameParts.join(' / ')
+      : (
+          visit.customer_name
+          || visit.customer_code
+          || status
+        );
+
+
+  const storeClass =
+    scheduleStoreClass(
+      visit.store_name
+    );
+
+  const courseClass =
+    scheduleCourseClass(
+      Number(visit.course_minutes)
+    );
+
+  const repeatClass =
+    [
+      'repeat',
+      'other_store_repeat',
+      'repeat_unknown_id',
+    ].includes(visit.customer_status)
+      ? 'is-repeat'
+      : '';
+
+
+  const optionNames =
+    Array.isArray(visit.options)
+      ? visit.options
+          .map((option) =>
+            option.name
+            || option.custom_name
+            || ''
+          )
+          .filter(Boolean)
+      : [];
+
+
+  const optionHtml =
+    optionNames.length
+      ? `
+        <span class="schedule-event-options">
+          ${escapeHtml(
+            optionNames.join('・')
+          )}
+        </span>
+      `
+      : '';
+
+
+  return `
+    <button
+      class="
+        schedule-event
+        ${storeClass}
+        ${courseClass}
+        ${repeatClass}
+      "
+      type="button"
+      draggable="true"
+      data-schedule-event="${Number(visit.id)}"
+      data-schedule-started-at="${escapeHtml(
+        String(visit.started_at || '')
+      )}"
+      style="
+        top:${top}px;
+        height:${height}px;
+      "
+    >
+
+      <span class="schedule-event-heading">
+
+        <span class="schedule-event-time">
+          ${escapeHtml(time)}
+        </span>
+
+        <span class="schedule-event-kind">
+          ${escapeHtml(status)}
+        </span>
+
+      </span>
+
+      ${
+        visit.customer_name
+        || visit.customer_code
+          ? `
+            <span class="schedule-event-main">
+              ${escapeHtml(customer)}
+            </span>
+          `
+          : ''
+      }
+
+      <span class="schedule-event-meta">
+
+        <span class="schedule-event-status">
+          ${
+            visit.pricing_category
+              === 'foreign'
+              ? `外${Number(
+                  visit.course_minutes
+                )}分`
+              : `${Number(
+                  visit.course_minutes
+                )}分`
+          }
+        </span>
+
+      </span>
+
+      ${optionHtml}
+
+      <span class="schedule-event-progress">
+
+        <span
+          class="${Number(visit.customer_linked) ? '' : 'is-incomplete'}"
+          title="顧客"
+        >
+          👤
+        </span>
+
+        <span
+          class="${Number(visit.diary_linked) ? '' : 'is-incomplete'}"
+          title="日記"
+        >
+          📓
+        </span>
+
+        <span
+          class="${Number(visit.sales_entered) ? '' : 'is-incomplete'}"
+          title="売上"
+        >
+          ¥
+        </span>
+
+      </span>
+
+    </button>
+  `;
+}
+
+
+function renderScheduleNowLine(
+  hourHeight
+) {
+
+  const now =
+    new Date();
+
+  let displayHour =
+    now.getHours();
+
+
+  if (
+    displayHour < 3
+  ) {
+    displayHour += 24;
+  }
+
+
+  const minutes =
+    displayHour * 60
+    + now.getMinutes();
+
+  const start =
+    scheduleStartHour * 60;
+
+  const end =
+    scheduleEndHour * 60;
+
+
+  if (
+    minutes < start
+    || minutes >= end
+  ) {
+    return '';
+  }
+
+
+  const top =
+    (
+      minutes - start
+    ) * hourHeight / 60;
+
+
+  return `
+    <div
+      class="schedule-now-line"
+      style="top:${top}px"
+    >
+
+      <span class="schedule-now-label">
+        ${String(displayHour).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}
+      </span>
+
+    </div>
+  `;
+}
+
+
+/* ========================================
+   PERIOD TITLE
+======================================== */
+
+function updateSchedulePeriodTitle(
+  period
+) {
+
+  if (!schedulePeriodTitle) return;
+
+
+  const start =
+    scheduleParseDate(
+      period.start
+    );
+
+  const end =
+    scheduleParseDate(
+      period.end
+    );
+
+
+  if (period.start === period.end) {
+
+    schedulePeriodTitle.textContent =
+      `${start.getFullYear()}年${start.getMonth() + 1}月${start.getDate()}日`;
+
+    return;
+  }
+
+
+  schedulePeriodTitle.textContent =
+    `${start.getMonth() + 1}/${start.getDate()} 〜 ${end.getMonth() + 1}/${end.getDate()}`;
+}
