@@ -1,3 +1,5 @@
+/* 🟥ここから↓🟥 NAV STATE */
+
 // WRITER:VIEW_REGISTRY:START
 
 const views = {
@@ -24,6 +26,8 @@ const placeholderTitle = document.getElementById('placeholder-title');
 
 
 let currentView = 'home';
+
+/* 🟥ここまで↑🟥 NAV STATE */
 
 
 
