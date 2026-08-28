@@ -7203,3 +7203,257 @@ async function deleteCurrentScheduleVisit() {
     );
   }
 }
+
+/* ========================================
+   HELPERS
+======================================== */
+
+function scheduleCustomerStatusLabel(
+  status
+) {
+
+  const labels = {
+    new: '新規',
+    repeat: 'リピ',
+    other_store_repeat:
+      '他店リピ',
+    repeat_unknown_id:
+      'リピ・ID不明',
+  };
+
+  return labels[status]
+    || '未設定';
+}
+
+
+function scheduleStoreClass(
+  storeName
+) {
+
+  const classes = {
+    札幌: 'store-sapporo',
+    千葉: 'store-chiba',
+    東京: 'store-tokyo',
+    名古屋: 'store-nagoya',
+  };
+
+  return classes[storeName]
+    || 'store-sapporo';
+}
+
+
+function scheduleCourseClass(
+  minutes
+) {
+
+  if (minutes <= 45) {
+    return 'course-40';
+  }
+
+  if (minutes <= 65) {
+    return 'course-60';
+  }
+
+  if (minutes <= 85) {
+    return 'course-80';
+  }
+
+  if (minutes <= 95) {
+    return 'course-90';
+  }
+
+  if (minutes <= 105) {
+    return 'course-100';
+  }
+
+  if (minutes <= 127) {
+    return 'course-120';
+  }
+
+  if (minutes <= 165) {
+    return 'course-150';
+  }
+
+  if (minutes <= 180) {
+    return 'course-180';
+  }
+
+  return 'course-over-180';
+}
+
+
+function scheduleFormatDate(
+  date
+) {
+
+  const year =
+    date.getFullYear();
+
+  const month =
+    String(
+      date.getMonth() + 1
+    ).padStart(2, '0');
+
+  const day =
+    String(
+      date.getDate()
+    ).padStart(2, '0');
+
+
+  return `${year}-${month}-${day}`;
+}
+
+
+function scheduleParseDate(
+  value
+) {
+
+  return new Date(
+    `${value}T00:00:00`
+  );
+}
+
+
+function getScheduleHourHeight() {
+
+  const page =
+    document.querySelector(
+      '.schedule-page'
+    );
+
+  if (!page) {
+    return 96;
+  }
+
+
+  const value =
+    getComputedStyle(page)
+      .getPropertyValue(
+        '--schedule-hour-height'
+      )
+      .trim();
+
+
+  return Number(
+    value.replace('px', '')
+  ) || 96;
+}
+
+
+function scrollScheduleNearFirstVisit(
+  period,
+  hourHeight
+) {
+
+  const shell =
+    document.querySelector(
+      '.schedule-calendar-shell'
+    );
+
+  if (!shell) return;
+
+
+  const visibleVisits =
+    scheduleState.visits
+      .filter((visit) => {
+
+        const date =
+          String(
+            visit.started_at
+          ).slice(0, 10);
+
+        return period.dates.includes(
+          date
+        );
+      });
+
+
+  let targetHour = 12;
+
+
+  if (visibleVisits.length > 0) {
+
+    const firstTime =
+      String(
+        visibleVisits[0].started_at
+      ).slice(11, 16);
+
+    const hour =
+      Number(
+        firstTime.slice(0, 2)
+      );
+
+    targetHour =
+      Math.max(
+        scheduleStartHour,
+        hour - 1
+      );
+  }
+
+
+  shell.scrollTop =
+    Math.max(
+      0,
+      (
+        targetHour
+        - scheduleStartHour
+      ) * hourHeight
+    );
+}
+
+
+function showScheduleMessage(
+  message,
+  isError = false
+) {
+
+  if (!scheduleFormMessage) {
+    return;
+  }
+
+
+  scheduleFormMessage.hidden =
+    false;
+
+  scheduleFormMessage.textContent =
+    message;
+
+  scheduleFormMessage.classList.toggle(
+    'is-error',
+    isError
+  );
+}
+
+
+function hideScheduleMessage() {
+
+  if (!scheduleFormMessage) {
+    return;
+  }
+
+
+  scheduleFormMessage.hidden =
+    true;
+
+  scheduleFormMessage.textContent =
+    '';
+
+  scheduleFormMessage.classList.remove(
+    'is-error'
+  );
+}
+
+
+function escapeHtml(
+  value
+) {
+
+  return String(value)
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#039;');
+}
+
+// WRITER:WORK_SCHEDULE_LOGIC:END
