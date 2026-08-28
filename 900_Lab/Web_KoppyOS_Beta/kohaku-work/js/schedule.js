@@ -4665,3 +4665,694 @@ async function addScheduleIdentityFeature() {
     }
   }
 }
+
+async function openScheduleCustomerPanel() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+
+  if (
+    !visit
+    || !scheduleCustomerPanel
+    || !scheduleLinkedCustomerPanel
+  ) {
+    return;
+  }
+
+
+  const customerId =
+    Number(
+      visit.customer_id
+      || 0
+    );
+
+
+  if (customerId) {
+
+    scheduleCustomerPanel.hidden =
+      true;
+
+    scheduleLinkedCustomerPanel.hidden =
+      false;
+
+    scheduleLinkedCustomerPanel.innerHTML =
+      '<p>顧客情報を読み込み中...</p>';
+
+
+    try {
+
+      const response =
+        await fetch(
+          customersApiUrl,
+          {
+            method: 'GET',
+            cache: 'no-store',
+          }
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (
+        !response.ok
+        || !data.success
+      ) {
+        throw new Error(
+          data.error
+          || '顧客情報を取得できませんでした。'
+        );
+      }
+
+
+      const customers =
+        Array.isArray(
+          data.customers
+        )
+          ? data.customers
+          : [];
+
+
+      const customer =
+        customers.find(
+          (customerRecord) =>
+            Number(
+              customerRecord.id
+            ) === customerId
+        );
+
+
+      if (!customer) {
+        throw new Error(
+          '紐付け先の顧客が見つかりませんでした。'
+        );
+      }
+
+
+      const names =
+        Array.isArray(
+          customer.names
+        )
+          ? customer.names
+          : [];
+
+
+      const primaryName =
+        names.find(
+          (nameRecord) =>
+            Number(
+              nameRecord.is_primary
+            ) === 1
+        )
+        || names[0]
+        || null;
+
+
+      const displayName =
+        primaryName
+          ? String(
+              primaryName.name
+            )
+          : (
+              visit.customer_name
+              || '名前未登録'
+            );
+
+
+      const findName =
+        (nameType) => {
+
+          const nameRecord =
+            names.find(
+              (record) =>
+                record.name_type
+                === nameType
+            );
+
+          return nameRecord
+            ? String(
+                nameRecord.name
+              )
+            : '未登録';
+        };
+
+
+      const visits =
+        Array.isArray(
+          customer.visits
+        )
+          ? customer.visits
+          : [];
+
+
+      const identityFeatures =
+        Array.isArray(
+          customer.identity_features
+        )
+          ? customer.identity_features
+          : [];
+
+
+      const acquisitionSource =
+        customer.acquisition_source
+        || null;
+
+
+      const findIdentityFeature =
+        (featureType) => {
+
+          const feature =
+            identityFeatures.find(
+              (record) =>
+                record.feature_type
+                === featureType
+            );
+
+
+          return feature
+            ? String(
+                feature.feature_value
+                || ''
+              )
+            : '';
+        };
+
+
+      const visitHistoryHtml =
+        visits.length
+          ? visits
+              .slice(0, 5)
+              .map(
+                (customerVisit) => `
+                  <details class="schedule-customer-visit-detail">
+
+                    <summary class="schedule-detail-row">
+
+                      <span>
+                        ${escapeHtml(
+                          String(
+                            customerVisit.started_at
+                            || '日時未登録'
+                          )
+                        )}
+                      </span>
+
+                      <strong>
+                        ${escapeHtml(
+                          String(
+                            customerVisit.course_minutes
+                            || ''
+                          )
+                        )}${customerVisit.course_minutes
+                          ? '分'
+                          : ''}
+                      </strong>
+
+                    </summary>
+
+                    <div class="schedule-customer-visit-detail-body">
+
+                      <p>
+                        <strong>
+                          会話メモ
+                        </strong>
+                        <br>
+                        ${escapeHtml(
+                          String(
+                            customerVisit.conversation_notes
+                            || '未登録'
+                          )
+                        )}
+                      </p>
+
+                      <p>
+                        <strong>
+                          来店メモ
+                        </strong>
+                        <br>
+                        ${escapeHtml(
+                          String(
+                            customerVisit.visit_notes
+                            || '未登録'
+                          )
+                        )}
+                      </p>
+
+                    </div>
+
+                  </details>
+                `
+              )
+              .join('')
+          : `
+              <p>
+                来店履歴はありません。
+              </p>
+            `;
+
+
+      scheduleLinkedCustomerPanel.innerHTML = `
+        <div class="schedule-detail-card">
+
+          <div class="schedule-detail-row">
+            <span>顧客名</span>
+            <strong>
+              ${escapeHtml(
+                displayName
+              )}
+            </strong>
+          </div>
+
+          <div class="schedule-detail-row">
+            <span>顧客ID</span>
+            <strong>
+              #${escapeHtml(
+                String(customerId)
+              )}
+            </strong>
+          </div>
+
+          <div class="schedule-detail-row">
+            <span>顧客コード</span>
+            <strong>
+              ${escapeHtml(
+                String(
+                  customer.customer_code
+                  || '未登録'
+                )
+              )}
+            </strong>
+          </div>
+
+          <div class="schedule-detail-row">
+            <span>来店</span>
+            <strong>
+              ${escapeHtml(
+                String(
+                  customer.visit_count
+                  || 0
+                )
+              )}回
+            </strong>
+          </div>
+
+          <div class="schedule-detail-row">
+            <span>予約中</span>
+            <strong>
+              ${escapeHtml(
+                String(
+                  customer.scheduled_count
+                  || 0
+                )
+              )}件
+            </strong>
+          </div>
+
+        </div>
+
+
+        <div class="schedule-detail-card">
+
+          <label>
+            <span>呼び名</span>
+            <input
+              type="text"
+              data-customer-name-input="nickname"
+              value="${escapeHtml(
+                findName('nickname') === '未登録'
+                  ? ''
+                  : findName('nickname')
+              )}"
+              placeholder="呼び名"
+            >
+          </label>
+
+          <label>
+            <span>カシコイ</span>
+            <input
+              type="text"
+              data-customer-name-input="kashikoi"
+              value="${escapeHtml(
+                findName('kashikoi') === '未登録'
+                  ? ''
+                  : findName('kashikoi')
+              )}"
+              placeholder="カシコイ名"
+            >
+          </label>
+
+          <label>
+            <span>オキニトーク</span>
+            <input
+              type="text"
+              data-customer-name-input="okini_talk"
+              value="${escapeHtml(
+                findName('okini_talk') === '未登録'
+                  ? ''
+                  : findName('okini_talk')
+              )}"
+              placeholder="オキニトーク名"
+            >
+          </label>
+
+          <label>
+            <span>LINE</span>
+            <input
+              type="text"
+              data-customer-name-input="line"
+              value="${escapeHtml(
+                findName('line') === '未登録'
+                  ? ''
+                  : findName('line')
+              )}"
+              placeholder="LINE名"
+            >
+          </label>
+
+          <label>
+            <span>X</span>
+            <input
+              type="text"
+              data-customer-name-input="x"
+              value="${escapeHtml(
+                findName('x') === '未登録'
+                  ? ''
+                  : findName('x')
+              )}"
+              placeholder="X名"
+            >
+          </label>
+
+          <label>
+            <span>Instagram</span>
+            <input
+              type="text"
+              data-customer-name-input="instagram"
+              value="${escapeHtml(
+                findName('instagram') === '未登録'
+                  ? ''
+                  : findName('instagram')
+              )}"
+              placeholder="Instagram名"
+            >
+          </label>
+
+          <div class="schedule-customer-actions">
+
+            <button
+              class="secondary-button"
+              type="button"
+              data-action="save-schedule-customer-names"
+              data-customer-id="${escapeHtml(
+                String(customerId)
+              )}"
+            >
+              名義情報を保存
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="schedule-detail-card">
+
+          <strong>
+            初回流入元
+          </strong>
+
+          <label>
+            <span>きっかけ</span>
+
+            <select
+              id="schedule-customer-acquisition-source"
+            >
+              <option value="unknown"
+                ${!acquisitionSource || acquisitionSource.source_type === 'unknown' ? 'selected' : ''}>
+                不明
+              </option>
+
+              <option value="heaven"
+                ${acquisitionSource?.source_type === 'heaven' ? 'selected' : ''}>
+                ヘブン
+              </option>
+
+              <option value="x"
+                ${acquisitionSource?.source_type === 'x' ? 'selected' : ''}>
+                X
+              </option>
+
+              <option value="instagram"
+                ${acquisitionSource?.source_type === 'instagram' ? 'selected' : ''}>
+                Instagram
+              </option>
+
+              <option value="okini_talk"
+                ${acquisitionSource?.source_type === 'okini_talk' ? 'selected' : ''}>
+                オキニトーク
+              </option>
+
+              <option value="store_site"
+                ${acquisitionSource?.source_type === 'store_site' ? 'selected' : ''}>
+                店舗サイト
+              </option>
+
+              <option value="referral"
+                ${acquisitionSource?.source_type === 'referral' ? 'selected' : ''}>
+                紹介
+              </option>
+
+              <option value="review"
+                ${acquisitionSource?.source_type === 'review' ? 'selected' : ''}>
+                口コミ
+              </option>
+
+              <option value="store_route"
+                ${acquisitionSource?.source_type === 'store_route' ? 'selected' : ''}>
+                店舗経由
+              </option>
+
+              <option value="other"
+                ${acquisitionSource?.source_type === 'other' ? 'selected' : ''}>
+                その他
+              </option>
+            </select>
+          </label>
+
+          <label>
+            <span>補足</span>
+
+            <input
+              id="schedule-customer-acquisition-detail"
+              type="text"
+              value="${escapeHtml(
+                String(
+                  acquisitionSource?.source_detail
+                  || ''
+                )
+              )}"
+              placeholder="例：Xの投稿を見た、友人○○さんの紹介"
+            >
+          </label>
+
+          <div class="schedule-customer-actions">
+
+            <button
+              class="secondary-button"
+              type="button"
+              data-action="save-schedule-customer-acquisition-source"
+              data-customer-id="${escapeHtml(
+                String(customerId)
+              )}"
+            >
+              初回流入元を保存
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="schedule-detail-card">
+
+          <strong>
+            顧客メモ
+          </strong>
+
+          <textarea
+            id="schedule-customer-general-notes"
+            rows="4"
+            maxlength="2000"
+            placeholder="顧客全体に残したいメモ"
+          >${escapeHtml(
+            String(
+              customer.general_notes
+              || ''
+            )
+          )}</textarea>
+
+          <div class="schedule-customer-actions">
+
+            <button
+              class="secondary-button"
+              type="button"
+              data-action="save-schedule-customer-general-notes"
+              data-customer-id="${escapeHtml(
+                String(customerId)
+              )}"
+            >
+              顧客メモを保存
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="schedule-detail-card">
+
+          <strong>
+            顧客特徴
+          </strong>
+
+          <label>
+            <span>年代</span>
+            <input
+              type="text"
+              data-customer-feature-input="age_range"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'age_range'
+                )
+              )}"
+              placeholder="例：40代"
+            >
+          </label>
+
+          <label>
+            <span>身長</span>
+            <input
+              type="text"
+              data-customer-feature-input="height"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'height'
+                )
+              )}"
+              placeholder="例：170cmくらい"
+            >
+          </label>
+
+          <label>
+            <span>体格</span>
+            <input
+              type="text"
+              data-customer-feature-input="body_type"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'body_type'
+                )
+              )}"
+              placeholder="例：少し太め"
+            >
+          </label>
+
+          <label>
+            <span>髪</span>
+            <input
+              type="text"
+              data-customer-feature-input="hair"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'hair'
+                )
+              )}"
+              placeholder="髪型・髪色など"
+            >
+          </label>
+
+          <label>
+            <span>ヒゲ</span>
+            <input
+              type="text"
+              data-customer-feature-input="facial_hair"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'facial_hair'
+                )
+              )}"
+              placeholder="例：口ひげ"
+            >
+          </label>
+
+          <label>
+            <span>眼鏡</span>
+            <input
+              type="text"
+              data-customer-feature-input="glasses"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'glasses'
+                )
+              )}"
+              placeholder="眼鏡の特徴"
+            >
+          </label>
+
+          <label>
+            <span>見た目</span>
+            <input
+              type="text"
+              data-customer-feature-input="appearance"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'appearance'
+                )
+              )}"
+              placeholder="その他の見た目"
+            >
+          </label>
+
+          <label>
+            <span>似てる人</span>
+            <input
+              type="text"
+              data-customer-feature-input="lookalike"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'lookalike'
+                )
+              )}"
+              placeholder="似ている人"
+            >
+          </label>
+
+          <label>
+            <span>職業</span>
+            <input
+              type="text"
+              data-customer-feature-input="occupation"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'occupation'
+                )
+              )}"
+              placeholder="例：建築系"
+            >
+          </label>
+
+          <label>
+            <span>声・話し方</span>
+            <input
+              type="text"
+              data-customer-feature-input="voice_speech"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'voice_speech'
+                )
+              )}"
+              placeholder="例：声低め"
+            >
+          </label>
