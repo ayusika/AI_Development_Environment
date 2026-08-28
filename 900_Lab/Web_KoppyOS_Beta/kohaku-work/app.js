@@ -9368,6 +9368,7 @@ function hideScheduleMessage() {
 }
 
 
+// 🟥ここまで↑🟥
 function escapeHtml(
   value
 ) {
