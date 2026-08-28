@@ -1908,6 +1908,8 @@ if (customerSearchInput) {
 
 // WRITER:CUSTOMERS_LOGIC:END
 
+// 🟥CUSTOMERS JS ここまで↑🟥
+
 
 function escapeHtml(
   value
