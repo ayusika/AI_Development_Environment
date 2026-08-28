@@ -463,6 +463,8 @@ function handleAction(action, button) {
 }
 
 
+/* 🟥ここから↓🟥 DATABASE */
+
 const databaseApiUrl =
   '/api/v1/database.php';
 
