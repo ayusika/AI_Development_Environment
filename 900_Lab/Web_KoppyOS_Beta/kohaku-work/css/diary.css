@@ -507,3 +507,11 @@
   font-size: 12px;
   line-height: 1.65;
 }
+
+
+
+@media (min-width: 720px) {
+  .photo-preview img {
+    max-height: 600px;
+  }
+}
