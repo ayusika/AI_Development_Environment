@@ -531,55 +531,7 @@ h2 {
 
 
 
-/* ========================================
-   PLATFORM PANEL
-======================================== */
 
-.platform-panel {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-
-  margin-bottom: 17px;
-}
-
-.platform-panel > div:first-child {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.platform-label {
-  font-size: 10px;
-  color: var(--text-soft);
-  font-weight: 800;
-  letter-spacing: 0.12em;
-}
-
-.platform-panel strong {
-  font-size: 20px;
-}
-
-.platform-mode {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  padding: 9px 12px;
-
-  border-radius: 13px;
-
-  font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 0.09em;
-}
-
-.platform-mode.nukinavi {
-  color: var(--accent-deep);
-  background: var(--accent-soft);
-  border: 1px solid var(--line-strong);
-}
 
 
 /* ========================================
