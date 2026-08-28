@@ -1536,6 +1536,8 @@ function demoVoiceInput() {
   );
 }
 
+/* 🟥ここまで↑🟥 DIARY */
+
 
 /* ========================================
    PLACEHOLDER
