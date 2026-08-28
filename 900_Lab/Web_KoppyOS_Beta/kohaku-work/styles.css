@@ -488,78 +488,7 @@ h2 {
 }
 
 
-/* ========================================
-   DIARY PLATFORM ACTIONS
-======================================== */
 
-.diary-platform-actions {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-}
-
-.diary-platform-button {
-  min-height: 76px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-
-  gap: 3px;
-
-  padding: 13px 17px;
-
-  text-align: left;
-}
-
-.diary-platform-button strong {
-  font-size: 15px;
-  line-height: 1.3;
-}
-
-.diary-platform-button small {
-  font-size: 10px;
-  font-weight: 700;
-  opacity: 0.76;
-}
-
-.diary-platform-label {
-  font-size: 10px;
-  line-height: 1.2;
-
-  font-weight: 900;
-  letter-spacing: 0.08em;
-}
-
-.diary-platform-button.nukinavi {
-  align-items: flex-start;
-}
-
-.diary-platform-button.nukinavi .diary-platform-label {
-  color: rgba(255, 255, 255, 0.82);
-}
-
-.diary-platform-button.heaven {
-  color: var(--text);
-  background:
-    linear-gradient(
-      145deg,
-      #f8fcfe,
-      #eef8fc
-    );
-
-  border-color: var(--line);
-  box-shadow: none;
-}
-
-.diary-platform-button.heaven .diary-platform-label {
-  color: var(--text-soft);
-}
-
-.diary-platform-button.heaven small {
-  color: var(--text-faint);
-}
 
 
 .secondary-button {
