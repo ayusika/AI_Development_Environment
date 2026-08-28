@@ -1,3 +1,31 @@
+// WRITER:VIEW_REGISTRY:START
+
+const views = {
+  home: document.querySelector('[data-view="home"]'),
+  diary: document.querySelector('[data-view="diary"]'),
+  nukinaviCreate: document.querySelector('[data-view="nukinavi-create"]'),
+  heavenCreate: document.querySelector('[data-view="heaven-create"]'),
+  diaryEdit: document.querySelector('[data-view="diary-edit"]'),
+  postPrep: document.querySelector('[data-view="post-prep"]'),
+  schedule: document.querySelector('[data-view="schedule"]'),
+  shift: document.querySelector('[data-view="shift"]'),
+  customers: document.querySelector('[data-view="customers"]'),
+  customerDetail: document.querySelector('[data-view="customer-detail"]'),
+  database: document.querySelector('[data-view="database"]'),
+  placeholder: document.querySelector('[data-view="placeholder"]'),
+};
+
+// WRITER:VIEW_REGISTRY:END
+
+const navItems = document.querySelectorAll('.nav-item');
+
+
+const placeholderTitle = document.getElementById('placeholder-title');
+
+
+let currentView = 'home';
+
+
 function showView(viewName) {
   Object.values(views).forEach((view) => {
     if (!view) return;
