@@ -369,18 +369,7 @@ function handleAction(action, button) {
 
 
 
-/* ========================================
-   PLACEHOLDER
-======================================== */
 
-function showPlaceholder(title) {
-  if (placeholderTitle) {
-    placeholderTitle.textContent =
-      title;
-  }
-
-  showView('placeholder');
-}
 
 
 /* ========================================
