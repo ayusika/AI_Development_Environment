@@ -590,3 +590,47 @@
 .diary-platform-button.heaven small {
   color: var(--text-faint);
 }
+
+
+
+/* ========================================
+   DIARY HERO
+======================================== */
+
+.diary-hero {
+  position: relative;
+  overflow: hidden;
+
+  margin-bottom: 16px;
+
+  background:
+    radial-gradient(
+      circle at 92% 4%,
+      rgba(145, 216, 245, 0.3),
+      transparent 27%
+    ),
+    rgba(255, 255, 255, 0.94);
+}
+
+.diary-hero::after {
+  content: "❄︎";
+  position: absolute;
+  right: -2px;
+  bottom: -26px;
+
+  color: rgba(145, 216, 245, 0.1);
+
+  font-size: 110px;
+  line-height: 1;
+
+  pointer-events: none;
+}
+
+
+/* ========================================
+   DIARY BODY
+======================================== */
+
+.diary-body {
+  min-height: 360px;
+}
