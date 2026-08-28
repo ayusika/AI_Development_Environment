@@ -79,3 +79,15 @@
 .nav-item:active {
   transform: scale(0.96);
 }
+
+
+
+@media (max-width: 370px) {
+  .nav-item {
+    font-size: 8px;
+  }
+
+  .nav-icon {
+    font-size: 19px;
+  }
+}
