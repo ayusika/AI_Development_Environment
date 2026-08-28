@@ -307,26 +307,7 @@ h2 {
 
 
 
-/* ========================================
-   TODAY CONTEXT
-======================================== */
 
-.today-context {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-
-  margin: 3px 0 18px;
-
-  color: var(--text-soft);
-
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.separator {
-  opacity: 0.5;
-}
 
 
 
