@@ -1,0 +1,68 @@
+/* ========================================
+   CARDS
+======================================== */
+
+.hero-card,
+.content-card {
+  border: 1px solid rgba(191, 228, 245, 0.9);
+  background: var(--surface);
+
+  box-shadow: var(--shadow-card);
+
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.hero-card {
+  border-radius: var(--radius-xl);
+  padding: 21px;
+}
+
+.content-card {
+  border-radius: var(--radius-lg);
+  padding: 18px;
+
+  margin-bottom: 14px;
+}
+
+
+/* ========================================
+   BADGES
+======================================== */
+
+.status-badge,
+.count-badge,
+.mode-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 30px;
+
+  padding: 6px 11px;
+
+  border-radius: 999px;
+
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 800;
+}
+
+.status-badge {
+  color: var(--accent-deep);
+  background: var(--accent-soft);
+  border: 1px solid var(--line-strong);
+}
+
+.count-badge {
+  min-width: 42px;
+
+  color: var(--text-soft);
+  background: var(--bg-soft);
+}
+
+.mode-chip {
+  color: var(--accent-deep);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
