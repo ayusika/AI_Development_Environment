@@ -341,55 +341,7 @@ h2 {
 
 
 
-/* ========================================
-   MODE BANNER
-======================================== */
 
-.mode-banner {
-  min-height: 74px;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
-
-  padding: 15px 17px;
-
-  margin-bottom: 14px;
-
-  border-radius: var(--radius-lg);
-
-  box-shadow: var(--shadow-soft);
-}
-
-.nukinavi-banner {
-  color: var(--text);
-
-  background:
-    linear-gradient(
-      135deg,
-      rgba(217, 244, 255, 0.92),
-      rgba(238, 250, 255, 0.97)
-    );
-
-  border: 1px solid var(--line-strong);
-}
-
-.mode-banner > div {
-  display: flex;
-  align-items: baseline;
-  gap: 8px;
-}
-
-.mode-banner span:first-child {
-  font-size: 13px;
-  color: var(--text-soft);
-  font-weight: 700;
-}
-
-.mode-banner strong {
-  font-size: 21px;
-}
 
 
 
