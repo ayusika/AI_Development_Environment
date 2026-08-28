@@ -97,46 +97,7 @@ document.addEventListener('click', (event) => {
 });
 
 
-// WRITER:MAIN_NAV_ROUTING:START
 
-function handleNav(navName) {
-  if (navName === 'home') {
-    showView('home');
-    return;
-  }
-
-  if (navName === 'diary') {
-    showView('diary');
-    return;
-  }
-
-  if (navName === 'schedule') {
-    showView('schedule');
-    loadSchedule();
-    return;
-  }
-
-  if (navName === 'shift') {
-    showView('shift');
-    loadShift();
-    return;
-  }
-
-  if (navName === 'customers') {
-    showView('customers');
-    loadCustomers();
-    return;
-  }
-
-  const labels = {
-    sales: '売上',
-    koppy: 'Koppy',
-  };
-
-  showPlaceholder(labels[navName] || '準備中');
-}
-
-// WRITER:MAIN_NAV_ROUTING:END
 
 
 function handleAction(action, button) {
