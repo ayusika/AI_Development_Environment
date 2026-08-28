@@ -1601,11 +1601,6 @@ h2 {
     padding: 21px;
   }
 
-  .diary-mini-status,
-  .shift-summary,
-  .metric-grid {
-    gap: 13px;
-  }
 
   .photo-preview img {
     max-height: 600px;
