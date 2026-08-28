@@ -1,0 +1,244 @@
+/* ========================================
+   DIARY MINI STATUS
+======================================== */
+
+.diary-mini-status {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+
+  margin-top: 15px;
+}
+
+.mini-status-item {
+  min-height: 60px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+
+  padding: 11px 13px;
+
+  border-radius: 14px;
+
+  background: var(--accent-softer);
+  border: 1px solid var(--line);
+}
+
+.mini-label {
+  font-size: 11px;
+  color: var(--text-soft);
+  font-weight: 700;
+}
+
+.mini-status-item strong {
+  font-size: 18px;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  margin-top: 9px;
+}
+
+
+/* ========================================
+   SHIFT SUMMARY
+======================================== */
+
+.shift-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 10px;
+
+  margin-bottom: 13px;
+}
+
+.shift-summary > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+
+  min-height: 63px;
+
+  padding: 12px;
+
+  border-radius: 14px;
+
+  background: var(--bg-soft);
+}
+
+.summary-label {
+  font-size: 11px;
+  color: var(--text-soft);
+  font-weight: 700;
+}
+
+.shift-summary strong {
+  font-size: 16px;
+}
+
+
+/* ========================================
+   METRICS
+======================================== */
+
+.metric-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+
+  gap: 10px;
+}
+
+.metric-card {
+  min-height: 76px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  padding: 13px;
+
+  border-radius: 15px;
+
+  background: var(--surface-strong);
+  border: 1px solid var(--line);
+}
+
+.metric-card span {
+  margin-bottom: 5px;
+
+  font-size: 11px;
+  line-height: 1.2;
+
+  color: var(--text-soft);
+  font-weight: 700;
+}
+
+.metric-card strong {
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.metric-card.highlight {
+  background:
+    linear-gradient(
+      145deg,
+      #edfaff,
+      #f8fdff
+    );
+
+  border-color: var(--accent);
+}
+
+
+/* ========================================
+   QUICK ACTIONS
+======================================== */
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 11px;
+
+  margin-bottom: 14px;
+}
+
+.quick-action-button {
+  min-height: 54px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  border-radius: 16px;
+
+  color: var(--text);
+  background: var(--surface);
+
+  border: 1px solid var(--line);
+
+  font-size: 13px;
+  font-weight: 800;
+
+  box-shadow: var(--shadow-soft);
+}
+
+.quick-action-button span {
+  color: var(--accent-deep);
+  font-size: 20px;
+}
+
+.quick-action-button:active {
+  transform: scale(0.98);
+  background: var(--accent-softer);
+}
+
+.quick-action-database {
+  grid-column: 1 / -1;
+}
+
+
+/* ========================================
+   KOPPY CARD
+======================================== */
+
+.koppy-card {
+  overflow: hidden;
+
+  background:
+    radial-gradient(
+      circle at 100% 0%,
+      rgba(145, 216, 245, 0.22),
+      transparent 37%
+    ),
+    var(--surface);
+}
+
+.koppy-heading {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+
+  margin-bottom: 11px;
+}
+
+.koppy-symbol {
+  color: var(--accent-deep);
+  font-weight: 900;
+}
+
+.koppy-heading > .koppy-symbol {
+  width: 41px;
+  height: 41px;
+
+  display: grid;
+  place-items: center;
+
+  border-radius: 14px;
+
+  background: var(--accent-soft);
+  border: 1px solid var(--line-strong);
+
+  font-size: 18px;
+}
+
+.koppy-symbol.large {
+  font-size: 42px;
+}
+
+.koppy-message {
+  margin: 0;
+
+  font-size: 14px;
+  line-height: 1.75;
+
+  color: var(--text-soft);
+}
