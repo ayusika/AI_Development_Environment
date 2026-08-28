@@ -242,3 +242,23 @@
 
   color: var(--text-soft);
 }
+
+
+
+/* ========================================
+   RESPONSIVE
+======================================== */
+
+@media (max-width: 370px) {
+  .metric-card strong {
+    font-size: 13px;
+  }
+}
+
+@media (min-width: 720px) {
+  .diary-mini-status,
+  .shift-summary,
+  .metric-grid {
+    gap: 13px;
+  }
+}
