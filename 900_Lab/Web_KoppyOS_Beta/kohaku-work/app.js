@@ -1566,6 +1566,8 @@ function initializeApp() {
 
 initializeApp();
 
+/* 🟥ここから↓🟥 SCHEDULE */
+
 /* ========================================
    SCHEDULE DRAG MOVE
    desktop foundation
