@@ -761,3 +761,36 @@
   font-size: 12px;
   font-weight: 900;
 }
+
+
+
+/* ========================================
+   VISIT INFO
+======================================== */
+
+.visit-time {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-soft);
+}
+
+.visit-info {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.visit-info strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  font-size: 13px;
+}
+
+.visit-info small {
+  color: var(--text-soft);
+  font-size: 11px;
+}
