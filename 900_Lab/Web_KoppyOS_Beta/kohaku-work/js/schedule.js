@@ -6550,3 +6550,656 @@ function closeScheduleDetail() {
 
   closeCustomerCancelPanel();
 }
+
+async function openCurrentScheduleHistory() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+  if (
+    !visit
+    || !scheduleHistoryPanel
+  ) {
+    return;
+  }
+
+
+  if (!scheduleHistoryPanel.hidden) {
+
+    scheduleHistoryPanel.hidden =
+      true;
+
+    scheduleHistoryPanel.innerHTML =
+      '';
+
+    return;
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        `${scheduleApiUrl}?visit_id=${encodeURIComponent(
+          String(visit.id)
+        )}`
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+      throw new Error(
+        data.error
+        || '予約変更履歴を取得できませんでした。'
+      );
+    }
+
+
+    const history =
+      Array.isArray(data.history)
+        ? data.history
+        : [];
+
+
+    const historyHtml =
+      history.length
+        ? history
+            .map((item) => {
+
+              const typeLabels = {
+                datetime: '日時変更',
+                course: '予約時間変更',
+                store: '店舗変更',
+                option: 'OP変更',
+                status: '区分変更',
+                multiple: '複数項目変更',
+                other: 'その他変更',
+              };
+
+
+              const typeLabel =
+                typeLabels[item.change_type]
+                || '予約変更';
+
+
+              const before =
+                item.before_data
+                || {};
+
+              const after =
+                item.after_data
+                || {};
+
+
+              const changes = [];
+
+
+              if (
+                before.started_at
+                !== after.started_at
+              ) {
+
+                const beforeStartedAt =
+                  String(
+                    before.started_at
+                    || ''
+                  );
+
+                const afterStartedAt =
+                  String(
+                    after.started_at
+                    || ''
+                  );
+
+
+                const beforeDate =
+                  beforeStartedAt.slice(
+                    0,
+                    10
+                  );
+
+                const afterDate =
+                  afterStartedAt.slice(
+                    0,
+                    10
+                  );
+
+
+                const formatShortDateTime =
+                  (value) => {
+
+                    if (!value) {
+                      return '未設定';
+                    }
+
+                    const month =
+                      Number(
+                        value.slice(
+                          5,
+                          7
+                        )
+                      );
+
+                    const day =
+                      Number(
+                        value.slice(
+                          8,
+                          10
+                        )
+                      );
+
+                    const time =
+                      value.slice(
+                        11,
+                        16
+                      );
+
+                    return `${month}/${day} ${time}`;
+                  };
+
+
+                changes.push({
+                  label: '日時',
+
+                  before:
+                    formatShortDateTime(
+                      beforeStartedAt
+                    ),
+
+                  after:
+                    beforeDate === afterDate
+                      ? afterStartedAt.slice(
+                          11,
+                          16
+                        )
+                      : formatShortDateTime(
+                          afterStartedAt
+                        ),
+                });
+              }
+
+
+              if (
+                before.course_minutes
+                !== after.course_minutes
+              ) {
+
+                changes.push({
+                  label: '予約時間',
+                  before:
+                    before.course_minutes
+                      ? `${before.course_minutes}分`
+                      : '未設定',
+                  after:
+                    after.course_minutes
+                      ? `${after.course_minutes}分`
+                      : '未設定',
+                });
+              }
+
+
+              if (
+                before.store_id
+                !== after.store_id
+              ) {
+
+                changes.push({
+                  label: '店舗',
+                  before:
+                    before.store_id
+                    ?? '未設定',
+                  after:
+                    after.store_id
+                    ?? '未設定',
+                });
+              }
+
+
+              const beforeOptions =
+                Array.isArray(before.options)
+                  ? before.options
+                  : [];
+
+              const afterOptions =
+                Array.isArray(after.options)
+                  ? after.options
+                  : [];
+
+
+              if (
+                JSON.stringify(beforeOptions)
+                !== JSON.stringify(afterOptions)
+              ) {
+
+                changes.push({
+                  label: 'OP',
+                  before:
+                    beforeOptions.length
+                      ? beforeOptions.join('・')
+                      : 'なし',
+                  after:
+                    afterOptions.length
+                      ? afterOptions.join('・')
+                      : 'なし',
+                });
+              }
+
+
+              if (
+                before.customer_status
+                !== after.customer_status
+              ) {
+
+                changes.push({
+                  label: '区分',
+                  before:
+                    before.customer_status
+                    || '未設定',
+                  after:
+                    after.customer_status
+                    || '未設定',
+                });
+              }
+
+
+              const changesHtml =
+                changes
+                  .map((change) => `
+                    <div class="schedule-history-change">
+                      <span class="schedule-history-change-label">
+                        ${escapeHtml(change.label)}
+                      </span>
+
+                      <span class="schedule-history-change-values">
+                        ${escapeHtml(
+                          String(change.before)
+                        )}
+                        →
+                        ${escapeHtml(
+                          String(change.after)
+                        )}
+                      </span>
+                    </div>
+                  `)
+                  .join('');
+
+
+              return `
+                <div class="schedule-history-item">
+                  <strong>
+                    ${escapeHtml(typeLabel)}
+                  </strong>
+
+                  ${changesHtml}
+
+                  <span>
+                    受付：
+                    ${escapeHtml(
+                      String(
+                        item.requested_at
+                        || ''
+                      )
+                    )}
+                  </span>
+                </div>
+              `;
+            })
+            .join('')
+        : `
+            <p class="schedule-history-empty">
+              変更履歴はありません
+            </p>
+          `;
+
+
+    scheduleHistoryPanel.innerHTML = `
+      <div class="schedule-history-list">
+        <h3>予約変更履歴</h3>
+        ${historyHtml}
+      </div>
+    `;
+
+    scheduleHistoryPanel.hidden =
+      false;
+
+
+  } catch (error) {
+
+    window.alert(
+      error.message
+    );
+  }
+}
+
+
+function editCurrentScheduleVisit() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+  if (!visit) return;
+
+
+  closeScheduleDetail();
+
+  resetScheduleForm();
+
+
+  const date =
+    String(
+      visit.started_at
+    ).slice(0, 10);
+
+  const time =
+    String(
+      visit.started_at
+    ).slice(11, 16);
+
+
+  const bookedAt =
+    visit.booked_at
+      ? String(
+          visit.booked_at
+        )
+      : '';
+
+
+  const bookedDate =
+    bookedAt
+      ? bookedAt.slice(0, 10)
+      : '';
+
+
+  const bookedTime =
+    bookedAt
+      ? bookedAt.slice(11, 16)
+      : '';
+
+
+  if (scheduleBookedDate) {
+    scheduleBookedDate.value =
+      bookedDate;
+  }
+
+
+  if (scheduleBookedTime) {
+    scheduleBookedTime.value =
+      bookedTime;
+  }
+
+
+  if (scheduleEditId) {
+    scheduleEditId.value =
+      String(visit.id);
+  }
+
+
+  if (scheduleFormTitle) {
+    scheduleFormTitle.textContent =
+      '予約を編集';
+  }
+
+
+  if (scheduleFormDate) {
+    scheduleFormDate.value =
+      date;
+  }
+
+
+  if (scheduleStartTime) {
+    scheduleStartTime.value =
+      time;
+  }
+
+
+  if (scheduleStore) {
+    scheduleStore.value =
+      String(visit.store_id);
+  }
+
+
+  selectedScheduleCourse =
+    Number(
+      visit.course_minutes
+    );
+
+
+  selectedScheduleCourseMaster =
+    visit.store_course_id
+      ? {
+          store_course_id:
+            Number(
+              visit.store_course_id
+            ),
+        }
+      : null;
+
+
+  selectedSchedulePricingCategory =
+    String(
+      visit.pricing_category
+      || 'standard'
+    );
+
+
+  selectedScheduleExtensions =
+    Array.isArray(
+      visit.extensions
+    )
+      ? visit.extensions
+          .map((extension) => ({
+            store_course_id:
+              Number(
+                extension.store_course_id
+              ),
+
+            quantity:
+              Number(
+                extension.quantity
+                || 1
+              ),
+          }))
+          .filter(
+            (extension) =>
+              extension.store_course_id > 0
+              && extension.quantity > 0
+          )
+      : [];
+
+
+  const standardCourse =
+    document.querySelector(
+      `[data-course="${selectedScheduleCourse}"]`
+    );
+
+
+  document
+    .querySelectorAll('[data-course]')
+    .forEach((button) => {
+
+      button.classList.toggle(
+        'is-selected',
+        button === standardCourse
+      );
+    });
+
+
+  if (
+    !standardCourse
+    && scheduleCustomCourse
+  ) {
+    scheduleCustomCourse.value =
+      String(
+        selectedScheduleCourse
+      );
+  }
+
+
+  selectedCustomerStatus =
+    visit.customer_status;
+
+
+  document
+    .querySelectorAll(
+      '[data-customer-status]'
+    )
+    .forEach((button) => {
+
+      button.classList.toggle(
+        'is-selected',
+        button.dataset.customerStatus
+        === selectedCustomerStatus
+      );
+    });
+
+
+  const visitOptions =
+    Array.isArray(visit.options)
+      ? visit.options
+      : [];
+
+
+  const standardOptionNames =
+    visitOptions
+      .map((option) =>
+        option.name
+          ? String(option.name)
+          : ''
+      )
+      .filter(Boolean);
+
+
+  document
+    .querySelectorAll(
+      '[data-schedule-option]'
+    )
+    .forEach((input) => {
+
+      input.checked =
+        standardOptionNames.includes(
+          String(input.value)
+        );
+    });
+
+
+  if (scheduleCustomOption) {
+
+    const customNames =
+      visitOptions
+        .map((option) =>
+          option.custom_name
+            ? String(option.custom_name)
+            : ''
+        )
+        .filter(Boolean);
+
+    scheduleCustomOption.value =
+      customNames.join('、');
+  }
+
+
+  if (scheduleSaveButton) {
+    scheduleSaveButton.textContent =
+      '変更を保存';
+  }
+
+
+  scheduleFormCard.hidden = false;
+
+  loadScheduleSalesMaster()
+    .then(() => {
+
+      document
+        .querySelectorAll(
+          '[data-schedule-option]'
+        )
+        .forEach((input) => {
+
+          input.checked =
+            standardOptionNames.includes(
+              String(input.value)
+            );
+        });
+    });
+}
+
+
+async function deleteCurrentScheduleVisit() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+  if (!visit) return;
+
+
+  const confirmed =
+    window.confirm(
+      'この予約をDBから削除する？\n関連する日記・売上・OPの紐付けも削除されます。'
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        scheduleApiUrl,
+        {
+          method: 'DELETE',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              id:
+                Number(
+                  visit.id
+                ),
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+      throw new Error(
+        data.error
+        || '予約を削除できませんでした。'
+      );
+    }
+
+
+    closeScheduleDetail();
+
+    scheduleState.selectedVisit =
+      null;
+
+    await loadSchedule();
+
+
+  } catch (error) {
+
+    window.alert(
+      error.message
+    );
+  }
+}
