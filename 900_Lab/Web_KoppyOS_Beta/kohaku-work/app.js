@@ -1077,6 +1077,8 @@ async function loadDatabaseViewer() {
 }
 
 
+// 🟥CUSTOMERS JS ここから↓🟥
+
 // WRITER:CUSTOMERS_LOGIC:START
 
 /* ========================================
