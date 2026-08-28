@@ -1,3 +1,30 @@
+const diaryTitleInput = document.getElementById('diary-title');
+const diaryBodyInput = document.getElementById('diary-body');
+const postPreviewTitle = document.getElementById('post-preview-title');
+const postPreviewBody = document.getElementById('post-preview-body');
+const photoInput = document.getElementById('diary-photo');
+const photoPreview = document.getElementById('photo-preview');
+const photoPreviewImage = document.getElementById('photo-preview-image');
+const draftCount = document.getElementById('draft-count');
+const todayPostCount = document.getElementById('today-post-count');
+
+const diaryState = {
+  availability: '23時からラスト1枠',
+  extraNote: '',
+  selectedVisitIds: [],
+  sourceVisitId: null,
+  sourceCustomerId: null,
+  sourceVisit: null,
+  photoUrl: '',
+  aiDraftTitle: '',
+  aiDraftBody: '',
+  finalTitle: '',
+  finalBody: '',
+  status: 'editing',
+  posted: false,
+};
+
+
 /* ========================================
    DUMMY DIARY LITE
 ======================================== */

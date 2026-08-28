@@ -19,51 +19,11 @@ const views = {
 
 const navItems = document.querySelectorAll('.nav-item');
 
-/* 🟥ここから↓🟥 DIARY DOM */
-
-const diaryTitleInput = document.getElementById('diary-title');
-const diaryBodyInput = document.getElementById('diary-body');
-
-const postPreviewTitle = document.getElementById('post-preview-title');
-const postPreviewBody = document.getElementById('post-preview-body');
-
-const photoInput = document.getElementById('diary-photo');
-const photoPreview = document.getElementById('photo-preview');
-const photoPreviewImage = document.getElementById('photo-preview-image');
-
-/* 🟥ここまで↑🟥 DIARY DOM */
 
 const placeholderTitle = document.getElementById('placeholder-title');
 
-/* 🟥ここから↓🟥 DIARY COUNT */
-
-const draftCount = document.getElementById('draft-count');
-const todayPostCount = document.getElementById('today-post-count');
-
-/* 🟥ここまで↑🟥 DIARY COUNT */
 
 let currentView = 'home';
-
-/* 🟥ここから↓🟥 DIARY STATE */
-
-const diaryState = {
-  availability: '23時からラスト1枠',
-  extraNote: '',
-  selectedVisitIds: [],
-  sourceVisitId: null,
-  sourceCustomerId: null,
-  sourceVisit: null,
-  photoUrl: '',
-  aiDraftTitle: '',
-  aiDraftBody: '',
-  finalTitle: '',
-  finalBody: '',
-  status: 'editing',
-  posted: false,
-};
-
-/* 🟥ここまで↑🟥 DIARY STATE */
-
 
 
 
