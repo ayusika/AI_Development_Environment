@@ -1,3 +1,9 @@
 /* ========================================
-   KOHaku WORK - CUSTOMERS
+   CUSTOMER CHECK LIST
 ======================================== */
+
+.customer-check-list {
+  display: flex;
+  flex-direction: column;
+}
+
