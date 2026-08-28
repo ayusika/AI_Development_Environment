@@ -1,0 +1,81 @@
+/* ========================================
+   BOTTOM NAV
+======================================== */
+
+.bottom-nav {
+  position: fixed;
+
+  left: 50%;
+  bottom: 0;
+  z-index: 100;
+
+  width: 100%;
+  max-width: var(--content-max);
+
+  min-height:
+    calc(
+      var(--bottom-nav-height)
+      + env(safe-area-inset-bottom)
+    );
+
+  padding:
+    7px
+    6px
+    calc(7px + env(safe-area-inset-bottom));
+
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+
+  transform: translateX(-50%);
+
+  background: rgba(250, 253, 255, 0.94);
+
+  border-top: 1px solid rgba(191, 228, 245, 0.92);
+
+  box-shadow:
+    0 -8px 26px rgba(75, 140, 170, 0.08);
+
+  backdrop-filter: blur(19px);
+  -webkit-backdrop-filter: blur(19px);
+}
+
+.nav-item {
+  min-width: 0;
+  min-height: 59px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  gap: 3px;
+
+  padding: 5px 2px;
+
+  border-radius: 13px;
+
+  color: var(--text-faint);
+  background: transparent;
+
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.nav-icon {
+  min-height: 23px;
+
+  display: grid;
+  place-items: center;
+
+  font-size: 21px;
+  line-height: 1;
+}
+
+.nav-item.is-active {
+  color: var(--accent-deep);
+  background: var(--accent-soft);
+}
+
+.nav-item:active {
+  transform: scale(0.96);
+}
