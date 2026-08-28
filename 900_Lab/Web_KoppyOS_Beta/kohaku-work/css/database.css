@@ -1,0 +1,101 @@
+/* ========================================
+   DATABASE RECORD TABLE
+======================================== */
+
+.database-inline-records {
+  margin-top: 14px;
+  padding-top: 12px;
+
+  border-top: 1px solid var(--line);
+}
+
+
+.database-inline-record-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  margin-bottom: 10px;
+}
+
+
+.database-inline-record-heading strong {
+  color: var(--accent-deep);
+
+  font-size: 10px;
+  font-weight: 900;
+
+  letter-spacing: 0.16em;
+}
+
+
+.database-record-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+
+  border: 1px solid var(--line);
+  border-radius: 12px;
+
+  background: #ffffff;
+}
+
+
+.database-record-table {
+  width: max-content;
+  min-width: 100%;
+
+  border-collapse: collapse;
+
+  font-size: 11px;
+}
+
+
+.database-record-table th,
+.database-record-table td {
+  padding: 8px 10px;
+
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+
+  text-align: left;
+  vertical-align: top;
+
+  white-space: nowrap;
+}
+
+
+.database-record-table th:last-child,
+.database-record-table td:last-child {
+  border-right: 0;
+}
+
+
+.database-record-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+
+.database-record-table th {
+  position: sticky;
+  top: 0;
+
+  z-index: 1;
+
+  color: var(--text);
+  background: #eef9ff;
+
+  font-size: 10px;
+  font-weight: 900;
+}
+
+
+.database-record-table td {
+  color: var(--text);
+  background: #ffffff;
+}
+
+
+.database-record-table tbody tr:nth-child(even) td {
+  background: #f8fcfe;
+}
