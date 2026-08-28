@@ -497,4 +497,4 @@ function initializeApp() {
 }
 
 
-initializeApp();
+window.addEventListener('load', initializeApp);
