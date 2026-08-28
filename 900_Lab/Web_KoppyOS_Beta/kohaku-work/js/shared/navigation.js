@@ -96,3 +96,16 @@ function handleNav(navName) {
 }
 
 // WRITER:MAIN_NAV_ROUTING:END
+
+/* ========================================
+   PLACEHOLDER
+======================================== */
+
+function showPlaceholder(title) {
+  if (placeholderTitle) {
+    placeholderTitle.textContent =
+      title;
+  }
+
+  showView('placeholder');
+}
