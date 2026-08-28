@@ -6076,3 +6076,477 @@ async function saveScheduleCustomerIdentityFeatures(
       originalText;
   }
 }
+
+async function linkScheduleExistingCustomer(
+  button
+) {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+  const customerId =
+    Number(
+      button?.dataset?.customerId
+    );
+
+
+  if (
+    !visit
+    || !customerId
+    || Boolean(
+      Number(
+        visit.customer_linked
+      )
+    )
+  ) {
+    return;
+  }
+
+
+  const confirmed =
+    window.confirm(
+      `customer #${customerId} に現在の予約を紐付けますか？`
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  const originalText =
+    button
+      ? button.textContent
+      : '';
+
+
+  if (button) {
+
+    button.disabled =
+      true;
+
+    button.textContent =
+      '紐付け中...';
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        scheduleApiUrl,
+        {
+          method: 'PATCH',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              id:
+                Number(
+                  visit.id
+                ),
+
+              customer_id:
+                customerId,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+
+      throw new Error(
+        data.error
+        || '既存顧客への紐付けに失敗しました。'
+      );
+    }
+
+
+    closeScheduleCustomerPanel();
+    closeScheduleDetail();
+
+
+    await loadSchedule(
+      true
+    );
+
+
+  } catch (error) {
+
+    window.alert(
+      error.message
+    );
+
+
+  } finally {
+
+    if (button) {
+
+      button.disabled =
+        false;
+
+      button.textContent =
+        originalText;
+    }
+  }
+}
+
+
+async function createScheduleCustomer() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+
+  if (
+    !visit
+    || Boolean(
+      Number(
+        visit.customer_linked
+      )
+    )
+  ) {
+    return;
+  }
+
+
+  const name =
+    scheduleCustomerName
+      ? scheduleCustomerName.value.trim()
+      : '';
+
+
+  if (!name) {
+
+    window.alert(
+      '顧客名を入力してください。'
+    );
+
+
+    if (scheduleCustomerName) {
+      scheduleCustomerName.focus();
+    }
+
+    return;
+  }
+
+
+  const createButton =
+    document.querySelector(
+      '[data-action="create-schedule-customer"]'
+    );
+
+
+  if (createButton) {
+
+    createButton.disabled =
+      true;
+
+    createButton.textContent =
+      '紐付け中...';
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        '/api/v1/customers.php',
+        {
+          method: 'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              visit_id:
+                Number(
+                  visit.id
+                ),
+
+              name:
+                name,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+
+      throw new Error(
+        data.error
+        || '顧客の紐付けに失敗しました。'
+      );
+    }
+
+
+    closeScheduleCustomerPanel();
+    closeScheduleDetail();
+
+
+    await loadSchedule(
+      true
+    );
+
+
+  } catch (error) {
+
+    window.alert(
+      error.message
+    );
+
+
+  } finally {
+
+    if (createButton) {
+
+      createButton.disabled =
+        false;
+
+      createButton.textContent =
+        '新規顧客として紐付け';
+    }
+  }
+}
+
+
+function openCustomerCancelPanel() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+  if (
+    !visit
+    || !scheduleCustomerCancelPanel
+    || !Boolean(
+      Number(
+        visit.customer_linked
+      )
+    )
+  ) {
+    return;
+  }
+
+
+  if (scheduleCustomerCancelReason) {
+    scheduleCustomerCancelReason.value =
+      '';
+  }
+
+
+  scheduleCustomerCancelPanel.hidden =
+    false;
+
+
+  if (scheduleCustomerCancelReason) {
+    scheduleCustomerCancelReason.focus();
+  }
+}
+
+
+function closeCustomerCancelPanel() {
+
+  if (scheduleCustomerCancelPanel) {
+    scheduleCustomerCancelPanel.hidden =
+      true;
+  }
+
+
+  if (scheduleCustomerCancelReason) {
+    scheduleCustomerCancelReason.value =
+      '';
+  }
+}
+
+
+async function saveCustomerCancellation() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+
+  if (
+    !visit
+    || !Boolean(
+      Number(
+        visit.customer_linked
+      )
+    )
+  ) {
+    window.alert(
+      '顧客情報が紐付いている予約だけキャンセルできます。'
+    );
+
+    return;
+  }
+
+
+  const reason =
+    scheduleCustomerCancelReason
+      ? scheduleCustomerCancelReason.value.trim()
+      : '';
+
+
+  if (!reason) {
+
+    window.alert(
+      'キャンセル理由を入力してください。'
+    );
+
+
+    if (scheduleCustomerCancelReason) {
+      scheduleCustomerCancelReason.focus();
+    }
+
+    return;
+  }
+
+
+  const saveButton =
+    document.querySelector(
+      '[data-action="save-customer-cancel"]'
+    );
+
+
+  if (saveButton) {
+
+    saveButton.disabled =
+      true;
+
+    saveButton.textContent =
+      '保存中...';
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        scheduleApiUrl,
+        {
+          method: 'PATCH',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              id:
+                Number(
+                  visit.id
+                ),
+
+              status:
+                'cancelled',
+
+              cancelled_by:
+                'customer',
+
+              cancel_reason:
+                reason,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+
+      throw new Error(
+        data.error
+        || 'キャンセルの保存に失敗しました。'
+      );
+    }
+
+
+    closeScheduleDetail();
+
+
+    await loadSchedule(
+      true
+    );
+
+
+  } catch (error) {
+
+    window.alert(
+      error.message
+    );
+
+
+  } finally {
+
+    if (saveButton) {
+
+      saveButton.disabled =
+        false;
+
+      saveButton.textContent =
+        'キャンセルとして保存';
+    }
+  }
+}
+
+
+function closeScheduleDetail() {
+
+  if (scheduleDetailDrawer) {
+
+    scheduleDetailDrawer.classList.remove(
+      'is-open'
+    );
+
+    scheduleDetailDrawer.setAttribute(
+      'aria-hidden',
+      'true'
+    );
+  }
+
+
+  if (scheduleDrawerBackdrop) {
+    scheduleDrawerBackdrop.hidden =
+      true;
+  }
+
+
+  if (scheduleHistoryPanel) {
+
+    scheduleHistoryPanel.hidden =
+      true;
+
+    scheduleHistoryPanel.innerHTML =
+      '';
+  }
+
+
+  closeCustomerCancelPanel();
+}
