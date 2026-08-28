@@ -5356,3 +5356,262 @@ async function openScheduleCustomerPanel() {
               placeholder="例：声低め"
             >
           </label>
+
+          <label>
+            <span>エリア</span>
+            <input
+              type="text"
+              data-customer-feature-input="area"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'area'
+                )
+              )}"
+              placeholder="住んでいる・活動エリアなど"
+            >
+          </label>
+
+          <label>
+            <span>趣味・話題</span>
+            <input
+              type="text"
+              data-customer-feature-input="hobby_topic"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'hobby_topic'
+                )
+              )}"
+              placeholder="趣味やよく話す話題"
+            >
+          </label>
+
+          <label>
+            <span>その他</span>
+            <input
+              type="text"
+              data-customer-feature-input="other"
+              value="${escapeHtml(
+                findIdentityFeature(
+                  'other'
+                )
+              )}"
+              placeholder="その他の特徴"
+            >
+          </label>
+
+          <div class="schedule-customer-actions">
+
+            <button
+              class="secondary-button"
+              type="button"
+              data-action="save-schedule-customer-identity-features"
+              data-customer-id="${escapeHtml(
+                String(customerId)
+              )}"
+            >
+              顧客特徴を保存
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <div class="schedule-detail-card">
+
+          <strong>
+            直近の来店履歴
+          </strong>
+
+          ${visitHistoryHtml}
+
+        </div>
+      `;
+
+
+    } catch (error) {
+
+      scheduleLinkedCustomerPanel.innerHTML = `
+        <p>
+          ${escapeHtml(
+            error.message
+          )}
+        </p>
+      `;
+    }
+
+
+    return;
+  }
+
+
+  scheduleLinkedCustomerPanel.hidden =
+    true;
+
+  scheduleLinkedCustomerPanel.innerHTML =
+    '';
+
+
+  if (scheduleCustomerName) {
+    scheduleCustomerName.value =
+      '';
+  }
+
+
+  if (scheduleCustomerFeatures) {
+    scheduleCustomerFeatures.value =
+      visit.customer_features
+        ? String(
+            visit.customer_features
+          )
+        : '';
+  }
+
+
+  scheduleCustomerPanel.hidden =
+    false;
+
+
+  loadScheduleIdentityFeatures();
+
+
+  if (scheduleCustomerFeatures) {
+    scheduleCustomerFeatures.focus();
+  } else if (scheduleCustomerName) {
+    scheduleCustomerName.focus();
+  }
+}
+
+
+function closeScheduleCustomerPanel() {
+
+  if (scheduleCustomerPanel) {
+    scheduleCustomerPanel.hidden =
+      true;
+  }
+
+
+  if (scheduleCustomerName) {
+    scheduleCustomerName.value =
+      '';
+  }
+
+
+  if (scheduleCustomerFeatures) {
+    scheduleCustomerFeatures.value =
+      '';
+  }
+}
+
+
+async function saveScheduleCustomerFeatures() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+
+  if (
+    !visit
+    || !scheduleCustomerFeatures
+  ) {
+    return;
+  }
+
+
+  const customerFeatures =
+    scheduleCustomerFeatures.value.trim();
+
+
+  const saveButton =
+    document.querySelector(
+      '[data-action="save-schedule-customer-features"]'
+    );
+
+
+  if (saveButton) {
+    saveButton.disabled =
+      true;
+
+    saveButton.textContent =
+      '保存中...';
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        scheduleApiUrl,
+        {
+          method: 'PATCH',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              id:
+                Number(
+                  visit.id
+                ),
+
+              customer_features:
+                customerFeatures,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+      throw new Error(
+        data.error
+        || '特徴メモを保存できませんでした。'
+      );
+    }
+
+
+    if (data.visit) {
+      scheduleState.selectedVisit =
+        data.visit;
+
+      scheduleCustomerFeatures.value =
+        data.visit.customer_features
+          ? String(
+              data.visit.customer_features
+            )
+          : '';
+    }
+
+
+    window.alert(
+      '特徴メモを保存しました。'
+    );
+
+
+  } catch (error) {
+
+    window.alert(
+      error.message
+    );
+
+
+  } finally {
+
+    if (saveButton) {
+      saveButton.disabled =
+        false;
+
+      saveButton.textContent =
+        '特徴メモを保存';
+    }
+  }
+}
