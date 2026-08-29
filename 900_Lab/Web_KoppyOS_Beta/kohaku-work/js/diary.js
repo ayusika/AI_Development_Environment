@@ -6,6 +6,8 @@ const photoInput = document.getElementById('diary-photo');
 const photoPreview = document.getElementById('photo-preview');
 const photoPreviewImage = document.getElementById('photo-preview-image');
 const draftCount = document.getElementById('draft-count');
+const diaryMenuDraftCount =
+  document.getElementById('diary-menu-draft-count');
 const todayPostCount = document.getElementById('today-post-count');
 
 const diaryState = {
