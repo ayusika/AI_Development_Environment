@@ -150,12 +150,14 @@ function showPlaceholder(
     item.classList.remove('is-active');
   });
 
-  const activeItem =
-    document.querySelector(
-      `.nav-item[data-nav="${navName}"]`
-    );
+  if (navName) {
+    const activeItem =
+      document.querySelector(
+        `.nav-item[data-nav="${navName}"]`
+      );
 
-  if (activeItem) {
-    activeItem.classList.add('is-active');
+    if (activeItem) {
+      activeItem.classList.add('is-active');
+    }
   }
 }
