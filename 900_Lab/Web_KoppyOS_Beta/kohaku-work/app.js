@@ -168,15 +168,24 @@ function handleAction(action, button) {
       break;
 
     case 'open-drafts':
-      showPlaceholder('下書き');
+      showPlaceholder(
+        '下書き',
+        'diary'
+      );
       break;
 
     case 'open-history':
-      showPlaceholder('過去ログ');
+      showPlaceholder(
+        '過去ログ',
+        'diary'
+      );
       break;
 
     case 'open-rules':
-      showPlaceholder('写メ日記ルール');
+      showPlaceholder(
+        '写メ日記ルール',
+        'diary'
+      );
       break;
 
     case 'shift-detail':
