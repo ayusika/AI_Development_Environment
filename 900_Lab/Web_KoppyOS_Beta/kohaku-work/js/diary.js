@@ -696,8 +696,6 @@ diaryBodyInput?.addEventListener(
 function saveDraft() {
   syncFinalText();
 
-  diaryState.status = 'editing';
-
   localStorage.setItem(
     'kohakuWorkDiaryDraft',
     JSON.stringify(diaryState)
