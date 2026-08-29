@@ -767,6 +767,9 @@ function updateDraftCount() {
    PHOTO PREVIEW
 ======================================== */
 
+let photoPreviewUrl = '';
+
+
 photoInput?.addEventListener(
   'change',
   (event) => {
@@ -778,22 +781,17 @@ photoInput?.addEventListener(
       return;
     }
 
-    if (
-      diaryState.photoUrl &&
-      diaryState.photoUrl.startsWith('blob:')
-    ) {
+    if (photoPreviewUrl) {
       URL.revokeObjectURL(
-        diaryState.photoUrl
+        photoPreviewUrl
       );
     }
 
-    const imageUrl =
+    photoPreviewUrl =
       URL.createObjectURL(file);
 
-    diaryState.photoUrl = imageUrl;
-
     photoPreviewImage.src =
-      imageUrl;
+      photoPreviewUrl;
 
     photoPreview.hidden = false;
   }
