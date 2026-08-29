@@ -137,7 +137,7 @@ function handleNav(navName) {
 
 function showPlaceholder(
   title,
-  navName = 'home'
+  navName = null
 ) {
   if (placeholderTitle) {
     placeholderTitle.textContent =
