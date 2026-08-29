@@ -71,6 +71,13 @@ function updateBottomNav(viewName) {
     activeNav = 'shift';
   }
 
+  if (
+    viewName === 'customers'
+    || viewName === 'customerDetail'
+  ) {
+    activeNav = 'customers';
+  }
+
   const activeItem = document.querySelector(
     `.nav-item[data-nav="${activeNav}"]`
   );
