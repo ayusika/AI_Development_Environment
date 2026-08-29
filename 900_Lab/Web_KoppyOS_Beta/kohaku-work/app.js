@@ -298,9 +298,6 @@ function handleAction(action, button) {
       );
       break;
 
-    case 'close-database-records':
-      closeDatabaseRecords();
-      break;
 
     case 'close-inline-database-records':
       closeInlineDatabaseRecords(
