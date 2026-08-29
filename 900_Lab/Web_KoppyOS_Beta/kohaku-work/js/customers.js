@@ -8,14 +8,12 @@ const customersApiUrl =
 
 let loadedCustomers = [];
 
-let selectedCustomerId = null;
-
 
 function openCustomerDetail(
   customerId
 ) {
 
-  selectedCustomerId =
+  const selectedCustomerId =
     Number(customerId);
 
 
