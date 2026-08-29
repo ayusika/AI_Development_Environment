@@ -547,10 +547,10 @@ function generateDiary() {
   const selectedCount =
     diaryState.selectedVisitIds.length;
 
-  diaryState.aiDraftTitle =
+  diaryState.finalTitle =
     '昨日もいっぱいありがと♡';
 
-  diaryState.aiDraftBody =
+  diaryState.finalBody =
 `昨日もたくさんありがと♡
 
 今日も事前予約ありがと〜☺️
@@ -578,12 +578,6 @@ ${diaryState.extraNote
   : ''}
 
 ❄︎こはく❄︎`;
-
-  diaryState.finalTitle =
-    diaryState.aiDraftTitle;
-
-  diaryState.finalBody =
-    diaryState.aiDraftBody;
 
   diaryTitleInput.value =
     diaryState.finalTitle;
