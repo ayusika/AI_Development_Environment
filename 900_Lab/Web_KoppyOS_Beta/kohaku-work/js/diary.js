@@ -16,8 +16,6 @@ const diaryState = {
   selectedVisitIds: [],
   sourceVisit: null,
   photoUrl: '',
-  aiDraftTitle: '',
-  aiDraftBody: '',
   finalTitle: '',
   finalBody: '',
 };
