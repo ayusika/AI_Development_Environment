@@ -123,7 +123,10 @@ function handleNav(navName) {
     koppy: 'Koppy',
   };
 
-  showPlaceholder(labels[navName] || '準備中');
+  showPlaceholder(
+    labels[navName] || '準備中',
+    navName
+  );
 }
 
 // WRITER:MAIN_NAV_ROUTING:END
