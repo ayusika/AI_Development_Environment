@@ -715,10 +715,25 @@ function restoreDraftToCreateScreen() {
   try {
     const parsed = JSON.parse(saved);
 
-    Object.assign(
-      diaryState,
-      parsed
-    );
+    diaryState.availability =
+      typeof parsed.availability === 'string'
+        ? parsed.availability
+        : '';
+
+    diaryState.extraNote =
+      typeof parsed.extraNote === 'string'
+        ? parsed.extraNote
+        : '';
+
+    diaryState.finalTitle =
+      typeof parsed.finalTitle === 'string'
+        ? parsed.finalTitle
+        : '';
+
+    diaryState.finalBody =
+      typeof parsed.finalBody === 'string'
+        ? parsed.finalBody
+        : '';
 
     const availabilityInput =
       document.getElementById(
