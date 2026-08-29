@@ -132,11 +132,27 @@ function handleNav(navName) {
    PLACEHOLDER
 ======================================== */
 
-function showPlaceholder(title) {
+function showPlaceholder(
+  title,
+  navName = 'home'
+) {
   if (placeholderTitle) {
     placeholderTitle.textContent =
       title;
   }
 
   showView('placeholder');
+
+  navItems.forEach((item) => {
+    item.classList.remove('is-active');
+  });
+
+  const activeItem =
+    document.querySelector(
+      `.nav-item[data-nav="${navName}"]`
+    );
+
+  if (activeItem) {
+    activeItem.classList.add('is-active');
+  }
 }
