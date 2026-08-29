@@ -1631,7 +1631,8 @@ document.addEventListener(
       showPlaceholder(
         labels[
           featureButton.dataset.scheduleFeature
-        ] || '準備中'
+        ] || '準備中',
+        'schedule'
       );
     }
   }
