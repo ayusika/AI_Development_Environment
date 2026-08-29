@@ -23,9 +23,6 @@ const navItems = document.querySelectorAll('.nav-item');
 const placeholderTitle = document.getElementById('placeholder-title');
 
 
-let currentView = 'home';
-
-
 function showView(viewName) {
   Object.values(views).forEach((view) => {
     if (!view) return;
