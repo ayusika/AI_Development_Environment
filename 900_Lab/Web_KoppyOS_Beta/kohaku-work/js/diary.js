@@ -683,9 +683,20 @@ diaryBodyInput?.addEventListener(
 function saveDraft() {
   syncFinalText();
 
+  const draftData = {
+    availability:
+      diaryState.availability,
+    extraNote:
+      diaryState.extraNote,
+    finalTitle:
+      diaryState.finalTitle,
+    finalBody:
+      diaryState.finalBody,
+  };
+
   localStorage.setItem(
     'kohakuWorkDiaryDraft',
-    JSON.stringify(diaryState)
+    JSON.stringify(draftData)
   );
 
   updateDraftCount();
