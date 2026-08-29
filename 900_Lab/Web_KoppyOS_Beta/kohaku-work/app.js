@@ -330,6 +330,8 @@ function initializeApp() {
 
   updateDraftCount();
 
+  updateTodayPostCount();
+
   showView('home');
 }
 
