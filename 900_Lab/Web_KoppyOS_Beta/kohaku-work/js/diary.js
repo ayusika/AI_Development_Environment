@@ -761,10 +761,20 @@ function updateDraftCount() {
     'kohakuWorkDiaryDraft'
   );
 
-  draftCount.textContent =
-    saved || diaryState.status !== 'posted'
+  const count =
+    saved
       ? '1'
       : '0';
+
+  if (draftCount) {
+    draftCount.textContent =
+      count;
+  }
+
+  if (diaryMenuDraftCount) {
+    diaryMenuDraftCount.textContent =
+      count;
+  }
 }
 
 
