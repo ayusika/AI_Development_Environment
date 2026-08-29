@@ -20,8 +20,6 @@ const diaryState = {
   aiDraftBody: '',
   finalTitle: '',
   finalBody: '',
-  status: 'editing',
-  posted: false,
 };
 
 
