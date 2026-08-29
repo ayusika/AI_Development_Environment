@@ -863,9 +863,6 @@ function createNukinaviMail() {
 ======================================== */
 
 function markPosted() {
-  diaryState.posted = true;
-  diaryState.status = 'posted';
-
   todayPostCount.textContent = '1';
 
   localStorage.removeItem(
