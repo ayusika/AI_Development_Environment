@@ -587,8 +587,6 @@ ${diaryState.extraNote
   diaryState.finalBody =
     diaryState.aiDraftBody;
 
-  diaryState.status = 'generated';
-
   diaryTitleInput.value =
     diaryState.finalTitle;
 
