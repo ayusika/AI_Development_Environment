@@ -8595,20 +8595,6 @@ function openScheduleDiary() {
   }
 
 
-  diaryState.sourceVisitId =
-    Number(
-      visit.id
-    );
-
-
-  diaryState.sourceCustomerId =
-    visit.customer_id
-      ? Number(
-          visit.customer_id
-        )
-      : null;
-
-
   diaryState.sourceVisit =
     visit;
 
