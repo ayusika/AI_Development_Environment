@@ -4,35 +4,6 @@ const databaseApiUrl =
 const databaseViewer =
   document.getElementById('database-viewer');
 
-const databaseRecordViewer =
-  document.getElementById(
-    'database-record-viewer'
-  );
-
-const databaseRecordTitle =
-  document.getElementById(
-    'database-record-title'
-  );
-
-const databaseRecordContent =
-  document.getElementById(
-    'database-record-content'
-  );
-
-
-function closeDatabaseRecords() {
-
-  if (databaseRecordViewer) {
-    databaseRecordViewer.hidden =
-      true;
-  }
-
-  if (databaseRecordContent) {
-    databaseRecordContent.innerHTML =
-      '';
-  }
-}
-
 
 const databaseTableLabels = {
   stores: '店舗',
