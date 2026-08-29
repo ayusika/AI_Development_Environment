@@ -323,9 +323,7 @@ function initializeApp() {
 
   updateDraftCount();
 
-  showView('schedule');
-
-  loadSchedule();
+  showView('home');
 }
 
 
