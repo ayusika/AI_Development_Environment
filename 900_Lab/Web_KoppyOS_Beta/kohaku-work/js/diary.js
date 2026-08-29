@@ -873,8 +873,51 @@ function createNukinaviMail() {
    POSTED
 ======================================== */
 
+function getTodayDateKey() {
+  const now = new Date();
+
+  const year =
+    now.getFullYear();
+
+  const month =
+    String(
+      now.getMonth() + 1
+    ).padStart(2, '0');
+
+  const day =
+    String(
+      now.getDate()
+    ).padStart(2, '0');
+
+  return `${year}-${month}-${day}`;
+}
+
+
+function updateTodayPostCount() {
+  const postedDate =
+    localStorage.getItem(
+      'kohakuWorkDiaryPostedDate'
+    );
+
+  const count =
+    postedDate === getTodayDateKey()
+      ? '1'
+      : '0';
+
+  if (todayPostCount) {
+    todayPostCount.textContent =
+      count;
+  }
+}
+
+
 function markPosted() {
-  todayPostCount.textContent = '1';
+  localStorage.setItem(
+    'kohakuWorkDiaryPostedDate',
+    getTodayDateKey()
+  );
+
+  updateTodayPostCount();
 
   localStorage.removeItem(
     'kohakuWorkDiaryDraft'
