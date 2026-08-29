@@ -63,7 +63,10 @@ function updateBottomNav(viewName) {
     activeNav = 'diary';
   }
 
-  if (viewName === 'schedule') {
+  if (
+    viewName === 'schedule'
+    || viewName === 'heavenCreate'
+  ) {
     activeNav = 'schedule';
   }
 
