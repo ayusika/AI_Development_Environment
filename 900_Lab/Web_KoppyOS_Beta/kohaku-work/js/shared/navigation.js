@@ -37,7 +37,6 @@ function showView(viewName) {
   }
 
   target.classList.add('is-active');
-  currentView = viewName;
 
   updateBottomNav(viewName);
 
