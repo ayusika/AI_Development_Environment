@@ -12,8 +12,6 @@ const diaryState = {
   availability: '23時からラスト1枠',
   extraNote: '',
   selectedVisitIds: [],
-  sourceVisitId: null,
-  sourceCustomerId: null,
   sourceVisit: null,
   photoUrl: '',
   aiDraftTitle: '',
