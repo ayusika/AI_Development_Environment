@@ -15,7 +15,6 @@ const diaryState = {
   extraNote: '',
   selectedVisitIds: [],
   sourceVisit: null,
-  photoUrl: '',
   finalTitle: '',
   finalBody: '',
 };
