@@ -880,7 +880,7 @@ function markPosted() {
     'kohakuWorkDiaryDraft'
   );
 
-  draftCount.textContent = '0';
+  updateDraftCount();
 
   alert(
     '投稿済みにしたよ☺️\nおつかれさま♡'
