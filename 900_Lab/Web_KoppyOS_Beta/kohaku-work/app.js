@@ -281,10 +281,8 @@ function handleAction(action, button) {
       break;
 
     case 'search-customer':
-      showPlaceholder(
-        '顧客を探す',
-        'customers'
-      );
+      showView('customers');
+      loadCustomers();
       break;
 
     case 'open-database':
