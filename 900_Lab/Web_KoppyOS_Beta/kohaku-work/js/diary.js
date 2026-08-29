@@ -509,17 +509,11 @@ function adoptCustomerIdea(button) {
 
 function startNukinaviDiary() {
 
-  diaryState.sourceVisitId =
-    null;
+  restoreDraftToCreateScreen();
 
-  diaryState.sourceCustomerId =
-    null;
 
   diaryState.sourceVisit =
     null;
-
-
-  restoreDraftToCreateScreen();
 
 
   showView('nukinaviCreate');
