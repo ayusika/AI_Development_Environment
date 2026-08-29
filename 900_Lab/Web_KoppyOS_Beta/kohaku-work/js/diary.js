@@ -539,11 +539,8 @@ function generateDiary() {
   diaryState.extraNote =
     extraNoteInput?.value.trim() || '';
 
-  diaryState.selectedVisitIds =
-    getSelectedVisits();
-
   const selectedCount =
-    diaryState.selectedVisitIds.length;
+    getSelectedVisits().length;
 
   diaryState.finalTitle =
     '昨日もいっぱいありがと♡';
