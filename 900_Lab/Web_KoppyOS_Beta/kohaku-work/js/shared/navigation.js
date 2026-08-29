@@ -164,6 +164,10 @@ function showPlaceholder(
     backAction = 'back-to-customers';
   }
 
+  if (navName === 'schedule') {
+    backAction = 'back-to-schedule';
+  }
+
   if (backButton) {
     backButton.dataset.action =
       backAction;
