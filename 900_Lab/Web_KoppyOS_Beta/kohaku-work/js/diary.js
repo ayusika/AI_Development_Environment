@@ -824,8 +824,6 @@ function preparePost() {
     diaryState.finalBody ||
     '本文未入力';
 
-  diaryState.status = 'ready';
-
   showView('postPrep');
 }
 
