@@ -147,6 +147,28 @@ function showPlaceholder(
       title;
   }
 
+  const backButton =
+    views.placeholder
+      ? views.placeholder.querySelector(
+          '.back-button'
+        )
+      : null;
+
+  let backAction = 'go-home';
+
+  if (navName === 'diary') {
+    backAction = 'go-diary';
+  }
+
+  if (navName === 'customers') {
+    backAction = 'back-to-customers';
+  }
+
+  if (backButton) {
+    backButton.dataset.action =
+      backAction;
+  }
+
   showView('placeholder');
 
   navItems.forEach((item) => {
