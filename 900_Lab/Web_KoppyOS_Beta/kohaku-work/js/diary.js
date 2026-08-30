@@ -526,7 +526,9 @@ function generateDiary() {
     extraNoteInput?.value.trim() || '';
 
   const selectedCount =
-    getSelectedVisits().length;
+    document.querySelectorAll(
+      'input[name="visit"]:checked'
+    ).length;
 
   diaryState.finalTitle =
     '昨日もいっぱいありがと♡';
