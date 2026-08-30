@@ -554,10 +554,7 @@ button {
 
 .calendar-day.is-outside-month {
   background:
-    #f8fbfc;
-
-  color:
-    var(--calendar-muted);
+    rgba(255, 255, 255, 0.86);
 }
 
 
