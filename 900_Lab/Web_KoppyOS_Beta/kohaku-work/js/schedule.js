@@ -5457,6 +5457,12 @@ async function openScheduleCustomerPanel() {
   }
 
 
+  if (scheduleCustomerKashikoiName) {
+    scheduleCustomerKashikoiName.value =
+      '';
+  }
+
+
   if (scheduleCustomerFeatures) {
     scheduleCustomerFeatures.value =
       visit.customer_features
