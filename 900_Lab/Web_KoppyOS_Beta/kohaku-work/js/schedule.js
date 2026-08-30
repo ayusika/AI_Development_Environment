@@ -8595,12 +8595,10 @@ function openScheduleDiary() {
   }
 
 
-  diaryState.sourceVisit =
-    visit;
-
-
   closeScheduleDetail();
 
 
-  startHeavenDiary();
+  startHeavenDiary(
+    visit
+  );
 }
