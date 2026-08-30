@@ -7,3 +7,11 @@ RewriteRule ^index\.html$ ./ [R=302,L]
 
 RewriteCond %{THE_REQUEST} \s/+kohaku-work/calendar/index\.html(?:[\s?]|$) [NC]
 RewriteRule ^calendar/index\.html$ ./calendar/ [R=302,L]
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+</IfModule>
