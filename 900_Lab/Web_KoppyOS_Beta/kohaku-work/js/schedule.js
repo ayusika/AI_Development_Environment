@@ -141,6 +141,11 @@ const scheduleCustomerName =
     'schedule-customer-name'
   );
 
+const scheduleCustomerKashikoiName =
+  document.getElementById(
+    'schedule-customer-kashikoi-name'
+  );
+
 const scheduleCustomerFeatures =
   document.getElementById(
     'schedule-customer-features'
