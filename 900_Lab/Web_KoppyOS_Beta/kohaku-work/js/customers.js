@@ -572,6 +572,63 @@ async function loadCustomers() {
             };
 
 
+          const visitSearchText =
+            (
+              Array.isArray(
+                customer.visits
+              )
+                ? customer.visits
+                : []
+            )
+              .flatMap(
+                (visit) => {
+
+                  const startedAt =
+                    String(
+                      visit.started_at
+                      || ''
+                    );
+
+                  const dateText =
+                    startedAt.slice(
+                      0,
+                      10
+                    );
+
+                  const match =
+                    dateText.match(
+                      /^(\d{4})-(\d{2})-(\d{2})$/
+                    );
+
+
+                  if (!match) {
+                    return [
+                      startedAt,
+                    ];
+                  }
+
+
+                  const year =
+                    Number(match[1]);
+
+                  const month =
+                    Number(match[2]);
+
+                  const day =
+                    Number(match[3]);
+
+
+                  return [
+                    startedAt,
+                    dateText,
+                    `${year}/${month}/${day}`,
+                    `${month}/${day}`,
+                    `${month}月${day}日`,
+                  ];
+                }
+              );
+
+
           const searchText = [
             String(
               customer.id
@@ -590,6 +647,8 @@ async function loadCustomers() {
                   || ''
                 )
             ),
+
+            ...visitSearchText,
           ]
             .join(' ')
             .toLowerCase();
