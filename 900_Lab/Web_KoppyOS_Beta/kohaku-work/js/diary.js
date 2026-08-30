@@ -505,10 +505,6 @@ function startNukinaviDiary() {
   restoreDraftToCreateScreen();
 
 
-  diaryState.sourceVisit =
-    null;
-
-
   showView('nukinaviCreate');
 }
 
