@@ -1234,6 +1234,16 @@ try {
                     category = ?,
                     memo = ?,
                     text_color = ?,
+                    repeat_type = ?,
+                    repeat_interval = ?,
+                    repeat_weekdays = ?,
+                    repeat_day_of_month = ?,
+                    repeat_week_of_month = ?,
+                    repeat_weekday = ?,
+                    repeat_month = ?,
+                    repeat_end_type = ?,
+                    repeat_end_date = ?,
+                    repeat_count = ?,
                     updated_at = CURRENT_TIMESTAMP
 
                 WHERE id = ?
@@ -1249,6 +1259,16 @@ try {
             $fields['category'],
             $fields['memo'],
             $fields['text_color'],
+            $fields['repeat_type'],
+            $fields['repeat_interval'],
+            $fields['repeat_weekdays'],
+            $fields['repeat_day_of_month'],
+            $fields['repeat_week_of_month'],
+            $fields['repeat_weekday'],
+            $fields['repeat_month'],
+            $fields['repeat_end_type'],
+            $fields['repeat_end_date'],
+            $fields['repeat_count'],
             $eventId,
         ]);
 
