@@ -414,6 +414,37 @@ function formatDateKey(date) {
 }
 
 
+function formatMonthKey(date) {
+  return [
+    date.getFullYear(),
+    padNumber(
+      date.getMonth() + 1
+    ),
+  ].join('-');
+}
+
+
+function scrollToCurrentMonth(
+  behavior = 'smooth'
+) {
+  const monthElement =
+    monthCalendarElement.querySelector(
+      `[data-calendar-month="${formatMonthKey(
+        calendarState.currentMonth
+      )}"]`
+    );
+
+  if (!monthElement) {
+    return;
+  }
+
+  monthElement.scrollIntoView({
+    behavior,
+    block: 'start',
+  });
+}
+
+
 function parseDateKey(dateKey) {
   const [
     year,
