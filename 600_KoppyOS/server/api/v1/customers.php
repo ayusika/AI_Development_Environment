@@ -1454,7 +1454,9 @@ try {
             $customerId,
             'kashikoi',
             $kashikoiName,
-            0,
+            $name === ''
+                ? 1
+                : 0,
         ]);
     }
 
