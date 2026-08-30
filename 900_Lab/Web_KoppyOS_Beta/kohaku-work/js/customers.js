@@ -903,11 +903,25 @@ const customerSearchInput =
     'customer-search-input'
   );
 
+const customerSearchDate =
+  document.getElementById(
+    'customer-search-date'
+  );
+
 
 if (customerSearchInput) {
 
   customerSearchInput.addEventListener(
     'input',
+    filterCustomerCards
+  );
+}
+
+
+if (customerSearchDate) {
+
+  customerSearchDate.addEventListener(
+    'change',
     filterCustomerCards
   );
 }
