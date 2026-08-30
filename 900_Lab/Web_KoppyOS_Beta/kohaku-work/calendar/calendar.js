@@ -2271,9 +2271,25 @@ eventDeleteButton.addEventListener(
       );
 
 
+    const isRepeating =
+      repeatTypeSelect.value
+      !== 'none';
+
+
+    const confirmMessage =
+      isRepeating
+        ? (
+            `「${title}」の繰り返し予定を`
+            + 'すべて削除しますか？\n\n'
+            + 'この1回だけではなく、'
+            + 'シリーズ全体が削除されます。'
+          )
+        : `「${title}」を削除しますか？`;
+
+
     const confirmed =
       window.confirm(
-        `「${title}」を削除しますか？`
+        confirmMessage
       );
 
 
