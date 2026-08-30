@@ -531,7 +531,7 @@
               hidden
             >
               <span>
-                終了日
+                繰り返し終了日
               </span>
 
               <input
@@ -586,9 +586,25 @@
         </label>
 
 
-        <label class="calendar-event-field">
+        <label class="calendar-event-all-day">
+          <input
+            type="checkbox"
+            data-event-multi-day
+          >
+
           <span>
-            終了日
+            複数日にまたがる予定
+          </span>
+        </label>
+
+
+        <label
+          class="calendar-event-field"
+          data-event-end-date-field
+          hidden
+        >
+          <span>
+            予定の終了日
           </span>
 
           <input
