@@ -564,7 +564,7 @@ async function copyHeavenDiary() {
 async function saveHeavenDiary() {
 
   const visit =
-    diaryState.sourceVisit;
+    activeHeavenDiaryVisit;
 
 
   const bodyElement =
