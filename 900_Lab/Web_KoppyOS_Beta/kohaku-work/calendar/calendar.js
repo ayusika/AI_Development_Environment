@@ -331,6 +331,49 @@ repeatEndTypeSelect.addEventListener(
 );
 
 
+function syncMultiDayFields() {
+  const isMultiDay =
+    eventMultiDayInput.checked;
+
+  const eventDate =
+    String(
+      eventDateInput.value
+      || ''
+    );
+
+
+  eventEndDateField.hidden =
+    !isMultiDay;
+
+
+  if (eventDate !== '') {
+    eventEndDateInput.min =
+      eventDate;
+
+
+    if (
+      !isMultiDay
+      ||
+      eventEndDateInput.value === ''
+      ||
+      eventEndDateInput.value
+        < eventDate
+    ) {
+      eventEndDateInput.value =
+        eventDate;
+    }
+  }
+}
+
+
+eventMultiDayInput.addEventListener(
+  'change',
+  () => {
+    syncMultiDayFields();
+  }
+);
+
+
 async function loadSavedColorPalette() {
   const response =
     await fetch(
