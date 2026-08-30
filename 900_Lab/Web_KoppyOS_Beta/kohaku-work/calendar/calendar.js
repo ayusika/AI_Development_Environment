@@ -2149,22 +2149,15 @@ eventForm.addEventListener(
 );
 
 
-function renderMonthCalendar() {
-  const currentMonth =
-    calendarState.currentMonth;
-
+function renderSingleMonthCalendar(
+  currentMonth,
+  targetElement
+) {
   const year =
     currentMonth.getFullYear();
 
   const month =
     currentMonth.getMonth();
-
-
-  monthTitleElement.textContent =
-    `${year}年 ${month + 1}月`;
-
-
-  monthCalendarElement.replaceChildren();
 
 
   const weekdayNames = [
