@@ -1141,6 +1141,32 @@ try {
                 : null;
 
 
+        $newCustomerName =
+            isset(
+                $payload['new_customer_name']
+            )
+                ? trim(
+                    (string)
+                    $payload['new_customer_name']
+                )
+                : '';
+
+
+        $newCustomerKashikoiName =
+            isset(
+                $payload[
+                    'new_customer_kashikoi_name'
+                ]
+            )
+                ? trim(
+                    (string)
+                    $payload[
+                        'new_customer_kashikoi_name'
+                    ]
+                )
+                : '';
+
+
         $optionNames =
             isset($payload['options'])
             && is_array($payload['options'])
