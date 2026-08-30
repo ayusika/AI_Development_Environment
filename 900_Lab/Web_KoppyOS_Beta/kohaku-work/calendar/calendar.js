@@ -2528,12 +2528,22 @@ eventForm.addEventListener(
         ),
 
       end_date:
-        String(
-          formData.get(
-            'end_date'
-          )
-          || ''
-        ),
+        eventMultiDayInput.checked
+          ? String(
+              formData.get(
+                'end_date'
+              )
+              || formData.get(
+                'event_date'
+              )
+              || ''
+            )
+          : String(
+              formData.get(
+                'event_date'
+              )
+              || ''
+            ),
 
       text_color:
         String(
