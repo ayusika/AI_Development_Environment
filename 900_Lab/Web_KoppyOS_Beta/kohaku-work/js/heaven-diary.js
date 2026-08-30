@@ -2,11 +2,9 @@
    HEAVEN DIARY
 ======================================== */
 
-function startHeavenDiary() {
-
-  const visit =
-    diaryState.sourceVisit;
-
+function startHeavenDiary(
+  visit
+) {
 
   if (!visit) {
     return;
