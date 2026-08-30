@@ -3506,37 +3506,30 @@ function openScheduleDetail(
   };
 
 
-  const preferredCustomerName =
-    customerNames.find(
-      (nameRecord) =>
-        nameRecord.name_type ===
-          'nickname'
-        && nameRecord.name
-    )
-    ||
-    customerNames.find(
-      (nameRecord) =>
-        nameRecord.name_type ===
-          'kashikoi'
-        && nameRecord.name
-    )
-    ||
-    customerNames.find(
-      (nameRecord) =>
-        nameRecord.name
-    );
+  const customerNameParts =
+    customerNames
+      .filter(
+        (nameRecord) =>
+          nameRecord.name
+      )
+      .map(
+        (nameRecord) => {
+          const prefix =
+            namePrefixes[
+              nameRecord.name_type
+            ]
+            || '';
+
+          return `${prefix}${String(
+            nameRecord.name
+          )}`;
+        }
+      );
 
 
   const customer =
-    preferredCustomerName
-      ? `${
-          namePrefixes[
-            preferredCustomerName.name_type
-          ]
-          || ''
-        }${String(
-          preferredCustomerName.name
-        )}`
+    customerNameParts.length
+      ? customerNameParts.join(' / ')
       : (
           visit.customer_name
           || visit.customer_code
