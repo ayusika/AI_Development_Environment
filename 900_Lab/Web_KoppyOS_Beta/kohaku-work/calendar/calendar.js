@@ -1040,6 +1040,744 @@ function getCalendarEventDateRange(
 }
 
 
+function calendarEventParseDateTime(
+  value
+) {
+  const match =
+    String(
+      value
+      || ''
+    ).match(
+      /^(\d{4})-(\d{2})-(\d{2})[ T](\d{2}):(\d{2})/
+    );
+
+
+  if (!match) {
+    return null;
+  }
+
+
+  return new Date(
+    Number(match[1]),
+    Number(match[2]) - 1,
+    Number(match[3]),
+    Number(match[4]),
+    Number(match[5]),
+    0,
+    0
+  );
+}
+
+
+function calendarEventFormatDateTime(
+  date
+) {
+  return (
+    formatDateKey(date)
+    + ' '
+    + padNumber(
+        date.getHours()
+      )
+    + ':'
+    + padNumber(
+        date.getMinutes()
+      )
+  );
+}
+
+
+function calendarEventDateSerial(
+  date
+) {
+  return (
+    Date.UTC(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate()
+    )
+    / 86400000
+  );
+}
+
+
+function calendarEventMonthDifference(
+  masterDate,
+  candidateDate
+) {
+  return (
+    (
+      candidateDate.getFullYear()
+      - masterDate.getFullYear()
+    )
+    * 12
+    + candidateDate.getMonth()
+    - masterDate.getMonth()
+  );
+}
+
+
+function calendarEventRepeatWeekdays(
+  event
+) {
+  const rawWeekdays =
+    event.repeat_weekdays;
+
+
+  const values =
+    Array.isArray(
+      rawWeekdays
+    )
+      ? rawWeekdays
+      : String(
+          rawWeekdays
+          || ''
+        ).split(',');
+
+
+  return [
+    ...new Set(
+      values
+        .map(Number)
+        .filter(
+          (weekday) =>
+            weekday >= 0
+            && weekday <= 6
+        )
+    ),
+  ].sort(
+    (left, right) =>
+      left - right
+  );
+}
+
+
+function calendarEventMatchesRepeatDate(
+  event,
+  masterDate,
+  candidateDate
+) {
+  const masterDateKey =
+    formatDateKey(
+      masterDate
+    );
+
+  const candidateDateKey =
+    formatDateKey(
+      candidateDate
+    );
+
+
+  /*
+   * 元予定の日付は必ず第1回として残す。
+   *
+   * これにより、
+   * 元予定の日付と後から選び直した繰り返し条件が
+   * 完全一致しない場合でも元予定そのものは消えない。
+   */
+  if (
+    candidateDateKey
+    === masterDateKey
+  ) {
+    return true;
+  }
+
+
+  if (
+    calendarEventDateSerial(
+      candidateDate
+    )
+    <
+    calendarEventDateSerial(
+      masterDate
+    )
+  ) {
+    return false;
+  }
+
+
+  const repeatType =
+    String(
+      event.repeat_type
+      || 'none'
+    );
+
+  const repeatInterval =
+    Math.max(
+      1,
+      Number(
+        event.repeat_interval
+        || 1
+      )
+    );
+
+
+  if (repeatType === 'daily') {
+    const dayDifference =
+      calendarEventDateSerial(
+        candidateDate
+      )
+      -
+      calendarEventDateSerial(
+        masterDate
+      );
+
+
+    return (
+      dayDifference > 0
+      &&
+      dayDifference
+        % repeatInterval
+        === 0
+    );
+  }
+
+
+  if (repeatType === 'weekly') {
+    const weekdays =
+      calendarEventRepeatWeekdays(
+        event
+      );
+
+
+    if (
+      !weekdays.includes(
+        candidateDate.getDay()
+      )
+    ) {
+      return false;
+    }
+
+
+    const masterWeekStart =
+      calendarEventDateSerial(
+        masterDate
+      )
+      - masterDate.getDay();
+
+    const candidateWeekStart =
+      calendarEventDateSerial(
+        candidateDate
+      )
+      - candidateDate.getDay();
+
+    const weekDifference =
+      (
+        candidateWeekStart
+        - masterWeekStart
+      )
+      / 7;
+
+
+    return (
+      weekDifference >= 0
+      &&
+      weekDifference
+        % repeatInterval
+        === 0
+    );
+  }
+
+
+  if (
+    repeatType ===
+    'monthly_day'
+  ) {
+    const monthDifference =
+      calendarEventMonthDifference(
+        masterDate,
+        candidateDate
+      );
+
+    const repeatDay =
+      Number(
+        event.repeat_day_of_month
+        || 0
+      );
+
+
+    return (
+      monthDifference >= 0
+      &&
+      monthDifference
+        % repeatInterval
+        === 0
+      &&
+      candidateDate.getDate()
+        === repeatDay
+    );
+  }
+
+
+  if (
+    repeatType ===
+    'monthly_weekday'
+  ) {
+    const monthDifference =
+      calendarEventMonthDifference(
+        masterDate,
+        candidateDate
+      );
+
+
+    if (
+      monthDifference < 0
+      ||
+      monthDifference
+        % repeatInterval
+        !== 0
+    ) {
+      return false;
+    }
+
+
+    const repeatWeekday =
+      Number(
+        event.repeat_weekday
+        ?? -1
+      );
+
+    const repeatWeekOfMonth =
+      Number(
+        event.repeat_week_of_month
+        || 0
+      );
+
+
+    if (
+      candidateDate.getDay()
+      !== repeatWeekday
+    ) {
+      return false;
+    }
+
+
+    if (
+      repeatWeekOfMonth === -1
+    ) {
+      const lastDate =
+        new Date(
+          candidateDate.getFullYear(),
+          candidateDate.getMonth() + 1,
+          0
+        ).getDate();
+
+
+      return (
+        candidateDate.getDate()
+        + 7
+        > lastDate
+      );
+    }
+
+
+    return (
+      Math.ceil(
+        candidateDate.getDate()
+        / 7
+      )
+      === repeatWeekOfMonth
+    );
+  }
+
+
+  if (repeatType === 'yearly') {
+    const yearDifference =
+      candidateDate.getFullYear()
+      - masterDate.getFullYear();
+
+    const repeatMonth =
+      Number(
+        event.repeat_month
+        || 0
+      );
+
+    const repeatDay =
+      Number(
+        event.repeat_day_of_month
+        || 0
+      );
+
+
+    return (
+      yearDifference >= 0
+      &&
+      yearDifference
+        % repeatInterval
+        === 0
+      &&
+      candidateDate.getMonth() + 1
+        === repeatMonth
+      &&
+      candidateDate.getDate()
+        === repeatDay
+    );
+  }
+
+
+  return false;
+}
+
+
+function createRecurringCalendarOccurrence(
+  event,
+  occurrenceDate
+) {
+  const masterStartAt =
+    calendarEventParseDateTime(
+      event.start_at
+    );
+
+
+  if (!masterStartAt) {
+    return null;
+  }
+
+
+  const masterEndAt =
+    calendarEventParseDateTime(
+      event.end_at
+    );
+
+
+  const occurrenceStartAt =
+    new Date(
+      occurrenceDate.getFullYear(),
+      occurrenceDate.getMonth(),
+      occurrenceDate.getDate(),
+      masterStartAt.getHours(),
+      masterStartAt.getMinutes(),
+      0,
+      0
+    );
+
+
+  let occurrenceEndAt =
+    null;
+
+
+  if (masterEndAt) {
+    const durationMilliseconds =
+      Math.max(
+        0,
+        masterEndAt.getTime()
+        - masterStartAt.getTime()
+      );
+
+
+    occurrenceEndAt =
+      new Date(
+        occurrenceStartAt.getTime()
+        + durationMilliseconds
+      );
+  }
+
+
+  return {
+    ...event,
+
+    start_at:
+      calendarEventFormatDateTime(
+        occurrenceStartAt
+      ),
+
+    end_at:
+      occurrenceEndAt
+        ? calendarEventFormatDateTime(
+            occurrenceEndAt
+          )
+        : null,
+
+    recurring_master_start_at:
+      event.recurring_master_start_at
+      || event.start_at
+      || null,
+
+    recurring_master_end_at:
+      event.recurring_master_end_at
+      ?? event.end_at
+      ?? null,
+
+    recurring_occurrence_date:
+      formatDateKey(
+        occurrenceDate
+      ),
+
+    is_recurring_occurrence:
+      true,
+  };
+}
+
+
+function expandRecurringCalendarEvents(
+  events,
+  rangeStartDate,
+  rangeEndDate
+) {
+  const expandedEvents =
+    [];
+
+
+  const rangeStartAt =
+    new Date(
+      rangeStartDate.getFullYear(),
+      rangeStartDate.getMonth(),
+      rangeStartDate.getDate(),
+      0,
+      0,
+      0,
+      0
+    );
+
+  const rangeEndExclusive =
+    new Date(
+      rangeEndDate.getFullYear(),
+      rangeEndDate.getMonth(),
+      rangeEndDate.getDate() + 1,
+      0,
+      0,
+      0,
+      0
+    );
+
+
+  events.forEach(
+    (event) => {
+
+      const repeatType =
+        String(
+          event.repeat_type
+          || 'none'
+        );
+
+
+      if (repeatType === 'none') {
+        expandedEvents.push(
+          event
+        );
+
+        return;
+      }
+
+
+      const masterStartAt =
+        calendarEventParseDateTime(
+          event.start_at
+        );
+
+
+      if (!masterStartAt) {
+        expandedEvents.push(
+          event
+        );
+
+        return;
+      }
+
+
+      const masterDate =
+        new Date(
+          masterStartAt.getFullYear(),
+          masterStartAt.getMonth(),
+          masterStartAt.getDate()
+        );
+
+
+      const repeatEndType =
+        String(
+          event.repeat_end_type
+          || 'none'
+        );
+
+      const repeatEndDateKey =
+        repeatEndType === 'date'
+          ? String(
+              event.repeat_end_date
+              || ''
+            )
+          : '';
+
+      const repeatCount =
+        repeatEndType === 'count'
+          ? Math.max(
+              1,
+              Number(
+                event.repeat_count
+                || 1
+              )
+            )
+          : null;
+
+
+      let occurrenceCount =
+        0;
+
+      let candidateDate =
+        new Date(
+          masterDate
+        );
+
+      let iterationCount =
+        0;
+
+
+      /*
+       * 異常に古い無期限予定でもブラウザを固めないための安全弁。
+       *
+       * 通常の13か月表示では十分すぎる上限。
+       */
+      const maxIterations =
+        100000;
+
+
+      while (
+        candidateDate
+          < rangeEndExclusive
+      ) {
+        iterationCount +=
+          1;
+
+
+        if (
+          iterationCount
+          > maxIterations
+        ) {
+          console.warn(
+            '繰り返し予定の展開上限に達しました。',
+            event
+          );
+
+          break;
+        }
+
+
+        const candidateDateKey =
+          formatDateKey(
+            candidateDate
+          );
+
+
+        if (
+          repeatEndDateKey !== ''
+          &&
+          candidateDateKey
+            > repeatEndDateKey
+        ) {
+          break;
+        }
+
+
+        if (
+          calendarEventMatchesRepeatDate(
+            event,
+            masterDate,
+            candidateDate
+          )
+        ) {
+          occurrenceCount +=
+            1;
+
+
+          if (
+            repeatCount !== null
+            &&
+            occurrenceCount
+              > repeatCount
+          ) {
+            break;
+          }
+
+
+          const occurrence =
+            createRecurringCalendarOccurrence(
+              event,
+              candidateDate
+            );
+
+
+          if (occurrence) {
+            const occurrenceStartAt =
+              calendarEventParseDateTime(
+                occurrence.start_at
+              );
+
+            const occurrenceEndAt =
+              calendarEventParseDateTime(
+                occurrence.end_at
+              )
+              || occurrenceStartAt;
+
+
+            if (
+              occurrenceStartAt
+              &&
+              occurrenceEndAt
+              &&
+              occurrenceEndAt
+                >= rangeStartAt
+              &&
+              occurrenceStartAt
+                < rangeEndExclusive
+            ) {
+              expandedEvents.push(
+                occurrence
+              );
+            }
+          }
+
+
+          if (
+            repeatCount !== null
+            &&
+            occurrenceCount
+              >= repeatCount
+          ) {
+            break;
+          }
+        }
+
+
+        candidateDate =
+          new Date(
+            candidateDate.getFullYear(),
+            candidateDate.getMonth(),
+            candidateDate.getDate() + 1
+          );
+      }
+    }
+  );
+
+
+  expandedEvents.sort(
+    (left, right) => {
+      const startCompare =
+        String(
+          left.start_at
+          || ''
+        ).localeCompare(
+          String(
+            right.start_at
+            || ''
+          )
+        );
+
+
+      if (startCompare !== 0) {
+        return startCompare;
+      }
+
+
+      return (
+        Number(left.id || 0)
+        - Number(right.id || 0)
+      );
+    }
+  );
+
+
+  return expandedEvents;
+}
+
+
 function isMultiDayCalendarEvent(
   event
 ) {
