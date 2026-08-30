@@ -2375,12 +2375,22 @@ function renderMultiDayEventOverlays(
     );
 
 
-  const gridEndDate =
-    new Date(
-      gridStartDate.getFullYear(),
-      gridStartDate.getMonth(),
-      gridStartDate.getDate() + 41
+  const lastDayElement =
+    gridElement.querySelector(
+      '.calendar-day:last-child'
     );
+
+  const lastDateKey =
+    lastDayElement
+      ? lastDayElement.dataset.dateKey
+      : '';
+
+  const gridEndDate =
+    lastDateKey
+      ? parseDateKey(
+          lastDateKey
+        )
+      : gridStartDate;
 
 
   events
