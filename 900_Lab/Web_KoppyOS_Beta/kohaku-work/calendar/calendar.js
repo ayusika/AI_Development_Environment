@@ -2774,13 +2774,91 @@ function renderMultiDayEventOverlays(
 }
 
 
+function setRepeatDefaultsForDate(
+  dateKey
+) {
+  const baseDate =
+    parseDateKey(
+      dateKey
+    );
+
+
+  repeatTypeSelect.value =
+    'none';
+
+  repeatIntervalInput.value =
+    '1';
+
+
+  repeatWeekdayInputs.forEach(
+    (input) => {
+      input.checked =
+        Number(input.value)
+        === baseDate.getDay();
+    }
+  );
+
+
+  repeatDayOfMonthInput.value =
+    String(
+      baseDate.getDate()
+    );
+
+
+  repeatWeekOfMonthSelect.value =
+    String(
+      Math.ceil(
+        baseDate.getDate()
+        / 7
+      )
+    );
+
+  repeatWeekdaySelect.value =
+    String(
+      baseDate.getDay()
+    );
+
+
+  repeatMonthInput.value =
+    String(
+      baseDate.getMonth() + 1
+    );
+
+  repeatYearlyDayInput.value =
+    String(
+      baseDate.getDate()
+    );
+
+
+  repeatEndTypeSelect.value =
+    'none';
+
+  repeatEndDateInput.value =
+    '';
+
+  repeatEndDateInput.min =
+    dateKey;
+
+  repeatCountInput.value =
+    '';
+
+
+  syncRepeatFields();
+}
+
+
 function openEventModal(
   dateKey,
   ownerCode,
   calendarEvent = null
 ) {
   eventForm.reset();
-    renderColorPalette();
+
+  renderColorPalette();
+
+  setRepeatDefaultsForDate(
+    dateKey
+  );
 
 
   const isEdit =
