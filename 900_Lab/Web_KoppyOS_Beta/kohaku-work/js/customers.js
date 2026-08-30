@@ -686,6 +686,8 @@ async function loadCustomers() {
         })
         .join('');
 
+  filterCustomerCards();
+
 
   } catch (error) {
 
