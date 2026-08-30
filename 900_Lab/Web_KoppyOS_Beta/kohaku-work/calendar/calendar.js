@@ -3455,7 +3455,7 @@ async function loadMonthShifts() {
 }
 
 
-function moveMonth(offset) {
+async function moveMonth(offset) {
   calendarState.currentMonth =
     new Date(
       calendarState.currentMonth
@@ -3467,7 +3467,9 @@ function moveMonth(offset) {
     );
 
 
-  loadMonthShifts();
+  await loadMonthShifts();
+
+  scrollToCurrentMonth();
 }
 
 
