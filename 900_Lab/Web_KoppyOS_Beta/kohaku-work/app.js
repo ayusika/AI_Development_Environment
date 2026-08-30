@@ -325,12 +325,35 @@ function handleAction(action, button) {
    INITIALIZE
 ======================================== */
 
+function updateTodayDateLabels() {
+  const now = new Date();
+
+  const dateLabel =
+    `${now.getMonth() + 1}/${now.getDate()}`;
+
+  [
+    'today-date',
+    'diary-today-date',
+  ].forEach((id) => {
+    const element =
+      document.getElementById(id);
+
+    if (element) {
+      element.textContent =
+        dateLabel;
+    }
+  });
+}
+
+
 function initializeApp() {
   restoreDraftToCreateScreen();
 
   updateDraftCount();
 
   updateTodayPostCount();
+
+  updateTodayDateLabels();
 
   showView('home');
 }
