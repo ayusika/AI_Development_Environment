@@ -3857,6 +3857,54 @@ function openEventModal(
   ownerCode,
   calendarEvent = null
 ) {
+  const isRecurringOccurrence =
+    calendarEvent !== null
+    &&
+    calendarEvent
+      .is_recurring_occurrence
+      === true;
+
+
+  if (isRecurringOccurrence) {
+    const masterStartAt =
+      String(
+        calendarEvent
+          .recurring_master_start_at
+        || calendarEvent.start_at
+        || ''
+      );
+
+    const masterEndAt =
+      calendarEvent
+        .recurring_master_end_at
+      ?? calendarEvent.end_at
+      ?? null;
+
+
+    const masterDateMatch =
+      masterStartAt.match(
+        /^(\d{4}-\d{2}-\d{2})/
+      );
+
+
+    calendarEvent = {
+      ...calendarEvent,
+
+      start_at:
+        masterStartAt,
+
+      end_at:
+        masterEndAt,
+    };
+
+
+    if (masterDateMatch) {
+      dateKey =
+        masterDateMatch[1];
+    }
+  }
+
+
   eventForm.reset();
 
   renderColorPalette();
