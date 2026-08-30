@@ -6225,8 +6225,16 @@ async function createScheduleCustomer() {
       ? scheduleCustomerName.value.trim()
       : '';
 
+  const kashikoiName =
+    scheduleCustomerKashikoiName
+      ? scheduleCustomerKashikoiName.value.trim()
+      : '';
 
-  if (!name) {
+
+  if (
+    !name
+    && !kashikoiName
+  ) {
 
     window.alert(
       '顧客名を入力してください。'
