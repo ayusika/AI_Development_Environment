@@ -2654,7 +2654,7 @@ function renderSingleMonthCalendar(
   }
 
 
-  monthCalendarElement.appendChild(
+  targetElement.appendChild(
     gridElement
   );
 
