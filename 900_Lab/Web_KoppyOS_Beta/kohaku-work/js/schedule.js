@@ -3053,6 +3053,27 @@ function openScheduleForm(
 }
 
 
+function syncScheduleNewCustomerFields() {
+
+  if (!scheduleNewCustomerFields) {
+    return;
+  }
+
+
+  const isNewReservation =
+    !Number(
+      scheduleEditId?.value
+      || 0
+    );
+
+  scheduleNewCustomerFields.hidden =
+    !(
+      isNewReservation
+      && selectedCustomerStatus === 'new'
+    );
+}
+
+
 function resetScheduleForm() {
 
   if (scheduleEditId) {
