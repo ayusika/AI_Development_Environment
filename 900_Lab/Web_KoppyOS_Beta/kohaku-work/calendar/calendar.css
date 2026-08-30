@@ -1618,6 +1618,23 @@ button {
 ===================================================== */
 
 .calendar-shift {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  width:
+    100%;
+
+  max-width:
+    100%;
+
+  min-width: 0;
+
+  align-self:
+    stretch;
+
   flex:
     0 0 22px;
 
@@ -1629,6 +1646,9 @@ button {
 
   max-height:
     22px;
+
+  box-sizing:
+    border-box;
 }
 
 
