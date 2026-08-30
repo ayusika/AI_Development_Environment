@@ -6287,6 +6287,9 @@ async function createScheduleCustomer() {
 
               name:
                 name,
+
+              kashikoi_name:
+                kashikoiName,
             }),
         }
       );
