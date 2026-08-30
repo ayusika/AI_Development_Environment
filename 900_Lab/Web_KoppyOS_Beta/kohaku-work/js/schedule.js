@@ -1561,6 +1561,8 @@ document.addEventListener(
           );
         });
 
+      syncScheduleNewCustomerFields();
+
       return;
     }
 
