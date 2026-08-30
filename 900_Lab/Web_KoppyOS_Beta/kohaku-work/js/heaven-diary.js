@@ -278,7 +278,7 @@ async function loadSavedHeavenDiary(
 async function generateHeavenDiary() {
 
   const visit =
-    diaryState.sourceVisit;
+    activeHeavenDiaryVisit;
 
 
   if (!visit) {
