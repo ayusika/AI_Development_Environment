@@ -1657,6 +1657,52 @@ eventForm.addEventListener(
       );
 
 
+    const repeatType =
+      String(
+        formData.get(
+          'repeat_type'
+        )
+        || 'none'
+      );
+
+    const repeatEndType =
+      repeatType === 'none'
+        ? 'none'
+        : String(
+            formData.get(
+              'repeat_end_type'
+            )
+            || 'none'
+          );
+
+
+    let repeatDayOfMonth =
+      null;
+
+
+    if (
+      repeatType ===
+      'monthly_day'
+    ) {
+      repeatDayOfMonth =
+        Number(
+          formData.get(
+            'repeat_day_of_month'
+          )
+          || 0
+        );
+    }
+
+
+    if (repeatType === 'yearly') {
+      repeatDayOfMonth =
+        Number(
+          repeatYearlyDayInput.value
+          || 0
+        );
+    }
+
+
     const payload = {
       event_date:
         String(
@@ -1736,6 +1782,86 @@ eventForm.addEventListener(
           )
           || ''
         ),
+
+      repeat_type:
+        repeatType,
+
+      repeat_interval:
+        repeatType === 'none'
+          ? 1
+          : Number(
+              formData.get(
+                'repeat_interval'
+              )
+              || 1
+            ),
+
+      repeat_weekdays:
+        repeatType === 'weekly'
+          ? formData
+              .getAll(
+                'repeat_weekdays'
+              )
+              .map(Number)
+          : null,
+
+      repeat_day_of_month:
+        repeatDayOfMonth,
+
+      repeat_week_of_month:
+        repeatType ===
+        'monthly_weekday'
+          ? Number(
+              formData.get(
+                'repeat_week_of_month'
+              )
+              || 1
+            )
+          : null,
+
+      repeat_weekday:
+        repeatType ===
+        'monthly_weekday'
+          ? Number(
+              formData.get(
+                'repeat_weekday'
+              )
+              || 0
+            )
+          : null,
+
+      repeat_month:
+        repeatType === 'yearly'
+          ? Number(
+              formData.get(
+                'repeat_month'
+              )
+              || 0
+            )
+          : null,
+
+      repeat_end_type:
+        repeatEndType,
+
+      repeat_end_date:
+        repeatEndType === 'date'
+          ? String(
+              formData.get(
+                'repeat_end_date'
+              )
+              || ''
+            )
+          : null,
+
+      repeat_count:
+        repeatEndType === 'count'
+          ? Number(
+              formData.get(
+                'repeat_count'
+              )
+              || 0
+            )
+          : null,
     };
 
 
