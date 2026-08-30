@@ -3210,10 +3210,25 @@ async function loadHolidayData() {
 async function loadMonthShifts() {
   const {
     firstDate,
-    lastDate,
   } =
     getMonthRange(
       calendarState.currentMonth
+    );
+
+
+  const gridStartDate =
+    new Date(
+      firstDate.getFullYear(),
+      firstDate.getMonth(),
+      firstDate.getDate()
+        - firstDate.getDay()
+    );
+
+  const gridEndDate =
+    new Date(
+      gridStartDate.getFullYear(),
+      gridStartDate.getMonth(),
+      gridStartDate.getDate() + 41
     );
 
 
@@ -3225,11 +3240,11 @@ async function loadMonthShifts() {
     new URLSearchParams({
       date_from:
         formatDateKey(
-          firstDate
+          gridStartDate
         ),
       date_to:
         formatDateKey(
-          lastDate
+          gridEndDate
         ),
     });
 
