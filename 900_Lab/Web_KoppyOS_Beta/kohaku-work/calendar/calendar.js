@@ -3475,7 +3475,7 @@ async function moveMonth(offset) {
 
 todayButton.addEventListener(
   'click',
-  () => {
+  async () => {
 
     const today =
       new Date();
@@ -3489,7 +3489,9 @@ todayButton.addEventListener(
       );
 
 
-    loadMonthShifts();
+    await loadMonthShifts();
+
+    scrollToCurrentMonth();
   }
 );
 
