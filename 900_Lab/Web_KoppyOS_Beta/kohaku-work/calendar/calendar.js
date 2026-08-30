@@ -4002,6 +4002,11 @@ function openEventModal(
   eventEndDateInput.value =
     dateKey;
 
+  eventMultiDayInput.checked =
+    false;
+
+  syncMultiDayFields();
+
   eventTextColorInput.value =
     '#29485a';
 
