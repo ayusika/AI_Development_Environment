@@ -1427,14 +1427,21 @@ try {
         );
 
 
+        $createdVisit =
+            fetchVisit(
+                $pdo,
+                $visitId
+            );
+
+
+        $pdo->commit();
+
+
         echo json_encode(
             [
                 'success' => true,
                 'visit' =>
-                    fetchVisit(
-                        $pdo,
-                        $visitId
-                    ),
+                    $createdVisit,
                 'error' => null,
             ],
             JSON_UNESCAPED_UNICODE |
