@@ -1301,9 +1301,12 @@ try {
     }
 
 
-    if ($name === '') {
+    if (
+        $name === ''
+        && $kashikoiName === ''
+    ) {
         throw new RuntimeException(
-            'name is required.'
+            'name or kashikoi_name is required.'
         );
     }
 
