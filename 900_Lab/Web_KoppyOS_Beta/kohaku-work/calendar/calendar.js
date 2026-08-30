@@ -2281,6 +2281,12 @@ function renderSingleMonthCalendar(
       dayElement.classList.add(
         'is-outside-month'
       );
+
+      gridElement.appendChild(
+        dayElement
+      );
+
+      continue;
     }
 
 
