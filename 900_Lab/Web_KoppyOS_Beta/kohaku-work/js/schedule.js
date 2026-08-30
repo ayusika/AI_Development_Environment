@@ -3112,6 +3112,21 @@ function resetScheduleForm() {
     'repeat_unknown_id';
 
 
+  if (scheduleNewCustomerName) {
+    scheduleNewCustomerName.value =
+      '';
+  }
+
+
+  if (scheduleNewCustomerKashikoiName) {
+    scheduleNewCustomerKashikoiName.value =
+      '';
+  }
+
+
+  syncScheduleNewCustomerFields();
+
+
   if (scheduleCustomCourse) {
     scheduleCustomCourse.value = '';
   }
