@@ -5502,6 +5502,12 @@ function closeScheduleCustomerPanel() {
   }
 
 
+  if (scheduleCustomerKashikoiName) {
+    scheduleCustomerKashikoiName.value =
+      '';
+  }
+
+
   if (scheduleCustomerFeatures) {
     scheduleCustomerFeatures.value =
       '';
