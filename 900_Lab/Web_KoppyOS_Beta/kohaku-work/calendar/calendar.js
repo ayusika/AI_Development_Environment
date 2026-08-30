@@ -108,6 +108,16 @@ const eventEndDateInput =
     '[data-event-end-date]'
   );
 
+const eventMultiDayInput =
+  document.querySelector(
+    '[data-event-multi-day]'
+  );
+
+const eventEndDateField =
+  document.querySelector(
+    '[data-event-end-date-field]'
+  );
+
 const eventTextColorInput =
   document.querySelector(
     '[data-event-text-color]'
