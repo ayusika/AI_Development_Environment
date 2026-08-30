@@ -2847,6 +2847,147 @@ function setRepeatDefaultsForDate(
 }
 
 
+function restoreRepeatFieldsFromEvent(
+  calendarEvent
+) {
+  const repeatType =
+    String(
+      calendarEvent.repeat_type
+      || 'none'
+    );
+
+
+  repeatTypeSelect.value =
+    repeatType;
+
+  repeatIntervalInput.value =
+    String(
+      Math.max(
+        1,
+        Number(
+          calendarEvent.repeat_interval
+          || 1
+        )
+      )
+    );
+
+
+  if (repeatType === 'weekly') {
+    const savedWeekdays =
+      String(
+        calendarEvent.repeat_weekdays
+        || ''
+      )
+        .split(',')
+        .map(Number)
+        .filter(
+          (weekday) =>
+            weekday >= 0
+            && weekday <= 6
+        );
+
+
+    repeatWeekdayInputs.forEach(
+      (input) => {
+        input.checked =
+          savedWeekdays.includes(
+            Number(input.value)
+          );
+      }
+    );
+  }
+
+
+  if (repeatType === 'monthly_day') {
+    const repeatDay =
+      Number(
+        calendarEvent.repeat_day_of_month
+        || 0
+      );
+
+
+    if (repeatDay > 0) {
+      repeatDayOfMonthInput.value =
+        String(
+          repeatDay
+        );
+    }
+  }
+
+
+  if (
+    repeatType
+    === 'monthly_weekday'
+  ) {
+    repeatWeekOfMonthSelect.value =
+      String(
+        calendarEvent.repeat_week_of_month
+        || 1
+      );
+
+    repeatWeekdaySelect.value =
+      String(
+        calendarEvent.repeat_weekday
+        ?? 0
+      );
+  }
+
+
+  if (repeatType === 'yearly') {
+    const repeatMonth =
+      Number(
+        calendarEvent.repeat_month
+        || 0
+      );
+
+    const repeatDay =
+      Number(
+        calendarEvent.repeat_day_of_month
+        || 0
+      );
+
+
+    if (repeatMonth > 0) {
+      repeatMonthInput.value =
+        String(
+          repeatMonth
+        );
+    }
+
+
+    if (repeatDay > 0) {
+      repeatYearlyDayInput.value =
+        String(
+          repeatDay
+        );
+    }
+  }
+
+
+  repeatEndTypeSelect.value =
+    String(
+      calendarEvent.repeat_end_type
+      || 'none'
+    );
+
+  repeatEndDateInput.value =
+    String(
+      calendarEvent.repeat_end_date
+      || ''
+    );
+
+  repeatCountInput.value =
+    calendarEvent.repeat_count
+      ? String(
+          calendarEvent.repeat_count
+        )
+      : '';
+
+
+  syncRepeatFields();
+}
+
+
 function openEventModal(
   dateKey,
   ownerCode,
