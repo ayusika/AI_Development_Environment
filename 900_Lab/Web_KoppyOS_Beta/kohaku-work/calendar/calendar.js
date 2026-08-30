@@ -2197,7 +2197,7 @@ function renderSingleMonthCalendar(
   );
 
 
-  monthCalendarElement.appendChild(
+  targetElement.appendChild(
     weekdayRow
   );
 
