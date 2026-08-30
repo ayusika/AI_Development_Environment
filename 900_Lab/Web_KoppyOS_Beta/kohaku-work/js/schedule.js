@@ -87,6 +87,21 @@ const scheduleFormMessage =
 const scheduleSaveButton =
   document.getElementById('schedule-save-button');
 
+const scheduleNewCustomerFields =
+  document.getElementById(
+    'schedule-new-customer-fields'
+  );
+
+const scheduleNewCustomerName =
+  document.getElementById(
+    'schedule-new-customer-name'
+  );
+
+const scheduleNewCustomerKashikoiName =
+  document.getElementById(
+    'schedule-new-customer-kashikoi-name'
+  );
+
 const scheduleDetailDrawer =
   document.getElementById('schedule-detail-drawer');
 
