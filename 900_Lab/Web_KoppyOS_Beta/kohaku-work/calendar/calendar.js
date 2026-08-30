@@ -2275,7 +2275,7 @@ function renderSingleMonthCalendar(
 
   for (
     let index = 0;
-    index < 42;
+    index < visibleCellCount;
     index += 1
   ) {
 
