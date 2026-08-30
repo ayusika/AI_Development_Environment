@@ -3090,6 +3090,11 @@ function openEventModal(
       );
 
 
+    restoreRepeatFieldsFromEvent(
+      calendarEvent
+    );
+
+
     const allDay =
       Number(
         calendarEvent.all_day
