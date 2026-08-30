@@ -4308,7 +4308,11 @@ async function loadMonthShifts() {
 
 
     calendarState.events =
-      eventsData.events;
+      expandRecurringCalendarEvents(
+        eventsData.events,
+        gridStartDate,
+        gridEndDate
+      );
 
 
     renderMonthCalendar();
