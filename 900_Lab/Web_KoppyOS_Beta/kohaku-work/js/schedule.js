@@ -3375,6 +3375,20 @@ async function saveScheduleVisit() {
     customer_status:
       selectedCustomerStatus,
 
+    new_customer_name:
+      !editId
+      && selectedCustomerStatus === 'new'
+      && scheduleNewCustomerName
+        ? scheduleNewCustomerName.value.trim()
+        : '',
+
+    new_customer_kashikoi_name:
+      !editId
+      && selectedCustomerStatus === 'new'
+      && scheduleNewCustomerKashikoiName
+        ? scheduleNewCustomerKashikoiName.value.trim()
+        : '',
+
     options:
       selectedOptions,
 
