@@ -1418,7 +1418,7 @@ try {
     ]);
 
 
-    $statement =
+    $nameStatement =
         $pdo->prepare(
             "
             INSERT INTO customer_names (
@@ -1429,18 +1429,34 @@ try {
             )
             VALUES (
                 ?,
-                'nickname',
                 ?,
-                1
+                ?,
+                ?
             )
             "
         );
 
 
-    $statement->execute([
-        $customerId,
-        $name,
-    ]);
+    if ($name !== '') {
+
+        $nameStatement->execute([
+            $customerId,
+            'nickname',
+            $name,
+            1,
+        ]);
+    }
+
+
+    if ($kashikoiName !== '') {
+
+        $nameStatement->execute([
+            $customerId,
+            'kashikoi',
+            $kashikoiName,
+            0,
+        ]);
+    }
 
 
     $statement =
