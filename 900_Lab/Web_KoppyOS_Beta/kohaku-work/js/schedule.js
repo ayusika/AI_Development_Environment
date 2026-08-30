@@ -6237,7 +6237,7 @@ async function createScheduleCustomer() {
   ) {
 
     window.alert(
-      '顧客名を入力してください。'
+      '顧客名かカシコイ名を入力してください。'
     );
 
 
