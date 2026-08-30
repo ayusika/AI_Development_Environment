@@ -2091,11 +2091,22 @@ button {
   display:
     grid;
 
+  grid-template-columns:
+    minmax(0, 1fr);
+
   grid-template-rows:
     20px minmax(0, 1fr);
 
+  width:
+    100%;
+
+  min-width: 0;
+
   align-content:
     start;
+
+  justify-items:
+    stretch;
 
   gap:
     3px;
