@@ -824,8 +824,13 @@ function renderHeavenDiaryBody(
 
 
   const isRepeat =
-    visit.customer_status ===
-      'repeat';
+    [
+      'repeat',
+      'other_store_repeat',
+      'repeat_unknown_id',
+    ].includes(
+      visit.customer_status
+    );
 
 
   const repeatText =
