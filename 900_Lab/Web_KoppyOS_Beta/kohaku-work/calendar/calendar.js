@@ -134,6 +134,193 @@ const eventModalCloseButtons =
   );
 
 
+const repeatTypeSelect =
+  document.querySelector(
+    '[data-repeat-type]'
+  );
+
+const repeatDetails =
+  document.querySelector(
+    '[data-repeat-details]'
+  );
+
+const repeatIntervalField =
+  document.querySelector(
+    '[data-repeat-interval-field]'
+  );
+
+const repeatIntervalInput =
+  document.querySelector(
+    '[data-repeat-interval]'
+  );
+
+const repeatIntervalUnit =
+  document.querySelector(
+    '[data-repeat-interval-unit]'
+  );
+
+const repeatWeekdaysField =
+  document.querySelector(
+    '[data-repeat-weekdays-field]'
+  );
+
+const repeatWeekdayInputs =
+  eventForm.querySelectorAll(
+    '[name="repeat_weekdays"]'
+  );
+
+const repeatMonthDayField =
+  document.querySelector(
+    '[data-repeat-month-day-field]'
+  );
+
+const repeatDayOfMonthInput =
+  document.querySelector(
+    '[data-repeat-day-of-month]'
+  );
+
+const repeatMonthWeekdayField =
+  document.querySelector(
+    '[data-repeat-month-weekday-field]'
+  );
+
+const repeatWeekOfMonthSelect =
+  document.querySelector(
+    '[data-repeat-week-of-month]'
+  );
+
+const repeatWeekdaySelect =
+  document.querySelector(
+    '[data-repeat-weekday]'
+  );
+
+const repeatYearlyField =
+  document.querySelector(
+    '[data-repeat-yearly-field]'
+  );
+
+const repeatMonthInput =
+  document.querySelector(
+    '[data-repeat-month]'
+  );
+
+const repeatYearlyDayInput =
+  document.querySelector(
+    '[data-repeat-yearly-day]'
+  );
+
+const repeatEndTypeSelect =
+  document.querySelector(
+    '[data-repeat-end-type]'
+  );
+
+const repeatEndDateField =
+  document.querySelector(
+    '[data-repeat-end-date-field]'
+  );
+
+const repeatEndDateInput =
+  document.querySelector(
+    '[data-repeat-end-date]'
+  );
+
+const repeatCountField =
+  document.querySelector(
+    '[data-repeat-count-field]'
+  );
+
+const repeatCountInput =
+  document.querySelector(
+    '[data-repeat-count]'
+  );
+
+
+function syncRepeatEndFields() {
+  const repeatEndType =
+    repeatEndTypeSelect.value;
+
+
+  repeatEndDateField.hidden =
+    repeatEndType !== 'date';
+
+  repeatCountField.hidden =
+    repeatEndType !== 'count';
+}
+
+
+function syncRepeatFields() {
+  const repeatType =
+    repeatTypeSelect.value;
+
+  const isRepeating =
+    repeatType !== 'none';
+
+
+  repeatDetails.hidden =
+    !isRepeating;
+
+
+  if (!isRepeating) {
+    return;
+  }
+
+
+  repeatIntervalField.hidden =
+    false;
+
+  repeatWeekdaysField.hidden =
+    repeatType !== 'weekly';
+
+  repeatMonthDayField.hidden =
+    repeatType !== 'monthly_day';
+
+  repeatMonthWeekdayField.hidden =
+    repeatType !==
+    'monthly_weekday';
+
+  repeatYearlyField.hidden =
+    repeatType !== 'yearly';
+
+
+  const intervalUnits = {
+    daily:
+      '日ごと',
+    weekly:
+      '週ごと',
+    monthly_day:
+      '月ごと',
+    monthly_weekday:
+      '月ごと',
+    yearly:
+      '年ごと',
+  };
+
+
+  repeatIntervalUnit.textContent =
+    intervalUnits[repeatType]
+    || 'ごと';
+
+
+  syncRepeatEndFields();
+}
+
+
+repeatTypeSelect.addEventListener(
+  'change',
+  () => {
+    syncRepeatFields();
+  }
+);
+
+
+repeatEndTypeSelect.addEventListener(
+  'change',
+  () => {
+    syncRepeatEndFields();
+  }
+);
+
+
 async function loadSavedColorPalette() {
   const response =
     await fetch(
