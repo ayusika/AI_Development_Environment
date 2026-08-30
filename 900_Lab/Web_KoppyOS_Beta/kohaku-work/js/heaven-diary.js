@@ -731,8 +731,7 @@ async function saveHeavenDiary() {
 
 function renderHeavenDiaryBody(
   visit,
-  note = '',
-  extraNote = ''
+  note = ''
 ) {
 
   const bodyElement =
