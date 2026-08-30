@@ -770,6 +770,12 @@ function filterCustomerCards() {
       'customer-search-input'
     );
 
+  const dateInput =
+    document.getElementById(
+      'customer-search-date'
+    );
+
+
   if (!searchInput) {
     return;
   }
@@ -779,6 +785,12 @@ function filterCustomerCards() {
     searchInput.value
       .trim()
       .toLowerCase();
+
+
+  const searchDate =
+    dateInput
+      ? dateInput.value.trim()
+      : '';
 
 
   if (query.startsWith('#')) {
@@ -805,10 +817,24 @@ function filterCustomerCards() {
       );
 
 
-    card.hidden =
-      query !== ''
-      && !searchText.includes(
+    const matchesName =
+      query === ''
+      || searchText.includes(
         query
+      );
+
+
+    const matchesDate =
+      searchDate === ''
+      || searchText.includes(
+        searchDate
+      );
+
+
+    card.hidden =
+      !(
+        matchesName
+        && matchesDate
       );
 
 
@@ -826,7 +852,10 @@ function filterCustomerCards() {
 
   if (
     visibleCount === 0
-    && query !== ''
+    && (
+      query !== ''
+      || searchDate !== ''
+    )
   ) {
 
     if (!emptyMessage) {
