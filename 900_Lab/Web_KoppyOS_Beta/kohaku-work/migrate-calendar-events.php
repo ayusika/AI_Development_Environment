@@ -105,6 +105,64 @@ try {
     }
 
 
+    $repeatColumns = [
+        'repeat_type' =>
+            "TEXT NOT NULL DEFAULT 'none'",
+
+        'repeat_interval' =>
+            'INTEGER NOT NULL DEFAULT 1',
+
+        'repeat_weekdays' =>
+            'TEXT',
+
+        'repeat_day_of_month' =>
+            'INTEGER',
+
+        'repeat_week_of_month' =>
+            'INTEGER',
+
+        'repeat_weekday' =>
+            'INTEGER',
+
+        'repeat_month' =>
+            'INTEGER',
+
+        'repeat_end_type' =>
+            "TEXT NOT NULL DEFAULT 'none'",
+
+        'repeat_end_date' =>
+            'TEXT',
+
+        'repeat_count' =>
+            'INTEGER',
+    ];
+
+
+    foreach (
+        $repeatColumns
+        as $columnName => $columnDefinition
+    ) {
+        if (
+            in_array(
+                $columnName,
+                $columnNames,
+                true
+            )
+        ) {
+            continue;
+        }
+
+
+        $pdo->exec(
+            "
+            ALTER TABLE calendar_events
+            ADD COLUMN {$columnName}
+            {$columnDefinition}
+            "
+        );
+    }
+
+
     $pdo->exec(
         "
         CREATE INDEX IF NOT EXISTS
