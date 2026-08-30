@@ -13,7 +13,6 @@ const todayPostCount = document.getElementById('today-post-count');
 const diaryState = {
   availability: '23時からラスト1枠',
   extraNote: '',
-  sourceVisit: null,
   finalTitle: '',
   finalBody: '',
 };
