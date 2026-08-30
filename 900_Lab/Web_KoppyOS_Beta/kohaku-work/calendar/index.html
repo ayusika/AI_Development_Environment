@@ -200,6 +200,378 @@
         </label>
 
 
+        <section
+          class="calendar-repeat-panel"
+          data-repeat-panel
+        >
+
+          <label class="calendar-event-field">
+            <span>
+              繰り返し
+            </span>
+
+            <select
+              name="repeat_type"
+              data-repeat-type
+            >
+              <option value="none">
+                なし
+              </option>
+
+              <option value="daily">
+                毎日 / ○日おき
+              </option>
+
+              <option value="weekly">
+                毎週 / ○週おき
+              </option>
+
+              <option value="monthly_day">
+                毎月 ○日
+              </option>
+
+              <option value="monthly_weekday">
+                毎月 第○曜日
+              </option>
+
+              <option value="yearly">
+                毎年
+              </option>
+            </select>
+          </label>
+
+
+          <div
+            class="calendar-repeat-details"
+            data-repeat-details
+            hidden
+          >
+
+            <label
+              class="calendar-event-field"
+              data-repeat-interval-field
+              hidden
+            >
+              <span>
+                間隔
+              </span>
+
+              <div class="calendar-repeat-inline">
+                <input
+                  type="number"
+                  name="repeat_interval"
+                  value="1"
+                  min="1"
+                  max="365"
+                  inputmode="numeric"
+                  data-repeat-interval
+                >
+
+                <span
+                  class="calendar-repeat-unit"
+                  data-repeat-interval-unit
+                >
+                  日ごと
+                </span>
+              </div>
+            </label>
+
+
+            <fieldset
+              class="calendar-repeat-weekdays"
+              data-repeat-weekdays-field
+              hidden
+            >
+              <legend>
+                曜日
+              </legend>
+
+              <label>
+                <input
+                  type="checkbox"
+                  name="repeat_weekdays"
+                  value="0"
+                >
+                日
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  name="repeat_weekdays"
+                  value="1"
+                >
+                月
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  name="repeat_weekdays"
+                  value="2"
+                >
+                火
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  name="repeat_weekdays"
+                  value="3"
+                >
+                水
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  name="repeat_weekdays"
+                  value="4"
+                >
+                木
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  name="repeat_weekdays"
+                  value="5"
+                >
+                金
+              </label>
+
+              <label>
+                <input
+                  type="checkbox"
+                  name="repeat_weekdays"
+                  value="6"
+                >
+                土
+              </label>
+            </fieldset>
+
+
+            <label
+              class="calendar-event-field"
+              data-repeat-month-day-field
+              hidden
+            >
+              <span>
+                日
+              </span>
+
+              <div class="calendar-repeat-inline">
+                <input
+                  type="number"
+                  name="repeat_day_of_month"
+                  min="1"
+                  max="31"
+                  inputmode="numeric"
+                  data-repeat-day-of-month
+                >
+
+                <span class="calendar-repeat-unit">
+                  日
+                </span>
+              </div>
+            </label>
+
+
+            <div
+              class="calendar-event-time-row"
+              data-repeat-month-weekday-field
+              hidden
+            >
+
+              <label class="calendar-event-field">
+                <span>
+                  週
+                </span>
+
+                <select
+                  name="repeat_week_of_month"
+                  data-repeat-week-of-month
+                >
+                  <option value="1">
+                    第1
+                  </option>
+
+                  <option value="2">
+                    第2
+                  </option>
+
+                  <option value="3">
+                    第3
+                  </option>
+
+                  <option value="4">
+                    第4
+                  </option>
+
+                  <option value="5">
+                    第5
+                  </option>
+
+                  <option value="-1">
+                    最終
+                  </option>
+                </select>
+              </label>
+
+
+              <label class="calendar-event-field">
+                <span>
+                  曜日
+                </span>
+
+                <select
+                  name="repeat_weekday"
+                  data-repeat-weekday
+                >
+                  <option value="0">
+                    日曜日
+                  </option>
+
+                  <option value="1">
+                    月曜日
+                  </option>
+
+                  <option value="2">
+                    火曜日
+                  </option>
+
+                  <option value="3">
+                    水曜日
+                  </option>
+
+                  <option value="4">
+                    木曜日
+                  </option>
+
+                  <option value="5">
+                    金曜日
+                  </option>
+
+                  <option value="6">
+                    土曜日
+                  </option>
+                </select>
+              </label>
+
+            </div>
+
+
+            <div
+              class="calendar-event-time-row"
+              data-repeat-yearly-field
+              hidden
+            >
+
+              <label class="calendar-event-field">
+                <span>
+                  月
+                </span>
+
+                <input
+                  type="number"
+                  name="repeat_month"
+                  min="1"
+                  max="12"
+                  inputmode="numeric"
+                  data-repeat-month
+                >
+              </label>
+
+
+              <label class="calendar-event-field">
+                <span>
+                  日
+                </span>
+
+                <input
+                  type="number"
+                  name="repeat_yearly_day"
+                  min="1"
+                  max="31"
+                  inputmode="numeric"
+                  data-repeat-yearly-day
+                >
+              </label>
+
+            </div>
+
+
+            <label class="calendar-event-field">
+              <span>
+                繰り返しの終了
+              </span>
+
+              <select
+                name="repeat_end_type"
+                data-repeat-end-type
+              >
+                <option value="none">
+                  終了しない
+                </option>
+
+                <option value="date">
+                  日付まで
+                </option>
+
+                <option value="count">
+                  回数を指定
+                </option>
+              </select>
+            </label>
+
+
+            <label
+              class="calendar-event-field"
+              data-repeat-end-date-field
+              hidden
+            >
+              <span>
+                終了日
+              </span>
+
+              <input
+                type="date"
+                name="repeat_end_date"
+                data-repeat-end-date
+              >
+            </label>
+
+
+            <label
+              class="calendar-event-field"
+              data-repeat-count-field
+              hidden
+            >
+              <span>
+                回数
+              </span>
+
+              <div class="calendar-repeat-inline">
+                <input
+                  type="number"
+                  name="repeat_count"
+                  min="1"
+                  max="1000"
+                  inputmode="numeric"
+                  data-repeat-count
+                >
+
+                <span class="calendar-repeat-unit">
+                  回
+                </span>
+              </div>
+            </label>
+
+          </div>
+
+        </section>
+
+
         <label class="calendar-event-all-day">
           <input
             type="checkbox"
