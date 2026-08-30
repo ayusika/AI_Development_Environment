@@ -1922,7 +1922,10 @@ button {
   .calendar-grid {
     grid-template-rows:
       repeat(
-        6,
+        var(
+          --calendar-week-count,
+          6
+        ),
         minmax(72px, auto)
       );
   }
