@@ -814,6 +814,13 @@ function calendarEventReadCommonFields(
             ?? null
         );
 
+
+    $repeatFields =
+        calendarEventReadRepeatFields(
+            $body
+        );
+
+
     return [
         'owner_code' =>
             $ownerCode,
@@ -837,6 +844,7 @@ function calendarEventReadCommonFields(
                 : null,
         'text_color' =>
             $textColor,
+        ...$repeatFields,
     ];
 }
 
