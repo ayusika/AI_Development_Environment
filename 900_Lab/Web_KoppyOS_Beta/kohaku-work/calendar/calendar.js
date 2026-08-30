@@ -1809,6 +1809,9 @@ function openEventModal(
 }
 
 
+/* 🟥ここまで↑🟥 DUPLICATE CALENDAR BLOCK */
+
+
 function closeEventModal() {
   eventModal.hidden =
     true;
