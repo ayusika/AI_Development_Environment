@@ -2,6 +2,9 @@
    HEAVEN DIARY
 ======================================== */
 
+let activeHeavenDiaryVisit = null;
+
+
 function startHeavenDiary(
   visit
 ) {
@@ -9,6 +12,10 @@ function startHeavenDiary(
   if (!visit) {
     return;
   }
+
+
+  activeHeavenDiaryVisit =
+    visit;
 
 
   renderHeavenDiaryVisit(
