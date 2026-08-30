@@ -2671,6 +2671,80 @@ function renderSingleMonthCalendar(
 }
 
 
+function renderMonthCalendar() {
+  const centerMonth =
+    calendarState.currentMonth;
+
+
+  monthTitleElement.textContent =
+    `${centerMonth.getFullYear()}年 ${centerMonth.getMonth() + 1}月`;
+
+
+  monthCalendarElement.replaceChildren();
+
+  monthCalendarElement.classList.add(
+    'is-scroll-range'
+  );
+
+
+  for (
+    let monthOffset = -6;
+    monthOffset <= 6;
+    monthOffset += 1
+  ) {
+    const monthDate =
+      new Date(
+        centerMonth.getFullYear(),
+        centerMonth.getMonth()
+          + monthOffset,
+        1
+      );
+
+
+    const monthSection =
+      document.createElement(
+        'section'
+      );
+
+    monthSection.className =
+      'calendar-month-section';
+
+    monthSection.dataset.calendarMonth =
+      formatMonthKey(
+        monthDate
+      );
+
+
+    const monthHeading =
+      document.createElement(
+        'h3'
+      );
+
+    monthHeading.className =
+      'calendar-scroll-month-title';
+
+    monthHeading.textContent =
+      `${monthDate.getFullYear()}年 ${monthDate.getMonth() + 1}月`;
+
+
+    monthSection.appendChild(
+      monthHeading
+    );
+
+
+    renderSingleMonthCalendar(
+      monthDate,
+      monthSection
+    );
+
+
+    monthCalendarElement.appendChild(
+      monthSection
+    );
+  }
+}
+
+
 function createMultiDayOverlayElement(
   event
 ) {
