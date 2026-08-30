@@ -460,7 +460,10 @@ button {
 
   grid-template-rows:
     repeat(
-      6,
+      var(
+        --calendar-week-count,
+        6
+      ),
       minmax(92px, 1fr)
     );
 }
