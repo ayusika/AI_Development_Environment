@@ -2228,6 +2228,33 @@ function renderSingleMonthCalendar(
     );
 
 
+  const lastDate =
+    new Date(
+      year,
+      month + 1,
+      0
+    );
+
+  const visibleCellCount =
+    Math.ceil(
+      (
+        firstWeekday
+        + lastDate.getDate()
+      )
+      / 7
+    ) * 7;
+
+  const weekCount =
+    visibleCellCount / 7;
+
+  gridElement.style.setProperty(
+    '--calendar-week-count',
+    String(
+      weekCount
+    )
+  );
+
+
   const shiftsByDate =
     groupShiftsByDate(
       calendarState.shifts
