@@ -1285,6 +1285,15 @@ try {
             : '';
 
 
+    $kashikoiName =
+        isset($payload['kashikoi_name'])
+            ? trim(
+                (string)
+                $payload['kashikoi_name']
+            )
+            : '';
+
+
     if ($visitId <= 0) {
         throw new RuntimeException(
             'visit_id is required.'
