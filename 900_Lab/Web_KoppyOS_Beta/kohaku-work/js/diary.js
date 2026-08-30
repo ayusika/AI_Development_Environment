@@ -510,15 +510,6 @@ function startNukinaviDiary() {
 
 
 
-function getSelectedVisits() {
-  const checked = document.querySelectorAll(
-    'input[name="visit"]:checked'
-  );
-
-  return Array.from(checked).map((input) => input.value);
-}
-
-
 function generateDiary() {
   const availabilityInput = document.getElementById(
     'availability-input'
