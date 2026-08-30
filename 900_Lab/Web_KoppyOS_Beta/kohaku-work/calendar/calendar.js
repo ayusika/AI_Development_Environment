@@ -3306,27 +3306,45 @@ async function loadHolidayData() {
 
 
 async function loadMonthShifts() {
-  const {
-    firstDate,
-  } =
-    getMonthRange(
-      calendarState.currentMonth
+  const centerMonth =
+    calendarState.currentMonth;
+
+
+  const firstVisibleMonth =
+    new Date(
+      centerMonth.getFullYear(),
+      centerMonth.getMonth() - 6,
+      1
+    );
+
+  const lastVisibleMonth =
+    new Date(
+      centerMonth.getFullYear(),
+      centerMonth.getMonth() + 6,
+      1
     );
 
 
   const gridStartDate =
     new Date(
-      firstDate.getFullYear(),
-      firstDate.getMonth(),
-      firstDate.getDate()
-        - firstDate.getDay()
+      firstVisibleMonth.getFullYear(),
+      firstVisibleMonth.getMonth(),
+      1 - firstVisibleMonth.getDay()
+    );
+
+
+  const lastGridStartDate =
+    new Date(
+      lastVisibleMonth.getFullYear(),
+      lastVisibleMonth.getMonth(),
+      1 - lastVisibleMonth.getDay()
     );
 
   const gridEndDate =
     new Date(
-      gridStartDate.getFullYear(),
-      gridStartDate.getMonth(),
-      gridStartDate.getDate() + 41
+      lastGridStartDate.getFullYear(),
+      lastGridStartDate.getMonth(),
+      lastGridStartDate.getDate() + 41
     );
 
 
