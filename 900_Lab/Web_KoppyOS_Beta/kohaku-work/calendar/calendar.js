@@ -4132,6 +4132,13 @@ function openEventModal(
         : dateKey;
 
 
+    eventMultiDayInput.checked =
+      eventEndDateInput.value
+      > dateKey;
+
+    syncMultiDayFields();
+
+
     eventTextColorInput.value =
       calendarEvent.text_color
         || '#29485a';
