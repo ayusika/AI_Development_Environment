@@ -198,6 +198,404 @@ function calendarEventNormalizeTextColor(
 }
 
 
+function calendarEventReadRepeatFields(
+    array $body
+): array {
+    $repeatType =
+        isset($body['repeat_type'])
+            ? trim(
+                (string)
+                $body['repeat_type']
+            )
+            : 'none';
+
+
+    $allowedRepeatTypes = [
+        'none',
+        'daily',
+        'weekly',
+        'monthly_day',
+        'monthly_weekday',
+        'yearly',
+    ];
+
+
+    if (
+        !in_array(
+            $repeatType,
+            $allowedRepeatTypes,
+            true
+        )
+    ) {
+        throw new RuntimeException(
+            'Invalid repeat_type.'
+        );
+    }
+
+
+    $repeatInterval =
+        isset($body['repeat_interval'])
+            ? (int)
+                $body['repeat_interval']
+            : 1;
+
+
+    if (
+        $repeatInterval < 1
+        ||
+        $repeatInterval > 365
+    ) {
+        throw new RuntimeException(
+            'Invalid repeat_interval.'
+        );
+    }
+
+
+    if ($repeatType === 'none') {
+        return [
+            'repeat_type' =>
+                'none',
+            'repeat_interval' =>
+                1,
+            'repeat_weekdays' =>
+                null,
+            'repeat_day_of_month' =>
+                null,
+            'repeat_week_of_month' =>
+                null,
+            'repeat_weekday' =>
+                null,
+            'repeat_month' =>
+                null,
+            'repeat_end_type' =>
+                'none',
+            'repeat_end_date' =>
+                null,
+            'repeat_count' =>
+                null,
+        ];
+    }
+
+
+    $repeatWeekdays = null;
+    $repeatDayOfMonth = null;
+    $repeatWeekOfMonth = null;
+    $repeatWeekday = null;
+    $repeatMonth = null;
+
+
+    if ($repeatType === 'weekly') {
+        $rawWeekdays =
+            $body['repeat_weekdays']
+            ?? [];
+
+
+        if (is_string($rawWeekdays)) {
+            $rawWeekdays =
+                trim($rawWeekdays) === ''
+                    ? []
+                    : preg_split(
+                        '/\s*,\s*/',
+                        trim($rawWeekdays)
+                    );
+        }
+
+
+        if (!is_array($rawWeekdays)) {
+            throw new RuntimeException(
+                'Invalid repeat_weekdays.'
+            );
+        }
+
+
+        $weekdays = [];
+
+
+        foreach (
+            $rawWeekdays
+            as $weekday
+        ) {
+            if (
+                $weekday === ''
+                ||
+                $weekday === null
+            ) {
+                continue;
+            }
+
+
+            $weekday =
+                (int)
+                $weekday;
+
+
+            if (
+                $weekday < 0
+                ||
+                $weekday > 6
+            ) {
+                throw new RuntimeException(
+                    'Invalid repeat weekday.'
+                );
+            }
+
+
+            $weekdays[$weekday] =
+                $weekday;
+        }
+
+
+        if ($weekdays === []) {
+            throw new RuntimeException(
+                'repeat_weekdays is required.'
+            );
+        }
+
+
+        sort($weekdays);
+
+
+        $repeatWeekdays =
+            implode(
+                ',',
+                $weekdays
+            );
+    }
+
+
+    if (
+        $repeatType === 'monthly_day'
+        ||
+        $repeatType === 'yearly'
+    ) {
+        $repeatDayOfMonth =
+            isset(
+                $body[
+                    'repeat_day_of_month'
+                ]
+            )
+                ? (int)
+                    $body[
+                        'repeat_day_of_month'
+                    ]
+                : 0;
+
+
+        if (
+            $repeatDayOfMonth < 1
+            ||
+            $repeatDayOfMonth > 31
+        ) {
+            throw new RuntimeException(
+                'Invalid repeat_day_of_month.'
+            );
+        }
+    }
+
+
+    if (
+        $repeatType
+        === 'monthly_weekday'
+    ) {
+        $repeatWeekOfMonth =
+            isset(
+                $body[
+                    'repeat_week_of_month'
+                ]
+            )
+                ? (int)
+                    $body[
+                        'repeat_week_of_month'
+                    ]
+                : 0;
+
+
+        if (
+            !in_array(
+                $repeatWeekOfMonth,
+                [
+                    -1,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5,
+                ],
+                true
+            )
+        ) {
+            throw new RuntimeException(
+                'Invalid repeat_week_of_month.'
+            );
+        }
+
+
+        $repeatWeekday =
+            isset(
+                $body[
+                    'repeat_weekday'
+                ]
+            )
+                ? (int)
+                    $body[
+                        'repeat_weekday'
+                    ]
+                : -1;
+
+
+        if (
+            $repeatWeekday < 0
+            ||
+            $repeatWeekday > 6
+        ) {
+            throw new RuntimeException(
+                'Invalid repeat_weekday.'
+            );
+        }
+    }
+
+
+    if ($repeatType === 'yearly') {
+        $repeatMonth =
+            isset($body['repeat_month'])
+                ? (int)
+                    $body['repeat_month']
+                : 0;
+
+
+        if (
+            $repeatMonth < 1
+            ||
+            $repeatMonth > 12
+            ||
+            !checkdate(
+                $repeatMonth,
+                $repeatDayOfMonth,
+                2000
+            )
+        ) {
+            throw new RuntimeException(
+                'Invalid yearly repeat date.'
+            );
+        }
+    }
+
+
+    $repeatEndType =
+        isset($body['repeat_end_type'])
+            ? trim(
+                (string)
+                $body['repeat_end_type']
+            )
+            : 'none';
+
+
+    if (
+        !in_array(
+            $repeatEndType,
+            [
+                'none',
+                'date',
+                'count',
+            ],
+            true
+        )
+    ) {
+        throw new RuntimeException(
+            'Invalid repeat_end_type.'
+        );
+    }
+
+
+    $repeatEndDate = null;
+    $repeatCount = null;
+
+
+    if ($repeatEndType === 'date') {
+        $repeatEndDate =
+            isset(
+                $body['repeat_end_date']
+            )
+                ? trim(
+                    (string)
+                    $body[
+                        'repeat_end_date'
+                    ]
+                )
+                : '';
+
+
+        calendarEventValidateDate(
+            $repeatEndDate
+        );
+
+
+        $eventDate =
+            isset($body['event_date'])
+                ? trim(
+                    (string)
+                    $body['event_date']
+                )
+                : '';
+
+
+        if (
+            $eventDate !== ''
+            &&
+            $repeatEndDate < $eventDate
+        ) {
+            throw new RuntimeException(
+                'repeat_end_date must not be before event_date.'
+            );
+        }
+    }
+
+
+    if ($repeatEndType === 'count') {
+        $repeatCount =
+            isset($body['repeat_count'])
+                ? (int)
+                    $body['repeat_count']
+                : 0;
+
+
+        if (
+            $repeatCount < 1
+            ||
+            $repeatCount > 1000
+        ) {
+            throw new RuntimeException(
+                'Invalid repeat_count.'
+            );
+        }
+    }
+
+
+    return [
+        'repeat_type' =>
+            $repeatType,
+        'repeat_interval' =>
+            $repeatInterval,
+        'repeat_weekdays' =>
+            $repeatWeekdays,
+        'repeat_day_of_month' =>
+            $repeatDayOfMonth,
+        'repeat_week_of_month' =>
+            $repeatWeekOfMonth,
+        'repeat_weekday' =>
+            $repeatWeekday,
+        'repeat_month' =>
+            $repeatMonth,
+        'repeat_end_type' =>
+            $repeatEndType,
+        'repeat_end_date' =>
+            $repeatEndDate,
+        'repeat_count' =>
+            $repeatCount,
+    ];
+}
+
+
 function calendarEventBuildTimes(
     array $body
 ): array {
