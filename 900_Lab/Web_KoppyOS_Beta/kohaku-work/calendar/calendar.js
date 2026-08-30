@@ -3531,7 +3531,14 @@ moveButtons.forEach(
 loadHolidayData()
   .finally(
     () => {
-      loadMonthShifts();
+      loadMonthShifts()
+        .then(
+          () => {
+            scrollToCurrentMonth(
+              'auto'
+            );
+          }
+        );
     }
   );
 
