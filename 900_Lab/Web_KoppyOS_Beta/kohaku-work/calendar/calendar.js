@@ -4551,6 +4551,105 @@ document.addEventListener(
 );
 
 
+function syncMonthJumpControls() {
+  if (
+    !yearSelect
+    || !monthSelect
+  ) {
+    return;
+  }
+
+
+  const centerYear =
+    calendarState.currentMonth
+      .getFullYear();
+
+  const centerMonth =
+    calendarState.currentMonth
+      .getMonth();
+
+
+  yearSelect.replaceChildren();
+
+
+  for (
+    let year = centerYear - 10;
+    year <= centerYear + 10;
+    year += 1
+  ) {
+    const option =
+      document.createElement(
+        'option'
+      );
+
+    option.value =
+      String(year);
+
+    option.textContent =
+      String(year);
+
+
+    yearSelect.appendChild(
+      option
+    );
+  }
+
+
+  yearSelect.value =
+    String(centerYear);
+
+  monthSelect.value =
+    String(centerMonth);
+}
+
+
+async function jumpToSelectedMonth() {
+  if (
+    !yearSelect
+    || !monthSelect
+  ) {
+    return;
+  }
+
+
+  const year =
+    Number(
+      yearSelect.value
+    );
+
+  const month =
+    Number(
+      monthSelect.value
+    );
+
+
+  if (
+    !Number.isInteger(year)
+    || !Number.isInteger(month)
+    || month < 0
+    || month > 11
+  ) {
+    return;
+  }
+
+
+  calendarState.currentMonth =
+    new Date(
+      year,
+      month,
+      1
+    );
+
+
+  syncMonthJumpControls();
+
+
+  await loadMonthShifts();
+
+  scrollToCurrentMonth();
+}
+
+
 async function moveMonth(offset) {
   calendarState.currentMonth =
     new Date(
@@ -4561,6 +4660,9 @@ async function moveMonth(offset) {
         + offset,
       1
     );
+
+
+  syncMonthJumpControls();
 
 
   await loadMonthShifts();
@@ -4583,6 +4685,9 @@ todayButton.addEventListener(
         today.getMonth(),
         1
       );
+
+
+    syncMonthJumpControls();
 
 
     await loadMonthShifts();
@@ -4622,6 +4727,29 @@ moveButtons.forEach(
     );
   }
 );
+
+
+if (
+  yearSelect
+  && monthSelect
+) {
+  yearSelect.addEventListener(
+    'change',
+    () => {
+      jumpToSelectedMonth();
+    }
+  );
+
+  monthSelect.addEventListener(
+    'change',
+    () => {
+      jumpToSelectedMonth();
+    }
+  );
+}
+
+
+syncMonthJumpControls();
 
 
 loadHolidayData()
