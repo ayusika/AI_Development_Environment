@@ -2435,7 +2435,8 @@ try {
                 $pdo,
                 $visitId,
                 $optionNames,
-                $customOption
+                $customOption,
+                $customOptionAmount
             );
         }
 
@@ -2447,6 +2448,17 @@ try {
                 $visitId,
                 $storeId,
                 $extensions
+            );
+        }
+
+
+        if ($hasMoneyDraft) {
+
+            saveVisitMoneyDraft(
+                $pdo,
+                $visitId,
+                $tipAmount,
+                $adjustmentAmount
             );
         }
 
