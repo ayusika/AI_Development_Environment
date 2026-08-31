@@ -2424,7 +2424,9 @@ eventDeleteButton.addEventListener(
       closeEventModal();
 
 
-      await loadMonthShifts();
+      await loadMonthShifts({
+        silent: true,
+      });
 
 
     } catch (error) {
