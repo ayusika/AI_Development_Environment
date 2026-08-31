@@ -412,16 +412,8 @@
       color: var(--error);
     }
 
-    /* CHAT */
+    /* SHARED PROPOSAL / DOCUMENT */
 
-    .chat-panel {
-      position: relative;
-      margin-bottom: 18px;
-      padding: 28px;
-      overflow: hidden;
-    }
-
-    .chat-header,
     .proposal-header,
     .proposal-preview-head,
     .document-header {
@@ -431,11 +423,6 @@
       gap: 18px;
     }
 
-    .chat-header {
-      margin-bottom: 24px;
-    }
-
-    .chat-eyebrow,
     .proposal-eyebrow,
     .proposal-preview-label {
       margin: 0;
@@ -445,14 +432,12 @@
       letter-spacing: 0.18em;
     }
 
-    .chat-title,
     .proposal-title {
       margin: 4px 0 0;
       font-size: 25px;
       line-height: 1.3;
     }
 
-    .chat-api-status,
     .proposal-status {
       display: inline-flex;
       align-items: center;
@@ -466,7 +451,6 @@
       background: rgba(255, 255, 255, 0.72);
     }
 
-    .chat-status-dot,
     .proposal-status-dot {
       width: 10px;
       height: 10px;
@@ -474,192 +458,33 @@
       background: #cedbe2;
     }
 
-    .chat-status-dot.online,
     .proposal-status.success .proposal-status-dot {
       background: #2fcf83;
       box-shadow: 0 0 16px rgba(47, 207, 131, 0.7);
     }
 
-    .chat-status-dot.loading,
     .proposal-status.working .proposal-status-dot {
       background: #54bfff;
       box-shadow: 0 0 18px rgba(84, 191, 255, 0.72);
       animation: pulse 0.9s ease-in-out infinite;
     }
 
-    .chat-status-dot.error,
     .proposal-status.error .proposal-status-dot {
       background: #ff667d;
       box-shadow: 0 0 16px rgba(255, 102, 125, 0.52);
     }
 
-    .chat-messages {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-      height: 380px;
-      padding: 22px;
-      overflow-y: auto;
-      scroll-behavior: smooth;
-      border: 1px solid rgba(91, 185, 231, 0.18);
-      border-radius: 30px;
-      background:
-        radial-gradient(circle at 15% 18%, rgba(255, 255, 255, 0.96), transparent 24%),
-        linear-gradient(160deg, rgba(248, 253, 255, 0.98), rgba(235, 248, 254, 0.92));
-    }
-
-    .chat-message {
-      display: flex;
-      align-items: flex-start;
-      gap: 14px;
-      animation: appear 0.35s ease both;
-    }
-
-    .chat-message.user-message {
-      flex-direction: row-reverse;
-    }
-
-    .chat-avatar {
-      display: grid;
-      place-items: center;
-      flex: 0 0 auto;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      color: var(--blue-dark);
-      font-weight: 900;
-      background:
-        radial-gradient(circle at 35% 28%, #ffffff, #e4f7ff 60%, #c9efff);
-      box-shadow:
-        0 10px 24px rgba(77, 165, 213, 0.14),
-        0 0 0 7px rgba(127, 215, 255, 0.07);
-    }
-
-    .user-message .chat-avatar {
-      color: #ffffff;
-      background: linear-gradient(145deg, #89ddff, #4aaee9);
-    }
-
-    .chat-message-content {
-      max-width: min(76%, 620px);
-    }
-
-    .chat-speaker {
-      margin: 0 0 7px;
-      color: var(--muted);
-      font-size: 12px;
-      font-weight: 800;
-    }
-
-    .user-message .chat-speaker {
-      text-align: right;
-    }
-
-    .chat-bubble {
-      padding: 16px 20px;
-      border: 1px solid rgba(107, 194, 235, 0.12);
-      border-radius: 10px 30px 30px 30px;
-      line-height: 1.85;
-      white-space: pre-wrap;
-      overflow-wrap: anywhere;
-      background: rgba(255, 255, 255, 0.95);
-      box-shadow: 0 12px 28px rgba(70, 151, 196, 0.1);
-    }
-
-    .user-message .chat-bubble {
-      border: 0;
-      border-radius: 30px 10px 30px 30px;
-      color: #ffffff;
-      background: linear-gradient(135deg, #84dcff, #50b7ef 56%, #429ed7);
-    }
-
-    .thinking-dots {
-      display: inline-flex;
-      gap: 7px;
-    }
-
-    .thinking-dots span {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: var(--blue-dark);
-      opacity: 0.24;
-      animation: thinkingDot 1.2s ease-in-out infinite;
-    }
-
-    .thinking-dots span:nth-child(2) {
-      animation-delay: 0.16s;
-    }
-
-    .thinking-dots span:nth-child(3) {
-      animation-delay: 0.32s;
-    }
-
-    .chat-form {
-      margin-top: 24px;
-    }
-
-    .chat-input-label {
-      display: block;
-      margin-bottom: 9px;
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    .chat-input-row {
-      display: flex;
-      align-items: stretch;
-      gap: 14px;
-    }
-
-    .chat-input {
-      flex: 1;
-      min-height: 72px;
-      padding: 17px 18px;
-      resize: vertical;
-      border: 1px solid rgba(91, 185, 231, 0.2);
-      border-radius: 24px;
-      outline: none;
-      color: var(--text);
-      line-height: 1.65;
-      background: rgba(255, 255, 255, 0.88);
-    }
-
-    .chat-input:focus,
     .proposal-input:focus,
     .proposal-textarea:focus {
       border-color: rgba(71, 178, 231, 0.68);
       box-shadow: 0 0 0 5px rgba(89, 196, 248, 0.12);
     }
 
-    .chat-send-button {
-      min-width: 112px;
-      padding: 16px 22px;
-      border-radius: 24px;
-      font-size: 15px;
-    }
-
-    .chat-form-footer {
-      display: flex;
-      justify-content: space-between;
-      min-height: 24px;
-      margin-top: 10px;
-      padding: 0 4px;
-    }
-
-    .chat-error-message,
     .proposal-error {
       margin: 0;
       color: var(--error);
       font-size: 13px;
       font-weight: 800;
-    }
-
-    .chat-character-count {
-      margin: 0 0 0 auto;
-      color: var(--muted);
-      font-size: 12px;
     }
 
     /* PROPOSAL */
