@@ -3079,6 +3079,321 @@ function openScheduleForm(
 }
 
 
+async function loadScheduleRepeatCustomers() {
+
+  if (!scheduleRepeatCustomerResults) {
+    return;
+  }
+
+
+  scheduleRepeatCustomerResults.innerHTML =
+    '<p>顧客情報を読み込み中...</p>';
+
+
+  try {
+
+    const response =
+      await fetch(
+        customersApiUrl,
+        {
+          method: 'GET',
+          cache: 'no-store',
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+      throw new Error(
+        data.error
+        || '顧客情報を取得できませんでした。'
+      );
+    }
+
+
+    scheduleRepeatCustomers =
+      Array.isArray(
+        data.customers
+      )
+        ? data.customers
+        : [];
+
+
+    filterScheduleRepeatCustomers();
+
+
+  } catch (error) {
+
+    scheduleRepeatCustomers =
+      [];
+
+    scheduleRepeatCustomerResults.innerHTML =
+      `<p>${escapeHtml(
+        error.message
+      )}</p>`;
+  }
+}
+
+
+function filterScheduleRepeatCustomers() {
+
+  if (!scheduleRepeatCustomerResults) {
+    return;
+  }
+
+
+  const nameQuery =
+    scheduleRepeatCustomerName
+      ? scheduleRepeatCustomerName
+          .value
+          .trim()
+          .toLowerCase()
+      : '';
+
+
+  const searchDate =
+    scheduleRepeatCustomerDate
+      ? scheduleRepeatCustomerDate
+          .value
+          .trim()
+      : '';
+
+
+  if (
+    nameQuery === ''
+    && searchDate === ''
+  ) {
+
+    scheduleRepeatCustomerResults.innerHTML =
+      '<p>名前か過去の予約日を入れて検索してね。</p>';
+
+    return;
+  }
+
+
+  const customers =
+    scheduleRepeatCustomers
+      .filter((customer) => {
+
+        const names =
+          Array.isArray(
+            customer.names
+          )
+            ? customer.names
+            : [];
+
+
+        const visits =
+          Array.isArray(
+            customer.visits
+          )
+            ? customer.visits
+            : [];
+
+
+        const matchesName =
+          nameQuery === ''
+          || names.some(
+            (nameRecord) =>
+              String(
+                nameRecord.name
+                || ''
+              )
+                .toLowerCase()
+                .includes(
+                  nameQuery
+                )
+          )
+          || String(
+            customer.customer_code
+            || ''
+          )
+            .toLowerCase()
+            .includes(
+              nameQuery
+            );
+
+
+        const matchesDate =
+          searchDate === ''
+          || visits.some(
+            (visit) =>
+              String(
+                visit.started_at
+                || ''
+              ).slice(
+                0,
+                10
+              ) === searchDate
+          );
+
+
+        return (
+          matchesName
+          && matchesDate
+        );
+      });
+
+
+  if (customers.length === 0) {
+
+    scheduleRepeatCustomerResults.innerHTML =
+      '<p>該当する顧客はいません。</p>';
+
+    return;
+  }
+
+
+  const namePrefixes = {
+    nickname: '',
+    kashikoi: 'カ:',
+    okini_talk: 'オ:',
+    line: 'L:',
+    x: 'X:',
+    instagram: 'I:',
+  };
+
+
+  scheduleRepeatCustomerResults.innerHTML =
+    customers
+      .map((customer) => {
+
+        const names =
+          Array.isArray(
+            customer.names
+          )
+            ? customer.names
+            : [];
+
+
+        const nameParts =
+          names
+            .filter(
+              (nameRecord) =>
+                nameRecord.name
+            )
+            .map((nameRecord) => {
+
+              const prefix =
+                namePrefixes[
+                  nameRecord.name_type
+                ]
+                || '';
+
+              return `${prefix}${String(
+                nameRecord.name
+              )}`;
+            });
+
+
+        const displayName =
+          nameParts.length
+            ? nameParts.join(' / ')
+            : (
+                customer.customer_code
+                || `顧客 #${customer.id}`
+              );
+
+
+        const isSelected =
+          Number(
+            selectedScheduleCustomerId
+          )
+          === Number(
+            customer.id
+          );
+
+
+        return `
+          <article
+            class="schedule-identity-search-result"
+          >
+
+            <strong>
+              ${escapeHtml(
+                displayName
+              )}
+            </strong>
+
+            <small>
+              顧客 #${escapeHtml(
+                String(
+                  customer.id
+                )
+              )}
+              ・来店 ${escapeHtml(
+                String(
+                  customer.visit_count
+                  || 0
+                )
+              )}回
+            </small>
+
+            <button
+              class="${
+                isSelected
+                  ? 'primary-button'
+                  : 'secondary-button'
+              }"
+              type="button"
+              data-action="select-schedule-repeat-customer"
+              data-customer-id="${escapeHtml(
+                String(
+                  customer.id
+                )
+              )}"
+            >
+              ${
+                isSelected
+                  ? 'この顧客を選択中'
+                  : 'この顧客を選ぶ'
+              }
+            </button>
+
+          </article>
+        `;
+      })
+      .join('');
+}
+
+
+function selectScheduleRepeatCustomer(
+  customerId
+) {
+
+  const selectedId =
+    Number(customerId);
+
+
+  const customer =
+    scheduleRepeatCustomers
+      .find(
+        (customerRecord) =>
+          Number(
+            customerRecord.id
+          ) === selectedId
+      );
+
+
+  if (!customer) {
+    return;
+  }
+
+
+  selectedScheduleCustomerId =
+    selectedId;
+
+
+  filterScheduleRepeatCustomers();
+}
+
+
 function syncScheduleNewCustomerFields() {
 
   const isNewReservation =
@@ -3100,12 +3415,19 @@ function syncScheduleNewCustomerFields() {
 
   if (scheduleRepeatCustomerFields) {
 
+    const showRepeatSearch =
+      isNewReservation
+      && selectedCustomerStatus
+        === 'repeat_unknown_id';
+
+
     scheduleRepeatCustomerFields.hidden =
-      !(
-        isNewReservation
-        && selectedCustomerStatus
-          === 'repeat_unknown_id'
-      );
+      !showRepeatSearch;
+
+
+    if (showRepeatSearch) {
+      loadScheduleRepeatCustomers();
+    }
   }
 }
 
