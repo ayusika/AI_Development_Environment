@@ -365,113 +365,32 @@
       </section>
 
       <!-- =========================================
-           KOPPY CHAT
+           KOPPY CHAT ENTRY
       ========================================== -->
 
-      <section class="panel chat-panel">
-        <div class="chat-header">
-          <div class="chat-title-group">
-            <div class="mini-symbol">
-              ♢ᴷ
-            </div>
+      <section class="panel">
+        <p class="eyebrow">
+          KOPPY CHAT
+        </p>
 
-            <div>
-              <p class="chat-eyebrow">
-                KOPPY CHAT
-              </p>
+        <h2>
+          Koppyと話す
+        </h2>
 
-              <h2 class="chat-title">
-                Koppyと話す
-              </h2>
-            </div>
-          </div>
+        <p class="welcome-copy">
+          Koppyとの会話は、
+          専用Chat画面から行います。
+        </p>
 
-          <div class="chat-api-status">
-            <span
-              id="chatStatusDot"
-              class="chat-status-dot"
-              aria-hidden="true"
-            ></span>
-
-            <span id="chatStatusText">
-              API接続待機中
-            </span>
-          </div>
-        </div>
-
-        <div
-          id="chatMessages"
-          class="chat-messages"
-          aria-live="polite"
+        <a
+          class="main-button"
+          href="/chat/"
         >
-          <div class="chat-message koppy-message">
-            <div class="chat-avatar">
-              ♢ᴷ
-            </div>
-
-            <div class="chat-message-content">
-              <p class="chat-speaker">
-                Koppy
-              </p>
-
-              <div class="chat-bubble">
-                おかえり、しいちゃん。
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <form
-          id="chatForm"
-          class="chat-form"
-        >
-          <label
-            class="chat-input-label"
-            for="chatInput"
-          >
-            Koppyへメッセージ
-          </label>
-
-          <div class="chat-input-row">
-            <textarea
-              id="chatInput"
-              class="chat-input"
-              rows="2"
-              maxlength="2000"
-              placeholder="Koppyに話しかける……"
-              required
-            ></textarea>
-
-            <button
-              id="chatSendButton"
-              class="chat-send-button"
-              type="submit"
-            >
-              <span aria-hidden="true">
-                ✦
-              </span>
-
-              <span id="chatSendButtonText">
-                送信
-              </span>
-            </button>
-          </div>
-
-          <div class="chat-form-footer">
-            <p
-              id="chatErrorMessage"
-              class="chat-error-message"
-              role="alert"
-            ></p>
-
-            <p class="chat-character-count">
-              <span id="chatCharacterCount">
-                0
-              </span>
-              / 2000
-            </p>
-          </div>
-        </form>
+          <span>♢ᴷ</span>
+          <span>
+            Koppy Chatを開く
+          </span>
+        </a>
       </section>
 
       <!-- =========================================
