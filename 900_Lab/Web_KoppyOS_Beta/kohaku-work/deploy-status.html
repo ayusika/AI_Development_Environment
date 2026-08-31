@@ -1,0 +1,2767 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+
+  <title>Koppy Deploy Monitor</title>
+
+  <link
+    id="status-favicon"
+    rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='28' fill='%238ca6b5'/%3E%3C/svg%3E"
+  >
+
+  <!-- WRITER:DEPLOY_STATUS_STYLE:START -->
+  <style>
+    :root {
+      color-scheme:
+        light;
+
+      --bg:
+        #f3fbff;
+
+      --panel:
+        rgba(
+          255,
+          255,
+          255,
+          0.95
+        );
+
+      --line:
+        #d5eaf4;
+
+      --line-strong:
+        #b7dce9;
+
+      --text:
+        #294556;
+
+      --muted:
+        #7e9cac;
+
+      --accent:
+        #48b5df;
+
+      --accent-soft:
+        #e4f6fd;
+
+      --success:
+        #28a86b;
+
+      --success-soft:
+        #e8f8f0;
+
+      --running:
+        #458fd2;
+
+      --running-soft:
+        #e8f2fc;
+
+      --failure:
+        #d84e5d;
+
+      --failure-soft:
+        #fff0f2;
+
+      --warning:
+        #d79a2b;
+
+      --warning-soft:
+        #fff7e5;
+
+      --idle:
+        #8ca6b5;
+
+      --idle-soft:
+        #eef4f7;
+
+      --shadow:
+        0 14px 36px
+        rgba(
+          72,
+          126,
+          153,
+          0.12
+        );
+    }
+
+
+    * {
+      box-sizing:
+        border-box;
+    }
+
+
+    html,
+    body {
+      margin: 0;
+
+      min-height:
+        100%;
+
+      background:
+        var(--bg);
+
+      color:
+        var(--text);
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Hiragino Sans",
+        "Yu Gothic",
+        sans-serif;
+    }
+
+
+    body {
+      min-height:
+        100vh;
+    }
+
+
+    button,
+    a {
+      font:
+        inherit;
+    }
+
+
+    button {
+      cursor:
+        pointer;
+    }
+
+
+    .deploy-monitor {
+      width:
+        min(
+          1180px,
+          calc(100% - 28px)
+        );
+
+      margin:
+        0 auto;
+
+      padding:
+        28px 0 48px;
+    }
+
+
+    .deploy-header {
+      display:
+        flex;
+
+      align-items:
+        flex-start;
+
+      justify-content:
+        space-between;
+
+      gap:
+        20px;
+
+      margin-bottom:
+        20px;
+    }
+
+
+    .deploy-brand {
+      margin:
+        0 0 5px;
+
+      color:
+        var(--accent);
+
+      font-size:
+        12px;
+
+      font-weight:
+        850;
+
+      letter-spacing:
+        0.16em;
+    }
+
+
+    .deploy-header h1 {
+      margin: 0;
+
+      font-size:
+        clamp(
+          28px,
+          4vw,
+          44px
+        );
+
+      line-height:
+        1.08;
+    }
+
+
+    .deploy-subtitle {
+      max-width:
+        680px;
+
+      margin:
+        9px 0 0;
+
+      color:
+        var(--muted);
+
+      font-size:
+        14px;
+
+      line-height:
+        1.6;
+    }
+
+
+    .deploy-header-actions {
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        flex-end;
+
+      gap:
+        8px;
+
+      flex-wrap:
+        wrap;
+    }
+
+
+    .deploy-button,
+    .deploy-link-button {
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      min-height:
+        42px;
+
+      padding:
+        0 14px;
+
+      border:
+        1px solid
+        var(--line-strong);
+
+      border-radius:
+        12px;
+
+      background:
+        #ffffff;
+
+      color:
+        var(--text);
+
+      text-decoration:
+        none;
+
+      font-size:
+        13px;
+
+      font-weight:
+        800;
+
+      box-shadow:
+        0 4px 12px
+        rgba(
+          72,
+          126,
+          153,
+          0.08
+        );
+    }
+
+
+    .deploy-button:hover,
+    .deploy-link-button:hover {
+      background:
+        var(--accent-soft);
+    }
+
+
+    .deploy-button:disabled {
+      cursor:
+        wait;
+
+      opacity:
+        0.6;
+    }
+
+
+    .deploy-summary {
+      display:
+        grid;
+
+      grid-template-columns:
+        minmax(0, 1fr)
+        minmax(260px, 0.55fr);
+
+      gap:
+        14px;
+
+      margin-bottom:
+        18px;
+    }
+
+
+    .overall-card,
+    .latest-card {
+      border:
+        1px solid
+        var(--line-strong);
+
+      border-radius:
+        20px;
+
+      background:
+        var(--panel);
+
+      box-shadow:
+        var(--shadow);
+    }
+
+
+    .overall-card {
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      gap:
+        16px;
+
+      min-height:
+        126px;
+
+      padding:
+        20px;
+    }
+
+
+    .overall-icon {
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      width:
+        64px;
+
+      height:
+        64px;
+
+      flex:
+        0 0 64px;
+
+      border-radius:
+        999px;
+
+      background:
+        var(--idle-soft);
+
+      color:
+        var(--idle);
+
+      font-size:
+        34px;
+
+      font-weight:
+        900;
+    }
+
+
+    .overall-card[data-kind="success"]
+    .overall-icon {
+      background:
+        var(--success-soft);
+
+      color:
+        var(--success);
+    }
+
+
+    .overall-card[data-kind="running"]
+    .overall-icon {
+      background:
+        var(--running-soft);
+
+      color:
+        var(--running);
+    }
+
+
+    .overall-card[data-kind="failure"]
+    .overall-icon {
+      background:
+        var(--failure-soft);
+
+      color:
+        var(--failure);
+    }
+
+
+    .overall-card[data-kind="warning"]
+    .overall-icon {
+      background:
+        var(--warning-soft);
+
+      color:
+        var(--warning);
+    }
+
+
+    .overall-label {
+      margin:
+        0 0 4px;
+
+      color:
+        var(--muted);
+
+      font-size:
+        12px;
+
+      font-weight:
+        850;
+
+      letter-spacing:
+        0.08em;
+    }
+
+
+    .overall-title {
+      margin: 0;
+
+      font-size:
+        clamp(
+          22px,
+          3vw,
+          32px
+        );
+
+      font-weight:
+        900;
+    }
+
+
+    .overall-detail {
+      margin:
+        7px 0 0;
+
+      color:
+        var(--muted);
+
+      font-size:
+        13px;
+
+      line-height:
+        1.5;
+    }
+
+
+    .latest-card {
+      padding:
+        18px 20px;
+    }
+
+
+    .latest-label {
+      margin:
+        0 0 8px;
+
+      color:
+        var(--muted);
+
+      font-size:
+        12px;
+
+      font-weight:
+        850;
+
+      letter-spacing:
+        0.08em;
+    }
+
+
+    .latest-name {
+      margin: 0;
+
+      font-size:
+        17px;
+
+      font-weight:
+        900;
+    }
+
+
+    .latest-detail {
+      margin:
+        7px 0 0;
+
+      color:
+        var(--muted);
+
+      font-size:
+        12px;
+
+      line-height:
+        1.55;
+    }
+
+
+    .deploy-meta-bar {
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        space-between;
+
+      gap:
+        12px;
+
+      margin-bottom:
+        12px;
+
+      color:
+        var(--muted);
+
+      font-size:
+        12px;
+
+      font-weight:
+        700;
+    }
+
+
+    .deploy-error {
+      margin:
+        0 0 14px;
+
+      padding:
+        12px 14px;
+
+      border:
+        1px solid
+        rgba(
+          216,
+          78,
+          93,
+          0.24
+        );
+
+      border-radius:
+        12px;
+
+      background:
+        var(--failure-soft);
+
+      color:
+        var(--failure);
+
+      font-size:
+        13px;
+
+      font-weight:
+        750;
+    }
+
+
+    .deploy-error[hidden] {
+      display:
+        none;
+    }
+
+
+    .workflow-grid {
+      display:
+        grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(
+            280px,
+            1fr
+          )
+        );
+
+      gap:
+        14px;
+    }
+
+
+    .workflow-card {
+      position:
+        relative;
+
+      overflow:
+        hidden;
+
+      border:
+        1px solid
+        var(--line-strong);
+
+      border-radius:
+        18px;
+
+      background:
+        var(--panel);
+
+      box-shadow:
+        0 8px 24px
+        rgba(
+          72,
+          126,
+          153,
+          0.09
+        );
+    }
+
+
+    .workflow-card::before {
+      content:
+        "";
+
+      position:
+        absolute;
+
+      inset:
+        0 auto 0 0;
+
+      width:
+        5px;
+
+      background:
+        var(--idle);
+    }
+
+
+    .workflow-card[data-kind="success"]::before {
+      background:
+        var(--success);
+    }
+
+
+    .workflow-card[data-kind="running"]::before {
+      background:
+        var(--running);
+    }
+
+
+    .workflow-card[data-kind="failure"]::before {
+      background:
+        var(--failure);
+    }
+
+
+    .workflow-card[data-kind="warning"]::before {
+      background:
+        var(--warning);
+    }
+
+
+    .workflow-card-inner {
+      padding:
+        17px 18px 16px 21px;
+    }
+
+
+    .workflow-card-top {
+      display:
+        flex;
+
+      align-items:
+        flex-start;
+
+      justify-content:
+        space-between;
+
+      gap:
+        12px;
+    }
+
+
+    .workflow-name {
+      margin: 0;
+
+      font-size:
+        17px;
+
+      font-weight:
+        900;
+
+      line-height:
+        1.35;
+    }
+
+
+    .workflow-file {
+      margin:
+        5px 0 0;
+
+      color:
+        var(--muted);
+
+      font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Monaco,
+        Consolas,
+        monospace;
+
+      font-size:
+        10px;
+
+      overflow-wrap:
+        anywhere;
+    }
+
+
+    .status-pill {
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      min-height:
+        30px;
+
+      padding:
+        4px 10px;
+
+      flex:
+        0 0 auto;
+
+      border-radius:
+        999px;
+
+      background:
+        var(--idle-soft);
+
+      color:
+        var(--idle);
+
+      font-size:
+        12px;
+
+      font-weight:
+        900;
+
+      white-space:
+        nowrap;
+    }
+
+
+    .workflow-card[data-kind="success"]
+    .status-pill {
+      background:
+        var(--success-soft);
+
+      color:
+        var(--success);
+    }
+
+
+    .workflow-card[data-kind="running"]
+    .status-pill {
+      background:
+        var(--running-soft);
+
+      color:
+        var(--running);
+    }
+
+
+    .workflow-card[data-kind="failure"]
+    .status-pill {
+      background:
+        var(--failure-soft);
+
+      color:
+        var(--failure);
+    }
+
+
+    .workflow-card[data-kind="warning"]
+    .status-pill {
+      background:
+        var(--warning-soft);
+
+      color:
+        var(--warning);
+    }
+
+
+    .workflow-run-title {
+      margin:
+        14px 0 0;
+
+      font-size:
+        13px;
+
+      font-weight:
+        800;
+
+      line-height:
+        1.45;
+    }
+
+
+    .workflow-details {
+      display:
+        grid;
+
+      grid-template-columns:
+        repeat(
+          2,
+          minmax(0, 1fr)
+        );
+
+      gap:
+        8px 12px;
+
+      margin-top:
+        13px;
+    }
+
+
+    .workflow-detail {
+      min-width: 0;
+    }
+
+
+    .workflow-detail-label {
+      display:
+        block;
+
+      margin-bottom:
+        2px;
+
+      color:
+        var(--muted);
+
+      font-size:
+        10px;
+
+      font-weight:
+        800;
+    }
+
+
+    .workflow-detail-value {
+      display:
+        block;
+
+      overflow:
+        hidden;
+
+      color:
+        var(--text);
+
+      font-size:
+        12px;
+
+      font-weight:
+        750;
+
+      text-overflow:
+        ellipsis;
+
+      white-space:
+        nowrap;
+    }
+
+
+    .workflow-footer {
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        space-between;
+
+      gap:
+        10px;
+
+      margin-top:
+        14px;
+
+      padding-top:
+        12px;
+
+      border-top:
+        1px solid
+        var(--line);
+    }
+
+
+    .workflow-link {
+      color:
+        var(--accent);
+
+      font-size:
+        12px;
+
+      font-weight:
+        850;
+
+      text-decoration:
+        none;
+    }
+
+
+    .workflow-link:hover {
+      text-decoration:
+        underline;
+    }
+
+
+    .workflow-sha {
+      color:
+        var(--muted);
+
+      font-family:
+        ui-monospace,
+        SFMono-Regular,
+        Menlo,
+        Monaco,
+        Consolas,
+        monospace;
+
+      font-size:
+        10px;
+    }
+
+
+    .deploy-footer-note {
+      margin:
+        18px 0 0;
+
+      color:
+        var(--muted);
+
+      font-size:
+        11px;
+
+      line-height:
+        1.6;
+    }
+
+
+    @media (
+      max-width: 760px
+    ) {
+      .deploy-monitor {
+        width:
+          min(
+            100% - 16px,
+            760px
+          );
+
+        padding-top:
+          16px;
+      }
+
+
+      .deploy-header {
+        flex-direction:
+          column;
+      }
+
+
+      .deploy-header-actions {
+        width:
+          100%;
+
+        justify-content:
+          flex-start;
+      }
+
+
+      .deploy-summary {
+        grid-template-columns:
+          1fr;
+      }
+
+
+      .overall-card {
+        min-height:
+          108px;
+
+        padding:
+          16px;
+      }
+
+
+      .overall-icon {
+        width:
+          54px;
+
+        height:
+          54px;
+
+        flex-basis:
+          54px;
+
+        font-size:
+          28px;
+      }
+
+
+      .workflow-details {
+        grid-template-columns:
+          1fr 1fr;
+      }
+
+
+      .deploy-meta-bar {
+        align-items:
+          flex-start;
+
+        flex-direction:
+          column;
+
+        gap:
+          4px;
+      }
+    }
+  </style>
+  <!-- WRITER:DEPLOY_STATUS_STYLE:END -->
+</head>
+
+<body>
+
+  <!-- WRITER:DEPLOY_STATUS_MARKUP:START -->
+  <main class="deploy-monitor">
+
+    <header class="deploy-header">
+
+      <div>
+        <p class="deploy-brand">
+          KOPPY WORLD
+        </p>
+
+        <h1>
+          Deploy Monitor
+        </h1>
+
+        <p class="deploy-subtitle">
+          GitHub Actions の最新状態をまとめて監視します。
+          実行中・成功・失敗を、この画面とブラウザタブから確認できます。
+        </p>
+      </div>
+
+
+      <div class="deploy-header-actions">
+
+        <button
+          type="button"
+          class="deploy-button"
+          data-refresh
+        >
+          今すぐ更新
+        </button>
+
+        <button
+          type="button"
+          class="deploy-button"
+          data-notification-toggle
+        >
+          通知 OFF
+        </button>
+
+        <a
+          class="deploy-link-button"
+          href="https://github.com/ayusika/AI_Development_Environment/actions"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          GitHub Actions
+        </a>
+
+      </div>
+
+    </header>
+
+
+    <section class="deploy-summary">
+
+      <article
+        class="overall-card"
+        data-overall-card
+        data-kind="idle"
+      >
+
+        <div
+          class="overall-icon"
+          data-overall-icon
+        >
+          ·
+        </div>
+
+        <div>
+          <p class="overall-label">
+            OVERALL STATUS
+          </p>
+
+          <p
+            class="overall-title"
+            data-overall-title
+          >
+            読み込み中…
+          </p>
+
+          <p
+            class="overall-detail"
+            data-overall-detail
+          >
+            GitHub Actions を確認しています。
+          </p>
+        </div>
+
+      </article>
+
+
+      <article class="latest-card">
+
+        <p class="latest-label">
+          LATEST ACTIVITY
+        </p>
+
+        <p
+          class="latest-name"
+          data-latest-name
+        >
+          読み込み中…
+        </p>
+
+        <p
+          class="latest-detail"
+          data-latest-detail
+        >
+          最新の workflow run を確認しています。
+        </p>
+
+      </article>
+
+    </section>
+
+
+    <div class="deploy-meta-bar">
+
+      <span data-last-checked>
+        最終確認: --
+      </span>
+
+      <span data-next-refresh>
+        次回更新: --
+      </span>
+
+    </div>
+
+
+    <p
+      class="deploy-error"
+      data-error
+      hidden
+    ></p>
+
+
+    <section
+      class="workflow-grid"
+      data-workflow-list
+      aria-live="polite"
+    ></section>
+
+
+    <p class="deploy-footer-note">
+      自動更新は90秒ごとです。
+      GitHub APIの制限を避けるため、常時監視と手動更新を組み合わせています。
+      通知をONにすると、このタブを開いている間はworkflow完了時にブラウザ通知を出します。
+    </p>
+
+  </main>
+  <!-- WRITER:DEPLOY_STATUS_MARKUP:END -->
+
+
+  <!-- WRITER:DEPLOY_STATUS_SCRIPT:START -->
+  <script>
+    'use strict';
+
+
+    const REPOSITORY =
+      'ayusika/AI_Development_Environment';
+
+    const API_BASE =
+      `https://api.github.com/repos/${REPOSITORY}`;
+
+    const RUN_REFRESH_MS =
+      90 * 1000;
+
+    const WORKFLOW_REFRESH_MS =
+      15 * 60 * 1000;
+
+    const FALLBACK_REFRESH_MS =
+      15 * 60 * 1000;
+
+
+    const refreshButton =
+      document.querySelector(
+        '[data-refresh]'
+      );
+
+    const notificationButton =
+      document.querySelector(
+        '[data-notification-toggle]'
+      );
+
+    const workflowListElement =
+      document.querySelector(
+        '[data-workflow-list]'
+      );
+
+    const errorElement =
+      document.querySelector(
+        '[data-error]'
+      );
+
+    const overallCard =
+      document.querySelector(
+        '[data-overall-card]'
+      );
+
+    const overallIcon =
+      document.querySelector(
+        '[data-overall-icon]'
+      );
+
+    const overallTitle =
+      document.querySelector(
+        '[data-overall-title]'
+      );
+
+    const overallDetail =
+      document.querySelector(
+        '[data-overall-detail]'
+      );
+
+    const latestName =
+      document.querySelector(
+        '[data-latest-name]'
+      );
+
+    const latestDetail =
+      document.querySelector(
+        '[data-latest-detail]'
+      );
+
+    const lastCheckedElement =
+      document.querySelector(
+        '[data-last-checked]'
+      );
+
+    const nextRefreshElement =
+      document.querySelector(
+        '[data-next-refresh]'
+      );
+
+    const faviconElement =
+      document.getElementById(
+        'status-favicon'
+      );
+
+
+    let workflowCache = [];
+
+    let workflowCacheUpdatedAt =
+      0;
+
+    let fallbackRunCache =
+      new Map();
+
+    let previousRunStates =
+      new Map();
+
+    let hasLoadedOnce =
+      false;
+
+    let refreshTimer =
+      null;
+
+    let countdownTimer =
+      null;
+
+    let nextRefreshAt =
+      0;
+
+    let refreshInFlight =
+      false;
+
+    let rateLimitRemaining =
+      null;
+
+
+    function escapeHtml(value) {
+      return String(
+        value
+        ?? ''
+      )
+        .replaceAll(
+          '&',
+          '&amp;'
+        )
+        .replaceAll(
+          '<',
+          '&lt;'
+        )
+        .replaceAll(
+          '>',
+          '&gt;'
+        )
+        .replaceAll(
+          '"',
+          '&quot;'
+        )
+        .replaceAll(
+          "'",
+          '&#039;'
+        );
+    }
+
+
+    function formatDateTime(value) {
+      if (!value) {
+        return '--';
+      }
+
+
+      const date =
+        new Date(value);
+
+
+      if (
+        Number.isNaN(
+          date.getTime()
+        )
+      ) {
+        return '--';
+      }
+
+
+      return new Intl.DateTimeFormat(
+        'ja-JP',
+        {
+          year:
+            'numeric',
+
+          month:
+            '2-digit',
+
+          day:
+            '2-digit',
+
+          hour:
+            '2-digit',
+
+          minute:
+            '2-digit',
+
+          second:
+            '2-digit',
+
+          hour12:
+            false,
+        }
+      ).format(date);
+    }
+
+
+    function getFileName(path) {
+      return String(
+        path
+        || ''
+      )
+        .split('/')
+        .pop()
+        || '';
+    }
+
+
+    function getEventLabel(eventName) {
+      const labels = {
+        push:
+          'push',
+
+        workflow_dispatch:
+          '手動',
+
+        schedule:
+          '定期',
+
+        workflow_run:
+          'workflow連動',
+
+        pull_request:
+          'PR',
+      };
+
+
+      return labels[eventName]
+        || eventName
+        || '--';
+    }
+
+
+    function getStatusInfo(
+      workflow,
+      run
+    ) {
+      if (!run) {
+        return {
+          kind:
+            'idle',
+
+          icon:
+            '·',
+
+          label:
+            '未実行',
+
+          detail:
+            'workflow run がまだ見つかりません。',
+        };
+      }
+
+
+      if (
+        run.status
+        && run.status !== 'completed'
+      ) {
+        const runningLabels = {
+          queued:
+            '待機中',
+
+          requested:
+            '開始待ち',
+
+          waiting:
+            '待機中',
+
+          pending:
+            '待機中',
+
+          in_progress:
+            '実行中',
+        };
+
+
+        return {
+          kind:
+            'running',
+
+          icon:
+            '●',
+
+          label:
+            runningLabels[
+              run.status
+            ]
+            || '実行中',
+
+          detail:
+            'GitHub Actions が現在動いています。',
+        };
+      }
+
+
+      const isDbMigration =
+        workflow.path
+          ===
+          '.github/workflows/koppy-db-migration.yml';
+
+
+      if (
+        isDbMigration
+        && run.event === 'push'
+        && run.conclusion === 'success'
+      ) {
+        return {
+          kind:
+            'warning',
+
+          icon:
+            '!',
+
+          label:
+            '検知のみ',
+
+          detail:
+            'Migrationファイル変更を検知しました。DB Migration自体はまだ実行されていません。',
+        };
+      }
+
+
+      if (
+        run.conclusion === 'success'
+      ) {
+        return {
+          kind:
+            'success',
+
+          icon:
+            '✓',
+
+          label:
+            isDbMigration
+              ? 'Migration成功'
+              : '成功',
+
+          detail:
+            '最新のworkflow runは正常終了しています。',
+        };
+      }
+
+
+      if (
+        [
+          'failure',
+          'timed_out',
+          'startup_failure',
+          'action_required',
+        ].includes(
+          run.conclusion
+        )
+      ) {
+        return {
+          kind:
+            'failure',
+
+          icon:
+            '×',
+
+          label:
+            '失敗',
+
+          detail:
+            '最新のworkflow runでエラーが発生しています。',
+        };
+      }
+
+
+      if (
+        run.conclusion === 'cancelled'
+      ) {
+        return {
+          kind:
+            'warning',
+
+          icon:
+            '!',
+
+          label:
+            'キャンセル',
+
+          detail:
+            '最新のworkflow runはキャンセルされています。',
+        };
+      }
+
+
+      return {
+        kind:
+          'idle',
+
+        icon:
+          '·',
+
+        label:
+          run.conclusion
+          || run.status
+          || '不明',
+
+        detail:
+          '最新状態を確認してください。',
+      };
+    }
+
+
+    function getOverallStatus(items) {
+      if (
+        items.some(
+          (item) =>
+            item.status.kind
+            === 'failure'
+        )
+      ) {
+        return {
+          kind:
+            'failure',
+
+          icon:
+            '×',
+
+          title:
+            '要確認',
+
+          detail:
+            '失敗しているworkflowがあります。',
+        };
+      }
+
+
+      if (
+        items.some(
+          (item) =>
+            item.status.kind
+            === 'running'
+        )
+      ) {
+        return {
+          kind:
+            'running',
+
+          icon:
+            '●',
+
+          title:
+            '実行中',
+
+          detail:
+            '現在動いているworkflowがあります。',
+        };
+      }
+
+
+      if (
+        items.some(
+          (item) =>
+            item.status.kind
+            === 'warning'
+        )
+      ) {
+        return {
+          kind:
+            'warning',
+
+          icon:
+            '!',
+
+          title:
+            '確認あり',
+
+          detail:
+            'キャンセルまたはDB Migration検知のみのworkflowがあります。',
+        };
+      }
+
+
+      if (
+        items.length > 0
+        &&
+        items.every(
+          (item) =>
+            item.status.kind
+            === 'success'
+        )
+      ) {
+        return {
+          kind:
+            'success',
+
+          icon:
+            '✓',
+
+          title:
+            'ALL GREEN',
+
+          detail:
+            '最新workflowはすべて正常終了しています。',
+        };
+      }
+
+
+      return {
+        kind:
+          'idle',
+
+        icon:
+          '·',
+
+        title:
+          '状態確認中',
+
+        detail:
+          'まだ状態を確定できません。',
+      };
+    }
+
+
+    function setTabStatus(
+      overall
+    ) {
+      const config = {
+        success: {
+          background:
+            '#28a86b',
+
+          glyph:
+            '✓',
+
+          title:
+            '✓ Koppy Deploy',
+        },
+
+        running: {
+          background:
+            '#458fd2',
+
+          glyph:
+            '●',
+
+          title:
+            '● Koppy Deploy',
+        },
+
+        failure: {
+          background:
+            '#d84e5d',
+
+          glyph:
+            '×',
+
+          title:
+            '× Koppy Deploy',
+        },
+
+        warning: {
+          background:
+            '#d79a2b',
+
+          glyph:
+            '!',
+
+          title:
+            '! Koppy Deploy',
+        },
+
+        idle: {
+          background:
+            '#8ca6b5',
+
+          glyph:
+            '·',
+
+          title:
+            'Koppy Deploy',
+        },
+      };
+
+
+      const current =
+        config[overall.kind]
+        || config.idle;
+
+
+      document.title =
+        current.title;
+
+
+      const svg =
+        `
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 64 64"
+          >
+            <circle
+              cx="32"
+              cy="32"
+              r="28"
+              fill="${current.background}"
+            />
+
+            <text
+              x="32"
+              y="43"
+              text-anchor="middle"
+              font-family="Arial, sans-serif"
+              font-size="34"
+              font-weight="700"
+              fill="#ffffff"
+            >${current.glyph}</text>
+          </svg>
+        `;
+
+
+      faviconElement.href =
+        `data:image/svg+xml,${encodeURIComponent(
+          svg
+        )}`;
+    }
+
+
+    function renderOverall(items) {
+      const overall =
+        getOverallStatus(
+          items
+        );
+
+
+      overallCard.dataset.kind =
+        overall.kind;
+
+      overallIcon.textContent =
+        overall.icon;
+
+      overallTitle.textContent =
+        overall.title;
+
+      overallDetail.textContent =
+        overall.detail;
+
+
+      setTabStatus(
+        overall
+      );
+    }
+
+
+    function renderLatestActivity(
+      recentRuns
+    ) {
+      const latestRun =
+        recentRuns[0]
+        || null;
+
+
+      if (!latestRun) {
+        latestName.textContent =
+          '履歴なし';
+
+        latestDetail.textContent =
+          '最近のworkflow runは見つかりませんでした。';
+
+        return;
+      }
+
+
+      latestName.textContent =
+        latestRun.name
+        || getFileName(
+          latestRun.path
+        );
+
+
+      const statusText =
+        latestRun.status
+        === 'completed'
+          ? (
+              latestRun.conclusion
+              || 'completed'
+            )
+          : (
+              latestRun.status
+              || 'running'
+            );
+
+
+      latestDetail.textContent =
+        [
+          statusText,
+          `#${latestRun.run_number}`,
+          getEventLabel(
+            latestRun.event
+          ),
+          formatDateTime(
+            latestRun.created_at
+          ),
+        ].join(' / ');
+    }
+
+
+    function renderWorkflows(items) {
+      workflowListElement
+        .replaceChildren();
+
+
+      items.forEach(
+        (item) => {
+
+          const {
+            workflow,
+            run,
+            status,
+          } = item;
+
+
+          const card =
+            document.createElement(
+              'article'
+            );
+
+          card.className =
+            'workflow-card';
+
+          card.dataset.kind =
+            status.kind;
+
+
+          const runLink =
+            run?.html_url
+              || (
+                `https://github.com/${REPOSITORY}/actions/workflows/`
+                + encodeURIComponent(
+                  getFileName(
+                    workflow.path
+                  )
+                )
+              );
+
+
+          const runTitle =
+            run?.display_title
+            || '実行履歴なし';
+
+          const sha =
+            String(
+              run?.head_sha
+              || ''
+            ).slice(
+              0,
+              7
+            );
+
+
+          card.innerHTML =
+            `
+              <div class="workflow-card-inner">
+
+                <div class="workflow-card-top">
+
+                  <div>
+                    <h2 class="workflow-name">
+                      ${escapeHtml(
+                        workflow.name
+                        || getFileName(
+                          workflow.path
+                        )
+                      )}
+                    </h2>
+
+                    <p class="workflow-file">
+                      ${escapeHtml(
+                        workflow.path
+                      )}
+                    </p>
+                  </div>
+
+                  <span class="status-pill">
+                    ${escapeHtml(
+                      status.label
+                    )}
+                  </span>
+
+                </div>
+
+
+                <p class="workflow-run-title">
+                  ${escapeHtml(
+                    runTitle
+                  )}
+                </p>
+
+
+                <div class="workflow-details">
+
+                  <div class="workflow-detail">
+                    <span class="workflow-detail-label">
+                      TRIGGER
+                    </span>
+
+                    <span class="workflow-detail-value">
+                      ${escapeHtml(
+                        getEventLabel(
+                          run?.event
+                        )
+                      )}
+                    </span>
+                  </div>
+
+
+                  <div class="workflow-detail">
+                    <span class="workflow-detail-label">
+                      RUN
+                    </span>
+
+                    <span class="workflow-detail-value">
+                      ${
+                        run
+                          ? `#${escapeHtml(
+                              run.run_number
+                            )}`
+                          : '--'
+                      }
+                    </span>
+                  </div>
+
+
+                  <div class="workflow-detail">
+                    <span class="workflow-detail-label">
+                      START
+                    </span>
+
+                    <span class="workflow-detail-value">
+                      ${escapeHtml(
+                        formatDateTime(
+                          run?.created_at
+                        )
+                      )}
+                    </span>
+                  </div>
+
+
+                  <div class="workflow-detail">
+                    <span class="workflow-detail-label">
+                      UPDATED
+                    </span>
+
+                    <span class="workflow-detail-value">
+                      ${escapeHtml(
+                        formatDateTime(
+                          run?.updated_at
+                        )
+                      )}
+                    </span>
+                  </div>
+
+                </div>
+
+
+                <div class="workflow-footer">
+
+                  <a
+                    class="workflow-link"
+                    href="${escapeHtml(
+                      runLink
+                    )}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    GitHubで開く
+                  </a>
+
+                  <span class="workflow-sha">
+                    ${escapeHtml(
+                      sha
+                      || '--'
+                    )}
+                  </span>
+
+                </div>
+
+              </div>
+            `;
+
+
+          workflowListElement
+            .appendChild(
+              card
+            );
+        }
+      );
+    }
+
+
+    async function githubFetch(url) {
+      const response =
+        await fetch(
+          url,
+          {
+            cache:
+              'no-store',
+          }
+        );
+
+
+      const remaining =
+        Number(
+          response.headers.get(
+            'x-ratelimit-remaining'
+          )
+        );
+
+
+      if (
+        Number.isFinite(
+          remaining
+        )
+      ) {
+        rateLimitRemaining =
+          remaining;
+      }
+
+
+      if (!response.ok) {
+        if (
+          response.status === 403
+          && rateLimitRemaining === 0
+        ) {
+          throw new Error(
+            'GitHub APIの回数制限に達しました。少し待ってから更新してください。'
+          );
+        }
+
+
+        throw new Error(
+          `GitHub API error: ${response.status}`
+        );
+      }
+
+
+      return response.json();
+    }
+
+
+    async function loadWorkflowList(
+      force = false
+    ) {
+      const now =
+        Date.now();
+
+
+      if (
+        !force
+        && workflowCache.length > 0
+        && (
+          now
+          - workflowCacheUpdatedAt
+        ) < WORKFLOW_REFRESH_MS
+      ) {
+        return workflowCache;
+      }
+
+
+      const data =
+        await githubFetch(
+          `${API_BASE}/actions/workflows?per_page=100`
+        );
+
+
+      workflowCache =
+        (
+          Array.isArray(
+            data.workflows
+          )
+            ? data.workflows
+            : []
+        )
+          .filter(
+            (workflow) =>
+              workflow.state === 'active'
+              &&
+              /\.ya?ml$/i.test(
+                workflow.path
+              )
+          );
+
+
+      workflowCacheUpdatedAt =
+        now;
+
+
+      return workflowCache;
+    }
+
+
+    async function loadRecentRuns() {
+      const data =
+        await githubFetch(
+          `${API_BASE}/actions/runs?branch=main&per_page=100`
+        );
+
+
+      return Array.isArray(
+        data.workflow_runs
+      )
+        ? data.workflow_runs
+        : [];
+    }
+
+
+    async function loadFallbackRun(
+      workflow
+    ) {
+      const cached =
+        fallbackRunCache.get(
+          workflow.id
+        );
+
+
+      if (
+        cached
+        &&
+        (
+          Date.now()
+          - cached.fetchedAt
+        ) < FALLBACK_REFRESH_MS
+      ) {
+        return cached.run;
+      }
+
+
+      const data =
+        await githubFetch(
+          `${API_BASE}/actions/workflows/${workflow.id}/runs?branch=main&per_page=1`
+        );
+
+
+      const run =
+        Array.isArray(
+          data.workflow_runs
+        )
+          ? (
+              data.workflow_runs[0]
+              || null
+            )
+          : null;
+
+
+      fallbackRunCache.set(
+        workflow.id,
+        {
+          run,
+          fetchedAt:
+            Date.now(),
+        }
+      );
+
+
+      return run;
+    }
+
+
+    async function buildWorkflowItems(
+      workflows,
+      recentRuns
+    ) {
+      const latestByPath =
+        new Map();
+
+
+      recentRuns.forEach(
+        (run) => {
+
+          const path =
+            String(
+              run.path
+              || ''
+            );
+
+
+          if (
+            path === ''
+            || latestByPath.has(
+              path
+            )
+          ) {
+            return;
+          }
+
+
+          latestByPath.set(
+            path,
+            run
+          );
+        }
+      );
+
+
+      const items = [];
+
+
+      for (
+        const workflow
+        of workflows
+      ) {
+        let run =
+          latestByPath.get(
+            workflow.path
+          )
+          || null;
+
+
+        if (!run) {
+          try {
+            run =
+              await loadFallbackRun(
+                workflow
+              );
+
+          } catch (error) {
+            console.warn(
+              'Failed to load fallback run.',
+              workflow.path,
+              error
+            );
+          }
+        }
+
+
+        items.push({
+          workflow,
+          run,
+          status:
+            getStatusInfo(
+              workflow,
+              run
+            ),
+        });
+      }
+
+
+      return items;
+    }
+
+
+    function getRunStateSignature(
+      item
+    ) {
+      if (!item.run) {
+        return 'none';
+      }
+
+
+      return [
+        item.run.id,
+        item.run.status,
+        item.run.conclusion,
+      ].join(':');
+    }
+
+
+    function isNotificationEnabled() {
+      return (
+        localStorage.getItem(
+          'koppyDeployNotifications'
+        )
+        === 'on'
+      );
+    }
+
+
+    function syncNotificationButton() {
+      if (
+        !(
+          'Notification'
+          in window
+        )
+      ) {
+        notificationButton.textContent =
+          '通知 非対応';
+
+        notificationButton.disabled =
+          true;
+
+        return;
+      }
+
+
+      const enabled =
+        isNotificationEnabled()
+        &&
+        Notification.permission
+          === 'granted';
+
+
+      notificationButton.textContent =
+        enabled
+          ? '通知 ON'
+          : '通知 OFF';
+    }
+
+
+    function sendRunNotification(
+      item
+    ) {
+      if (
+        !isNotificationEnabled()
+        ||
+        !(
+          'Notification'
+          in window
+        )
+        ||
+        Notification.permission
+          !== 'granted'
+        ||
+        !item.run
+        ||
+        item.run.status
+          !== 'completed'
+      ) {
+        return;
+      }
+
+
+      const title =
+        `${item.status.icon} ${item.workflow.name}`;
+
+
+      const notification =
+        new Notification(
+          title,
+          {
+            body:
+              `${item.status.label} / ${item.run.display_title || ''}`,
+          }
+        );
+
+
+      notification.onclick =
+        () => {
+          window.open(
+            item.run.html_url,
+            '_blank',
+            'noopener'
+          );
+        };
+    }
+
+
+    function handleRunNotifications(
+      items
+    ) {
+      items.forEach(
+        (item) => {
+
+          const key =
+            item.workflow.path;
+
+          const current =
+            getRunStateSignature(
+              item
+            );
+
+          const previous =
+            previousRunStates.get(
+              key
+            );
+
+
+          if (
+            hasLoadedOnce
+            && previous
+            && previous !== current
+          ) {
+            sendRunNotification(
+              item
+            );
+          }
+
+
+          previousRunStates.set(
+            key,
+            current
+          );
+        }
+      );
+
+
+      hasLoadedOnce =
+        true;
+    }
+
+
+    function updateLastChecked() {
+      const checkedAt =
+        formatDateTime(
+          new Date()
+        );
+
+
+      const apiText =
+        rateLimitRemaining === null
+          ? ''
+          : ` / API残り ${rateLimitRemaining}`;
+
+
+      lastCheckedElement.textContent =
+        `最終確認: ${checkedAt}${apiText}`;
+    }
+
+
+    function updateCountdown() {
+      if (
+        nextRefreshAt <= 0
+      ) {
+        nextRefreshElement.textContent =
+          '次回更新: --';
+
+        return;
+      }
+
+
+      const remainingMs =
+        Math.max(
+          0,
+          nextRefreshAt
+          - Date.now()
+        );
+
+      const remainingSeconds =
+        Math.ceil(
+          remainingMs
+          / 1000
+        );
+
+
+      nextRefreshElement.textContent =
+        `次回更新: ${remainingSeconds}秒後`;
+    }
+
+
+    function scheduleNextRefresh() {
+      window.clearTimeout(
+        refreshTimer
+      );
+
+      window.clearInterval(
+        countdownTimer
+      );
+
+
+      nextRefreshAt =
+        Date.now()
+        + RUN_REFRESH_MS;
+
+
+      updateCountdown();
+
+
+      countdownTimer =
+        window.setInterval(
+          updateCountdown,
+          1000
+        );
+
+
+      refreshTimer =
+        window.setTimeout(
+          () => {
+            refreshStatus();
+          },
+          RUN_REFRESH_MS
+        );
+    }
+
+
+    async function refreshStatus(
+      options = {}
+    ) {
+      if (refreshInFlight) {
+        return;
+      }
+
+
+      refreshInFlight =
+        true;
+
+      refreshButton.disabled =
+        true;
+
+      errorElement.hidden =
+        true;
+
+
+      try {
+        const workflows =
+          await loadWorkflowList(
+            options.forceWorkflowList
+            === true
+          );
+
+
+        const recentRuns =
+          await loadRecentRuns();
+
+
+        const items =
+          await buildWorkflowItems(
+            workflows,
+            recentRuns
+          );
+
+
+        renderOverall(
+          items
+        );
+
+        renderLatestActivity(
+          recentRuns
+        );
+
+        renderWorkflows(
+          items
+        );
+
+        handleRunNotifications(
+          items
+        );
+
+        updateLastChecked();
+
+
+      } catch (error) {
+        console.error(
+          'Deploy monitor refresh failed.',
+          error
+        );
+
+
+        errorElement.textContent =
+          error.message
+          || 'Deploy statusを取得できませんでした。';
+
+        errorElement.hidden =
+          false;
+
+
+      } finally {
+        refreshInFlight =
+          false;
+
+        refreshButton.disabled =
+          false;
+
+        scheduleNextRefresh();
+      }
+    }
+
+
+    refreshButton.addEventListener(
+      'click',
+      () => {
+        refreshStatus({
+          forceWorkflowList:
+            true,
+        });
+      }
+    );
+
+
+    notificationButton.addEventListener(
+      'click',
+      async () => {
+
+        if (
+          !(
+            'Notification'
+            in window
+          )
+        ) {
+          return;
+        }
+
+
+        if (
+          isNotificationEnabled()
+        ) {
+          localStorage.setItem(
+            'koppyDeployNotifications',
+            'off'
+          );
+
+          syncNotificationButton();
+
+          return;
+        }
+
+
+        const permission =
+          await Notification
+            .requestPermission();
+
+
+        if (
+          permission === 'granted'
+        ) {
+          localStorage.setItem(
+            'koppyDeployNotifications',
+            'on'
+          );
+        }
+
+
+        syncNotificationButton();
+      }
+    );
+
+
+    document.addEventListener(
+      'visibilitychange',
+      () => {
+
+        if (
+          document.visibilityState
+          !== 'visible'
+        ) {
+          return;
+        }
+
+
+        if (
+          nextRefreshAt > 0
+          && Date.now()
+          >= nextRefreshAt
+        ) {
+          refreshStatus();
+        }
+      }
+    );
+
+
+    syncNotificationButton();
+
+    refreshStatus({
+      forceWorkflowList:
+        true,
+    });
+  </script>
+  <!-- WRITER:DEPLOY_STATUS_SCRIPT:END -->
+
+</body>
+
+</html>
