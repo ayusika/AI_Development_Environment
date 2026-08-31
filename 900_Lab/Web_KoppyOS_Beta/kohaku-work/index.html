@@ -2271,18 +2271,75 @@
               </div>
 
 
-              <label class="schedule-custom-option">
+              <div class="schedule-form-grid">
 
-                <span>その他OP</span>
+                <label class="schedule-field">
 
-                <input
-                  id="schedule-custom-option"
-                  type="text"
-                  maxlength="100"
-                  placeholder="自由入力"
-                >
+                  <span>その他OP</span>
 
-              </label>
+                  <input
+                    id="schedule-custom-option"
+                    type="text"
+                    maxlength="100"
+                    autocomplete="off"
+                    placeholder="例：特別OP"
+                  >
+
+                </label>
+
+
+                <label class="schedule-field">
+
+                  <span>その他OP金額</span>
+
+                  <input
+                    id="schedule-custom-option-amount"
+                    type="number"
+                    min="0"
+                    step="1"
+                    inputmode="numeric"
+                    placeholder="円"
+                  >
+
+                </label>
+
+
+                <label class="schedule-field">
+
+                  <span>チップ</span>
+
+                  <input
+                    id="schedule-tip-amount"
+                    type="number"
+                    min="0"
+                    step="1"
+                    inputmode="numeric"
+                    placeholder="円"
+                  >
+
+                </label>
+
+
+                <label class="schedule-field">
+
+                  <span>調整分</span>
+
+                  <input
+                    id="schedule-adjustment-amount"
+                    type="number"
+                    step="1"
+                    inputmode="numeric"
+                    placeholder="例：-1000"
+                  >
+
+                </label>
+
+              </div>
+
+
+              <small>
+                調整分は、1000円引きなら -1000、500円上乗せなら 500。
+              </small>
 
             </div>
 
