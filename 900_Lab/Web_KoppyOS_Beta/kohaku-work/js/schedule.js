@@ -3837,6 +3837,18 @@ async function saveScheduleVisit() {
   };
 
 
+  if (
+    !editId
+    && selectedCustomerStatus
+      === 'repeat_unknown_id'
+    && selectedScheduleCustomerId
+  ) {
+
+    payload.customer_id =
+      selectedScheduleCustomerId;
+  }
+
+
   if (editId) {
     payload.id = editId;
   }
