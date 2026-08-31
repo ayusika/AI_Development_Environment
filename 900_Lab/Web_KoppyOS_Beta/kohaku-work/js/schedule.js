@@ -3805,7 +3805,12 @@ async function saveScheduleVisit() {
         })),
 
     customer_status:
-      selectedCustomerStatus,
+      !editId
+      && selectedCustomerStatus
+        === 'repeat_unknown_id'
+      && selectedScheduleCustomerId
+        ? 'repeat'
+        : selectedCustomerStatus,
 
     new_customer_name:
       !editId
