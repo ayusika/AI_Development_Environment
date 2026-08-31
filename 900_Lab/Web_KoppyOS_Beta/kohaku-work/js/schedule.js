@@ -3627,6 +3627,24 @@ function resetScheduleForm() {
   }
 
 
+  if (scheduleCustomOptionAmount) {
+    scheduleCustomOptionAmount.value =
+      '';
+  }
+
+
+  if (scheduleTipAmount) {
+    scheduleTipAmount.value =
+      '';
+  }
+
+
+  if (scheduleAdjustmentAmount) {
+    scheduleAdjustmentAmount.value =
+      '';
+  }
+
+
   document
     .querySelectorAll(
       '[data-customer-status]'
