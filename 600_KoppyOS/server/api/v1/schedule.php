@@ -2063,6 +2063,10 @@ try {
             || array_key_exists(
                 'custom_option',
                 $payload
+            )
+            || array_key_exists(
+                'custom_option_amount',
+                $payload
             );
 
         $optionNames =
@@ -2080,6 +2084,115 @@ try {
                     $payload['custom_option']
                 )
                 : null;
+
+
+        $customOptionAmount =
+            null;
+
+
+        if (
+            array_key_exists(
+                'custom_option_amount',
+                $payload
+            )
+            && $payload[
+                'custom_option_amount'
+            ] !== null
+            && $payload[
+                'custom_option_amount'
+            ] !== ''
+        ) {
+
+            $customOptionAmount =
+                filter_var(
+                    $payload[
+                        'custom_option_amount'
+                    ],
+                    FILTER_VALIDATE_INT
+                );
+
+
+            if (
+                $customOptionAmount === false
+                || $customOptionAmount < 0
+            ) {
+                throw new RuntimeException(
+                    'custom_option_amount must be a non-negative integer.'
+                );
+            }
+        }
+
+
+        if (
+            $customOption === ''
+            && $customOptionAmount !== null
+        ) {
+            throw new RuntimeException(
+                'custom_option is required when custom_option_amount is set.'
+            );
+        }
+
+
+        $hasMoneyDraft =
+            array_key_exists(
+                'tip_amount',
+                $payload
+            )
+            || array_key_exists(
+                'adjustment_amount',
+                $payload
+            );
+
+
+        $tipAmount =
+            array_key_exists(
+                'tip_amount',
+                $payload
+            )
+                ? filter_var(
+                    $payload['tip_amount'],
+                    FILTER_VALIDATE_INT
+                )
+                : (int) (
+                    $currentVisit['tip_amount']
+                    ?? 0
+                );
+
+
+        if (
+            $tipAmount === false
+            || $tipAmount < 0
+        ) {
+            throw new RuntimeException(
+                'tip_amount must be a non-negative integer.'
+            );
+        }
+
+
+        $adjustmentAmount =
+            array_key_exists(
+                'adjustment_amount',
+                $payload
+            )
+                ? filter_var(
+                    $payload['adjustment_amount'],
+                    FILTER_VALIDATE_INT
+                )
+                : (int) (
+                    $currentVisit[
+                        'adjustment_amount'
+                    ]
+                    ?? 0
+                );
+
+
+        if (
+            $adjustmentAmount === false
+        ) {
+            throw new RuntimeException(
+                'adjustment_amount must be an integer.'
+            );
+        }
 
 
         $hasExtensions =
