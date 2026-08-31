@@ -268,6 +268,12 @@ let scheduleSalesMaster = {
 let selectedCustomerStatus =
   'repeat_unknown_id';
 
+let scheduleRepeatCustomers =
+  [];
+
+let selectedScheduleCustomerId =
+  null;
+
 
 initializeSchedule();
 initializeScheduleResize();
