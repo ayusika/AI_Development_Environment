@@ -3752,6 +3752,85 @@ async function saveScheduleVisit() {
       : '';
 
 
+  const customOptionAmount =
+    scheduleCustomOptionAmount
+    && scheduleCustomOptionAmount.value !== ''
+      ? scheduleCustomOptionAmount.valueAsNumber
+      : null;
+
+
+  const tipAmount =
+    scheduleTipAmount
+    && scheduleTipAmount.value !== ''
+      ? scheduleTipAmount.valueAsNumber
+      : 0;
+
+
+  const adjustmentAmount =
+    scheduleAdjustmentAmount
+    && scheduleAdjustmentAmount.value !== ''
+      ? scheduleAdjustmentAmount.valueAsNumber
+      : 0;
+
+
+  if (
+    (
+      customOptionAmount !== null
+      && (
+        !Number.isSafeInteger(
+          customOptionAmount
+        )
+        || customOptionAmount < 0
+      )
+    )
+    || !Number.isSafeInteger(
+      tipAmount
+    )
+    || tipAmount < 0
+    || !Number.isSafeInteger(
+      adjustmentAmount
+    )
+  ) {
+
+    showScheduleMessage(
+      '金額は1円単位の整数で入力してね。',
+      true
+    );
+
+    scheduleSaveButton.disabled =
+      false;
+
+    scheduleSaveButton.textContent =
+      editId
+        ? '変更を保存'
+        : 'この予約を登録';
+
+    return;
+  }
+
+
+  if (
+    customOption === ''
+    && customOptionAmount !== null
+  ) {
+
+    showScheduleMessage(
+      'その他OP金額を入れる場合は、その他OP名も入力してね。',
+      true
+    );
+
+    scheduleSaveButton.disabled =
+      false;
+
+    scheduleSaveButton.textContent =
+      editId
+        ? '変更を保存'
+        : 'この予約を登録';
+
+    return;
+  }
+
+
   const bookedDate =
     scheduleBookedDate
       ? scheduleBookedDate.value
