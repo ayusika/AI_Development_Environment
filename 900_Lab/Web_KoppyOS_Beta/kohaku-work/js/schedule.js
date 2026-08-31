@@ -1424,6 +1424,36 @@ if (scheduleCustomCourse) {
 }
 
 
+if (scheduleRepeatCustomerName) {
+
+  scheduleRepeatCustomerName.addEventListener(
+    'input',
+    () => {
+
+      selectedScheduleCustomerId =
+        null;
+
+      filterScheduleRepeatCustomers();
+    }
+  );
+}
+
+
+if (scheduleRepeatCustomerDate) {
+
+  scheduleRepeatCustomerDate.addEventListener(
+    'change',
+    () => {
+
+      selectedScheduleCustomerId =
+        null;
+
+      filterScheduleRepeatCustomers();
+    }
+  );
+}
+
+
 document.addEventListener(
   'click',
   (event) => {
