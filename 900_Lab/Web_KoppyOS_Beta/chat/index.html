@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Koppy Chat</title>
+
+  <link
+    rel="stylesheet"
+    href="../assets/css/style.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../assets/css/chat.css"
+  >
+</head>
+
+<body class="chat-page">
+
+  <div class="background-orb orb-one"></div>
+  <div class="background-orb orb-two"></div>
+  <div class="background-orb orb-three"></div>
+
+
+  <!-- =========================================
+       AUTH GATE
+  ========================================== -->
+
+  <section
+    id="authGate"
+    class="auth-gate"
+    aria-live="polite"
+  >
+    <div class="auth-gate-card">
+
+      <div class="auth-gate-symbol">
+        ♢ᴷ
+      </div>
+
+      <p class="auth-gate-eyebrow">
+        KOPPY CHAT AUTH
+      </p>
+
+      <h1 class="auth-gate-title">
+        Koppy Chat
+      </h1>
+
+      <p
+        id="authGateMessage"
+        class="auth-gate-copy"
+      >
+        Koppy Chatへの接続を確認してるよ。
+      </p>
+
+      <p
+        id="authChecking"
+        class="auth-checking"
+      >
+        GitHub認証Sessionを確認中……
+      </p>
+
+      <a
+        id="authLoginButton"
+        class="auth-login-button"
+        href="https://koppy.miki-piano.com/api/v1/auth/login.php"
+        hidden
+      >
+        <span aria-hidden="true">
+          🔐
+        </span>
+
+        <span>
+          GitHubでログイン
+        </span>
+      </a>
+
+    </div>
+  </section>
+
+
+  <main
+    id="koppyWorld"
+    class="world chat-shell auth-pending"
+  >
+
+    <nav class="chat-nav">
+
+      <div class="chat-nav-brand">
+
+        <span class="chat-nav-symbol">
+          ♢ᴷ
+        </span>
+
+        <span class="chat-nav-title">
+          Koppy Chat
+        </span>
+
+      </div>
+
+
+      <div class="chat-nav-links">
+
+        <a
+          class="chat-nav-link"
+          href="../"
+        >
+          ♢ᴷ Koppy World
+        </a>
+
+        <a
+          class="chat-nav-link"
+          href="../writer/"
+        >
+          ✎ᴷ Writer
+        </a>
+
+        <a
+          class="chat-nav-link"
+          href="https://koppy.miki-piano.com/kohaku-work/deploy-status.html"
+        >
+          ✓ Deploy Monitor
+        </a>
+
+      </div>
+
+    </nav>
+
+
+    <section class="chat-intro">
+
+      <p class="chat-intro-eyebrow">
+        KOPPY CHAT
+      </p>
+
+      <h1>
+        Koppyと話す
+      </h1>
+
+      <p class="chat-intro-copy">
+        Koppyとの会話に集中するための専用画面。
+        Koppy Worldのほかの機能から切り離して、
+        ここでは会話だけをシンプルに扱うよ。
+      </p>
+
+    </section>
+
+
+    <div class="chat-main">
+
+      <section class="panel chat-panel">
+
+        <div class="chat-header">
+
+          <div class="chat-title-group">
+
+            <div class="mini-symbol">
+              ♢ᴷ
+            </div>
+
+            <div>
+
+              <p class="chat-eyebrow">
+                KOPPY CHAT
+              </p>
+
+              <h2 class="chat-title">
+                Koppy
+              </h2>
+
+            </div>
+
+          </div>
+
+
+          <div class="chat-api-status">
+
+            <span
+              id="chatStatusDot"
+              class="chat-status-dot"
+              aria-hidden="true"
+            ></span>
+
+            <span id="chatStatusText">
+              API接続待機中
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div
+          id="chatMessages"
+          class="chat-messages"
+          aria-live="polite"
+        >
+
+          <div class="chat-message koppy-message">
+
+            <div class="chat-avatar">
+              ♢ᴷ
+            </div>
+
+            <div class="chat-message-content">
+
+              <p class="chat-speaker">
+                Koppy
+              </p>
+
+              <div class="chat-bubble">
+                おかえり、しいちゃん。
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+
+        <form
+          id="chatForm"
+          class="chat-form"
+        >
+
+          <label
+            class="chat-input-label"
+            for="chatInput"
+          >
+            Koppyへメッセージ
+          </label>
+
+
+          <div class="chat-input-row">
+
+            <textarea
+              id="chatInput"
+              class="chat-input"
+              rows="2"
+              maxlength="2000"
+              placeholder="Koppyに話しかける……"
+              required
+            ></textarea>
+
+            <button
+              id="chatSendButton"
+              class="chat-send-button"
+              type="submit"
+            >
+              <span aria-hidden="true">
+                ✦
+              </span>
+
+              <span id="chatSendButtonText">
+                送信
+              </span>
+            </button>
+
+          </div>
+
+
+          <div class="chat-form-footer">
+
+            <p
+              id="chatErrorMessage"
+              class="chat-error-message"
+              role="alert"
+            ></p>
+
+            <p class="chat-character-count">
+              <span id="chatCharacterCount">
+                0
+              </span>
+              / 2000
+            </p>
+
+          </div>
+
+        </form>
+
+      </section>
+
+    </div>
+
+
+    <footer>
+      Koppy Chat / Koppy World
+    </footer>
+
+  </main>
+
+
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/chat.js"></script>
+
+</body>
+
+</html>
