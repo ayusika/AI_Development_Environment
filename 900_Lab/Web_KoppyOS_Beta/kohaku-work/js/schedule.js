@@ -2903,11 +2903,9 @@ function renderScheduleEvent(
 
 
 function renderScheduleNowLine(
-  hourHeight
+  hourHeight,
+  now = new Date()
 ) {
-
-  const now =
-    new Date();
 
   let displayHour =
     now.getHours();
@@ -2922,7 +2920,8 @@ function renderScheduleNowLine(
 
   const minutes =
     displayHour * 60
-    + now.getMinutes();
+    + now.getMinutes()
+    + now.getSeconds() / 60;
 
   const start =
     scheduleStartHour * 60;
@@ -2958,6 +2957,104 @@ function renderScheduleNowLine(
     </div>
   `;
 }
+
+
+function updateScheduleNowLine() {
+
+  if (!scheduleCalendar) {
+    return;
+  }
+
+
+  scheduleCalendar
+    .querySelectorAll(
+      '.schedule-now-line'
+    )
+    .forEach(
+      (line) => {
+        line.remove();
+      }
+    );
+
+
+  const now =
+    new Date();
+
+  let targetDate =
+    scheduleFormatDate(
+      now
+    );
+
+
+  if (
+    now.getHours() < 3
+  ) {
+
+    const previousDate =
+      new Date(now);
+
+    previousDate.setDate(
+      previousDate.getDate() - 1
+    );
+
+
+    targetDate =
+      scheduleFormatDate(
+        previousDate
+      );
+  }
+
+
+  const targetColumn =
+    scheduleCalendar.querySelector(
+      `[data-schedule-day="${targetDate}"]`
+    );
+
+
+  if (!targetColumn) {
+    return;
+  }
+
+
+  const lineHtml =
+    renderScheduleNowLine(
+      getScheduleHourHeight(),
+      now
+    );
+
+
+  if (lineHtml === '') {
+    return;
+  }
+
+
+  targetColumn.insertAdjacentHTML(
+    'beforeend',
+    lineHtml
+  );
+}
+
+
+window.setInterval(
+  () => {
+    updateScheduleNowLine();
+  },
+  15 * 1000
+);
+
+
+document.addEventListener(
+  'visibilitychange',
+  () => {
+
+    if (
+      document.visibilityState
+      === 'visible'
+    ) {
+      updateScheduleNowLine();
+    }
+  }
+);
 
 
 /* ========================================
