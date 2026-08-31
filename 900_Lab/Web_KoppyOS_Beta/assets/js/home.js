@@ -952,7 +952,7 @@
 
         if (!message) {
           chatErrorMessage.textContent =
-            "メッセージを入力してね.";
+            "メッセージを入力してね。";
 
           return;
         }
