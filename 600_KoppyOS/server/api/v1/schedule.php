@@ -355,7 +355,8 @@ function saveVisitOptions(
     PDO $pdo,
     int $visitId,
     array $optionNames,
-    ?string $customName
+    ?string $customName,
+    ?int $customIncomeAmount
 ): void {
     $deleteStatement =
         $pdo->prepare(
@@ -382,9 +383,10 @@ function saveVisitOptions(
             (
                 visit_id,
                 option_id,
-                custom_name
+                custom_name,
+                income_amount
             )
-            VALUES (?, ?, ?)'
+            VALUES (?, ?, ?, ?)'
         );
 
 
@@ -417,6 +419,7 @@ function saveVisitOptions(
             $visitId,
             (int) $optionId,
             null,
+            null,
         ]);
     }
 
@@ -432,8 +435,49 @@ function saveVisitOptions(
             $visitId,
             null,
             $customName,
+            $customIncomeAmount,
         ]);
     }
+}
+
+
+function saveVisitMoneyDraft(
+    PDO $pdo,
+    int $visitId,
+    int $tipAmount,
+    int $adjustmentAmount
+): void {
+
+    if (
+        $tipAmount === 0
+        && $adjustmentAmount === 0
+    ) {
+        return;
+    }
+
+
+    $statement =
+        $pdo->prepare(
+            "
+            INSERT INTO visit_sales_v2 (
+                visit_id,
+                tip_amount,
+                adjustment_amount
+            )
+            VALUES (
+                ?,
+                ?,
+                ?
+            )
+            "
+        );
+
+
+    $statement->execute([
+        $visitId,
+        $tipAmount,
+        $adjustmentAmount,
+    ]);
 }
 
 
