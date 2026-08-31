@@ -40,6 +40,7 @@ jobs:
           cp 900_Lab/Web_KoppyOS_Beta/index.html public/index.html
           cp -R 900_Lab/Web_KoppyOS_Beta/assets public/assets
           cp -R 900_Lab/Web_KoppyOS_Beta/writer public/writer
+          cp -R 900_Lab/Web_KoppyOS_Beta/chat public/chat
           touch public/.nojekyll
       - name: Upload Koppy World artifact
         uses: actions/upload-pages-artifact@v4
