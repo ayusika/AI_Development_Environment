@@ -1204,35 +1204,15 @@
         width: 100%;
       }
 
-      .chat-panel,
       .proposal-panel {
         padding: 20px;
       }
 
-      .chat-header,
       .proposal-header,
       .proposal-preview-head,
       .document-header {
         align-items: flex-start;
         flex-direction: column;
-      }
-
-      .chat-messages {
-        height: 420px;
-        padding: 16px;
-      }
-
-      .chat-message-content {
-        max-width: 82%;
-      }
-
-      .chat-input-row {
-        flex-direction: column;
-      }
-
-      .chat-send-button {
-        width: 100%;
-        min-height: 56px;
       }
 
       .proposal-actions {
