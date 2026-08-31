@@ -204,7 +204,6 @@
     }
 
     .main-button,
-    .chat-send-button,
     .proposal-create-button,
     .proposal-approve-button {
       border: 0;
@@ -222,7 +221,6 @@
     }
 
     .main-button:hover,
-    .chat-send-button:hover,
     .proposal-create-button:hover,
     .proposal-approve-button:hover {
       transform: translateY(-2px);
