@@ -7747,6 +7747,14 @@ function editCurrentScheduleVisit() {
     });
 
 
+  const customOptionRecord =
+    visitOptions.find(
+      (option) =>
+        option.custom_name
+    )
+    || null;
+
+
   if (scheduleCustomOption) {
 
     const customNames =
@@ -7760,6 +7768,47 @@ function editCurrentScheduleVisit() {
 
     scheduleCustomOption.value =
       customNames.join('、');
+  }
+
+
+  if (scheduleCustomOptionAmount) {
+
+    scheduleCustomOptionAmount.value =
+      customOptionRecord
+      && customOptionRecord.income_amount !== null
+      && customOptionRecord.income_amount !== ''
+        ? String(
+            customOptionRecord.income_amount
+          )
+        : '';
+  }
+
+
+  if (scheduleTipAmount) {
+
+    scheduleTipAmount.value =
+      Number(
+        visit.tip_amount
+        || 0
+      )
+        ? String(
+            visit.tip_amount
+          )
+        : '';
+  }
+
+
+  if (scheduleAdjustmentAmount) {
+
+    scheduleAdjustmentAmount.value =
+      Number(
+        visit.adjustment_amount
+        || 0
+      )
+        ? String(
+            visit.adjustment_amount
+          )
+        : '';
   }
 
 
