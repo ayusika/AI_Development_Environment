@@ -2183,38 +2183,6 @@ body:has(#view-schedule.is-active) .bottom-nav {
 }
 
 
-.schedule-custom-option {
-  display: grid;
-
-  gap: 6px;
-
-  margin-top: 10px;
-}
-
-
-.schedule-custom-option span {
-  color: var(--text-soft);
-
-  font-size: 10px;
-  font-weight: 800;
-}
-
-
-.schedule-custom-option input {
-  width: 100%;
-
-  min-height: 40px;
-
-  padding: 8px 11px;
-
-  border: 1px solid var(--line);
-  border-radius: 11px;
-
-  color: var(--text);
-  background: #ffffff;
-}
-
-
 @media (max-width: 700px) {
 
   .schedule-option-grid {
@@ -2233,11 +2201,6 @@ body:has(#view-schedule.is-active) .bottom-nav {
     border-radius: 9px;
 
     font-size: 9px;
-  }
-
-
-  .schedule-custom-option {
-    margin-top: 7px;
   }
 
 }
