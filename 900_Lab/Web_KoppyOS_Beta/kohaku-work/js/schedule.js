@@ -81,6 +81,21 @@ const scheduleOptionGrid =
 const scheduleCustomOption =
   document.getElementById('schedule-custom-option');
 
+const scheduleCustomOptionAmount =
+  document.getElementById(
+    'schedule-custom-option-amount'
+  );
+
+const scheduleTipAmount =
+  document.getElementById(
+    'schedule-tip-amount'
+  );
+
+const scheduleAdjustmentAmount =
+  document.getElementById(
+    'schedule-adjustment-amount'
+  );
+
 const scheduleFormMessage =
   document.getElementById('schedule-form-message');
 
