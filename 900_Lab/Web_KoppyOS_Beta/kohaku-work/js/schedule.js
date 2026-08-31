@@ -1912,7 +1912,7 @@ async function loadSchedule(
 
   scheduleCalendar.innerHTML = `
     <div class="schedule-loading">
-      予定を読み込み中…
+      予約を読み込み中…
     </div>
   `;
 
