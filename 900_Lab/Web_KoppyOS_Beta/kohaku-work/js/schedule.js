@@ -3944,6 +3944,15 @@ async function saveScheduleVisit() {
     custom_option:
       customOption,
 
+    custom_option_amount:
+      customOptionAmount,
+
+    tip_amount:
+      tipAmount,
+
+    adjustment_amount:
+      adjustmentAmount,
+
     customer_requested_change:
       customerRequestedChange,
   };
