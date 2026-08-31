@@ -4251,7 +4251,22 @@ async function loadHolidayData() {
 }
 
 
-async function loadMonthShifts() {
+const CALENDAR_AUTO_REFRESH_INTERVAL_MS =
+  5 * 60 * 1000;
+
+let calendarLastRefreshAt =
+  Date.now();
+
+let calendarBackgroundRefreshInFlight =
+  false;
+
+
+async function loadMonthShifts(
+  options = {}
+) {
+  const silent =
+    options.silent === true;
+
   const centerMonth =
     calendarState.currentMonth;
 
@@ -4294,8 +4309,10 @@ async function loadMonthShifts() {
     );
 
 
-  monthCalendarElement.textContent =
-    'カレンダーを読み込んでいます…';
+  if (!silent) {
+    monthCalendarElement.textContent =
+      'カレンダーを読み込んでいます…';
+  }
 
 
   const query =
@@ -4323,6 +4340,8 @@ async function loadMonthShifts() {
           {
             credentials:
               'same-origin',
+            cache:
+              'no-store',
           }
         ),
 
@@ -4331,6 +4350,8 @@ async function loadMonthShifts() {
           {
             credentials:
               'same-origin',
+            cache:
+              'no-store',
           }
         ),
       ]);
@@ -4390,7 +4411,32 @@ async function loadMonthShifts() {
       );
 
 
+    const previousScrollX =
+      silent
+        ? window.scrollX
+        : null;
+
+    const previousScrollY =
+      silent
+        ? window.scrollY
+        : null;
+
+
     renderMonthCalendar();
+
+
+    if (silent) {
+      window.scrollTo(
+        previousScrollX,
+        previousScrollY
+      );
+    }
+
+
+    calendarLastRefreshAt =
+      Date.now();
+
+    return true;
 
   } catch (error) {
 
@@ -4399,10 +4445,87 @@ async function loadMonthShifts() {
     );
 
 
-    monthCalendarElement.textContent =
-      'カレンダーを読み込めませんでした。';
+    if (!silent) {
+      monthCalendarElement.textContent =
+        'カレンダーを読み込めませんでした。';
+    }
+
+
+    return false;
   }
 }
+
+
+async function refreshCalendarInBackground() {
+  if (
+    document.visibilityState
+      !== 'visible'
+    ||
+    (
+      eventModal
+      && !eventModal.hidden
+    )
+    ||
+    calendarBackgroundRefreshInFlight
+  ) {
+    return;
+  }
+
+
+  calendarBackgroundRefreshInFlight =
+    true;
+
+
+  try {
+
+    await loadMonthShifts({
+      silent: true,
+    });
+
+  } finally {
+
+    calendarBackgroundRefreshInFlight =
+      false;
+  }
+}
+
+
+window.setInterval(
+  () => {
+    refreshCalendarInBackground();
+  },
+  CALENDAR_AUTO_REFRESH_INTERVAL_MS
+);
+
+
+document.addEventListener(
+  'visibilitychange',
+  () => {
+
+    if (
+      document.visibilityState
+      !== 'visible'
+    ) {
+      return;
+    }
+
+
+    const elapsed =
+      Date.now()
+      - calendarLastRefreshAt;
+
+
+    if (
+      elapsed
+      < CALENDAR_AUTO_REFRESH_INTERVAL_MS
+    ) {
+      return;
+    }
+
+
+    refreshCalendarInBackground();
+  }
+);
 
 
 async function moveMonth(offset) {
