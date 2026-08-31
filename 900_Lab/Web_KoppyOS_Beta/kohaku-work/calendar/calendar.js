@@ -664,14 +664,13 @@ function formatMonthKey(date) {
 }
 
 
-function scrollToCurrentMonth(
+function scrollToMonthKey(
+  monthKey,
   behavior = 'smooth'
 ) {
   const monthElement =
     monthCalendarElement.querySelector(
-      `[data-calendar-month="${formatMonthKey(
-        calendarState.currentMonth
-      )}"]`
+      `[data-calendar-month="${monthKey}"]`
     );
 
   if (!monthElement) {
@@ -682,6 +681,18 @@ function scrollToCurrentMonth(
     behavior,
     block: 'start',
   });
+}
+
+
+function scrollToCurrentMonth(
+  behavior = 'smooth'
+) {
+  scrollToMonthKey(
+    formatMonthKey(
+      calendarState.currentMonth
+    ),
+    behavior
+  );
 }
 
 
