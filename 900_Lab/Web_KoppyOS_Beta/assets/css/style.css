@@ -370,7 +370,6 @@
     }
 
     .message-head,
-    .chat-title-group,
     .proposal-title-group {
       display: flex;
       align-items: center;
