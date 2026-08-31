@@ -1950,7 +1950,7 @@ async function loadSchedule(
     ) {
       throw new Error(
         data.error
-        || '予定の取得に失敗しました。'
+        || '予約の取得に失敗しました。'
       );
     }
 
