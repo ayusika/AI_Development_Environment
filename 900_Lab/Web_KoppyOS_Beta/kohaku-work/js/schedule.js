@@ -1623,6 +1623,9 @@ document.addEventListener(
       selectedCustomerStatus =
         statusButton.dataset.customerStatus;
 
+      selectedScheduleCustomerId =
+        null;
+
       document
         .querySelectorAll(
           '[data-customer-status]'
