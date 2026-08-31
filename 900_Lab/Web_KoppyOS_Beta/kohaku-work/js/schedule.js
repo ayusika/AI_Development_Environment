@@ -3519,6 +3519,30 @@ function resetScheduleForm() {
   selectedCustomerStatus =
     'repeat_unknown_id';
 
+  scheduleRepeatCustomers =
+    [];
+
+  selectedScheduleCustomerId =
+    null;
+
+
+  if (scheduleRepeatCustomerName) {
+    scheduleRepeatCustomerName.value =
+      '';
+  }
+
+
+  if (scheduleRepeatCustomerDate) {
+    scheduleRepeatCustomerDate.value =
+      '';
+  }
+
+
+  if (scheduleRepeatCustomerResults) {
+    scheduleRepeatCustomerResults.innerHTML =
+      '<p>名前か過去の予約日を入れて検索してね。</p>';
+  }
+
 
   if (scheduleNewCustomerName) {
     scheduleNewCustomerName.value =
