@@ -1541,7 +1541,8 @@ try {
             $pdo,
             $visitId,
             $optionNames,
-            $customOption
+            $customOption,
+            $customOptionAmount
         );
 
 
@@ -1550,6 +1551,14 @@ try {
             $visitId,
             $storeId,
             $extensions
+        );
+
+
+        saveVisitMoneyDraft(
+            $pdo,
+            $visitId,
+            $tipAmount,
+            $adjustmentAmount
         );
 
 
