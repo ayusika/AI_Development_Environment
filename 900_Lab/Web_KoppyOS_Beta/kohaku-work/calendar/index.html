@@ -59,9 +59,51 @@
 
       <div class="calendar-month-heading">
 
-        <h2 id="calendar-month-title">
-          読み込み中…
-        </h2>
+        <div class="calendar-month-navigation">
+
+          <h2 id="calendar-month-title">
+            読み込み中…
+          </h2>
+
+          <div
+            class="calendar-month-jump"
+            aria-label="表示年月を選択"
+          >
+
+            <select
+              data-calendar-year-select
+              aria-label="年を選択"
+            ></select>
+
+            <span class="calendar-month-jump-unit">
+              年
+            </span>
+
+            <select
+              data-calendar-month-select
+              aria-label="月を選択"
+            >
+              <option value="0">1</option>
+              <option value="1">2</option>
+              <option value="2">3</option>
+              <option value="3">4</option>
+              <option value="4">5</option>
+              <option value="5">6</option>
+              <option value="6">7</option>
+              <option value="7">8</option>
+              <option value="8">9</option>
+              <option value="9">10</option>
+              <option value="10">11</option>
+              <option value="11">12</option>
+            </select>
+
+            <span class="calendar-month-jump-unit">
+              月
+            </span>
+
+          </div>
+
+        </div>
 
         <div
           class="calendar-person-legend"
