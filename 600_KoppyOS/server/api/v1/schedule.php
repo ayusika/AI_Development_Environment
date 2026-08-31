@@ -441,12 +441,131 @@ function saveVisitOptions(
 }
 
 
+function fetchVisitMoneyDraft(
+    PDO $pdo,
+    int $visitId
+): array {
+
+    $statement =
+        $pdo->prepare(
+            "
+            SELECT
+                tip_amount,
+                adjustment_amount,
+                confirmed_at
+
+            FROM visit_sales_v2
+
+            WHERE visit_id = ?
+            "
+        );
+
+
+    $statement->execute([
+        $visitId,
+    ]);
+
+
+    $money =
+        $statement->fetch();
+
+
+    if (!$money) {
+
+        return [
+            'tip_amount' => 0,
+            'adjustment_amount' => 0,
+            'confirmed_at' => null,
+        ];
+    }
+
+
+    return $money;
+}
+
+
 function saveVisitMoneyDraft(
     PDO $pdo,
     int $visitId,
     int $tipAmount,
     int $adjustmentAmount
 ): void {
+
+    $current =
+        fetchVisitMoneyDraft(
+            $pdo,
+            $visitId
+        );
+
+
+    if (
+        $current['confirmed_at'] !== null
+    ) {
+
+        if (
+            (int) $current['tip_amount']
+                !== $tipAmount
+            ||
+            (int) $current['adjustment_amount']
+                !== $adjustmentAmount
+        ) {
+            throw new RuntimeException(
+                'Confirmed sales cannot be changed from the reservation form.'
+            );
+        }
+
+
+        return;
+    }
+
+
+    $existsStatement =
+        $pdo->prepare(
+            "
+            SELECT id
+            FROM visit_sales_v2
+            WHERE visit_id = ?
+            "
+        );
+
+
+    $existsStatement->execute([
+        $visitId,
+    ]);
+
+
+    if ($existsStatement->fetchColumn()) {
+
+        $statement =
+            $pdo->prepare(
+                "
+                UPDATE visit_sales_v2
+
+                SET
+                    tip_amount = ?,
+                    adjustment_amount = ?,
+                    updated_at =
+                        strftime(
+                            '%Y-%m-%d %H:%M',
+                            'now',
+                            'localtime'
+                        )
+
+                WHERE visit_id = ?
+                "
+            );
+
+
+        $statement->execute([
+            $tipAmount,
+            $adjustmentAmount,
+            $visitId,
+        ]);
+
+
+        return;
+    }
+
 
     if (
         $tipAmount === 0
