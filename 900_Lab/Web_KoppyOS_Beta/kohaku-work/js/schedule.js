@@ -1596,6 +1596,23 @@ document.addEventListener(
       return;
     }
 
+    const repeatCustomerButton =
+      event.target.closest(
+        '[data-action="select-schedule-repeat-customer"]'
+      );
+
+
+    if (repeatCustomerButton) {
+
+      selectScheduleRepeatCustomer(
+        repeatCustomerButton.dataset
+          .customerId
+      );
+
+      return;
+    }
+
+
     const statusButton =
       event.target.closest(
         '[data-customer-status]'
