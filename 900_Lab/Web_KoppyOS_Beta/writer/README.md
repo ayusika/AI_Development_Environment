@@ -30,3 +30,7 @@ File Edit Protocolに従った指示だけを実行する。
 
 新規作成・追記・全文置換・部分置換を扱い、
 部分置換ではExact Matchが1件のときだけ変更する。
+
+## Self Test
+
+Koppy Writer専用画面からのGitHub書き込み動作を確認済み。
