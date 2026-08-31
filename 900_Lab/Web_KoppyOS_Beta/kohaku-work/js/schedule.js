@@ -2029,7 +2029,7 @@ async function loadSchedule(
 
     scheduleCalendar.innerHTML = `
       <div class="schedule-error">
-        <strong>予定を読み込めなかった</strong>
+        <strong>予約を読み込めなかった</strong>
         <span>
           ${escapeHtml(error.message)}
         </span>
