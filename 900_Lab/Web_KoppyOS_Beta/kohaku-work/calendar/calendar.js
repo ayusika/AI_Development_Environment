@@ -47,6 +47,16 @@ const moveButtons =
     '[data-calendar-move]'
   );
 
+const yearSelect =
+  document.querySelector(
+    '[data-calendar-year-select]'
+  );
+
+const monthSelect =
+  document.querySelector(
+    '[data-calendar-month-select]'
+  );
+
 
 const eventModal =
   document.querySelector(
