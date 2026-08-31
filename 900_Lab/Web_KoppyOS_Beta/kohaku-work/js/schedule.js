@@ -4363,6 +4363,22 @@ function openScheduleDetail(
         </strong>
       </div>
 
+
+      <div class="schedule-detail-row">
+        <span>チップ</span>
+        <strong>
+          ${escapeHtml(tipText)}
+        </strong>
+      </div>
+
+
+      <div class="schedule-detail-row">
+        <span>調整分</span>
+        <strong>
+          ${escapeHtml(adjustmentText)}
+        </strong>
+      </div>
+
     </div>
   `;
 
