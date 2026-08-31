@@ -1226,6 +1226,28 @@ try {
                     (int) $visit['id']
                 );
 
+
+            $moneyDraft =
+                fetchVisitMoneyDraft(
+                    $pdo,
+                    (int) $visit['id']
+                );
+
+
+            $visit['tip_amount'] =
+                (int)
+                $moneyDraft['tip_amount'];
+
+            $visit['adjustment_amount'] =
+                (int)
+                $moneyDraft[
+                    'adjustment_amount'
+                ];
+
+            $visit['sales_confirmed_at'] =
+                $moneyDraft['confirmed_at'];
+
+
             $visit['customer_names'] =
                 fetchCustomerNames(
                     $pdo,
