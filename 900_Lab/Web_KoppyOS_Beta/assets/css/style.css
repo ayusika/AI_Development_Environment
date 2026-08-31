@@ -1061,28 +1061,6 @@
         transform: scale(1.04);
       }
     }
-
-    @keyframes appear {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes thinkingDot {
-      0%, 60%, 100% {
-        opacity: 0.22;
-        transform: translateY(0);
-      }
-      30% {
-        opacity: 1;
-        transform: translateY(-5px);
-      }
-    }
     /* ======================================================
        LOCAL BRIDGE
     ====================================================== */
