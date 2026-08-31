@@ -4213,11 +4213,33 @@ function openScheduleDetail(
   const optionNames =
     Array.isArray(visit.options)
       ? visit.options
-          .map((option) =>
-            option.name
-            || option.custom_name
-            || ''
-          )
+          .map((option) => {
+
+            const name =
+              option.name
+              || option.custom_name
+              || '';
+
+
+            if (!name) {
+              return '';
+            }
+
+
+            if (
+              option.custom_name
+              && option.income_amount !== null
+              && option.income_amount !== ''
+            ) {
+
+              return `${name} ${formatScheduleMoney(
+                option.income_amount
+              )}`;
+            }
+
+
+            return name;
+          })
           .filter(Boolean)
       : [];
 
@@ -4226,6 +4248,42 @@ function openScheduleDetail(
     optionNames.length
       ? optionNames.join(' / ')
       : 'なし';
+
+
+  const tipAmount =
+    Number(
+      visit.tip_amount
+      || 0
+    );
+
+
+  const tipText =
+    tipAmount > 0
+      ? formatScheduleMoney(
+          tipAmount
+        )
+      : 'なし';
+
+
+  const adjustmentAmount =
+    Number(
+      visit.adjustment_amount
+      || 0
+    );
+
+
+  const adjustmentText =
+    adjustmentAmount === 0
+      ? 'なし'
+      : `${
+          adjustmentAmount > 0
+            ? '+'
+            : '-'
+        }¥${Math.abs(
+          adjustmentAmount
+        ).toLocaleString(
+          'ja-JP'
+        )}`;
 
 
   scheduleDetailBody.innerHTML = `
