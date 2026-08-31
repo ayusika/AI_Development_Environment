@@ -102,6 +102,26 @@ const scheduleNewCustomerKashikoiName =
     'schedule-new-customer-kashikoi-name'
   );
 
+const scheduleRepeatCustomerFields =
+  document.getElementById(
+    'schedule-repeat-customer-fields'
+  );
+
+const scheduleRepeatCustomerName =
+  document.getElementById(
+    'schedule-repeat-customer-name'
+  );
+
+const scheduleRepeatCustomerDate =
+  document.getElementById(
+    'schedule-repeat-customer-date'
+  );
+
+const scheduleRepeatCustomerResults =
+  document.getElementById(
+    'schedule-repeat-customer-results'
+  );
+
 const scheduleDetailDrawer =
   document.getElementById('schedule-detail-drawer');
 
