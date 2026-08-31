@@ -505,65 +505,6 @@
 
       <!-- Legacy Writer UI: cleanup pending -->
       <section class="panel proposal-panel" hidden>
-        <div class="proposal-header">
-          <div class="proposal-title-group">
-            <div class="mini-symbol">
-              ✎ᴷ
-            </div>
-
-            <div>
-              <p class="proposal-eyebrow">
-                KOPPY GITHUB WRITER
-              </p>
-
-              <h2 class="proposal-title">
-                GitHubへ変更を提案する
-              </h2>
-            </div>
-          </div>
-
-          <div
-            id="proposalStatus"
-            class="proposal-status idle"
-          >
-            <span class="proposal-status-dot"></span>
-
-            <span id="proposalStatusText">
-              待機中
-            </span>
-          </div>
-        </div>
-
-        <p class="proposal-description">
-          Koppyは勝手にGitHubへ書き込まないよ。
-          変更案を作り、しいちゃんが確認して採用したときだけ実行するよ。
-          部分置換では「探す文字列」がGitHub正本に完全一致で1か所だけ存在するときだけ変更するよ。
-        </p>
-
-        <div class="writer-permission-panel">
-          <div class="writer-permission-head">
-            <span aria-hidden="true">🔐</span>
-            <strong>Writer 書き込み可能領域</strong>
-          </div>
-
-          <div class="writer-permission-list">
-            <code>600_KoppyOS/</code>
-            <code>900_Lab/</code>
-
-            <span class="writer-permission-label">
-              Exact Match
-            </span>
-
-            <code>000_HOME/決定事項.md</code>
-            <code>000_HOME/現在の状態.md</code>
-            <code>000_HOME/更新履歴.md</code>
-            <code>000_HOME/次にやること.md</code>
-          </div>
-
-          <p>
-            上記以外は、承認済みProposalでもExecutorが書き込みを拒否します。
-          </p>
-        </div>
 
         <form
           id="proposalForm"
