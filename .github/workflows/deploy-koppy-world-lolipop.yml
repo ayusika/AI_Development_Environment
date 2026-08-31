@@ -64,6 +64,9 @@ jobs:
           SOURCE_FILE="900_Lab/Web_KoppyOS_Beta/index.html"
           REMOTE_FILE="/home/users/2/her.jp-mikipiano/web/koppy/index.html"
 
+          ASSETS_SOURCE="900_Lab/Web_KoppyOS_Beta/assets"
+          WRITER_SOURCE="900_Lab/Web_KoppyOS_Beta/writer"
+
           KOHAKU_WORK_SOURCE="900_Lab/Web_KoppyOS_Beta/kohaku-work"
           KOHAKU_WORK_REMOTE="/home/users/2/her.jp-mikipiano/web/koppy/kohaku-work"
 
@@ -71,6 +74,8 @@ jobs:
           API_REMOTE="/home/users/2/her.jp-mikipiano/web/koppy/api"
 
           test -f "$SOURCE_FILE"
+          test -d "$ASSETS_SOURCE"
+          test -d "$WRITER_SOURCE"
           test -d "$KOHAKU_WORK_SOURCE"
           test -d "$API_SOURCE"
 
@@ -86,6 +91,14 @@ jobs:
           cp \
             "$SOURCE_FILE" \
             "$DEPLOY_PACKAGE_DIR/index.html"
+
+          cp -R \
+            "$ASSETS_SOURCE" \
+            "$DEPLOY_PACKAGE_DIR/assets"
+
+          cp -R \
+            "$WRITER_SOURCE" \
+            "$DEPLOY_PACKAGE_DIR/writer"
 
           cp -R \
             "$KOHAKU_WORK_SOURCE" \
