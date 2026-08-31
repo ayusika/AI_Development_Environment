@@ -3081,22 +3081,32 @@ function openScheduleForm(
 
 function syncScheduleNewCustomerFields() {
 
-  if (!scheduleNewCustomerFields) {
-    return;
-  }
-
-
   const isNewReservation =
     !Number(
       scheduleEditId?.value
       || 0
     );
 
-  scheduleNewCustomerFields.hidden =
-    !(
-      isNewReservation
-      && selectedCustomerStatus === 'new'
-    );
+
+  if (scheduleNewCustomerFields) {
+
+    scheduleNewCustomerFields.hidden =
+      !(
+        isNewReservation
+        && selectedCustomerStatus === 'new'
+      );
+  }
+
+
+  if (scheduleRepeatCustomerFields) {
+
+    scheduleRepeatCustomerFields.hidden =
+      !(
+        isNewReservation
+        && selectedCustomerStatus
+          === 'repeat_unknown_id'
+      );
+  }
 }
 
 
