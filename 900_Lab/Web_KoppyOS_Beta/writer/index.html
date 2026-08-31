@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Koppy Writer</title>
+
+  <link
+    rel="stylesheet"
+    href="../assets/css/style.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../assets/css/writer.css"
+  >
+</head>
+
+<body class="writer-page">
+
+  <div class="background-orb orb-one"></div>
+  <div class="background-orb orb-two"></div>
+  <div class="background-orb orb-three"></div>
+
+
+  <!-- =========================================
+       AUTH GATE
+  ========================================== -->
+
+  <section
+    id="authGate"
+    class="auth-gate"
+    aria-live="polite"
+  >
+    <div class="auth-gate-card">
+
+      <div class="auth-gate-symbol">
+        ✎ᴷ
+      </div>
+
+      <p class="auth-gate-eyebrow">
+        KOPPY WRITER AUTH
+      </p>
+
+      <h1 class="auth-gate-title">
+        Koppy Writer
+      </h1>
+
+      <p
+        id="authGateMessage"
+        class="auth-gate-copy"
+      >
+        Writerへの接続を確認してるよ。
+      </p>
+
+      <p
+        id="authChecking"
+        class="auth-checking"
+      >
+        GitHub認証Sessionを確認中……
+      </p>
+
+      <a
+        id="authLoginButton"
+        class="auth-login-button"
+        href="https://koppy.miki-piano.com/api/v1/auth/login.php"
+        hidden
+      >
+        <span aria-hidden="true">
+          🔐
+        </span>
+
+        <span>
+          GitHubでログイン
+        </span>
+      </a>
+
+    </div>
+  </section>
+
+
+  <main
+    id="koppyWorld"
+    class="world writer-shell auth-pending"
+  >
+
+    <!-- WRITER:WRITER_PAGE_NAV:START -->
+
+    <nav class="writer-nav">
+
+      <div class="writer-nav-brand">
+
+        <span class="writer-nav-symbol">
+          ✎ᴷ
+        </span>
+
+        <span class="writer-nav-title">
+          Koppy Writer
+        </span>
+
+      </div>
+
+
+      <div class="writer-nav-links">
+
+        <a
+          class="writer-nav-link"
+          href="../"
+        >
+          ♢ᴷ Koppy World
+        </a>
+
+        <a
+          class="writer-nav-link"
+          href="https://koppy.miki-piano.com/kohaku-work/deploy-status.html"
+        >
+          ✓ Deploy Monitor
+        </a>
+
+      </div>
+
+    </nav>
+
+    <!-- WRITER:WRITER_PAGE_NAV:END -->
+
+
+    <section class="writer-intro">
+
+      <div>
+
+        <p class="writer-intro-eyebrow">
+          KOPPY GITHUB WRITER
+        </p>
+
+        <h1>
+          Writer
+        </h1>
+
+        <p class="writer-intro-copy">
+          GitHub正本へ安全に変更を提案・承認・保存する専用画面。
+          Exact MatchとFile Edit Protocolを守りながら、
+          必要な編集だけをここで実行するよ。
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <div class="writer-layout">
+
+      <div class="writer-main">
+
+        <div class="writer-tip">
+          <strong>Writer専用モード。</strong>
+          Brain・Chat・Deploy操作を分離して、
+          GitHub編集だけに集中できるようにしてあります。
+        </div>
+
+
+        <!-- WRITER:WRITER_PAGE_MAIN:START -->
+
+        <section class="panel proposal-panel">
+
+          <div class="proposal-header">
+
+            <div class="proposal-title-group">
+
+              <div class="mini-symbol">
+                ✎ᴷ
+              </div>
+
+              <div>
+
+                <p class="proposal-eyebrow">
+                  KOPPY GITHUB WRITER
+                </p>
+
+                <h2 class="proposal-title">
+                  GitHubへ変更を提案する
+                </h2>
+
+              </div>
+
+            </div>
+
+
+            <div
+              id="proposalStatus"
+              class="proposal-status idle"
+            >
+              <span class="proposal-status-dot"></span>
+
+              <span id="proposalStatusText">
+                待機中
+              </span>
+            </div>
+
+          </div>
+
+
+          <p class="proposal-description">
+            Koppyは勝手にGitHubへ書き込まないよ。
+            変更案を作り、しいちゃんが確認して採用したときだけ実行するよ。
+            部分置換では「探す文字列」がGitHub正本に完全一致で1か所だけ存在するときだけ変更するよ。
+          </p>
+
+
+          <div class="writer-permission-panel">
+
+            <div class="writer-permission-head">
+              <span aria-hidden="true">
+                🔐
+              </span>
+
+              <strong>
+                Writer 書き込み可能領域
+              </strong>
+            </div>
+
+
+            <div class="writer-permission-list">
+
+              <code>
+                600_KoppyOS/
+              </code>
+
+              <code>
+                900_Lab/
+              </code>
+
+              <span class="writer-permission-label">
+                Exact Match
+              </span>
+
+              <code>
+                000_HOME/決定事項.md
+              </code>
+
+              <code>
+                000_HOME/現在の状態.md
+              </code>
+
+              <code>
+                000_HOME/更新履歴.md
+              </code>
+
+              <code>
+                000_HOME/次にやること.md
+              </code>
+
+            </div>
+
+
+            <p>
+              上記以外は、承認済みProposalでもExecutorが書き込みを拒否します。
+            </p>
+
+          </div>
+
+
+          <form
+            id="proposalForm"
+            class="proposal-form"
+          >
+
+            <div class="proposal-field">
+
+              <div class="proposal-field-head">
+
+                <label for="proposalTargetPath">
+                  変更するファイル
+                </label>
+
+
+                <div class="proposal-field-tools">
+
+                  <button
+                    class="proposal-mini-button"
+                    type="button"
+                    data-reset-target="proposalTargetPath"
+                    title="リセット"
+                  >
+                    ↺
+                  </button>
+
+                  <button
+                    class="proposal-mini-button"
+                    type="button"
+                    data-paste-target="proposalTargetPath"
+                    title="クリップボードから貼り付け"
+                  >
+                    📋
+                  </button>
+
+                </div>
+
+              </div>
+
+
+              <input
+                id="proposalTargetPath"
+                class="proposal-input"
+                type="text"
+                placeholder="例: 900_Lab/Web_KoppyOS_Beta/index.html"
+                required
+              >
+
+            </div>
+
+
+            <div class="proposal-field">
+
+              <div class="proposal-field-head">
+
+                <label for="proposalOperation">
+                  操作
+                </label>
+
+                <button
+                  id="proposalOperationReset"
+                  class="proposal-mini-button"
+                  type="button"
+                  title="追記へ戻す"
+                >
+                  ↺
+                </button>
+
+              </div>
+
+
+              <select
+                id="proposalOperation"
+                class="proposal-input operation-append"
+              >
+                <option value="append">
+                  追記
+                </option>
+
+                <option value="patch">
+                  部分置換
+                </option>
+
+                <option value="replace">
+                  全文置換
+                </option>
+
+                <option value="create">
+                  新規作成
+                </option>
+              </select>
+
+            </div>
+
+
+            <div class="proposal-field">
+
+              <div class="proposal-field-head">
+
+                <label for="proposalReason">
+                  変更理由
+                </label>
+
+
+                <div class="proposal-field-tools">
+
+                  <button
+                    class="proposal-mini-button"
+                    type="button"
+                    data-reset-target="proposalReason"
+                    title="リセット"
+                  >
+                    ↺
+                  </button>
+
+                  <button
+                    class="proposal-mini-button"
+                    type="button"
+                    data-paste-target="proposalReason"
+                    title="クリップボードから貼り付け"
+                  >
+                    📋
+                  </button>
+
+                </div>
+
+              </div>
+
+
+              <input
+                id="proposalReason"
+                class="proposal-input"
+                type="text"
+                placeholder="例: Writer UIの右パネルを広げる"
+              >
+
+            </div>
+
+
+            <div
+              id="proposalContentField"
+              class="proposal-field"
+            >
+
+              <div class="proposal-field-head">
+
+                <label for="proposalContent">
+                  変更内容
+                </label>
+
+
+                <div class="proposal-field-tools">
+
+                  <button
+                    class="proposal-mini-button"
+                    type="button"
+                    data-reset-target="proposalContent"
+                    title="リセット"
+                  >
+                    ↺
+                  </button>
+
+                  <button
+                    class="proposal-mini-button"
+                    type="button"
+                    data-paste-target="proposalContent"
+                    title="クリップボードから貼り付け"
+                  >
+                    📋
+                  </button>
+
+                </div>
+
+              </div>
+
+
+              <textarea
+                id="proposalContent"
+                class="proposal-textarea"
+                rows="7"
+                placeholder="GitHubへ追加・変更したい内容を書く……"
+              ></textarea>
+
+            </div>
+
+
+            <div
+              id="proposalPatchFields"
+              class="patch-fields"
+              hidden
+            >
+
+              <p class="patch-guide">
+                「探す文字列」は、GitHub上の現在のファイルから完全一致する部分をそのまま貼ってね。
+                0件または2件以上一致した場合、Executorは安全のため停止するよ。
+              </p>
+
+
+              <div class="proposal-field">
+
+                <div class="proposal-field-head">
+
+                  <label for="proposalSearch">
+                    探す文字列
+                  </label>
+
+
+                  <div class="proposal-field-tools">
+
+                    <button
+                      class="proposal-mini-button"
+                      type="button"
+                      data-reset-target="proposalSearch"
+                      title="リセット"
+                    >
+                      ↺
+                    </button>
+
+                    <button
+                      class="proposal-mini-button"
+                      type="button"
+                      data-paste-target="proposalSearch"
+                      title="クリップボードから貼り付け"
+                    >
+                      📋
+                    </button>
+
+                  </div>
+
+                </div>
+
+
+                <textarea
+                  id="proposalSearch"
+                  class="proposal-textarea"
+                  rows="7"
+                  placeholder="現在GitHubに存在するコードを、そのまま貼る……"
+                ></textarea>
+
+              </div>
+
+
+              <div class="proposal-field">
+
+                <div class="proposal-field-head">
+
+                  <label for="proposalReplaceWith">
+                    置換後
+                  </label>
+
+
+                  <div class="proposal-field-tools">
+
+                    <button
+                      class="proposal-mini-button"
+                      type="button"
+                      data-reset-target="proposalReplaceWith"
+                      title="リセット"
+                    >
+                      ↺
+                    </button>
+
+                    <button
+                      class="proposal-mini-button"
+                      type="button"
+                      data-paste-target="proposalReplaceWith"
+                      title="クリップボードから貼り付け"
+                    >
+                      📋
+                    </button>
+
+                  </div>
+
+                </div>
+
+
+                <textarea
+                  id="proposalReplaceWith"
+                  class="proposal-textarea"
+                  rows="7"
+                  placeholder="この内容へ置き換える。空欄なら削除。"
+                ></textarea>
+
+              </div>
+
+
+              <div class="patch-warning">
+
+                <span aria-hidden="true">
+                  🛡️
+                </span>
+
+                <span>
+                  部分置換は「完全一致1件」のときだけ実行。
+                  曖昧な大量置換はしない安全設計だよ。
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <button
+              id="proposalCreateButton"
+              class="proposal-create-button"
+              type="submit"
+            >
+              <span aria-hidden="true">
+                ✦
+              </span>
+
+              変更案をつくる
+            </button>
+
+          </form>
+
+
+          <div
+            id="proposalPreview"
+            class="proposal-preview"
+            hidden
+          >
+
+            <div class="proposal-preview-head">
+
+              <div>
+
+                <p class="proposal-preview-label">
+                  CHANGE PROPOSAL
+                </p>
+
+                <h3>
+                  Koppyから変更提案があります
+                </h3>
+
+              </div>
+
+
+              <span
+                id="proposalIdBadge"
+                class="proposal-id-badge"
+              >
+                Proposal ID
+              </span>
+
+            </div>
+
+
+            <div class="proposal-summary-grid">
+
+              <div class="proposal-summary-card">
+
+                <span>
+                  対象
+                </span>
+
+                <strong id="proposalPreviewPath">
+                  -
+                </strong>
+
+              </div>
+
+
+              <div class="proposal-summary-card">
+
+                <span>
+                  操作
+                </span>
+
+                <strong id="proposalPreviewOperation">
+                  -
+                </strong>
+
+              </div>
+
+            </div>
+
+
+            <div class="proposal-preview-section">
+
+              <p class="proposal-preview-section-title">
+                変更理由
+              </p>
+
+              <p id="proposalPreviewReason">
+                -
+              </p>
+
+            </div>
+
+
+            <div
+              id="proposalContentPreviewSection"
+              class="proposal-preview-section"
+            >
+
+              <p class="proposal-preview-section-title">
+                変更内容
+              </p>
+
+              <pre
+                id="proposalPreviewContent"
+                class="proposal-code-preview"
+              ></pre>
+
+            </div>
+
+
+            <div
+              id="proposalPatchPreviewSection"
+              class="proposal-preview-section"
+              hidden
+            >
+
+              <p class="proposal-preview-section-title">
+                部分置換プレビュー
+              </p>
+
+
+              <div class="patch-preview-grid">
+
+                <div class="patch-preview-card search">
+
+                  <p class="proposal-preview-section-title">
+                    − 探す文字列
+                  </p>
+
+                  <pre
+                    id="proposalPreviewSearch"
+                    class="proposal-code-preview"
+                  ></pre>
+
+                </div>
+
+
+                <div class="patch-preview-card replace">
+
+                  <p class="proposal-preview-section-title">
+                    ＋ 置換後
+                  </p>
+
+                  <pre
+                    id="proposalPreviewReplaceWith"
+                    class="proposal-code-preview"
+                  ></pre>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div class="proposal-safety">
+
+              <span aria-hidden="true">
+                🛡️
+              </span>
+
+              <p id="proposalSafetyText">
+                この時点ではGitHubは変更されていません。
+                「採用してGitHubへ保存」を押したときだけ実行します。
+              </p>
+
+            </div>
+
+
+            <div class="proposal-actions">
+
+              <button
+                id="proposalRejectButton"
+                class="proposal-reject-button"
+                type="button"
+              >
+                やめる
+              </button>
+
+
+              <button
+                id="proposalApproveButton"
+                class="proposal-approve-button"
+                type="button"
+              >
+                <span aria-hidden="true">
+                  ✓
+                </span>
+
+                採用してGitHubへ保存
+              </button>
+
+            </div>
+
+          </div>
+
+
+          <div
+            id="proposalComplete"
+            class="proposal-complete"
+            hidden
+          >
+
+            <div class="proposal-complete-icon">
+              ✓
+            </div>
+
+            <div>
+
+              <strong>
+                GitHubへ保存したよ！
+              </strong>
+
+              <p id="proposalCompleteMessage">
+                Commit完了
+              </p>
+
+            </div>
+
+          </div>
+
+
+          <p
+            id="proposalError"
+            class="proposal-error"
+            role="alert"
+          ></p>
+
+        </section>
+
+        <!-- WRITER:WRITER_PAGE_MAIN:END -->
+
+      </div>
+
+    </div>
+
+
+    <footer>
+      Koppy Writer / Koppy World
+    </footer>
+
+  </main>
+
+
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/writer.js"></script>
+
+</body>
+
+</html>
