@@ -212,6 +212,46 @@ button {
 }
 
 
+button[data-calendar-today] {
+  position:
+    fixed;
+
+  right:
+    calc(
+      20px
+      + env(safe-area-inset-right)
+    );
+
+  bottom:
+    calc(
+      20px
+      + env(safe-area-inset-bottom)
+    );
+
+  z-index:
+    20;
+
+  min-width:
+    84px;
+
+  min-height:
+    48px;
+
+  border-radius:
+    999px;
+
+  background:
+    var(--calendar-accent);
+
+  color:
+    #ffffff;
+
+  box-shadow:
+    0 8px 24px
+    rgba(72, 181, 223, 0.28);
+}
+
+
 .calendar-toolbar {
   display:
     grid;
