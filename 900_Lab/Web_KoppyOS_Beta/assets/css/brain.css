@@ -86,6 +86,20 @@
 }
 
 
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+@keyframes spin-reverse {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+
 .brain-page .core-center {
   display: grid;
   place-items: center;
