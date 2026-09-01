@@ -71,6 +71,7 @@ jobs:
           ASSETS_SOURCE="900_Lab/Web_KoppyOS_Beta/assets"
           WRITER_SOURCE="900_Lab/Web_KoppyOS_Beta/writer"
           CHAT_SOURCE="900_Lab/Web_KoppyOS_Beta/chat"
+          BRAIN_SOURCE="900_Lab/Web_KoppyOS_Beta/brain"
 
           KOHAKU_WORK_SOURCE="900_Lab/Web_KoppyOS_Beta/kohaku-work"
           KOHAKU_WORK_REMOTE="/home/users/2/her.jp-mikipiano/web/koppy/kohaku-work"
@@ -82,6 +83,7 @@ jobs:
           test -d "$ASSETS_SOURCE"
           test -d "$WRITER_SOURCE"
           test -d "$CHAT_SOURCE"
+          test -d "$BRAIN_SOURCE"
           test -d "$KOHAKU_WORK_SOURCE"
           test -d "$API_SOURCE"
 
@@ -109,6 +111,10 @@ jobs:
           cp -R \
             "$CHAT_SOURCE" \
             "$DEPLOY_PACKAGE_DIR/chat"
+
+          cp -R \
+            "$BRAIN_SOURCE" \
+            "$DEPLOY_PACKAGE_DIR/brain"
 
           cp -R \
             "$KOHAKU_WORK_SOURCE" \
