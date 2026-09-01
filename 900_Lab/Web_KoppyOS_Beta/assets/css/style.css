@@ -246,13 +246,7 @@
       overflow-wrap: anywhere;
     }
 
-    .status-detail {
-      margin: 8px 0 0;
-      color: var(--muted);
-      font-size: 12px;
-      line-height: 1.65;
-      overflow-wrap: anywhere;
-    }
+    /* Brain status detail moved to assets/css/brain.css */
 
     .proposal-title-group {
       display: flex;
