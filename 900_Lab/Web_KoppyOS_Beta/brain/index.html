@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Koppy Brain</title>
+
+  <link
+    rel="stylesheet"
+    href="../assets/css/style.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../assets/css/brain.css"
+  >
+</head>
+
+<body class="brain-page">
+
+  <div class="background-orb orb-one"></div>
+  <div class="background-orb orb-two"></div>
+  <div class="background-orb orb-three"></div>
+
+
+  <!-- =========================================
+       AUTH GATE
+  ========================================== -->
+
+  <section
+    id="authGate"
+    class="auth-gate"
+    aria-live="polite"
+  >
+    <div class="auth-gate-card">
+
+      <div class="auth-gate-symbol">
+        ♢ᴷ
+      </div>
+
+      <p class="auth-gate-eyebrow">
+        KOPPY BRAIN AUTH
+      </p>
+
+      <h1 class="auth-gate-title">
+        Koppy Brain
+      </h1>
+
+      <p
+        id="authGateMessage"
+        class="auth-gate-copy"
+      >
+        Koppy Brainへの接続を確認してるよ。
+      </p>
+
+      <p
+        id="authChecking"
+        class="auth-checking"
+      >
+        GitHub認証Sessionを確認中……
+      </p>
+
+      <a
+        id="authLoginButton"
+        class="auth-login-button"
+        href="https://koppy.miki-piano.com/api/v1/auth/login.php"
+        hidden
+      >
+        <span aria-hidden="true">
+          🔐
+        </span>
+
+        <span>
+          GitHubでログイン
+        </span>
+      </a>
+
+    </div>
+  </section>
+
+
+  <main
+    id="koppyWorld"
+    class="world brain-shell auth-pending"
+  >
+
+    <!-- =========================================
+         NAVIGATION
+    ========================================== -->
+
+    <nav class="brain-nav">
+
+      <div class="brain-nav-brand">
+
+        <span class="brain-nav-symbol">
+          🧠
+        </span>
+
+        <span class="brain-nav-title">
+          Koppy Brain
+        </span>
+
+      </div>
+
+      <div class="brain-nav-links">
+
+        <a
+          class="brain-nav-link"
+          href="../"
+        >
+          ♢ᴷ Koppy World
+        </a>
+
+        <a
+          class="brain-nav-link"
+          href="../chat/"
+        >
+          ♢ᴷ Chat
+        </a>
+
+        <a
+          class="brain-nav-link"
+          href="../writer/"
+        >
+          ✎ᴷ Writer
+        </a>
+
+        <a
+          class="brain-nav-link"
+          href="https://koppy.miki-piano.com/kohaku-work/deploy-status.html"
+        >
+          ✓ Deploy Monitor
+        </a>
+
+      </div>
+
+    </nav>
+
+
+    <!-- =========================================
+         INTRO
+    ========================================== -->
+
+    <section class="brain-intro">
+
+      <p class="brain-intro-eyebrow">
+        KOPPY BRAIN
+      </p>
+
+      <h1>
+        GitHub Brain
+      </h1>
+
+      <p class="brain-intro-copy">
+        Koppyが参照するGitHub Brainの接続状態と、
+        最新コミット、Koppy設計書の正本を確認する専用画面。
+      </p>
+
+    </section>
+
+
+    <div class="brain-main">
+
+      <!-- =========================================
+           BRAIN OVERVIEW
+      ========================================== -->
+
+      <div class="brain-overview-grid">
+
+        <section class="panel welcome-panel">
+
+          <p class="eyebrow">
+            GITHUB BRAIN
+          </p>
+
+          <h2 class="welcome-title">
+            Brainを確認する
+          </h2>
+
+          <p class="welcome-copy">
+            GitHub上の最新状態を取得して、
+            Koppy設計書の正本とコミット情報を確認するよ。
+          </p>
+
+          <button
+            id="loadButton"
+            class="main-button"
+            type="button"
+          >
+            <span aria-hidden="true">
+              🧠
+            </span>
+
+            <span id="buttonText">
+              Brainを見にいく
+            </span>
+          </button>
+
+        </section>
+
+
+        <section class="panel core-panel">
+
+          <div
+            id="coreRing"
+            class="core-ring"
+          >
+            <div class="core-center">
+              ♢ᴷ
+            </div>
+          </div>
+
+          <h2 class="core-title">
+            Koppy Core
+          </h2>
+
+          <p
+            id="coreStatus"
+            class="core-status"
+          >
+            GitHub Brain 接続待機中
+          </p>
+
+        </section>
+
+      </div>
+
+
+      <!-- =========================================
+           BRAIN STATUS
+      ========================================== -->
+
+      <section class="status-grid">
+
+        <article class="panel status-card">
+
+          <p class="status-label">
+            CONNECTION
+          </p>
+
+          <p
+            id="connectionValue"
+            class="status-value"
+          >
+            待機中
+          </p>
+
+          <p
+            id="connectionDetail"
+            class="status-detail"
+          >
+            まだBrainへ接続していません。
+          </p>
+
+        </article>
+
+
+        <article class="panel status-card">
+
+          <p class="status-label">
+            LATEST COMMIT
+          </p>
+
+          <p
+            id="commitValue"
+            class="status-value"
+          >
+            未取得
+          </p>
+
+          <p
+            id="commitDetail"
+            class="status-detail"
+          >
+            コミット情報はここに表示されます。
+          </p>
+
+        </article>
+
+
+        <article class="panel status-card">
+
+          <p class="status-label">
+            LAST UPDATE
+          </p>
+
+          <p
+            id="updatedValue"
+            class="status-value"
+          >
+            未取得
+          </p>
+
+          <p
+            id="brainDetail"
+            class="status-detail"
+          >
+            最新コミット日時を表示します。
+          </p>
+
+        </article>
+
+      </section>
+
+
+      <!-- =========================================
+           KOPPY MESSAGE
+      ========================================== -->
+
+      <section class="panel message-panel">
+
+        <div class="message-head">
+
+          <div class="mini-symbol">
+            ♢ᴷ
+          </div>
+
+          <h2 class="message-title">
+            Koppyからの通信
+          </h2>
+
+        </div>
+
+        <p
+          id="statusMessage"
+          class="status-message"
+        >
+          まだBrainを見にいってないよ。
+          準備できたらボタンを押してね。
+        </p>
+
+      </section>
+
+
+      <!-- =========================================
+           DOCUMENT VIEWER
+      ========================================== -->
+
+      <section class="panel document-panel">
+
+        <div class="document-header">
+
+          <h2>
+            GitHub正本ビューア
+          </h2>
+
+          <button
+            id="documentToggle"
+            class="document-toggle"
+            type="button"
+            aria-expanded="true"
+          >
+            本文を閉じる
+          </button>
+
+        </div>
+
+        <div
+          id="documentWrap"
+          class="document-wrap"
+        >
+          <pre
+            id="document"
+            class="document"
+          >まだ取得していません。</pre>
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <footer>
+      Koppy Brain / Koppy World
+    </footer>
+
+  </main>
+
+
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/brain.js"></script>
+
+</body>
+
+</html>
