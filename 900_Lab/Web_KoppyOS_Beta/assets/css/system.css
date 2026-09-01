@@ -1,0 +1,431 @@
+/* ======================================================
+   KOPPY SYSTEM PAGE
+====================================================== */
+
+
+.system-page {
+  min-height: 100vh;
+  padding: 22px 18px 54px;
+}
+
+
+.system-shell {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+}
+
+
+/* ======================================================
+   NAVIGATION
+====================================================== */
+
+
+.system-nav {
+  position: sticky;
+  top: 12px;
+  z-index: 20;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  margin-bottom: 18px;
+  padding: 10px 12px;
+
+  border: 1px solid rgba(153, 216, 239, 0.7);
+  border-radius: 18px;
+
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+
+  box-shadow:
+    0 10px 28px rgba(64, 136, 170, 0.1);
+}
+
+
+.system-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+
+  font-weight: 900;
+}
+
+
+.system-nav-symbol {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+
+  border-radius: 12px;
+
+  color: #35a7d5;
+  font-size: 18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #dff7ff,
+      #eefcff
+    );
+}
+
+
+.system-nav-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+
+.system-nav-links {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+  flex-wrap: wrap;
+}
+
+
+.system-nav-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 38px;
+  padding: 0 13px;
+
+  border: 1px solid rgba(153, 216, 239, 0.8);
+  border-radius: 12px;
+
+  color: #39768f;
+  font-size: 12px;
+  font-weight: 850;
+  text-decoration: none;
+
+  background: #ffffff;
+
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease;
+}
+
+
+.system-nav-link:hover {
+  transform: translateY(-1px);
+  background: #eaf9ff;
+}
+
+
+/* ======================================================
+   INTRO
+====================================================== */
+
+
+.system-intro {
+  margin-bottom: 16px;
+  padding: 22px 24px;
+
+  border: 1px solid rgba(153, 216, 239, 0.75);
+  border-radius: 24px;
+
+  background: rgba(255, 255, 255, 0.85);
+
+  box-shadow:
+    0 14px 34px rgba(64, 136, 170, 0.09);
+}
+
+
+.system-intro-eyebrow {
+  margin: 0 0 6px;
+
+  color: #48b5df;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+}
+
+
+.system-intro h1 {
+  margin: 0;
+
+  font-size: clamp(28px, 4vw, 42px);
+  line-height: 1.1;
+}
+
+
+.system-intro-copy {
+  max-width: 760px;
+  margin: 10px 0 0;
+
+  color: #7191a1;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+
+.system-main {
+  min-width: 0;
+}
+
+
+/* ======================================================
+   SYSTEM LOCAL BRIDGE
+====================================================== */
+
+
+.system-page .local-bridge-panel {
+  margin-bottom: 18px;
+  padding: 22px;
+}
+
+
+.system-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+
+.system-page .local-bridge-title {
+  margin: 0;
+
+  color: var(--blue-dark);
+  font-size: 20px;
+}
+
+
+.system-local-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  padding: 7px 11px;
+
+  border: 1px solid rgba(229, 168, 45, 0.34);
+  border-radius: 999px;
+
+  color: #9a721c;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+
+  background: rgba(255, 248, 224, 0.9);
+}
+
+
+.system-local-note {
+  margin: 18px 0;
+
+  padding: 14px 16px;
+
+  border: 1px solid rgba(112, 207, 255, 0.22);
+  border-radius: 16px;
+
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
+
+  background: rgba(241, 250, 255, 0.78);
+}
+
+
+.system-local-note code {
+  padding: 3px 6px;
+
+  border-radius: 7px;
+
+  color: #39768f;
+  font-family:
+    "SFMono-Regular",
+    Menlo,
+    Consolas,
+    monospace;
+  font-size: 11px;
+
+  background: rgba(255, 255, 255, 0.92);
+}
+
+
+.system-page .local-bridge-button {
+  padding: 11px 18px;
+
+  border: 0;
+  border-radius: 999px;
+
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+
+  background:
+    linear-gradient(
+      135deg,
+      #73d2ff,
+      #439fd7
+    );
+
+  box-shadow:
+    0 8px 22px rgba(67, 159, 215, 0.22);
+}
+
+
+.system-page .local-bridge-button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+
+.system-page .local-bridge-status {
+  margin: 14px 0 0;
+
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+
+.system-page .local-bridge-status.success {
+  color: var(--success);
+}
+
+
+.system-page .local-bridge-status.warning {
+  color: var(--warning);
+}
+
+
+.system-page .local-bridge-status.error {
+  color: var(--error);
+}
+
+
+.system-page .local-bridge-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+
+  margin-top: 16px;
+}
+
+
+.system-page .local-bridge-card {
+  padding: 15px;
+
+  border: 1px solid rgba(112, 207, 255, 0.32);
+  border-radius: 16px;
+
+  background: rgba(238, 248, 253, 0.78);
+}
+
+
+.system-page .local-bridge-label {
+  display: block;
+  margin-bottom: 6px;
+
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+.system-page .local-bridge-value {
+  font-size: 17px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+
+.system-page .local-change-list {
+  margin: 14px 0 0;
+  padding: 14px 14px 14px 38px;
+
+  border-radius: 14px;
+
+  color: #294656;
+  font-family:
+    "SFMono-Regular",
+    Consolas,
+    monospace;
+  font-size: 13px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+
+  background: rgba(238, 248, 253, 0.78);
+}
+
+
+.system-page footer {
+  margin-top: 22px;
+
+  color: #93aebb;
+  font-size: 11px;
+  text-align: center;
+}
+
+
+/* ======================================================
+   MOBILE
+====================================================== */
+
+
+@media (max-width: 760px) {
+  .system-page {
+    padding: 10px 8px 34px;
+  }
+
+
+  .system-nav {
+    top: 6px;
+
+    align-items: flex-start;
+    flex-direction: column;
+
+    border-radius: 15px;
+  }
+
+
+  .system-nav-links {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+
+  .system-nav-link {
+    flex: 1 1 auto;
+  }
+
+
+  .system-intro {
+    padding: 18px;
+    border-radius: 19px;
+  }
+
+
+  .system-intro h1 {
+    font-size: 27px;
+  }
+
+
+  .system-section-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+
+  .system-page .local-bridge-grid {
+    grid-template-columns: 1fr;
+  }
+
+
+  .system-page .local-bridge-button {
+    width: 100%;
+  }
+}
