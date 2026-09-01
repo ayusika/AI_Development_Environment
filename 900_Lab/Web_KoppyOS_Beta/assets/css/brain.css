@@ -1,0 +1,455 @@
+/* ======================================================
+   KOPPY BRAIN PAGE
+====================================================== */
+
+
+.brain-page {
+  min-height:
+    100vh;
+
+  padding:
+    22px 18px 54px;
+}
+
+
+.brain-shell {
+  width:
+    min(
+      1180px,
+      100%
+    );
+
+  margin:
+    0 auto;
+}
+
+
+.brain-nav {
+  position:
+    sticky;
+
+  top:
+    12px;
+
+  z-index:
+    20;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  gap:
+    12px;
+
+  margin-bottom:
+    18px;
+
+  padding:
+    10px 12px;
+
+  border:
+    1px solid
+    rgba(
+      153,
+      216,
+      239,
+      0.7
+    );
+
+  border-radius:
+    18px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.88
+    );
+
+  backdrop-filter:
+    blur(16px);
+
+  box-shadow:
+    0 10px 28px
+    rgba(
+      64,
+      136,
+      170,
+      0.1
+    );
+}
+
+
+.brain-nav-brand {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    9px;
+
+  min-width:
+    0;
+
+  font-weight:
+    900;
+}
+
+
+.brain-nav-symbol {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  width:
+    36px;
+
+  height:
+    36px;
+
+  flex:
+    0 0 36px;
+
+  border-radius:
+    12px;
+
+  color:
+    #35a7d5;
+
+  font-size:
+    18px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #dff7ff,
+      #eefcff
+    );
+}
+
+
+.brain-nav-title {
+  overflow:
+    hidden;
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+}
+
+
+.brain-nav-links {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    flex-end;
+
+  gap:
+    7px;
+
+  flex-wrap:
+    wrap;
+}
+
+
+.brain-nav-link {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  min-height:
+    38px;
+
+  padding:
+    0 13px;
+
+  border:
+    1px solid
+    rgba(
+      153,
+      216,
+      239,
+      0.8
+    );
+
+  border-radius:
+    12px;
+
+  color:
+    #39768f;
+
+  font-size:
+    12px;
+
+  font-weight:
+    850;
+
+  text-decoration:
+    none;
+
+  background:
+    #ffffff;
+
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease;
+}
+
+
+.brain-nav-link:hover {
+  transform:
+    translateY(-1px);
+
+  background:
+    #eaf9ff;
+}
+
+
+.brain-intro {
+  margin-bottom:
+    16px;
+
+  padding:
+    22px 24px;
+
+  border:
+    1px solid
+    rgba(
+      153,
+      216,
+      239,
+      0.75
+    );
+
+  border-radius:
+    24px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.85
+    );
+
+  box-shadow:
+    0 14px 34px
+    rgba(
+      64,
+      136,
+      170,
+      0.09
+    );
+}
+
+
+.brain-intro-eyebrow {
+  margin:
+    0 0 6px;
+
+  color:
+    #48b5df;
+
+  font-size:
+    11px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    0.14em;
+}
+
+
+.brain-intro h1 {
+  margin:
+    0;
+
+  font-size:
+    clamp(
+      28px,
+      4vw,
+      42px
+    );
+
+  line-height:
+    1.1;
+}
+
+
+.brain-intro-copy {
+  max-width:
+    760px;
+
+  margin:
+    10px 0 0;
+
+  color:
+    #7191a1;
+
+  font-size:
+    13px;
+
+  line-height:
+    1.7;
+}
+
+
+.brain-main {
+  min-width:
+    0;
+}
+
+
+.brain-overview-grid {
+  display:
+    grid;
+
+  grid-template-columns:
+    minmax(
+      0,
+      1.15fr
+    )
+    minmax(
+      260px,
+      0.85fr
+    );
+
+  gap:
+    18px;
+
+  margin-bottom:
+    18px;
+}
+
+
+.brain-page .welcome-panel,
+.brain-page .core-panel {
+  min-height:
+    290px;
+}
+
+
+.brain-page .status-grid {
+  margin-bottom:
+    18px;
+}
+
+
+.brain-page .message-panel {
+  margin-bottom:
+    18px;
+}
+
+
+.brain-page .document-panel {
+  margin-bottom:
+    0;
+}
+
+
+.brain-page footer {
+  margin-top:
+    22px;
+
+  text-align:
+    center;
+
+  color:
+    #93aebb;
+
+  font-size:
+    11px;
+}
+
+
+@media (
+  max-width: 760px
+) {
+  .brain-page {
+    padding:
+      10px 8px 34px;
+  }
+
+
+  .brain-nav {
+    top:
+      6px;
+
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+
+    border-radius:
+      15px;
+  }
+
+
+  .brain-nav-links {
+    width:
+      100%;
+
+    justify-content:
+      flex-start;
+  }
+
+
+  .brain-nav-link {
+    flex:
+      1 1 auto;
+  }
+
+
+  .brain-intro {
+    padding:
+      18px;
+
+    border-radius:
+      19px;
+  }
+
+
+  .brain-intro h1 {
+    font-size:
+      27px;
+  }
+
+
+  .brain-overview-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  .brain-page .welcome-panel,
+  .brain-page .core-panel {
+    min-height:
+      auto;
+  }
+}
