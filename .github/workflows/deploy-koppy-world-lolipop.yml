@@ -9,6 +9,7 @@ on:
       - "900_Lab/Web_KoppyOS_Beta/assets/**"
       - "900_Lab/Web_KoppyOS_Beta/writer/**"
       - "900_Lab/Web_KoppyOS_Beta/chat/**"
+      - "900_Lab/Web_KoppyOS_Beta/brain/**"
       - "900_Lab/Web_KoppyOS_Beta/kohaku-work/**"
       - "600_KoppyOS/server/api/**"
       - "600_KoppyOS/server/database/migrate-sales-v2.php"
