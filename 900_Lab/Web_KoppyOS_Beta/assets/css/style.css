@@ -160,13 +160,7 @@
       text-transform: uppercase;
     }
 
-    .welcome-title {
-      position: relative;
-      z-index: 1;
-      margin: 0 0 10px;
-      font-size: clamp(26px, 5vw, 42px);
-      line-height: 1.35;
-    }
+    /* Brain welcome title moved to assets/css/brain.css */
 
     .welcome-copy {
       position: relative;
