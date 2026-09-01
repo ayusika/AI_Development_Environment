@@ -848,17 +848,7 @@
       }
     }
 
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    @keyframes spin-reverse {
-      to {
-        transform: rotate(-360deg);
-      }
-    }
+    /* Brain rotation keyframes moved to assets/css/brain.css */
 
     @keyframes pulse {
       0%, 100% {
