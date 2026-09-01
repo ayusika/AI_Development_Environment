@@ -254,12 +254,6 @@
       overflow-wrap: anywhere;
     }
 
-    .message-panel {
-      margin-bottom: 18px;
-      padding: 22px;
-    }
-
-    .message-head,
     .proposal-title-group {
       display: flex;
       align-items: center;
@@ -276,27 +270,6 @@
       color: var(--blue-dark);
       font-weight: 800;
       background: rgba(218, 245, 255, 0.88);
-    }
-
-    .message-title {
-      margin: 0;
-      color: var(--blue-dark);
-      font-size: 18px;
-    }
-
-    .status-message {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.85;
-      white-space: pre-wrap;
-    }
-
-    .status-message.success {
-      color: var(--success);
-    }
-
-    .status-message.error {
-      color: var(--error);
     }
 
     /* SHARED PROPOSAL / DOCUMENT */
