@@ -988,8 +988,7 @@
       }
 
       .proposal-header,
-      .proposal-preview-head,
-      .document-header {
+      .proposal-preview-head {
         align-items: flex-start;
         flex-direction: column;
       }
