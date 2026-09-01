@@ -177,6 +177,78 @@
 }
 
 
+/* ======================================================
+   BRAIN DOCUMENT VIEWER
+====================================================== */
+
+
+.brain-page .document-panel {
+  overflow: hidden;
+}
+
+
+.brain-page .document-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px 22px;
+  border-bottom: 1px solid rgba(112, 207, 255, 0.24);
+}
+
+
+.brain-page .document-header h2 {
+  margin: 0;
+  color: var(--blue-dark);
+  font-size: 18px;
+}
+
+
+.brain-page .document-toggle {
+  padding: 9px 14px;
+  border: 1px solid rgba(91, 185, 231, 0.28);
+  border-radius: 999px;
+  color: var(--blue-dark);
+  cursor: pointer;
+  background: rgba(237, 249, 255, 0.88);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+
+.brain-page .document-wrap {
+  padding: 18px;
+}
+
+
+.brain-page .document {
+  max-height: 470px;
+  margin: 0;
+  padding: 20px;
+  overflow: auto;
+  border-radius: 18px;
+  color: #294656;
+  font-family:
+    "SFMono-Regular",
+    Menlo,
+    Consolas,
+    monospace;
+  font-size: 13px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: rgba(237, 248, 253, 0.9);
+}
+
+
+@media (max-width: 760px) {
+  .brain-page .document-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+
 .brain-page {
   min-height:
     100vh;
