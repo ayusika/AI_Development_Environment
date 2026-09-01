@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Koppy System</title>
+
+  <link
+    rel="stylesheet"
+    href="../assets/css/style.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../assets/css/system.css"
+  >
+</head>
+
+<body class="system-page">
+
+  <div class="background-orb orb-one"></div>
+  <div class="background-orb orb-two"></div>
+  <div class="background-orb orb-three"></div>
+
+
+  <!-- =========================================
+       AUTH GATE
+  ========================================== -->
+
+  <section
+    id="authGate"
+    class="auth-gate"
+    aria-live="polite"
+  >
+    <div class="auth-gate-card">
+
+      <div class="auth-gate-symbol">
+        ♢ᴷ
+      </div>
+
+      <p class="auth-gate-eyebrow">
+        KOPPY SYSTEM AUTH
+      </p>
+
+      <h1 class="auth-gate-title">
+        Koppy System
+      </h1>
+
+      <p
+        id="authGateMessage"
+        class="auth-gate-copy"
+      >
+        Koppy Systemへの接続を確認してるよ。
+      </p>
+
+      <p
+        id="authChecking"
+        class="auth-checking"
+      >
+        GitHub認証Sessionを確認中……
+      </p>
+
+      <a
+        id="authLoginButton"
+        class="auth-login-button"
+        href="https://koppy.miki-piano.com/api/v1/auth/login.php"
+        hidden
+      >
+        <span aria-hidden="true">
+          🔐
+        </span>
+
+        <span>
+          GitHubでログイン
+        </span>
+      </a>
+
+    </div>
+  </section>
+
+
+  <main
+    id="koppyWorld"
+    class="world system-shell auth-pending"
+  >
+
+    <!-- =========================================
+         NAVIGATION
+    ========================================== -->
+
+    <nav class="system-nav">
+
+      <div class="system-nav-brand">
+
+        <span class="system-nav-symbol">
+          ⚙️
+        </span>
+
+        <span class="system-nav-title">
+          Koppy System
+        </span>
+
+      </div>
+
+      <div class="system-nav-links">
+
+        <a
+          class="system-nav-link"
+          href="../"
+        >
+          ♢ᴷ Koppy World
+        </a>
+
+        <a
+          class="system-nav-link"
+          href="../brain/"
+        >
+          🧠 Brain
+        </a>
+
+        <a
+          class="system-nav-link"
+          href="../chat/"
+        >
+          ♢ᴷ Chat
+        </a>
+
+        <a
+          class="system-nav-link"
+          href="../writer/"
+        >
+          ✎ᴷ Writer
+        </a>
+
+        <a
+          class="system-nav-link"
+          href="https://koppy.miki-piano.com/kohaku-work/deploy-status.html"
+        >
+          ✓ Deploy Monitor
+        </a>
+
+      </div>
+
+    </nav>
+
+
+    <!-- =========================================
+         INTRO
+    ========================================== -->
+
+    <section class="system-intro">
+
+      <p class="system-intro-eyebrow">
+        KOPPY SYSTEM
+      </p>
+
+      <h1>
+        Local Development
+      </h1>
+
+      <p class="system-intro-copy">
+        Koppy Worldのローカル開発環境や、
+        Mac内のGit状態を確認するためのSystem画面。
+      </p>
+
+    </section>
+
+
+    <div class="system-main">
+
+      <!-- WRITER:SYSTEM_LOCAL_BRIDGE:START -->
+
+      <!-- =========================================
+           LOCAL BRIDGE
+      ========================================== -->
+
+      <section class="panel local-bridge-panel">
+
+        <div class="system-section-header">
+
+          <div>
+
+            <p class="eyebrow">
+              LOCAL BRIDGE
+            </p>
+
+            <h2 class="local-bridge-title">
+              Local Git Status
+            </h2>
+
+          </div>
+
+          <span class="system-local-badge">
+            LOCAL ONLY
+          </span>
+
+        </div>
+
+
+        <p class="system-local-note">
+          この機能は
+          <code>server.py</code>
+          を起動して
+          <code>http://localhost:8000/system/</code>
+          から開いたときに使用します。
+        </p>
+
+
+        <button
+          id="localBridgeButton"
+          class="local-bridge-button"
+          type="button"
+        >
+          ローカルGitを確認
+        </button>
+
+
+        <p
+          id="localBridgeStatus"
+          class="local-bridge-status"
+        >
+          Local Bridgeへの接続待機中。
+        </p>
+
+
+        <div
+          id="localBridgeSummary"
+          class="local-bridge-grid"
+          hidden
+        >
+
+          <div class="local-bridge-card">
+
+            <span class="local-bridge-label">
+              CURRENT BRANCH
+            </span>
+
+            <span
+              id="localBranchValue"
+              class="local-bridge-value"
+            >
+              未取得
+            </span>
+
+          </div>
+
+
+          <div class="local-bridge-card">
+
+            <span class="local-bridge-label">
+              LOCAL CHANGES
+            </span>
+
+            <span
+              id="localChangesValue"
+              class="local-bridge-value"
+            >
+              未取得
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <ul
+          id="localChangeList"
+          class="local-change-list"
+          hidden
+        ></ul>
+
+      </section>
+
+      <!-- WRITER:SYSTEM_LOCAL_BRIDGE:END -->
+
+    </div>
+
+
+    <footer>
+      Koppy System / Koppy World
+    </footer>
+
+  </main>
+
+
+  <script src="../assets/js/auth.js"></script>
+  <script src="../assets/js/system.js"></script>
+
+</body>
+
+</html>
