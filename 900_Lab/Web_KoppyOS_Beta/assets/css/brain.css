@@ -3,6 +3,180 @@
 ====================================================== */
 
 
+/* ======================================================
+   BRAIN COMPONENTS
+====================================================== */
+
+
+.brain-page .welcome-panel {
+  position: relative;
+  min-height: 310px;
+  padding: 28px;
+  overflow: hidden;
+}
+
+
+.brain-page .welcome-panel::after {
+  content: "";
+  position: absolute;
+  right: -55px;
+  bottom: -70px;
+  width: 190px;
+  height: 190px;
+  border: 1px solid rgba(117, 211, 255, 0.35);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 24px rgba(133, 219, 255, 0.08),
+    0 0 0 48px rgba(133, 219, 255, 0.05);
+}
+
+
+.brain-page .welcome-title {
+  position: relative;
+  z-index: 1;
+  margin: 0 0 10px;
+  font-size: clamp(26px, 5vw, 42px);
+  line-height: 1.35;
+}
+
+
+.brain-page .core-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 310px;
+  padding: 24px;
+  text-align: center;
+}
+
+
+.brain-page .core-ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 155px;
+  height: 155px;
+  margin-bottom: 18px;
+  border-radius: 50%;
+}
+
+
+.brain-page .core-ring::before,
+.brain-page .core-ring::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+}
+
+
+.brain-page .core-ring::before {
+  inset: 0;
+  border: 2px solid rgba(102, 204, 246, 0.35);
+  border-top-color: rgba(39, 139, 196, 0.95);
+  border-right-color: rgba(121, 214, 255, 0.8);
+  animation: spin 7s linear infinite;
+}
+
+
+.brain-page .core-ring::after {
+  inset: 18px;
+  border: 1px dashed rgba(78, 173, 220, 0.38);
+  animation: spin-reverse 11s linear infinite;
+}
+
+
+.brain-page .core-center {
+  display: grid;
+  place-items: center;
+  width: 92px;
+  height: 92px;
+  border-radius: 50%;
+  color: var(--blue-dark);
+  font-size: 30px;
+  font-weight: 800;
+  background:
+    radial-gradient(circle at 35% 30%, #ffffff, #dff5ff 55%, #bce9ff);
+  box-shadow:
+    0 0 28px rgba(77, 177, 226, 0.22),
+    inset 0 0 16px rgba(255, 255, 255, 0.9);
+}
+
+
+.brain-page .core-ring.loading {
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+
+.brain-page .core-ring.success .core-center {
+  box-shadow:
+    0 0 40px rgba(37, 168, 119, 0.28),
+    inset 0 0 16px rgba(255, 255, 255, 0.95);
+}
+
+
+.brain-page .core-title {
+  margin: 0 0 6px;
+  color: var(--blue-dark);
+  font-size: 18px;
+}
+
+
+.brain-page .core-status {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+
+.brain-page .status-detail {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+
+.brain-page .message-panel {
+  margin-bottom: 18px;
+  padding: 22px;
+}
+
+
+.brain-page .message-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+
+.brain-page .message-title {
+  margin: 0;
+  color: var(--blue-dark);
+  font-size: 18px;
+}
+
+
+.brain-page .status-message {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.85;
+  white-space: pre-wrap;
+}
+
+
+.brain-page .status-message.success {
+  color: var(--success);
+}
+
+
+.brain-page .status-message.error {
+  color: var(--error);
+}
+
+
 .brain-page {
   min-height:
     100vh;
