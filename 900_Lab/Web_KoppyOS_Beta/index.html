@@ -192,76 +192,38 @@
       <!-- WRITER:KOHAKU_WORK_ENTRY:END -->
 
 
+      <!-- WRITER:SYSTEM_ENTRY:START -->
+
       <!-- =========================================
-           LOCAL BRIDGE
+           KOPPY SYSTEM ENTRY
       ========================================== -->
 
-      <section class="panel local-bridge-panel">
-        <div class="local-bridge-header">
-          <div>
-            <p class="eyebrow">
-              LOCAL DEVELOPMENT
-            </p>
-
-            <h2 class="local-bridge-title">
-              Local Bridge β
-            </h2>
-          </div>
-
-          <button
-            id="localBridgeButton"
-            class="local-bridge-button"
-            type="button"
-          >
-            ローカルGitを確認
-          </button>
-        </div>
-
-        <p
-          id="localBridgeStatus"
-          class="local-bridge-status"
-        >
-          Local Bridgeへの接続待機中。
+      <section class="panel">
+        <p class="eyebrow">
+          KOPPY SYSTEM / LOCAL ONLY
         </p>
 
-        <div
-          id="localBridgeSummary"
-          class="local-bridge-grid"
-          hidden
+        <h2>
+          Local Development
+        </h2>
+
+        <p class="welcome-copy">
+          Mac内のGit状態やLocal Bridgeは、
+          localhost専用のSystem画面から確認できます。
+        </p>
+
+        <a
+          class="main-button"
+          href="http://localhost:8000/system/"
         >
-          <div class="local-bridge-card">
-            <span class="local-bridge-label">
-              CURRENT BRANCH
-            </span>
-
-            <span
-              id="localBranchValue"
-              class="local-bridge-value"
-            >
-              未取得
-            </span>
-          </div>
-
-          <div class="local-bridge-card">
-            <span class="local-bridge-label">
-              LOCAL CHANGES
-            </span>
-
-            <span
-              id="localChangesValue"
-              class="local-bridge-value"
-            >
-              未取得
-            </span>
-          </div>
-        </div>
-
-        <ul
-          id="localChangeList"
-          class="local-change-list"
-          hidden
-        ></ul>
+          <span>⚙️</span>
+          <span>
+            Koppy Systemを開く
+          </span>
+        </a>
       </section>
+
+      <!-- WRITER:SYSTEM_ENTRY:END -->
 
       <!-- Legacy Brain status UI removed: use /brain/ -->
 
