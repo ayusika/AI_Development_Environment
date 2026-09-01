@@ -334,6 +334,4 @@
       loadLocalGitStatus
     );
   }
-
-  chatInput?.focus();
 })();
