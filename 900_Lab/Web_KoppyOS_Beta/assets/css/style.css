@@ -266,11 +266,10 @@
       background: rgba(218, 245, 255, 0.88);
     }
 
-    /* SHARED PROPOSAL / DOCUMENT */
+    /* SHARED PROPOSAL */
 
     .proposal-header,
-    .proposal-preview-head,
-    .document-header {
+    .proposal-preview-head {
       display: flex;
       align-items: center;
       justify-content: space-between;
