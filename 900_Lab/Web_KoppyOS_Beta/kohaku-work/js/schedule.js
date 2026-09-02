@@ -2986,31 +2986,20 @@ function updateSchedulePeriodTitle(
   period
 ) {
 
-  if (!schedulePeriodTitle) return;
-
-
-  const start =
-    scheduleParseDate(
-      period.start
+  if (
+    !window.KohakuSchedulePeriod
+    || !window.KohakuSchedulePeriod.isActive()
+  ) {
+    throw new Error(
+      'Schedule Period module is not available.'
     );
-
-  const end =
-    scheduleParseDate(
-      period.end
-    );
-
-
-  if (period.start === period.end) {
-
-    schedulePeriodTitle.textContent =
-      `${start.getFullYear()}年${start.getMonth() + 1}月${start.getDate()}日`;
-
-    return;
   }
 
 
-  schedulePeriodTitle.textContent =
-    `${start.getMonth() + 1}/${start.getDate()} 〜 ${end.getMonth() + 1}/${end.getDate()}`;
+  return window.KohakuSchedulePeriod
+    .updateSchedulePeriodTitle(
+      period
+    );
 }
 
 /* ========================================
