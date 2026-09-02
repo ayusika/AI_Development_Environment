@@ -1561,7 +1561,14 @@ try {
 
 
         if (
-            $customerStatus === 'new'
+            in_array(
+                $customerStatus,
+                [
+                    'new',
+                    'repeat_unknown_id',
+                ],
+                true
+            )
             && $customerId === null
             && $hasNewCustomerName
         ) {
