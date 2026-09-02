@@ -77,6 +77,76 @@ jobs:
         run: |
           set -euo pipefail
 
+          MIGRATION_STATUS_REMOTE_DIR="/home/users/2/her.jp-mikipiano/web/koppy/deploy-status"
+          MIGRATION_STATUS_REMOTE_FILE="$MIGRATION_STATUS_REMOTE_DIR/migration.json"
+          MIGRATION_STATUS_REMOTE_TEMP="/home/users/2/her.jp-mikipiano/koppy-migration-status-${GITHUB_RUN_ID}.json"
+          MIGRATION_STATUS_LOCAL_FILE="$RUNNER_TEMP/koppy-migration-status.json"
+
+          publish_migration_status() {
+            local migration_status="$1"
+            local updated_at
+
+            updated_at="$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
+
+            printf \
+              '{"status":"%s","sha":"%s","run_id":"%s","run_number":"%s","migration":"%s","updated_at":"%s"}\n' \
+              "$migration_status" \
+              "$GITHUB_SHA" \
+              "$GITHUB_RUN_ID" \
+              "$GITHUB_RUN_NUMBER" \
+              "$MIGRATION_FILE" \
+              "$updated_at" \
+              > "$MIGRATION_STATUS_LOCAL_FILE"
+
+            if ! sshpass -p "$SSH_PASSWORD" \
+              scp \
+              -P "$SSH_PORT" \
+              -O \
+              -o StrictHostKeyChecking=accept-new \
+              -o UpdateHostKeys=no \
+              -o ConnectTimeout=20 \
+              "$MIGRATION_STATUS_LOCAL_FILE" \
+              "$SSH_USER@$SSH_HOST:$MIGRATION_STATUS_REMOTE_TEMP"; then
+
+              echo "Migration status upload failed."
+
+              return 0
+            fi
+
+            if ! sshpass -p "$SSH_PASSWORD" \
+              ssh \
+              -p "$SSH_PORT" \
+              -o StrictHostKeyChecking=accept-new \
+              -o UpdateHostKeys=no \
+              -o ConnectTimeout=20 \
+              "$SSH_USER@$SSH_HOST" \
+              "mkdir -p '$MIGRATION_STATUS_REMOTE_DIR'
+              mv '$MIGRATION_STATUS_REMOTE_TEMP' '$MIGRATION_STATUS_REMOTE_FILE'"; then
+
+              echo "Migration status publish failed."
+            fi
+
+            return 0
+          }
+
+          finish_migration_status() {
+            local migration_exit_code="$?"
+
+            trap - EXIT
+
+            if [ "$migration_exit_code" -eq 0 ]; then
+              publish_migration_status "success"
+            else
+              publish_migration_status "failure"
+            fi
+
+            exit "$migration_exit_code"
+          }
+
+          trap finish_migration_status EXIT
+
+          publish_migration_status "running"
+
           LOCAL_FILE="600_KoppyOS/server/database/$MIGRATION_FILE"
 
           REMOTE_DIR="/home/users/2/her.jp-mikipiano/.koppy-private/migrations"
