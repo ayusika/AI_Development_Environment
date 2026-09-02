@@ -4424,6 +4424,27 @@ function openScheduleDetail(
   }
 
 
+  const editVisitButton =
+    scheduleDetailDrawer.querySelector(
+      '[data-action="edit-schedule-visit"]'
+    );
+
+  const progressActions =
+    scheduleDetailDrawer.querySelector(
+      '.schedule-progress-actions'
+    );
+
+
+  if (
+    editVisitButton
+    && progressActions
+  ) {
+    progressActions.before(
+      editVisitButton
+    );
+  }
+
+
   if (scheduleDrawerBackdrop) {
     scheduleDrawerBackdrop.hidden =
       false;
