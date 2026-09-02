@@ -4835,11 +4835,29 @@ async function openScheduleCustomerPanel() {
 
       const visitHistoryHtml =
         visits.length
-          ? visits
+          ? [...visits]
+              .sort(
+                (a, b) =>
+                  String(
+                    b.started_at
+                    || ''
+                  ).localeCompare(
+                    String(
+                      a.started_at
+                      || ''
+                    )
+                  )
+              )
               .slice(0, 5)
               .map(
-                (customerVisit) => `
-                  <details class="schedule-customer-visit-detail">
+                (
+                  customerVisit,
+                  visitIndex
+                ) => `
+                  <details
+                    class="schedule-customer-visit-detail"
+                    ${visitIndex === 0 ? 'open' : ''}
+                  >
 
                     <summary class="schedule-detail-row">
 
