@@ -5594,6 +5594,33 @@ async function openScheduleCustomerPanel() {
       }
 
 
+      const customerFeaturesInput =
+        scheduleLinkedCustomerPanel.querySelector(
+          '[data-customer-feature-input="age_range"]'
+        );
+
+      const customerFeaturesCard =
+        customerFeaturesInput
+          ? customerFeaturesInput.closest(
+              '.schedule-detail-card'
+            )
+          : null;
+
+
+      if (customerFeaturesCard) {
+
+        if (visitHistoryCard) {
+          visitHistoryCard.after(
+            customerFeaturesCard
+          );
+        } else {
+          otherInfoHeading.after(
+            customerFeaturesCard
+          );
+        }
+      }
+
+
     } catch (error) {
 
       scheduleLinkedCustomerPanel.innerHTML = `
