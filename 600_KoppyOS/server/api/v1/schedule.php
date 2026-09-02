@@ -1681,6 +1681,14 @@ try {
         }
 
 
+        if (
+            $customerStatus === 'repeat_unknown_id'
+            && $customerId !== null
+        ) {
+            $customerStatus = 'repeat';
+        }
+
+
         $statement =
             $pdo->prepare(
                 'INSERT INTO visits
