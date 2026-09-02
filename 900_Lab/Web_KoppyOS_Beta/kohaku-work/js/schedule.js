@@ -4009,8 +4009,7 @@ async function saveScheduleVisit() {
 
 
   if (
-    !editId
-    && selectedCustomerStatus
+    selectedCustomerStatus
       === 'repeat_unknown_id'
     && selectedScheduleCustomerId
   ) {
