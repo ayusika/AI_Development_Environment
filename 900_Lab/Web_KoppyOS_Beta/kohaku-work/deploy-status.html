@@ -2244,6 +2244,57 @@
                 </div>
 
 
+                <div
+                  class="workflow-fast-status"
+                  data-fast-status
+                  data-kind="${
+                    FAST_STATUS_SOURCES[
+                      workflow.path
+                    ]
+                      ? 'idle'
+                      : 'manual'
+                  }"
+                >
+                  <span class="workflow-fast-status-dot"></span>
+
+                  <span class="workflow-fast-status-label">
+                    ${
+                      FAST_STATUS_SOURCES[
+                        workflow.path
+                      ]
+                        ? 'FAST'
+                        : 'DETAIL'
+                    }
+                  </span>
+
+                  <span
+                    class="workflow-fast-status-value"
+                    data-fast-status-value
+                  >
+                    ${
+                      FAST_STATUS_SOURCES[
+                        workflow.path
+                      ]
+                        ? '状態ファイル確認中…'
+                        : '詳細更新で確認'
+                    }
+                  </span>
+
+                  <span
+                    class="workflow-fast-status-time"
+                    data-fast-status-time
+                  >
+                    ${
+                      FAST_STATUS_SOURCES[
+                        workflow.path
+                      ]
+                        ? '--'
+                        : 'GitHub API'
+                    }
+                  </span>
+                </div>
+
+
                 <p class="workflow-run-title">
                   ${escapeHtml(
                     runTitle
