@@ -5572,6 +5572,28 @@ async function openScheduleCustomerPanel() {
       }
 
 
+      const visitHistoryCard =
+        Array.from(
+          scheduleLinkedCustomerPanel.querySelectorAll(
+            '.schedule-detail-card'
+          )
+        )
+          .find(
+            (card) =>
+              card.textContent.includes(
+                '直近の来店履歴'
+              )
+          )
+        || null;
+
+
+      if (visitHistoryCard) {
+        otherInfoHeading.after(
+          visitHistoryCard
+        );
+      }
+
+
     } catch (error) {
 
       scheduleLinkedCustomerPanel.innerHTML = `
