@@ -142,6 +142,24 @@
   }
 
 
+  function scheduleCustomerStatusLabel(
+    status
+  ) {
+
+    const labels = {
+      new: '新規',
+      repeat: 'リピ',
+      other_store_repeat:
+        '他店リピ',
+      repeat_unknown_id:
+        'リピ・ID不明',
+    };
+
+    return labels[status]
+      || '未設定';
+  }
+
+
   window.KohakuScheduleCustomerPanel = {
     init,
 
@@ -153,6 +171,7 @@
     closeScheduleCustomerPanel,
     openCustomerCancelPanel,
     closeCustomerCancelPanel,
+    scheduleCustomerStatusLabel,
   };
 
 
