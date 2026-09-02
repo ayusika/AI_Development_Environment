@@ -5477,6 +5477,48 @@ async function openScheduleCustomerPanel() {
           areaLabel
         );
 
+
+        const areaSaveActions =
+          document.createElement(
+            'div'
+          );
+
+        areaSaveActions.className =
+          'schedule-customer-actions';
+
+
+        const areaSaveButton =
+          document.createElement(
+            'button'
+          );
+
+        areaSaveButton.className =
+          'secondary-button';
+
+        areaSaveButton.type =
+          'button';
+
+        areaSaveButton.dataset.action =
+          'save-schedule-customer-identity-features';
+
+        areaSaveButton.dataset.customerId =
+          String(
+            customerId
+          );
+
+        areaSaveButton.textContent =
+          'エリアを保存';
+
+
+        areaSaveActions.append(
+          areaSaveButton
+        );
+
+        areaCard.append(
+          areaSaveActions
+        );
+
+
         scheduleLinkedCustomerPanel.prepend(
           areaCard
         );
