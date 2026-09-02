@@ -1236,6 +1236,51 @@
     const API_BASE =
       `https://api.github.com/repos/${REPOSITORY}`;
 
+    const FAST_STATUS_REFRESH_MS =
+      5 * 1000;
+
+    const FAST_STATUS_STALE_MS =
+      10 * 60 * 1000;
+
+    const FAST_STATUS_SOURCES =
+      Object.freeze({
+        '.github/workflows/deploy-koppy-world-lolipop.yml':
+          Object.freeze({
+            url:
+              '/deploy-status/lolipop.json',
+
+            runningLabel:
+              '本番反映中',
+
+            successLabel:
+              '本番反映済み',
+
+            failureLabel:
+              '本番反映失敗',
+
+            missingLabel:
+              '公開状態なし',
+          }),
+
+        '.github/workflows/koppy-db-migration.yml':
+          Object.freeze({
+            url:
+              '/deploy-status/migration.json',
+
+            runningLabel:
+              'Migration実行中',
+
+            successLabel:
+              '前回Migration成功',
+
+            failureLabel:
+              '前回Migration失敗',
+
+            missingLabel:
+              '実行記録なし',
+          }),
+      });
+
     const RUN_REFRESH_MS =
       90 * 1000;
 
