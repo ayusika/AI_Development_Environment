@@ -550,6 +550,8 @@
       scheduleState,
       customerIdentitySearchApiUrl,
       scheduleIdentitySearchKeyword,
+      scheduleIdentitySearchKashikoiName,
+      scheduleIdentitySearchVisitDate,
       scheduleIdentitySearchStatus,
       scheduleIdentitySearchStore,
       scheduleIdentitySearchResults,
@@ -559,6 +561,8 @@
 
     if (
       !scheduleIdentitySearchKeyword
+      || !scheduleIdentitySearchKashikoiName
+      || !scheduleIdentitySearchVisitDate
       || !scheduleIdentitySearchStatus
       || !scheduleIdentitySearchStore
       || !scheduleIdentitySearchResults
