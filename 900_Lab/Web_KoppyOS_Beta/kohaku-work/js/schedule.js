@@ -3624,11 +3624,18 @@ function resetScheduleForm() {
 
 function closeScheduleForm() {
 
-  if (!scheduleFormCard) return;
+  if (
+    !window.KohakuScheduleForm
+    || !window.KohakuScheduleForm.isActive()
+  ) {
+    throw new Error(
+      'Schedule Form module is not available.'
+    );
+  }
 
-  scheduleFormCard.hidden = true;
 
-  hideScheduleMessage();
+  return window.KohakuScheduleForm
+    .closeScheduleForm();
 }
 
 
