@@ -7,7 +7,7 @@
 
   function init({
     scheduleFormCard,
-    hideScheduleMessage,
+    scheduleFormMessage,
   }) {
 
     if (context) {
@@ -17,7 +17,7 @@
 
     context = {
       scheduleFormCard,
-      hideScheduleMessage,
+      scheduleFormMessage,
     };
   }
 
@@ -35,11 +35,62 @@
   }
 
 
+  function showScheduleMessage(
+    message,
+    isError = false
+  ) {
+
+    const {
+      scheduleFormMessage,
+    } = getContext();
+
+
+    if (!scheduleFormMessage) {
+      return;
+    }
+
+
+    scheduleFormMessage.hidden =
+      false;
+
+    scheduleFormMessage.textContent =
+      message;
+
+    scheduleFormMessage.classList.toggle(
+      'is-error',
+      isError
+    );
+  }
+
+
+  function hideScheduleMessage() {
+
+    const {
+      scheduleFormMessage,
+    } = getContext();
+
+
+    if (!scheduleFormMessage) {
+      return;
+    }
+
+
+    scheduleFormMessage.hidden =
+      true;
+
+    scheduleFormMessage.textContent =
+      '';
+
+    scheduleFormMessage.classList.remove(
+      'is-error'
+    );
+  }
+
+
   function closeScheduleForm() {
 
     const {
       scheduleFormCard,
-      hideScheduleMessage,
     } = getContext();
 
 
@@ -60,12 +111,14 @@
     },
 
     getContext,
+    showScheduleMessage,
+    hideScheduleMessage,
     closeScheduleForm,
   };
 
 
   window.KohakuScheduleForm.init({
     scheduleFormCard,
-    hideScheduleMessage,
+    scheduleFormMessage,
   });
 })();
