@@ -136,9 +136,7 @@
       line-height: 1.85;
     }
 
-    .main-button,
-    .proposal-create-button,
-    .proposal-approve-button {
+    .main-button {
       border: 0;
       cursor: pointer;
       color: #ffffff;
@@ -153,9 +151,7 @@
         opacity 0.18s ease;
     }
 
-    .main-button:hover,
-    .proposal-create-button:hover,
-    .proposal-approve-button:hover {
+    .main-button:hover {
       transform: translateY(-2px);
       box-shadow:
         0 14px 32px rgba(58, 155, 210, 0.34),
