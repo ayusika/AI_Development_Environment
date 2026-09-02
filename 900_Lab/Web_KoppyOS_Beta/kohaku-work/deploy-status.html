@@ -3275,29 +3275,6 @@
     );
 
 
-    document.addEventListener(
-      'visibilitychange',
-      () => {
-
-        if (
-          document.visibilityState
-          !== 'visible'
-        ) {
-          return;
-        }
-
-
-        if (
-          nextRefreshAt > 0
-          && Date.now()
-          >= nextRefreshAt
-        ) {
-          refreshStatus();
-        }
-      }
-    );
-
-
     syncNotificationButton();
 
     refreshStatus({
