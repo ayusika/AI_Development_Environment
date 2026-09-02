@@ -1029,5 +1029,9 @@
 
   window.KohakuScheduleDrag = {
     init,
+
+    isActive() {
+      return initialized;
+    },
   };
 })();
