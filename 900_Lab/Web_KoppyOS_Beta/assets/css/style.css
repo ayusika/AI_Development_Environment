@@ -104,20 +104,7 @@
       text-shadow: 0 6px 24px rgba(45, 140, 191, 0.13);
     }
 
-    .subtitle {
-      margin: 0;
-      color: var(--muted);
-      line-height: 1.8;
-    }
-
-    .shell {
-      padding: 22px;
-      border: 1px solid rgba(123, 210, 250, 0.42);
-      border-radius: 30px;
-      background: rgba(255, 255, 255, 0.42);
-      box-shadow: 0 25px 70px rgba(52, 137, 180, 0.13);
-      backdrop-filter: blur(16px);
-    }
+    /* Home subtitle and shell styles moved to assets/css/home.css */
 
     .panel {
       border: 1px solid rgba(112, 207, 255, 0.36);
