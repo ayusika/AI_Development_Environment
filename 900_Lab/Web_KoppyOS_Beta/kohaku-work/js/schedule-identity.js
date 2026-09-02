@@ -709,9 +709,16 @@
                 <div>
                   <strong>
                     ${escapeHtml(
-                      visit.started_at
+                      visit.customer_name
+                      || '名前未登録'
                     )}
                   </strong>
+
+                  <span>
+                    ${escapeHtml(
+                      visit.started_at
+                    )}
+                  </span>
 
                   <span>
                     ${escapeHtml(
