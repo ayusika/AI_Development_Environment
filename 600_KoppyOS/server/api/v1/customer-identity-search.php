@@ -257,48 +257,70 @@ try {
 
     if ($keyword !== '') {
 
-        $whereConditions[] =
-            "
-            (
-                v.customer_features LIKE ?
-                OR v.started_at LIKE ?
-                OR s.name LIKE ?
+        $keywordParts =
+            preg_split(
+                '/[\s　,，、]+/u',
+                $keyword,
+                -1,
+                PREG_SPLIT_NO_EMPTY
+            );
 
-                OR EXISTS (
-                    SELECT 1
 
-                    FROM visit_identity_features vif_search
+        if ($keywordParts === false) {
+            throw new RuntimeException(
+                'Failed to parse keyword.'
+            );
+        }
 
-                    WHERE
-                        vif_search.visit_id = v.id
 
-                        AND (
-                            vif_search.feature_value LIKE ?
-                            OR vif_search.note LIKE ?
-                        )
+        foreach (
+            array_unique($keywordParts)
+            as $keywordPart
+        ) {
+
+            $whereConditions[] =
+                "
+                (
+                    v.customer_features LIKE ?
+                    OR v.started_at LIKE ?
+                    OR s.name LIKE ?
+
+                    OR EXISTS (
+                        SELECT 1
+
+                        FROM visit_identity_features vif_search
+
+                        WHERE
+                            vif_search.visit_id = v.id
+
+                            AND (
+                                vif_search.feature_value LIKE ?
+                                OR vif_search.note LIKE ?
+                            )
+                    )
                 )
-            )
-            ";
+                ";
 
 
-        $likeKeyword =
-            '%' . $keyword . '%';
+            $likeKeyword =
+                '%' . $keywordPart . '%';
 
 
-        $parameters[] =
-            $likeKeyword;
+            $parameters[] =
+                $likeKeyword;
 
-        $parameters[] =
-            $likeKeyword;
+            $parameters[] =
+                $likeKeyword;
 
-        $parameters[] =
-            $likeKeyword;
+            $parameters[] =
+                $likeKeyword;
 
-        $parameters[] =
-            $likeKeyword;
+            $parameters[] =
+                $likeKeyword;
 
-        $parameters[] =
-            $likeKeyword;
+            $parameters[] =
+                $likeKeyword;
+        }
     }
 
 
