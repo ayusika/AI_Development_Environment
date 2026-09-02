@@ -5496,6 +5496,40 @@ async function openScheduleCustomerPanel() {
       }
 
 
+      const areaCard =
+        areaInput
+          ? areaInput.closest(
+              '.schedule-detail-card'
+            )
+          : null;
+
+      const otherInfoAnchor =
+        generalNotesCard
+        || areaCard;
+
+      const otherInfoHeading =
+        document.createElement(
+          'p'
+        );
+
+      otherInfoHeading.className =
+        'eyebrow';
+
+      otherInfoHeading.textContent =
+        'その他の情報';
+
+
+      if (otherInfoAnchor) {
+        otherInfoAnchor.after(
+          otherInfoHeading
+        );
+      } else {
+        scheduleLinkedCustomerPanel.prepend(
+          otherInfoHeading
+        );
+      }
+
+
     } catch (error) {
 
       scheduleLinkedCustomerPanel.innerHTML = `
