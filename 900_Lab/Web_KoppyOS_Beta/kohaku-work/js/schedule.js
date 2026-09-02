@@ -3564,6 +3564,21 @@ function resetScheduleForm() {
     null;
 
 
+  document
+    .querySelectorAll(
+      '[data-schedule-customer-entry-mode]'
+    )
+    .forEach((button) => {
+
+      button.classList.toggle(
+        'is-selected',
+        button.dataset
+          .scheduleCustomerEntryMode
+        === 'new'
+      );
+    });
+
+
   if (scheduleRepeatCustomerName) {
     scheduleRepeatCustomerName.value =
       '';
