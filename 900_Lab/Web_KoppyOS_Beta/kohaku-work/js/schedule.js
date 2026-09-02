@@ -4671,33 +4671,6 @@ function updateScheduleDetailState(
 }
 
 
-function getIdentityFeatureLabel(
-  featureType
-) {
-
-  const labels = {
-    age_range: '年代',
-    height: '身長',
-    body_type: '体格',
-    hair: '髪',
-    facial_hair: 'ヒゲ',
-    glasses: '眼鏡',
-    appearance: '見た目',
-    lookalike: '似てる人',
-    occupation: '職業',
-    voice_speech: '声・話し方',
-    area: 'エリア',
-    hobby_topic: '趣味・話題',
-    other: 'その他',
-  };
-
-
-  return (
-    labels[featureType]
-    || featureType
-  );
-}
-
 async function loadScheduleIdentityFeatures() {
 
   if (
