@@ -5422,6 +5422,62 @@ async function openScheduleCustomerPanel() {
       `;
 
 
+      const areaInput =
+        scheduleLinkedCustomerPanel.querySelector(
+          '[data-customer-feature-input="area"]'
+        );
+
+      const areaLabel =
+        areaInput
+          ? areaInput.closest('label')
+          : null;
+
+      const generalNotesTextarea =
+        document.getElementById(
+          'schedule-customer-general-notes'
+        );
+
+      const generalNotesCard =
+        generalNotesTextarea
+          ? generalNotesTextarea.closest(
+              '.schedule-detail-card'
+            )
+          : null;
+
+
+      if (areaLabel) {
+
+        const areaCard =
+          document.createElement(
+            'div'
+          );
+
+        areaCard.className =
+          'schedule-detail-card';
+
+        areaCard.append(
+          areaLabel
+        );
+
+        scheduleLinkedCustomerPanel.prepend(
+          areaCard
+        );
+
+
+        if (generalNotesCard) {
+          areaCard.after(
+            generalNotesCard
+          );
+        }
+
+      } else if (generalNotesCard) {
+
+        scheduleLinkedCustomerPanel.prepend(
+          generalNotesCard
+        );
+      }
+
+
     } catch (error) {
 
       scheduleLinkedCustomerPanel.innerHTML = `
