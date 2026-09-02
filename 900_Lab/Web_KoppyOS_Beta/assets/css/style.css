@@ -209,11 +209,7 @@
 
     /* Brain status detail moved to assets/css/brain.css */
 
-    .proposal-title-group {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    /* Writer proposal title group moved to assets/css/writer.css */
 
     .mini-symbol {
       display: grid;
