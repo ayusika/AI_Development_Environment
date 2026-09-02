@@ -52,4 +52,14 @@
 
     getContext,
   };
+
+
+  window.KohakuSchedulePeriod.init({
+    scheduleState,
+    scheduleDateInput,
+    schedulePeriodTitle,
+    scheduleParseDate,
+    scheduleFormatDate,
+    loadSchedule,
+  });
 })();
