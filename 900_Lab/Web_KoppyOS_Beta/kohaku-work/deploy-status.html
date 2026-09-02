@@ -3345,6 +3345,11 @@
       forceWorkflowList:
         true,
     });
+
+    window.setInterval(
+      refreshFastStatuses,
+      FAST_STATUS_REFRESH_MS
+    );
   </script>
   <!-- WRITER:DEPLOY_STATUS_SCRIPT:END -->
 
