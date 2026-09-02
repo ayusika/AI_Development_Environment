@@ -7442,20 +7442,18 @@ function showScheduleMessage(
 
 function hideScheduleMessage() {
 
-  if (!scheduleFormMessage) {
-    return;
+  if (
+    !window.KohakuScheduleForm
+    || !window.KohakuScheduleForm.isActive()
+  ) {
+    throw new Error(
+      'Schedule Form module is not available.'
+    );
   }
 
 
-  scheduleFormMessage.hidden =
-    true;
-
-  scheduleFormMessage.textContent =
-    '';
-
-  scheduleFormMessage.classList.remove(
-    'is-error'
-  );
+  return window.KohakuScheduleForm
+    .hideScheduleMessage();
 }
 
 
