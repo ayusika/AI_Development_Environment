@@ -7202,17 +7202,20 @@ function scheduleCustomerStatusLabel(
   status
 ) {
 
-  const labels = {
-    new: '新規',
-    repeat: 'リピ',
-    other_store_repeat:
-      '他店リピ',
-    repeat_unknown_id:
-      'リピ・ID不明',
-  };
+  if (
+    !window.KohakuScheduleCustomerPanel
+    || !window.KohakuScheduleCustomerPanel.isActive()
+  ) {
+    throw new Error(
+      'Schedule Customer Panel module is not available.'
+    );
+  }
 
-  return labels[status]
-    || '未設定';
+
+  return window.KohakuScheduleCustomerPanel
+    .scheduleCustomerStatusLabel(
+      status
+    );
 }
 
 
