@@ -8340,14 +8340,6 @@ function escapeHtml(
 
 /* Schedule Drag runtime moved to ./schedule-drag.js. */
 
-/* Desktop Drop Save moved to ./schedule-drag.js. */
-
-/* Drag Preview moved to ./schedule-drag.js. */
-
-/* Touch Drag runtime moved to ./schedule-drag.js. */
-
-/* Touch Drop Save moved to ./schedule-drag.js. */
-
 /* ========================================
    SCHEDULE INITIAL POSITION
    today + current time centered
