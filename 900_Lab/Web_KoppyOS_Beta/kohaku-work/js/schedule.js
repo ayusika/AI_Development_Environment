@@ -6323,16 +6323,18 @@ function openCustomerCancelPanel() {
 
 function closeCustomerCancelPanel() {
 
-  if (scheduleCustomerCancelPanel) {
-    scheduleCustomerCancelPanel.hidden =
-      true;
+  if (
+    !window.KohakuScheduleCustomerPanel
+    || !window.KohakuScheduleCustomerPanel.isActive()
+  ) {
+    throw new Error(
+      'Schedule Customer Panel module is not available.'
+    );
   }
 
 
-  if (scheduleCustomerCancelReason) {
-    scheduleCustomerCancelReason.value =
-      '';
-  }
+  return window.KohakuScheduleCustomerPanel
+    .closeCustomerCancelPanel();
 }
 
 
