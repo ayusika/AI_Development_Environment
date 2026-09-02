@@ -64,4 +64,20 @@
 
     getContext,
   };
+
+
+  window.KohakuScheduleIdentity.init({
+    scheduleState,
+    visitIdentityFeaturesApiUrl,
+    customerIdentitySearchApiUrl,
+    scheduleIdentityFeatureType,
+    scheduleIdentityFeatureValue,
+    scheduleIdentityFeatureNote,
+    scheduleIdentityFeatureList,
+    scheduleIdentitySearchKeyword,
+    scheduleIdentitySearchStatus,
+    scheduleIdentitySearchStore,
+    scheduleIdentitySearchResults,
+    escapeHtml,
+  });
 })();
