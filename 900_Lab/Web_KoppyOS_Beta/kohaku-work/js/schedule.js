@@ -447,15 +447,19 @@ function formatScheduleMoney(
 ) {
 
   if (
-    value === null
-    || value === undefined
-    || value === ''
+    !window.KohakuScheduleSales
+    || !window.KohakuScheduleSales.isActive()
   ) {
-    return '未確認';
+    throw new Error(
+      'Schedule Sales module is not available.'
+    );
   }
 
 
-  return `¥${Number(value).toLocaleString('ja-JP')}`;
+  return window.KohakuScheduleSales
+    .formatScheduleMoney(
+      value
+    );
 }
 
 
