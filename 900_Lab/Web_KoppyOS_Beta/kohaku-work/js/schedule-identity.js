@@ -83,6 +83,121 @@
   }
 
 
+  async function loadScheduleIdentityFeatures() {
+
+    const {
+      scheduleState,
+      visitIdentityFeaturesApiUrl,
+      scheduleIdentityFeatureList,
+    } = getContext();
+
+
+    const visit =
+      scheduleState.selectedVisit;
+
+
+    if (
+      !visit
+      || !scheduleIdentityFeatureList
+    ) {
+      return;
+    }
+
+
+    scheduleIdentityFeatureList.innerHTML =
+      '<p>読み込み中...</p>';
+
+
+    try {
+
+      const response =
+        await fetch(
+          `${visitIdentityFeaturesApiUrl}?visit_id=${encodeURIComponent(
+            visit.id
+          )}`
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (
+        !response.ok
+        || !data.success
+      ) {
+        throw new Error(
+          data.error
+          || '構造化特徴を読み込めませんでした。'
+        );
+      }
+
+
+      const features =
+        Array.isArray(
+          data.data?.features
+        )
+          ? data.data.features
+          : [];
+
+
+      scheduleState.selectedVisit.identity_features =
+        features;
+
+
+      if (features.length === 0) {
+
+        scheduleIdentityFeatureList.innerHTML =
+          '<p>構造化特徴はまだありません。</p>';
+
+        return;
+      }
+
+
+      scheduleIdentityFeatureList.innerHTML =
+        features
+          .map(
+            (feature) => {
+
+              const label =
+                getIdentityFeatureLabel(
+                  feature.feature_type
+                );
+
+              const value =
+                String(
+                  feature.feature_value
+                  ?? ''
+                );
+
+              const note =
+                feature.note
+                  ? ` <small>${String(
+                      feature.note
+                    )}</small>`
+                  : '';
+
+
+              return `
+                <div class="schedule-identity-feature-item">
+                  <strong>${label}</strong>
+                  <span>${value}</span>
+                  ${note}
+                </div>
+              `;
+            }
+          )
+          .join('');
+
+
+    } catch (error) {
+
+      scheduleIdentityFeatureList.innerHTML =
+        `<p>${error.message}</p>`;
+    }
+  }
+
+
   window.KohakuScheduleIdentity = {
     init,
 
@@ -92,6 +207,7 @@
 
     getContext,
     getIdentityFeatureLabel,
+    loadScheduleIdentityFeatures,
   };
 
 
