@@ -3905,14 +3905,20 @@ async function saveScheduleVisit() {
 
     new_customer_name:
       !editId
-      && selectedCustomerStatus === 'new'
+      && (
+        selectedCustomerStatus === 'new'
+        || selectedCustomerStatus === 'repeat_unknown_id'
+      )
       && scheduleNewCustomerName
         ? scheduleNewCustomerName.value.trim()
         : '',
 
     new_customer_kashikoi_name:
       !editId
-      && selectedCustomerStatus === 'new'
+      && (
+        selectedCustomerStatus === 'new'
+        || selectedCustomerStatus === 'repeat_unknown_id'
+      )
       && scheduleNewCustomerKashikoiName
         ? scheduleNewCustomerKashikoiName.value.trim()
         : '',
