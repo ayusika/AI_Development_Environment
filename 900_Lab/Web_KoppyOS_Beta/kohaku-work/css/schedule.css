@@ -1251,6 +1251,78 @@ body:has(#view-schedule.is-active) .bottom-nav {
 }
 
 
+.schedule-customer-profile-details {
+  display: grid;
+  gap: 0;
+
+  margin-bottom: 14px;
+
+  border: 1px solid var(--line);
+  border-radius: 16px;
+
+  background: #ffffff;
+
+  overflow: hidden;
+}
+
+
+.schedule-customer-profile-details > summary {
+  min-height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+
+  padding: 12px 15px;
+
+  cursor: pointer;
+  list-style: none;
+
+  color: var(--text);
+
+  font-size: 12px;
+  font-weight: 900;
+}
+
+
+.schedule-customer-profile-details > summary::-webkit-details-marker {
+  display: none;
+}
+
+
+.schedule-customer-profile-details > summary::after {
+  content: '＋';
+
+  color: var(--accent-deep);
+
+  font-size: 16px;
+  font-weight: 700;
+}
+
+
+.schedule-customer-profile-details[open] > summary {
+  border-bottom: 1px solid var(--line);
+}
+
+
+.schedule-customer-profile-details[open] > summary::after {
+  content: '−';
+}
+
+
+.schedule-customer-profile-details > .schedule-detail-card {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+}
+
+
+.schedule-customer-profile-details > .schedule-detail-card:last-child {
+  border-bottom: 0;
+}
+
+
 .schedule-history-button {
   width: 100%;
   min-height: 50px;
