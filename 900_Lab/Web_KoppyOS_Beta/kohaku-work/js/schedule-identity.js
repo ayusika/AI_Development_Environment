@@ -443,6 +443,14 @@
             </h4>
 
             <p>
+              名前：
+              ${escapeHtml(
+                candidateVisit.customer_name
+                || '名前未登録'
+              )}
+            </p>
+
+            <p>
               日時：
               ${escapeHtml(
                 candidateVisit.started_at
