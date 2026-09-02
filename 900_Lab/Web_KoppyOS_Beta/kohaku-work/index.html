@@ -2506,12 +2506,12 @@
 
                 <p>
                   名前が分からない過去のお客様を、
-                  特徴や店舗から探します。
+                  特徴・カシコイ名・予約日・店舗から探します。
                 </p>
 
 
                 <label>
-                  <span>キーワード</span>
+                  <span>特徴キーワード</span>
 
                   <input
                     id="schedule-identity-search-keyword"
@@ -2521,6 +2521,35 @@
                     placeholder="例：少し太め、口ひげ、建築系"
                   >
                 </label>
+
+
+                <label>
+                  <span>カシコイ名</span>
+
+                  <input
+                    id="schedule-identity-search-kashikoi-name"
+                    type="search"
+                    maxlength="100"
+                    autocomplete="off"
+                    placeholder="例：カシコイで使っていた名前"
+                  >
+                </label>
+
+
+                <label>
+                  <span>過去の予約日</span>
+
+                  <input
+                    id="schedule-identity-search-visit-date"
+                    type="date"
+                  >
+                </label>
+
+
+                <small>
+                  どれか1つだけでも検索できます。
+                  複数条件はAND検索です。
+                </small>
 
 
                 <label>
