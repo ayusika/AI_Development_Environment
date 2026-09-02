@@ -756,6 +756,19 @@
                     )}
                   </strong>
 
+                  ${
+                    visit.customer_kashikoi_name
+                      ? `
+                        <span>
+                          カシコイ名：
+                          ${escapeHtml(
+                            visit.customer_kashikoi_name
+                          )}
+                        </span>
+                      `
+                      : ''
+                  }
+
                   <span>
                     ${escapeHtml(
                       visit.started_at
