@@ -206,6 +206,46 @@
   }
 
 
+  function updateSchedulePeriodTitle(
+    period
+  ) {
+
+    const {
+      schedulePeriodTitle,
+      scheduleParseDate,
+    } = getContext();
+
+
+    if (!schedulePeriodTitle) return;
+
+
+    const start =
+      scheduleParseDate(
+        period.start
+      );
+
+    const end =
+      scheduleParseDate(
+        period.end
+      );
+
+
+    if (
+      period.start === period.end
+    ) {
+
+      schedulePeriodTitle.textContent =
+        `${start.getFullYear()}年${start.getMonth() + 1}月${start.getDate()}日`;
+
+      return;
+    }
+
+
+    schedulePeriodTitle.textContent =
+      `${start.getMonth() + 1}/${start.getDate()} 〜 ${end.getMonth() + 1}/${end.getDate()}`;
+  }
+
+
   window.KohakuSchedulePeriod = {
     init,
 
@@ -216,6 +256,7 @@
     getContext,
     getSchedulePeriod,
     moveSchedulePeriod,
+    updateSchedulePeriodTitle,
   };
 
 
