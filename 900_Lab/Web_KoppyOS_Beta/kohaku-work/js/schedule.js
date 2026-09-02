@@ -864,54 +864,22 @@ function renderScheduleSalesMaster() {
 
 function updateScheduleCoursePriceSummary() {
 
-  if (!scheduleCoursePriceSummary) {
-    return;
+  if (
+    !window.KohakuScheduleSales
+    || !window.KohakuScheduleSales.isActive()
+  ) {
+    throw new Error(
+      'Schedule Sales module is not available.'
+    );
   }
 
 
-  if (!selectedScheduleCourseMaster) {
-
-    scheduleCoursePriceSummary.innerHTML = `
-      <span>
-        基本料金
-        <strong>未選択</strong>
-      </span>
-
-      <span>
-        コース手取り
-        <strong>未選択</strong>
-      </span>
-    `;
-
-    return;
-  }
-
-
-  scheduleCoursePriceSummary.innerHTML = `
-    <span>
-      基本料金
-      <strong>
-        ${escapeHtml(
-          formatScheduleMoney(
-            selectedScheduleCourseMaster
-              .base_price
-          )
-        )}
-      </strong>
-    </span>
-
-    <span>
-      コース手取り
-      <strong>
-        ${escapeHtml(
-          formatScheduleMoney(
-            selectedScheduleCourseMaster
-              .take_home
-          )
-        )}
-      </strong>
-    </span>
-  `;
+  return window.KohakuScheduleSales
+    .updateScheduleCoursePriceSummary({
+      scheduleCoursePriceSummary,
+      selectedScheduleCourseMaster,
+      escapeHtml,
+    });
 }
 
 
