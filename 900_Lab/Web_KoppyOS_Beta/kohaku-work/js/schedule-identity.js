@@ -578,6 +578,16 @@
     const keyword =
       scheduleIdentitySearchKeyword.value.trim();
 
+    const kashikoiName =
+      scheduleIdentitySearchKashikoiName
+        .value
+        .trim();
+
+    const visitDate =
+      scheduleIdentitySearchVisitDate
+        .value
+        .trim();
+
     const customerStatus =
       scheduleIdentitySearchStatus.value;
 
@@ -589,6 +599,22 @@
       params.set(
         'keyword',
         keyword
+      );
+    }
+
+
+    if (kashikoiName !== '') {
+      params.set(
+        'kashikoi_name',
+        kashikoiName
+      );
+    }
+
+
+    if (visitDate !== '') {
+      params.set(
+        'visit_date',
+        visitDate
       );
     }
 
