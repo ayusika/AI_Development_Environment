@@ -489,10 +489,19 @@
             </p>
 
             <p>
-              構造化特徴：
+              来店時の構造化特徴：
               ${escapeHtml(
                 renderFeatures(
                   candidateFeatures
+                )
+              )}
+            </p>
+
+            <p>
+              顧客本人の構造化特徴：
+              ${escapeHtml(
+                renderFeatures(
+                  candidateCustomerFeatures
                 )
               )}
             </p>
