@@ -78,6 +78,27 @@
   }
 
 
+  function closeCustomerCancelPanel() {
+
+    const {
+      scheduleCustomerCancelPanel,
+      scheduleCustomerCancelReason,
+    } = getContext();
+
+
+    if (scheduleCustomerCancelPanel) {
+      scheduleCustomerCancelPanel.hidden =
+        true;
+    }
+
+
+    if (scheduleCustomerCancelReason) {
+      scheduleCustomerCancelReason.value =
+        '';
+    }
+  }
+
+
   window.KohakuScheduleCustomerPanel = {
     init,
 
@@ -87,6 +108,7 @@
 
     getContext,
     closeScheduleCustomerPanel,
+    closeCustomerCancelPanel,
   };
 
 
@@ -95,5 +117,7 @@
     scheduleCustomerName,
     scheduleCustomerKashikoiName,
     scheduleCustomerFeatures,
+    scheduleCustomerCancelPanel,
+    scheduleCustomerCancelReason,
   });
 })();
