@@ -824,6 +824,195 @@
     }
 
 
+    .workflow-fast-status {
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      gap:
+        7px;
+
+      min-height:
+        38px;
+
+      margin-top:
+        13px;
+
+      padding:
+        8px 10px;
+
+      border:
+        1px solid
+        var(--line);
+
+      border-radius:
+        12px;
+
+      background:
+        var(--idle-soft);
+
+      color:
+        var(--idle);
+    }
+
+
+    .workflow-fast-status[data-kind="success"] {
+      border-color:
+        rgba(
+          40,
+          168,
+          107,
+          0.24
+        );
+
+      background:
+        var(--success-soft);
+
+      color:
+        var(--success);
+    }
+
+
+    .workflow-fast-status[data-kind="running"] {
+      border-color:
+        rgba(
+          69,
+          143,
+          210,
+          0.28
+        );
+
+      background:
+        var(--running-soft);
+
+      color:
+        var(--running);
+    }
+
+
+    .workflow-fast-status[data-kind="failure"] {
+      border-color:
+        rgba(
+          216,
+          78,
+          93,
+          0.24
+        );
+
+      background:
+        var(--failure-soft);
+
+      color:
+        var(--failure);
+    }
+
+
+    .workflow-fast-status[data-kind="warning"] {
+      border-color:
+        rgba(
+          215,
+          154,
+          43,
+          0.28
+        );
+
+      background:
+        var(--warning-soft);
+
+      color:
+        var(--warning);
+    }
+
+
+    .workflow-fast-status[data-kind="manual"] {
+      background:
+        var(--accent-soft);
+
+      color:
+        var(--accent);
+    }
+
+
+    .workflow-fast-status-dot {
+      width:
+        8px;
+
+      height:
+        8px;
+
+      flex:
+        0 0 auto;
+
+      border-radius:
+        50%;
+
+      background:
+        currentColor;
+    }
+
+
+    .workflow-fast-status-label {
+      flex:
+        0 0 auto;
+
+      font-size:
+        9px;
+
+      font-weight:
+        900;
+
+      letter-spacing:
+        0.08em;
+    }
+
+
+    .workflow-fast-status-value {
+      min-width:
+        0;
+
+      overflow:
+        hidden;
+
+      color:
+        currentColor;
+
+      font-size:
+        12px;
+
+      font-weight:
+        900;
+
+      text-overflow:
+        ellipsis;
+
+      white-space:
+        nowrap;
+    }
+
+
+    .workflow-fast-status-time {
+      margin-left:
+        auto;
+
+      flex:
+        0 0 auto;
+
+      color:
+        var(--muted);
+
+      font-size:
+        9px;
+
+      font-weight:
+        750;
+
+      white-space:
+        nowrap;
+    }
+
+
     .workflow-run-title {
       margin:
         14px 0 0;
