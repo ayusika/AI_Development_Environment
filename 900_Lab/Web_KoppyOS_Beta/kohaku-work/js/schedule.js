@@ -1788,37 +1788,20 @@ function moveSchedulePeriod(
   direction
 ) {
 
-  const current =
-    scheduleParseDate(
-      scheduleState.anchorDate
-    );
-
-  let amount = 1;
-
-  if (scheduleState.view === 'week') {
-    amount = 7;
-  }
-
   if (
-    scheduleState.view === 'two-weeks'
+    !window.KohakuSchedulePeriod
+    || !window.KohakuSchedulePeriod.isActive()
   ) {
-    amount = 14;
+    throw new Error(
+      'Schedule Period module is not available.'
+    );
   }
 
-  current.setDate(
-    current.getDate()
-    + amount * direction
-  );
 
-  scheduleState.anchorDate =
-    scheduleFormatDate(current);
-
-  if (scheduleDateInput) {
-    scheduleDateInput.value =
-      scheduleState.anchorDate;
-  }
-
-  loadSchedule();
+  return window.KohakuSchedulePeriod
+    .moveSchedulePeriod(
+      direction
+    );
 }
 
 
