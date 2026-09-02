@@ -3430,32 +3430,53 @@ function selectScheduleRepeatCustomer(
 
 function syncScheduleNewCustomerFields() {
 
-  const isNewReservation =
-    !Number(
-      scheduleEditId?.value
-      || 0
+  const entryModePanel =
+    document.getElementById(
+      'schedule-customer-entry-mode'
     );
+
+  const selectedEntryModeButton =
+    document.querySelector(
+      '[data-schedule-customer-entry-mode].is-selected'
+    );
+
+  const entryMode =
+    selectedEntryModeButton
+      ?.dataset
+      ?.scheduleCustomerEntryMode
+    || 'new';
+
+  const isRepeat =
+    selectedCustomerStatus
+    === 'repeat_unknown_id';
+
+
+  if (entryModePanel) {
+    entryModePanel.hidden =
+      !isRepeat;
+  }
 
 
   if (scheduleNewCustomerFields) {
 
-    scheduleNewCustomerFields.hidden =
-      !(
-        isNewReservation
-        && (
-          selectedCustomerStatus === 'new'
-          || selectedCustomerStatus === 'repeat_unknown_id'
-        )
+    const showNewCustomerFields =
+      selectedCustomerStatus === 'new'
+      || (
+        isRepeat
+        && entryMode === 'new'
       );
+
+
+    scheduleNewCustomerFields.hidden =
+      !showNewCustomerFields;
   }
 
 
   if (scheduleRepeatCustomerFields) {
 
     const showRepeatSearch =
-      isNewReservation
-      && selectedCustomerStatus
-        === 'repeat_unknown_id';
+      isRepeat
+      && entryMode === 'search';
 
 
     scheduleRepeatCustomerFields.hidden =
