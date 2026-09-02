@@ -1532,10 +1532,17 @@ try {
 
         if (
             $hasNewCustomerName
-            && $customerStatus !== 'new'
+            && !in_array(
+                $customerStatus,
+                [
+                    'new',
+                    'repeat_unknown_id',
+                ],
+                true
+            )
         ) {
             throw new RuntimeException(
-                'New customer names require customer_status new.'
+                'New customer names require customer_status new or repeat_unknown_id.'
             );
         }
 
