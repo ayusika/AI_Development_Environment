@@ -3442,7 +3442,10 @@ function syncScheduleNewCustomerFields() {
     scheduleNewCustomerFields.hidden =
       !(
         isNewReservation
-        && selectedCustomerStatus === 'new'
+        && (
+          selectedCustomerStatus === 'new'
+          || selectedCustomerStatus === 'repeat_unknown_id'
+        )
       );
   }
 
