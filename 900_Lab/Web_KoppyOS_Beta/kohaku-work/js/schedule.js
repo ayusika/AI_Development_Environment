@@ -408,35 +408,20 @@ function setScheduleZoom(
   nextHeight
 ) {
 
-  const page =
-    document.querySelector(
-      '.schedule-page'
+  if (
+    !window.KohakuScheduleZoom
+    || !window.KohakuScheduleZoom.isActive()
+  ) {
+    throw new Error(
+      'Schedule Zoom module is not available.'
     );
+  }
 
-  if (!page) return;
 
-  const clampedHeight =
-    Math.min(
-      scheduleZoom.maxHourHeight,
-      Math.max(
-        scheduleZoom.minHourHeight,
-        nextHeight
-      )
+  return window.KohakuScheduleZoom
+    .setScheduleZoom(
+      nextHeight
     );
-
-  page.style.setProperty(
-    '--schedule-hour-height',
-    `${clampedHeight}px`
-  );
-
-  const period =
-    getSchedulePeriod();
-
-  renderScheduleCalendar(
-    period
-  );
-
-  updateScheduleZoomLabel();
 }
 
 
