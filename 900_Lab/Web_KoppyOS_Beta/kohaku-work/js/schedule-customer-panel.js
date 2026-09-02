@@ -10,6 +10,8 @@
     scheduleCustomerName,
     scheduleCustomerKashikoiName,
     scheduleCustomerFeatures,
+    scheduleCustomerCancelPanel,
+    scheduleCustomerCancelReason,
   }) {
 
     if (context) {
@@ -22,6 +24,8 @@
       scheduleCustomerName,
       scheduleCustomerKashikoiName,
       scheduleCustomerFeatures,
+      scheduleCustomerCancelPanel,
+      scheduleCustomerCancelReason,
     };
   }
 
