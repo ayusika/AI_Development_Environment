@@ -8908,6 +8908,14 @@ document.addEventListener(
     }
 
 
+    if (
+      window.KohakuScheduleDrag
+      && window.KohakuScheduleDrag.isActive()
+    ) {
+      return;
+    }
+
+
     const card =
       event.target.closest(
         '[data-schedule-event]'
