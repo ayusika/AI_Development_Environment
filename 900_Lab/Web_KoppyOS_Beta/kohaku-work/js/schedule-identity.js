@@ -965,6 +965,8 @@
     scheduleIdentityFeatureNote,
     scheduleIdentityFeatureList,
     scheduleIdentitySearchKeyword,
+    scheduleIdentitySearchKashikoiName,
+    scheduleIdentitySearchVisitDate,
     scheduleIdentitySearchStatus,
     scheduleIdentitySearchStore,
     scheduleIdentitySearchResults,
