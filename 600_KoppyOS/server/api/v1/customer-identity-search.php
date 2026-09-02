@@ -298,6 +298,20 @@ try {
                                 OR vif_search.note LIKE ?
                             )
                     )
+
+                    OR EXISTS (
+                        SELECT 1
+
+                        FROM customer_identity_features cif_search
+
+                        WHERE
+                            cif_search.customer_id = v.customer_id
+
+                            AND (
+                                cif_search.feature_value LIKE ?
+                                OR cif_search.note LIKE ?
+                            )
+                    )
                 )
                 ";
 
@@ -305,6 +319,12 @@ try {
             $likeKeyword =
                 '%' . $keywordPart . '%';
 
+
+            $parameters[] =
+                $likeKeyword;
+
+            $parameters[] =
+                $likeKeyword;
 
             $parameters[] =
                 $likeKeyword;
