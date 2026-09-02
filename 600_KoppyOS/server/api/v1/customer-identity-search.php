@@ -699,6 +699,12 @@ try {
                     'keyword' =>
                         $keyword,
 
+                    'kashikoi_name' =>
+                        $kashikoiName,
+
+                    'visit_date' =>
+                        $visitDate,
+
                     'customer_status' =>
                         $customerStatus,
 
