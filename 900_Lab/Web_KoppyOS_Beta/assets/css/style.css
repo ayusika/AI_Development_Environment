@@ -374,8 +374,7 @@
 
       /* Home mobile shell styles moved to assets/css/home.css */
 
-      .status-grid,
-      .patch-preview-grid {
+      .status-grid {
         grid-template-columns: 1fr;
       }
 
@@ -383,21 +382,5 @@
         width: 100%;
       }
 
-      .proposal-panel {
-        padding: 20px;
-      }
-
-      .proposal-header,
-      .proposal-preview-head {
-        align-items: flex-start;
-        flex-direction: column;
-      }
-
-      .proposal-actions {
-        justify-content: stretch;
-      }
-
-      .proposal-actions button {
-        width: 100%;
-      }
+      /* Writer proposal mobile styles moved to assets/css/writer.css */
     }
