@@ -5434,28 +5434,18 @@ async function openScheduleCustomerPanel() {
 
 function closeScheduleCustomerPanel() {
 
-  if (scheduleCustomerPanel) {
-    scheduleCustomerPanel.hidden =
-      true;
+  if (
+    !window.KohakuScheduleCustomerPanel
+    || !window.KohakuScheduleCustomerPanel.isActive()
+  ) {
+    throw new Error(
+      'Schedule Customer Panel module is not available.'
+    );
   }
 
 
-  if (scheduleCustomerName) {
-    scheduleCustomerName.value =
-      '';
-  }
-
-
-  if (scheduleCustomerKashikoiName) {
-    scheduleCustomerKashikoiName.value =
-      '';
-  }
-
-
-  if (scheduleCustomerFeatures) {
-    scheduleCustomerFeatures.value =
-      '';
-  }
+  return window.KohakuScheduleCustomerPanel
+    .closeScheduleCustomerPanel();
 }
 
 
