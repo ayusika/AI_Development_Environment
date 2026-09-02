@@ -542,6 +542,22 @@ try {
                     LIMIT 1
                 ) AS customer_name,
 
+                (
+                    SELECT cn_kashikoi_display.name
+
+                    FROM customer_names cn_kashikoi_display
+
+                    WHERE
+                        cn_kashikoi_display.customer_id = v.customer_id
+                        AND cn_kashikoi_display.name_type = 'kashikoi'
+
+                    ORDER BY
+                        cn_kashikoi_display.is_primary DESC,
+                        cn_kashikoi_display.id ASC
+
+                    LIMIT 1
+                ) AS customer_kashikoi_name,
+
                 v.started_at,
                 v.booked_at,
                 v.course_minutes,
