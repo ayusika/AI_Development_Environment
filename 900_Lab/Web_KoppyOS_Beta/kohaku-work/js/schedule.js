@@ -6289,35 +6289,18 @@ async function createScheduleCustomer() {
 
 function openCustomerCancelPanel() {
 
-  const visit =
-    scheduleState.selectedVisit;
-
   if (
-    !visit
-    || !scheduleCustomerCancelPanel
-    || !Boolean(
-      Number(
-        visit.customer_linked
-      )
-    )
+    !window.KohakuScheduleCustomerPanel
+    || !window.KohakuScheduleCustomerPanel.isActive()
   ) {
-    return;
+    throw new Error(
+      'Schedule Customer Panel module is not available.'
+    );
   }
 
 
-  if (scheduleCustomerCancelReason) {
-    scheduleCustomerCancelReason.value =
-      '';
-  }
-
-
-  scheduleCustomerCancelPanel.hidden =
-    false;
-
-
-  if (scheduleCustomerCancelReason) {
-    scheduleCustomerCancelReason.focus();
-  }
+  return window.KohakuScheduleCustomerPanel
+    .openCustomerCancelPanel();
 }
 
 
