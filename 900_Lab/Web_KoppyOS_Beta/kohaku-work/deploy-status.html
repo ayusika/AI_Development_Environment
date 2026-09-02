@@ -3252,7 +3252,10 @@
         refreshButton.disabled =
           false;
 
-        scheduleNextRefresh();
+        nextRefreshAt =
+          0;
+
+        updateCountdown();
       }
     }
 
