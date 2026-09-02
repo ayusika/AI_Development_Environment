@@ -376,6 +376,37 @@ try {
     }
 
 
+    if ($kashikoiName !== '') {
+
+        $whereConditions[] =
+            "
+            EXISTS (
+                SELECT 1
+
+                FROM customer_names cn_kashikoi
+
+                WHERE
+                    cn_kashikoi.customer_id = v.customer_id
+                    AND cn_kashikoi.name_type = 'kashikoi'
+                    AND cn_kashikoi.name LIKE ?
+            )
+            ";
+
+        $parameters[] =
+            '%' . $kashikoiName . '%';
+    }
+
+
+    if ($visitDate !== '') {
+
+        $whereConditions[] =
+            'v.started_at LIKE ?';
+
+        $parameters[] =
+            $visitDate . '%';
+    }
+
+
     if ($keyword !== '') {
 
         $keywordParts =
