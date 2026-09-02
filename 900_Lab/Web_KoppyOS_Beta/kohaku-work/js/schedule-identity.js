@@ -329,6 +329,14 @@
         : [];
 
 
+    const candidateCustomerFeatures =
+      Array.isArray(
+        candidateVisit.customer_identity_features
+      )
+        ? candidateVisit.customer_identity_features
+        : [];
+
+
     let confirmation =
       document.getElementById(
         'schedule-identity-candidate-confirmation'
