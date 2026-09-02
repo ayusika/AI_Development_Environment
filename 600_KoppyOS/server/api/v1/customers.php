@@ -1468,6 +1468,12 @@ try {
 
             SET
                 customer_id = ?,
+                customer_status =
+                    CASE
+                        WHEN customer_status = 'repeat_unknown_id'
+                        THEN 'repeat'
+                        ELSE customer_status
+                    END,
                 updated_at =
                     strftime(
                         '%Y-%m-%d %H:%M',
