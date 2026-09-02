@@ -148,6 +148,64 @@
   }
 
 
+  function moveSchedulePeriod(
+    direction
+  ) {
+
+    const {
+      scheduleState,
+      scheduleDateInput,
+      scheduleParseDate,
+      scheduleFormatDate,
+      loadSchedule,
+    } = getContext();
+
+
+    const current =
+      scheduleParseDate(
+        scheduleState.anchorDate
+      );
+
+
+    let amount = 1;
+
+
+    if (
+      scheduleState.view === 'week'
+    ) {
+      amount = 7;
+    }
+
+
+    if (
+      scheduleState.view === 'two-weeks'
+    ) {
+      amount = 14;
+    }
+
+
+    current.setDate(
+      current.getDate()
+      + amount * direction
+    );
+
+
+    scheduleState.anchorDate =
+      scheduleFormatDate(
+        current
+      );
+
+
+    if (scheduleDateInput) {
+      scheduleDateInput.value =
+        scheduleState.anchorDate;
+    }
+
+
+    loadSchedule();
+  }
+
+
   window.KohakuSchedulePeriod = {
     init,
 
@@ -157,6 +215,7 @@
 
     getContext,
     getSchedulePeriod,
+    moveSchedulePeriod,
   };
 
 
