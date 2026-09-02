@@ -503,6 +503,46 @@ try {
         );
 
 
+    $customerIds =
+        [];
+
+
+    foreach (
+        $visits
+        as $visit
+    ) {
+
+        $customerId =
+            (int)
+            (
+                $visit['customer_id']
+                ?? 0
+            );
+
+
+        if ($customerId > 0) {
+
+            $customerIds[] =
+                $customerId;
+        }
+    }
+
+
+    $customerIds =
+        array_values(
+            array_unique(
+                $customerIds
+            )
+        );
+
+
+    $featuresByCustomer =
+        fetchIdentityFeaturesByCustomerIds(
+            $pdo,
+            $customerIds
+        );
+
+
     foreach (
         $visits
         as &$visit
@@ -512,12 +552,30 @@ try {
             (int)
             $visit['id'];
 
+        $customerId =
+            (int)
+            (
+                $visit['customer_id']
+                ?? 0
+            );
+
 
         $visit['identity_features'] =
             $featuresByVisit[
                 $visitId
             ]
             ?? [];
+
+
+        $visit['customer_identity_features'] =
+            $customerId > 0
+                ? (
+                    $featuresByCustomer[
+                        $customerId
+                    ]
+                    ?? []
+                )
+                : [];
     }
 
     unset($visit);
