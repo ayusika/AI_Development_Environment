@@ -3134,41 +3134,6 @@
     }
 
 
-    function scheduleNextRefresh() {
-      window.clearTimeout(
-        refreshTimer
-      );
-
-      window.clearInterval(
-        countdownTimer
-      );
-
-
-      nextRefreshAt =
-        Date.now()
-        + RUN_REFRESH_MS;
-
-
-      updateCountdown();
-
-
-      countdownTimer =
-        window.setInterval(
-          updateCountdown,
-          1000
-        );
-
-
-      refreshTimer =
-        window.setTimeout(
-          () => {
-            refreshStatus();
-          },
-          RUN_REFRESH_MS
-        );
-    }
-
-
     async function refreshStatus(
       options = {}
     ) {
