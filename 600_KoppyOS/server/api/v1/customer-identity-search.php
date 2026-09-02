@@ -400,6 +400,16 @@ try {
                                 OR cif_search.note LIKE ?
                             )
                     )
+
+                    OR EXISTS (
+                        SELECT 1
+
+                        FROM customer_names cn_search
+
+                        WHERE
+                            cn_search.customer_id = v.customer_id
+                            AND cn_search.name LIKE ?
+                    )
                 )
                 ";
 
@@ -407,6 +417,9 @@ try {
             $likeKeyword =
                 '%' . $keywordPart . '%';
 
+
+            $parameters[] =
+                $likeKeyword;
 
             $parameters[] =
                 $likeKeyword;
