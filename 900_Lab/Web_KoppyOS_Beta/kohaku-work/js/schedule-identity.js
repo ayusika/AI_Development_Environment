@@ -347,7 +347,16 @@
 
       confirmation.className =
         'schedule-identity-candidate-confirmation';
+    }
 
+
+    if (result) {
+
+      result.after(
+        confirmation
+      );
+
+    } else {
 
       scheduleIdentitySearchResults.after(
         confirmation
