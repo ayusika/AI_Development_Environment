@@ -5621,6 +5621,104 @@ async function openScheduleCustomerPanel() {
       }
 
 
+      const customerNameInput =
+        scheduleLinkedCustomerPanel.querySelector(
+          '[data-customer-name-input]'
+        );
+
+      const customerNamesCard =
+        customerNameInput
+          ? customerNameInput.closest(
+              '.schedule-detail-card'
+            )
+          : null;
+
+      const acquisitionInput =
+        document.getElementById(
+          'schedule-customer-acquisition-source'
+        );
+
+      const acquisitionCard =
+        acquisitionInput
+          ? acquisitionInput.closest(
+              '.schedule-detail-card'
+            )
+          : null;
+
+      const customerBasicCard =
+        Array.from(
+          scheduleLinkedCustomerPanel.querySelectorAll(
+            '.schedule-detail-card'
+          )
+        )
+          .find(
+            (card) =>
+              card.textContent.includes(
+                '顧客ID'
+              )
+          )
+        || null;
+
+
+      const profileCards =
+        [
+          customerBasicCard,
+          customerNamesCard,
+          acquisitionCard,
+        ]
+          .filter(Boolean);
+
+
+      if (profileCards.length) {
+
+        const profileDetails =
+          document.createElement(
+            'details'
+          );
+
+        profileDetails.className =
+          'schedule-customer-profile-details';
+
+
+        const profileSummary =
+          document.createElement(
+            'summary'
+          );
+
+        profileSummary.textContent =
+          'プロフィール詳細';
+
+
+        profileDetails.append(
+          profileSummary
+        );
+
+
+        profileCards.forEach(
+          (card) => {
+            profileDetails.append(
+              card
+            );
+          }
+        );
+
+
+        if (customerFeaturesCard) {
+          customerFeaturesCard.after(
+            profileDetails
+          );
+        } else if (visitHistoryCard) {
+          visitHistoryCard.after(
+            profileDetails
+          );
+        } else {
+          otherInfoHeading.after(
+            profileDetails
+          );
+        }
+      }
+
+
     } catch (error) {
 
       scheduleLinkedCustomerPanel.innerHTML = `
