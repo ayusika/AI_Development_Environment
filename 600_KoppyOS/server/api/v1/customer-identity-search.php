@@ -449,6 +449,22 @@ try {
                 v.store_id,
                 s.name AS store_name,
                 v.customer_id,
+
+                (
+                    SELECT cn.name
+
+                    FROM customer_names cn
+
+                    WHERE
+                        cn.customer_id = v.customer_id
+
+                    ORDER BY
+                        cn.is_primary DESC,
+                        cn.id ASC
+
+                    LIMIT 1
+                ) AS customer_name,
+
                 v.started_at,
                 v.booked_at,
                 v.course_minutes,
