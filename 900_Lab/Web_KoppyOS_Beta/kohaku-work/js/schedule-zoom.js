@@ -121,6 +121,32 @@
   }
 
 
+  function getScheduleHourHeight() {
+
+    const page =
+      document.querySelector(
+        '.schedule-page'
+      );
+
+    if (!page) {
+      return 96;
+    }
+
+
+    const value =
+      getComputedStyle(page)
+        .getPropertyValue(
+          '--schedule-hour-height'
+        )
+        .trim();
+
+
+    return Number(
+      value.replace('px', '')
+    ) || 96;
+  }
+
+
   window.KohakuScheduleZoom = {
     init,
 
@@ -131,6 +157,7 @@
     getContext,
     setScheduleZoom,
     updateScheduleZoomLabel,
+    getScheduleHourHeight,
   };
 
 
