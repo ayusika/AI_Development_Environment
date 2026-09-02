@@ -4459,6 +4459,16 @@ function openScheduleDetail(
     'aria-hidden',
     'false'
   );
+
+
+  if (
+    Number(
+      visit.customer_id
+      || 0
+    )
+  ) {
+    openScheduleCustomerPanel();
+  }
 }
 
 
