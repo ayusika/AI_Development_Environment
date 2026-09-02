@@ -7422,21 +7422,21 @@ function showScheduleMessage(
   isError = false
 ) {
 
-  if (!scheduleFormMessage) {
-    return;
+  if (
+    !window.KohakuScheduleForm
+    || !window.KohakuScheduleForm.isActive()
+  ) {
+    throw new Error(
+      'Schedule Form module is not available.'
+    );
   }
 
 
-  scheduleFormMessage.hidden =
-    false;
-
-  scheduleFormMessage.textContent =
-    message;
-
-  scheduleFormMessage.classList.toggle(
-    'is-error',
-    isError
-  );
+  return window.KohakuScheduleForm
+    .showScheduleMessage(
+      message,
+      isError
+    );
 }
 
 
