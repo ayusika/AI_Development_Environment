@@ -2403,6 +2403,292 @@
     }
 
 
+    function findWorkflowCard(
+      workflowPath
+    ) {
+      return Array.from(
+        workflowListElement.querySelectorAll(
+          '[data-workflow-path]'
+        )
+      ).find(
+        (card) =>
+          card.dataset.workflowPath
+          === workflowPath
+      )
+      || null;
+    }
+
+
+    function getFastStatusDisplay(
+      source,
+      payload
+    ) {
+      if (!payload) {
+        return {
+          kind:
+            'idle',
+
+          value:
+            source.missingLabel,
+
+          time:
+            '--',
+        };
+      }
+
+
+      const status =
+        String(
+          payload.status
+          || ''
+        );
+
+      const updatedAt =
+        payload.updated_at
+        || null;
+
+      const updatedTime =
+        updatedAt
+          ? new Date(
+              updatedAt
+            ).getTime()
+          : NaN;
+
+
+      if (
+        status === 'running'
+        &&
+        Number.isFinite(
+          updatedTime
+        )
+        &&
+        (
+          Date.now()
+          - updatedTime
+        ) > FAST_STATUS_STALE_MS
+      ) {
+        return {
+          kind:
+            'warning',
+
+          value:
+            `${source.runningLabel}（更新停滞）`,
+
+          time:
+            formatDateTime(
+              updatedAt
+            ),
+        };
+      }
+
+
+      if (status === 'running') {
+        return {
+          kind:
+            'running',
+
+          value:
+            source.runningLabel,
+
+          time:
+            formatDateTime(
+              updatedAt
+            ),
+        };
+      }
+
+
+      if (status === 'success') {
+        return {
+          kind:
+            'success',
+
+          value:
+            source.successLabel,
+
+          time:
+            formatDateTime(
+              updatedAt
+            ),
+        };
+      }
+
+
+      if (status === 'failure') {
+        return {
+          kind:
+            'failure',
+
+          value:
+            source.failureLabel,
+
+          time:
+            formatDateTime(
+              updatedAt
+            ),
+        };
+      }
+
+
+      return {
+        kind:
+          'warning',
+
+        value:
+          `不明な状態: ${status || '--'}`,
+
+        time:
+          formatDateTime(
+            updatedAt
+          ),
+      };
+    }
+
+
+    async function loadFastStatus(
+      source
+    ) {
+      const separator =
+        source.url.includes('?')
+          ? '&'
+          : '?';
+
+      const response =
+        await fetch(
+          `${source.url}${separator}_=${Date.now()}`,
+          {
+            cache:
+              'no-store',
+          }
+        );
+
+
+      if (response.status === 404) {
+        return null;
+      }
+
+
+      if (!response.ok) {
+        throw new Error(
+          `Fast status error: ${response.status}`
+        );
+      }
+
+
+      return response.json();
+    }
+
+
+    async function refreshFastStatuses() {
+      if (fastStatusRefreshInFlight) {
+        return;
+      }
+
+
+      fastStatusRefreshInFlight =
+        true;
+
+
+      try {
+        await Promise.all(
+          Object.entries(
+            FAST_STATUS_SOURCES
+          ).map(
+            async (
+              [
+                workflowPath,
+                source,
+              ]
+            ) => {
+
+              const card =
+                findWorkflowCard(
+                  workflowPath
+                );
+
+
+              if (!card) {
+                return;
+              }
+
+
+              const fastStatusElement =
+                card.querySelector(
+                  '[data-fast-status]'
+                );
+
+              const valueElement =
+                card.querySelector(
+                  '[data-fast-status-value]'
+                );
+
+              const timeElement =
+                card.querySelector(
+                  '[data-fast-status-time]'
+                );
+
+
+              if (
+                !fastStatusElement
+                ||
+                !valueElement
+                ||
+                !timeElement
+              ) {
+                return;
+              }
+
+
+              try {
+                const payload =
+                  await loadFastStatus(
+                    source
+                  );
+
+                const display =
+                  getFastStatusDisplay(
+                    source,
+                    payload
+                  );
+
+
+                fastStatusElement.dataset.kind =
+                  display.kind;
+
+                valueElement.textContent =
+                  display.value;
+
+                timeElement.textContent =
+                  display.time;
+
+              } catch (error) {
+                console.warn(
+                  'Fast deploy status fetch failed.',
+                  workflowPath,
+                  error
+                );
+
+
+                fastStatusElement.dataset.kind =
+                  'warning';
+
+                valueElement.textContent =
+                  '高速状態の取得失敗';
+
+                timeElement.textContent =
+                  '--';
+              }
+            }
+          )
+        );
+
+      } finally {
+        fastStatusRefreshInFlight =
+          false;
+      }
+    }
+
+
     async function githubFetch(url) {
       const response =
         await fetch(
