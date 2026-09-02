@@ -3099,32 +3099,8 @@
 
 
     function updateCountdown() {
-      if (
-        nextRefreshAt <= 0
-      ) {
-        nextRefreshElement.textContent =
-          '詳細更新: 手動';
-
-        return;
-      }
-
-
-      const remainingMs =
-        Math.max(
-          0,
-          nextRefreshAt
-          - Date.now()
-        );
-
-      const remainingSeconds =
-        Math.ceil(
-          remainingMs
-          / 1000
-        );
-
-
       nextRefreshElement.textContent =
-        `次回更新: ${remainingSeconds}秒後`;
+        '詳細更新: 手動';
     }
 
 
