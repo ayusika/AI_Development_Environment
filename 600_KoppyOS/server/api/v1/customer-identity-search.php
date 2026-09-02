@@ -146,6 +146,94 @@ function fetchIdentityFeaturesByVisitIds(
 }
 
 
+function fetchIdentityFeaturesByCustomerIds(
+    PDO $pdo,
+    array $customerIds
+): array {
+
+    if ($customerIds === []) {
+        return [];
+    }
+
+
+    $placeholders =
+        implode(
+            ',',
+            array_fill(
+                0,
+                count($customerIds),
+                '?'
+            )
+        );
+
+
+    $statement =
+        $pdo->prepare(
+            "
+            SELECT
+                id,
+                customer_id,
+                feature_type,
+                feature_value,
+                note,
+                created_at,
+                updated_at
+
+            FROM customer_identity_features
+
+            WHERE customer_id IN ({$placeholders})
+
+            ORDER BY
+                customer_id DESC,
+                id ASC
+            "
+        );
+
+
+    $statement->execute(
+        $customerIds
+    );
+
+
+    $featuresByCustomer =
+        [];
+
+
+    foreach (
+        $statement->fetchAll()
+        as $feature
+    ) {
+
+        $customerId =
+            (int)
+            $feature['customer_id'];
+
+
+        if (
+            !isset(
+                $featuresByCustomer[
+                    $customerId
+                ]
+            )
+        ) {
+            $featuresByCustomer[
+                $customerId
+            ] = [];
+        }
+
+
+        $featuresByCustomer[
+            $customerId
+        ][] =
+            $feature;
+    }
+
+
+    return
+        $featuresByCustomer;
+}
+
+
 /* =========================================================
    MAIN
 ========================================================= */
