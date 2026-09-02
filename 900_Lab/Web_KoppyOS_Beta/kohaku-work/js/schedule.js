@@ -226,6 +226,16 @@ const scheduleIdentitySearchKeyword =
     'schedule-identity-search-keyword'
   );
 
+const scheduleIdentitySearchKashikoiName =
+  document.getElementById(
+    'schedule-identity-search-kashikoi-name'
+  );
+
+const scheduleIdentitySearchVisitDate =
+  document.getElementById(
+    'schedule-identity-search-visit-date'
+  );
+
 const scheduleIdentitySearchStatus =
   document.getElementById(
     'schedule-identity-search-status'
