@@ -427,23 +427,18 @@ function setScheduleZoom(
 
 function updateScheduleZoomLabel() {
 
-  const label =
-    document.getElementById(
-      'schedule-zoom-label'
+  if (
+    !window.KohakuScheduleZoom
+    || !window.KohakuScheduleZoom.isActive()
+  ) {
+    throw new Error(
+      'Schedule Zoom module is not available.'
     );
+  }
 
-  if (!label) return;
 
-  const currentHeight =
-    getScheduleHourHeight();
-
-  const percent =
-    Math.round(
-      currentHeight / 96 * 100
-    );
-
-  label.textContent =
-    `${percent}%`;
+  return window.KohakuScheduleZoom
+    .updateScheduleZoomLabel();
 }
 
 
