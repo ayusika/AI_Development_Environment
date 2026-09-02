@@ -7309,27 +7309,18 @@ function scheduleParseDate(
 
 function getScheduleHourHeight() {
 
-  const page =
-    document.querySelector(
-      '.schedule-page'
+  if (
+    !window.KohakuScheduleZoom
+    || !window.KohakuScheduleZoom.isActive()
+  ) {
+    throw new Error(
+      'Schedule Zoom module is not available.'
     );
-
-  if (!page) {
-    return 96;
   }
 
 
-  const value =
-    getComputedStyle(page)
-      .getPropertyValue(
-        '--schedule-hour-height'
-      )
-      .trim();
-
-
-  return Number(
-    value.replace('px', '')
-  ) || 96;
+  return window.KohakuScheduleZoom
+    .getScheduleHourHeight();
 }
 
 
