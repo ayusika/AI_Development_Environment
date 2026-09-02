@@ -1590,6 +1590,36 @@ document.addEventListener(
     }
 
 
+    const customerEntryModeButton =
+      event.target.closest(
+        '[data-schedule-customer-entry-mode]'
+      );
+
+
+    if (customerEntryModeButton) {
+
+      selectedScheduleCustomerId =
+        null;
+
+      document
+        .querySelectorAll(
+          '[data-schedule-customer-entry-mode]'
+        )
+        .forEach((button) => {
+
+          button.classList.toggle(
+            'is-selected',
+            button === customerEntryModeButton
+          );
+        });
+
+
+      syncScheduleNewCustomerFields();
+
+      return;
+    }
+
+
     const statusButton =
       event.target.closest(
         '[data-customer-status]'
