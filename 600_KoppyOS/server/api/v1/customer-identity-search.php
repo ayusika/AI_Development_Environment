@@ -280,6 +280,26 @@ try {
         );
 
 
+    $kashikoiName =
+        trim(
+            (string)
+            (
+                $_GET['kashikoi_name']
+                ?? ''
+            )
+        );
+
+
+    $visitDate =
+        trim(
+            (string)
+            (
+                $_GET['visit_date']
+                ?? ''
+            )
+        );
+
+
     $customerStatus =
         trim(
             (string)
@@ -303,6 +323,19 @@ try {
     validateIdentitySearchCustomerStatus(
         $customerStatus
     );
+
+
+    if (
+        $visitDate !== ''
+        && !preg_match(
+            '/^\d{4}-\d{2}-\d{2}$/',
+            $visitDate
+        )
+    ) {
+        throw new RuntimeException(
+            'visit_date must be YYYY-MM-DD.'
+        );
+    }
 
 
     if (
