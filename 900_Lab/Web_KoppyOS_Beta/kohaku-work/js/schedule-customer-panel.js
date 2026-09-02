@@ -6,6 +6,7 @@
 
 
   function init({
+    scheduleState,
     scheduleCustomerPanel,
     scheduleCustomerName,
     scheduleCustomerKashikoiName,
@@ -20,6 +21,7 @@
 
 
     context = {
+      scheduleState,
       scheduleCustomerPanel,
       scheduleCustomerName,
       scheduleCustomerKashikoiName,
