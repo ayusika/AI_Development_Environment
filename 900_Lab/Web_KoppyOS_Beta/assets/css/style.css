@@ -830,10 +830,7 @@
         padding: 20px 12px 34px;
       }
 
-      .shell {
-        padding: 14px;
-        border-radius: 24px;
-      }
+      /* Home mobile shell styles moved to assets/css/home.css */
 
       .status-grid,
       .patch-preview-grid {
