@@ -1034,4 +1034,13 @@
       return initialized;
     },
   };
+
+
+  window.KohakuScheduleDrag.init({
+    scheduleState,
+    scheduleStartHour,
+    scheduleEndHour,
+    scheduleApiUrl,
+    loadSchedule,
+  });
 })();
