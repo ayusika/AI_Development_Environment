@@ -303,10 +303,12 @@ try {
 
 
     $whereSql =
-        implode(
-            "\nAND ",
-            $whereConditions
-        );
+        $whereConditions === []
+            ? '1 = 1'
+            : implode(
+                "\nAND ",
+                $whereConditions
+            );
 
 
     $statement =
