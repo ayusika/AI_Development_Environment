@@ -3962,8 +3962,7 @@ async function saveScheduleVisit() {
         })),
 
     customer_status:
-      !editId
-      && selectedCustomerStatus
+      selectedCustomerStatus
         === 'repeat_unknown_id'
       && selectedScheduleCustomerId
         ? 'repeat'
