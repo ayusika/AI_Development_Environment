@@ -101,6 +101,47 @@
   }
 
 
+  function openCustomerCancelPanel() {
+
+    const {
+      scheduleState,
+      scheduleCustomerCancelPanel,
+      scheduleCustomerCancelReason,
+    } = getContext();
+
+
+    const visit =
+      scheduleState.selectedVisit;
+
+    if (
+      !visit
+      || !scheduleCustomerCancelPanel
+      || !Boolean(
+        Number(
+          visit.customer_linked
+        )
+      )
+    ) {
+      return;
+    }
+
+
+    if (scheduleCustomerCancelReason) {
+      scheduleCustomerCancelReason.value =
+        '';
+    }
+
+
+    scheduleCustomerCancelPanel.hidden =
+      false;
+
+
+    if (scheduleCustomerCancelReason) {
+      scheduleCustomerCancelReason.focus();
+    }
+  }
+
+
   window.KohakuScheduleCustomerPanel = {
     init,
 
@@ -110,11 +151,13 @@
 
     getContext,
     closeScheduleCustomerPanel,
+    openCustomerCancelPanel,
     closeCustomerCancelPanel,
   };
 
 
   window.KohakuScheduleCustomerPanel.init({
+    scheduleState,
     scheduleCustomerPanel,
     scheduleCustomerName,
     scheduleCustomerKashikoiName,
