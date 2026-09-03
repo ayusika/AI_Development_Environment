@@ -7,6 +7,9 @@
 const scheduleApiUrl =
   '/api/v1/schedule.php';
 
+const visitSalesApiUrl =
+  '/api/v1/visit-sales.php';
+
 const scheduleShiftsApiUrl =
   '/api/v1/shifts.php';
 
