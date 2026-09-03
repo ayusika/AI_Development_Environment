@@ -481,6 +481,60 @@
 }
 
 
+.shift-line-share {
+  margin-top: 14px;
+  padding: 14px;
+
+  display: grid;
+  gap: 10px;
+
+  border: 1px solid var(--line);
+  border-radius: 14px;
+
+  background: #f8fcfe;
+}
+
+
+.shift-line-share[hidden] {
+  display: none;
+}
+
+
+.shift-line-share-heading h3 {
+  margin: 2px 0 0;
+
+  color: var(--text);
+
+  font-size: 15px;
+  font-weight: 900;
+}
+
+
+#shift-line-message {
+  width: 100%;
+  min-height: 150px;
+
+  padding: 12px;
+
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  outline: 0;
+
+  color: var(--text);
+  background: #ffffff;
+
+  font-size: 13px;
+  line-height: 1.7;
+
+  resize: vertical;
+}
+
+
+.shift-line-share .secondary-button {
+  width: 100%;
+}
+
+
 @media (max-width: 700px) {
 
   .shift-week-calendar {
