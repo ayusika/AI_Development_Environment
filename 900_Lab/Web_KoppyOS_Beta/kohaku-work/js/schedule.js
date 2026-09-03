@@ -8028,6 +8028,55 @@ function scrollScheduleToNow(
     );
 }
 
+
+async function openScheduleSales() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+
+  if (
+    !visit
+    || !visit.id
+  ) {
+    throw new Error(
+      'Sales visit is not selected.'
+    );
+  }
+
+
+  const response =
+    await fetch(
+      `${visitSalesApiUrl}?visit_id=${encodeURIComponent(
+        String(visit.id)
+      )}`
+    );
+
+
+  const result =
+    await response.json();
+
+
+  if (
+    !response.ok
+    || !result.success
+  ) {
+
+    throw new Error(
+      result.error
+      || '売上データの取得に失敗しました。'
+    );
+  }
+
+
+  scheduleState.selectedSalesPreview =
+    result;
+
+
+  return result;
+}
+
+
 function openScheduleDiary() {
 
   const visit =
