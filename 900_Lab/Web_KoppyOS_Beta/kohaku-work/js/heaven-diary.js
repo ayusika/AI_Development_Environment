@@ -250,6 +250,216 @@ function clearHeavenDiaryLocalDraft(
 }
 
 
+async function saveHeavenDiaryCloudDraft() {
+
+  const visit =
+    activeHeavenDiaryVisit;
+
+
+  if (
+    !visit
+    || !visit.id
+  ) {
+
+    window.alert(
+      '保存対象の予約を確認できませんでした。'
+    );
+
+    return;
+  }
+
+
+  const bodyElement =
+    document.getElementById(
+      'heaven-diary-body'
+    );
+
+  const noteElement =
+    document.getElementById(
+      'heaven-diary-note'
+    );
+
+  const extraNoteElement =
+    document.getElementById(
+      'heaven-diary-extra-note'
+    );
+
+  const selectedPlace =
+    document.querySelector(
+      'input[name="heaven-place"]:checked'
+    );
+
+  const statusElement =
+    document.getElementById(
+      'heaven-diary-draft-save-status'
+    );
+
+  const saveButton =
+    document.querySelector(
+      '[data-action="save-heaven-diary-draft"]'
+    );
+
+
+  const body =
+    bodyElement
+      ? bodyElement.value
+      : '';
+
+  const note =
+    noteElement
+      ? noteElement.value
+      : '';
+
+  const extraNote =
+    extraNoteElement
+      ? extraNoteElement.value
+      : '';
+
+  const place =
+    selectedPlace
+      ? selectedPlace.value
+      : 'hotel';
+
+
+  if (
+    !body.trim()
+    && !note.trim()
+    && !extraNote.trim()
+  ) {
+
+    window.alert(
+      '保存する下書きがありません。'
+    );
+
+    return;
+  }
+
+
+  if (saveButton) {
+
+    saveButton.disabled =
+      true;
+
+    saveButton.textContent =
+      'クラウド保存中...';
+  }
+
+
+  if (statusElement) {
+
+    statusElement.hidden =
+      true;
+
+    statusElement.textContent =
+      '';
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        '/api/v1/heaven-diary-drafts.php',
+        {
+          method:
+            'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              visit_id:
+                Number(
+                  visit.id
+                ),
+
+              body:
+                body,
+
+              note:
+                note,
+
+              extra_note:
+                extraNote,
+
+              place:
+                place,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+
+      throw new Error(
+        data.error
+        || 'クラウド下書きを保存できませんでした。'
+      );
+    }
+
+
+    saveHeavenDiaryLocalDraft();
+
+
+    if (statusElement) {
+
+      statusElement.hidden =
+        false;
+
+      statusElement.textContent =
+        '✓ クラウド下書きを保存しました';
+    }
+
+
+  } catch (error) {
+
+    console.error(
+      'Failed to save Heaven diary cloud draft:',
+      error
+    );
+
+
+    if (statusElement) {
+
+      statusElement.hidden =
+        false;
+
+      statusElement.textContent =
+        error.message
+        || 'クラウド下書きを保存できませんでした。';
+    }
+
+
+    window.alert(
+      error.message
+      || 'クラウド下書きを保存できませんでした。'
+    );
+
+
+  } finally {
+
+    if (saveButton) {
+
+      saveButton.disabled =
+        false;
+
+      saveButton.textContent =
+        '☁️ 下書きをクラウド保存';
+    }
+  }
+}
+
+
 [
   'heaven-diary-body',
   'heaven-diary-note',
