@@ -273,6 +273,28 @@ if (!$authenticated) {
 $_SESSION['last_activity_at'] =
     time();
 
+setcookie(
+    session_name(),
+    session_id(),
+    [
+        'expires' =>
+            time()
+            + $sessionLifetimeSeconds,
+
+        'path' =>
+            '/',
+
+        'secure' =>
+            true,
+
+        'httponly' =>
+            true,
+
+        'samesite' =>
+            'None',
+    ]
+);
+
 echo json_encode(
     [
         'success' =>
