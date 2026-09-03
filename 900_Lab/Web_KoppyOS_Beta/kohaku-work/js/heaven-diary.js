@@ -5,6 +5,251 @@
 let activeHeavenDiaryVisit = null;
 
 
+function heavenDiaryLocalDraftKey(
+  visitId
+) {
+
+  return (
+    'kohakuWorkHeavenDiaryDraft:'
+    + String(
+      visitId
+    )
+  );
+}
+
+
+function saveHeavenDiaryLocalDraft() {
+
+  const visit =
+    activeHeavenDiaryVisit;
+
+
+  if (
+    !visit
+    || !visit.id
+  ) {
+    return;
+  }
+
+
+  const bodyElement =
+    document.getElementById(
+      'heaven-diary-body'
+    );
+
+  const noteElement =
+    document.getElementById(
+      'heaven-diary-note'
+    );
+
+  const extraNoteElement =
+    document.getElementById(
+      'heaven-diary-extra-note'
+    );
+
+  const selectedPlace =
+    document.querySelector(
+      'input[name="heaven-place"]:checked'
+    );
+
+
+  const draft = {
+    body:
+      bodyElement
+        ? bodyElement.value
+        : '',
+
+    note:
+      noteElement
+        ? noteElement.value
+        : '',
+
+    extraNote:
+      extraNoteElement
+        ? extraNoteElement.value
+        : '',
+
+    place:
+      selectedPlace
+        ? selectedPlace.value
+        : 'hotel',
+
+    updatedAt:
+      new Date().toISOString(),
+  };
+
+
+  try {
+
+    localStorage.setItem(
+      heavenDiaryLocalDraftKey(
+        visit.id
+      ),
+      JSON.stringify(
+        draft
+      )
+    );
+
+  } catch (error) {
+
+    console.error(
+      'Failed to save Heaven diary local draft:',
+      error
+    );
+  }
+}
+
+
+function restoreHeavenDiaryLocalDraft(
+  visit
+) {
+
+  if (
+    !visit
+    || !visit.id
+  ) {
+    return false;
+  }
+
+
+  let saved = null;
+
+
+  try {
+
+    saved =
+      localStorage.getItem(
+        heavenDiaryLocalDraftKey(
+          visit.id
+        )
+      );
+
+  } catch (error) {
+
+    console.error(
+      'Failed to read Heaven diary local draft:',
+      error
+    );
+
+    return false;
+  }
+
+
+  if (!saved) {
+    return false;
+  }
+
+
+  let draft = null;
+
+
+  try {
+
+    draft =
+      JSON.parse(
+        saved
+      );
+
+  } catch (error) {
+
+    console.error(
+      'Failed to parse Heaven diary local draft:',
+      error
+    );
+
+    return false;
+  }
+
+
+  const bodyElement =
+    document.getElementById(
+      'heaven-diary-body'
+    );
+
+  const noteElement =
+    document.getElementById(
+      'heaven-diary-note'
+    );
+
+  const extraNoteElement =
+    document.getElementById(
+      'heaven-diary-extra-note'
+    );
+
+
+  if (bodyElement) {
+    bodyElement.value =
+      String(
+        draft.body
+        || ''
+      );
+  }
+
+
+  if (noteElement) {
+    noteElement.value =
+      String(
+        draft.note
+        || ''
+      );
+  }
+
+
+  if (extraNoteElement) {
+    extraNoteElement.value =
+      String(
+        draft.extraNote
+        || ''
+      );
+  }
+
+
+  document
+    .querySelectorAll(
+      'input[name="heaven-place"]'
+    )
+    .forEach((input) => {
+
+      input.checked =
+        input.value
+        === (
+          draft.place
+          || 'hotel'
+        );
+    });
+
+
+  return true;
+}
+
+
+function clearHeavenDiaryLocalDraft(
+  visitId
+) {
+
+  if (!visitId) {
+    return;
+  }
+
+
+  try {
+
+    localStorage.removeItem(
+      heavenDiaryLocalDraftKey(
+        visitId
+      )
+    );
+
+  } catch (error) {
+
+    console.error(
+      'Failed to clear Heaven diary local draft:',
+      error
+    );
+  }
+}
+
+
 function startHeavenDiary(
   visit
 ) {
