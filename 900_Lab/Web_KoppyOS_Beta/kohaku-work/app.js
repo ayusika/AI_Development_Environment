@@ -103,6 +103,10 @@ function handleAction(action, button) {
       copyHeavenDiary();
       break;
 
+    case 'save-heaven-diary-draft':
+      saveHeavenDiaryCloudDraft();
+      break;
+
     case 'save-heaven-diary':
       saveHeavenDiary();
       break;
