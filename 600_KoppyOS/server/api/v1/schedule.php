@@ -2300,6 +2300,38 @@ try {
         );
 
 
+        $hasNewCustomerName =
+            $newCustomerName !== ''
+            || $newCustomerKashikoiName !== '';
+
+
+        if (
+            $hasNewCustomerName
+            && !in_array(
+                $customerStatus,
+                [
+                    'new',
+                    'repeat_unknown_id',
+                ],
+                true
+            )
+        ) {
+            throw new RuntimeException(
+                'New customer names require customer_status new or repeat_unknown_id.'
+            );
+        }
+
+
+        if (
+            $hasNewCustomerName
+            && $customerId !== null
+        ) {
+            throw new RuntimeException(
+                'New customer names cannot be used with customer_id.'
+            );
+        }
+
+
         $allowedStatuses = [
             'scheduled',
             'completed',
