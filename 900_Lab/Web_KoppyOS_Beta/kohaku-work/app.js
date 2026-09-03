@@ -81,6 +81,10 @@ function handleAction(action, button) {
       confirmCurrentShiftWeek();
       break;
 
+    case 'copy-shift-line-message':
+      copyShiftLineMessage();
+      break;
+
     case 'back-to-customers':
       showView('customers');
       break;
