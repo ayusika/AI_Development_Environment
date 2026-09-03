@@ -906,6 +906,16 @@ function createShiftElement(shift) {
     'calendar-shift';
 
 
+  if (
+    shift.is_preview
+    === true
+  ) {
+    shiftElement.classList.add(
+      'is-preview'
+    );
+  }
+
+
   const workerCode =
     String(
       shift.worker_code
