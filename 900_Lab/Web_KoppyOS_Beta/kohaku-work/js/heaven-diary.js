@@ -809,9 +809,18 @@ function renderHeavenDiaryVisit(
   );
 
 
-  restoreHeavenDiaryLocalDraft(
-    visit
-  );
+  const localDraftRestored =
+    restoreHeavenDiaryLocalDraft(
+      visit
+    );
+
+
+  if (!localDraftRestored) {
+
+    loadHeavenDiaryCloudDraft(
+      visit
+    );
+  }
 
 
   loadSavedHeavenDiary(
