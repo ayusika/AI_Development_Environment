@@ -597,6 +597,85 @@ function toFullWidthShiftNumber(
 }
 
 
+async function copyShiftLineMessage() {
+
+  const messageElement =
+    document.getElementById(
+      'shift-line-message'
+    );
+
+
+  if (
+    !messageElement
+    || !messageElement.value
+  ) {
+    return;
+  }
+
+
+  const message =
+    messageElement.value;
+
+
+  try {
+
+    if (
+      navigator.clipboard
+      && navigator.clipboard.writeText
+    ) {
+
+      await navigator.clipboard.writeText(
+        message
+      );
+
+    } else {
+
+      throw new Error(
+        'Clipboard API unavailable'
+      );
+    }
+
+
+  } catch (error) {
+
+    messageElement.focus();
+    messageElement.select();
+
+    messageElement.setSelectionRange(
+      0,
+      messageElement.value.length
+    );
+
+
+    const copied =
+      document.execCommand(
+        'copy'
+      );
+
+
+    messageElement.setSelectionRange(
+      0,
+      0
+    );
+
+
+    if (!copied) {
+
+      window.alert(
+        'コピーできませんでした。本文を長押ししてコピーしてください。'
+      );
+
+      return;
+    }
+  }
+
+
+  showShiftSavePreview(
+    'LINE本文をコピーしました。'
+  );
+}
+
+
 /* ========================================
    WEEK
 ======================================== */
