@@ -63,13 +63,21 @@ if ($sessionName === '') {
         'KOPPYSESSID';
 }
 
+$sessionLifetimeSeconds =
+    60 * 60 * 24 * 30;
+
 session_name(
     $sessionName
 );
 
+ini_set(
+    'session.gc_maxlifetime',
+    (string) $sessionLifetimeSeconds
+);
+
 session_set_cookie_params([
     'lifetime' =>
-        0,
+        $sessionLifetimeSeconds,
 
     'path' =>
         '/',
