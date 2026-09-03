@@ -399,6 +399,11 @@ function renderHeavenDiaryVisit(
   );
 
 
+  restoreHeavenDiaryLocalDraft(
+    visit
+  );
+
+
   loadSavedHeavenDiary(
     visit
   );
