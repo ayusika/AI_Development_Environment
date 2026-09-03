@@ -125,13 +125,21 @@ if ($sessionName === '') {
 |--------------------------------------------------------------------------
 */
 
+$sessionLifetimeSeconds =
+    60 * 60 * 24 * 30;
+
 session_name(
     $sessionName
 );
 
+ini_set(
+    'session.gc_maxlifetime',
+    (string) $sessionLifetimeSeconds
+);
+
 session_set_cookie_params([
     'lifetime' =>
-        0,
+        $sessionLifetimeSeconds,
 
     'path' =>
         '/',
@@ -155,15 +163,7 @@ session_start();
 */
 
 $idleTimeoutSeconds =
-    (int) (
-        $sessionConfig['idle_timeout_seconds']
-        ?? 3600
-    );
-
-if ($idleTimeoutSeconds <= 0) {
-    $idleTimeoutSeconds =
-        3600;
-}
+    $sessionLifetimeSeconds;
 
 $authenticated =
     (
@@ -209,6 +209,28 @@ if (!$authenticated) {
 
 $_SESSION['last_activity_at'] =
     time();
+
+setcookie(
+    session_name(),
+    session_id(),
+    [
+        'expires' =>
+            time()
+            + $sessionLifetimeSeconds,
+
+        'path' =>
+            '/',
+
+        'secure' =>
+            true,
+
+        'httponly' =>
+            true,
+
+        'samesite' =>
+            'None',
+    ]
+);
 
 /*
 |--------------------------------------------------------------------------
