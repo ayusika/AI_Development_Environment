@@ -21,6 +21,7 @@ on:
         type: choice
         options:
           - migrate-heaven-diaries.php
+          - migrate-heaven-diary-drafts.php
           - migrate-customer-name-kashikoi.php
           - migrate-sales-v2.php
           - migrate-sapporo-rates-v2.php
