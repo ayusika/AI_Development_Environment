@@ -11,6 +11,7 @@ const views = {
   shift: document.querySelector('[data-view="shift"]'),
   customers: document.querySelector('[data-view="customers"]'),
   customerDetail: document.querySelector('[data-view="customer-detail"]'),
+  sales: document.querySelector('[data-view="sales"]'),
   database: document.querySelector('[data-view="database"]'),
   placeholder: document.querySelector('[data-view="placeholder"]'),
 };
@@ -81,6 +82,10 @@ function updateBottomNav(viewName) {
     activeNav = 'customers';
   }
 
+  if (viewName === 'sales') {
+    activeNav = 'sales';
+  }
+
   const activeItem = document.querySelector(
     `.nav-item[data-nav="${activeNav}"]`
   );
@@ -121,8 +126,12 @@ function handleNav(navName) {
     return;
   }
 
+  if (navName === 'sales') {
+    showView('sales');
+    return;
+  }
+
   const labels = {
-    sales: '売上',
     koppy: 'Koppy',
   };
 
