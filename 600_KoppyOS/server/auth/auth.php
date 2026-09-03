@@ -62,17 +62,108 @@ function koppyIsAuthenticated(): bool
     koppyStartSession();
 
 
-    return (
-        isset(
+    $authenticated =
+        (
+            isset(
+                $_SESSION[
+                    'koppy_authenticated'
+                ]
+            )
+            &&
             $_SESSION[
                 'koppy_authenticated'
+            ] === true
+        );
+
+
+    if (!$authenticated) {
+        return false;
+    }
+
+
+    $sessionLifetimeSeconds =
+        60 * 60 * 24 * 30;
+
+
+    $lastActivityAt =
+        (int) (
+            $_SESSION[
+                'koppy_last_activity_at'
             ]
-        )
+            ?? 0
+        );
+
+
+    if (
+        $lastActivityAt > 0
         &&
-        $_SESSION[
-            'koppy_authenticated'
-        ] === true
+        (
+            time()
+            - $lastActivityAt
+        ) > $sessionLifetimeSeconds
+    ) {
+
+        $_SESSION = [];
+
+
+        setcookie(
+            session_name(),
+            '',
+            [
+                'expires' =>
+                    time() - 42000,
+
+                'path' =>
+                    '/',
+
+                'secure' =>
+                    true,
+
+                'httponly' =>
+                    true,
+
+                'samesite' =>
+                    'Lax',
+            ]
+        );
+
+
+        session_destroy();
+
+
+        return false;
+    }
+
+
+    $_SESSION[
+        'koppy_last_activity_at'
+    ] = time();
+
+
+    setcookie(
+        session_name(),
+        session_id(),
+        [
+            'expires' =>
+                time()
+                + $sessionLifetimeSeconds,
+
+            'path' =>
+                '/',
+
+            'secure' =>
+                true,
+
+            'httponly' =>
+                true,
+
+            'samesite' =>
+                'Lax',
+        ]
     );
+
+
+    return true;
 }
 
 
