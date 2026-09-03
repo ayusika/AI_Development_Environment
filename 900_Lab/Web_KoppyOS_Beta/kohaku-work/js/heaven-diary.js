@@ -460,6 +460,175 @@ async function saveHeavenDiaryCloudDraft() {
 }
 
 
+async function loadHeavenDiaryCloudDraft(
+  visit
+) {
+
+  if (
+    !visit
+    || !visit.id
+  ) {
+    return false;
+  }
+
+
+  const statusElement =
+    document.getElementById(
+      'heaven-diary-draft-save-status'
+    );
+
+
+  try {
+
+    const response =
+      await fetch(
+        `/api/v1/heaven-diary-drafts.php?visit_id=${encodeURIComponent(
+          String(
+            visit.id
+          )
+        )}`
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+
+      throw new Error(
+        data.error
+        || 'クラウド下書きを読み込めませんでした。'
+      );
+    }
+
+
+    const draft =
+      data.data?.draft
+      || data.draft
+      || null;
+
+
+    if (!draft) {
+      return false;
+    }
+
+
+    if (
+      !activeHeavenDiaryVisit
+      || String(
+        activeHeavenDiaryVisit.id
+      ) !== String(
+        visit.id
+      )
+    ) {
+      return false;
+    }
+
+
+    const bodyElement =
+      document.getElementById(
+        'heaven-diary-body'
+      );
+
+    const noteElement =
+      document.getElementById(
+        'heaven-diary-note'
+      );
+
+    const extraNoteElement =
+      document.getElementById(
+        'heaven-diary-extra-note'
+      );
+
+
+    if (bodyElement) {
+
+      bodyElement.value =
+        String(
+          draft.body
+          || ''
+        );
+    }
+
+
+    if (noteElement) {
+
+      noteElement.value =
+        String(
+          draft.note
+          || ''
+        );
+    }
+
+
+    if (extraNoteElement) {
+
+      extraNoteElement.value =
+        String(
+          draft.extra_note
+          || ''
+        );
+    }
+
+
+    document
+      .querySelectorAll(
+        'input[name="heaven-place"]'
+      )
+      .forEach((input) => {
+
+        input.checked =
+          input.value
+          === (
+            draft.place
+            || 'hotel'
+          );
+      });
+
+
+    saveHeavenDiaryLocalDraft();
+
+
+    if (statusElement) {
+
+      statusElement.hidden =
+        false;
+
+      statusElement.textContent =
+        '✓ クラウド下書きを読み込みました';
+    }
+
+
+    return true;
+
+
+  } catch (error) {
+
+    console.error(
+      'Failed to load Heaven diary cloud draft:',
+      error
+    );
+
+
+    if (statusElement) {
+
+      statusElement.hidden =
+        false;
+
+      statusElement.textContent =
+        'クラウド下書きの読み込みに失敗しました';
+    }
+
+
+    return false;
+  }
+}
+
+
 [
   'heaven-diary-body',
   'heaven-diary-note',
