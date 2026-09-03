@@ -22,9 +22,50 @@ const calendarState = {
       1
     ),
   shifts: [],
+  previewShifts: [],
   events: [],
   holidays: {},
 };
+
+
+window.addEventListener(
+  'message',
+  (event) => {
+
+    if (
+      event.origin
+      !== window.location.origin
+    ) {
+      return;
+    }
+
+
+    const data =
+      event.data;
+
+
+    if (
+      !data
+      || data.type
+        !== 'kohaku-shift-preview'
+    ) {
+      return;
+    }
+
+
+    calendarState.previewShifts =
+      Array.isArray(
+        data.shifts
+      )
+        ? data.shifts.filter(
+            (shift) =>
+              shift
+              && shift.shift_date
+              && shift.worker_code
+          )
+        : [];
+  }
+);
 
 
 const monthTitleElement =
