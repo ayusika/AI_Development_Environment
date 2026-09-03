@@ -2947,9 +2947,50 @@ function renderSingleMonthCalendar(
   );
 
 
+  const previewShiftKeys =
+    new Set(
+      calendarState.previewShifts
+        .map(
+          (shift) =>
+            `${String(
+              shift.shift_date
+              || ''
+            )}|${String(
+              shift.worker_code
+              || ''
+            )}`
+        )
+    );
+
+
+  const visibleShifts = [
+    ...calendarState.shifts
+      .filter(
+        (shift) =>
+          !previewShiftKeys.has(
+            `${String(
+              shift.shift_date
+              || ''
+            )}|${String(
+              shift.worker_code
+              || ''
+            )}`
+          )
+      ),
+
+    ...calendarState.previewShifts
+      .map(
+        (shift) => ({
+          ...shift,
+          is_preview: true,
+        })
+      ),
+  ];
+
+
   const shiftsByDate =
     groupShiftsByDate(
-      calendarState.shifts
+      visibleShifts
     );
 
 
