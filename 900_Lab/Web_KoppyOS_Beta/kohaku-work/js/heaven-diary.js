@@ -752,6 +752,9 @@ async function generateHeavenDiary() {
     );
 
 
+    saveHeavenDiaryLocalDraft();
+
+
     if (bodyElement) {
 
       bodyElement.scrollIntoView({
