@@ -2427,6 +2427,135 @@ try {
         $pdo->beginTransaction();
 
 
+        if (
+            in_array(
+                $customerStatus,
+                [
+                    'new',
+                    'repeat_unknown_id',
+                ],
+                true
+            )
+            && $customerId === null
+            && $hasNewCustomerName
+        ) {
+
+            $temporaryCode =
+                'TMP-'
+                . bin2hex(
+                    random_bytes(8)
+                );
+
+
+            $customerStatement =
+                $pdo->prepare(
+                    "
+                    INSERT INTO customers (
+                        customer_code
+                    )
+                    VALUES (
+                        ?
+                    )
+                    "
+                );
+
+
+            $customerStatement->execute([
+                $temporaryCode,
+            ]);
+
+
+            $customerId =
+                (int)
+                $pdo->lastInsertId();
+
+
+            $customerCode =
+                sprintf(
+                    'K%06d',
+                    $customerId
+                );
+
+
+            $customerStatement =
+                $pdo->prepare(
+                    "
+                    UPDATE customers
+
+                    SET
+                        customer_code = ?,
+                        updated_at =
+                            strftime(
+                                '%Y-%m-%d %H:%M',
+                                'now',
+                                'localtime'
+                            )
+
+                    WHERE id = ?
+                    "
+                );
+
+
+            $customerStatement->execute([
+                $customerCode,
+                $customerId,
+            ]);
+
+
+            $customerNameStatement =
+                $pdo->prepare(
+                    "
+                    INSERT INTO customer_names (
+                        customer_id,
+                        name_type,
+                        name,
+                        is_primary
+                    )
+                    VALUES (
+                        ?,
+                        ?,
+                        ?,
+                        ?
+                    )
+                    "
+                );
+
+
+            if ($newCustomerName !== '') {
+
+                $customerNameStatement->execute([
+                    $customerId,
+                    'nickname',
+                    $newCustomerName,
+                    1,
+                ]);
+            }
+
+
+            if (
+                $newCustomerKashikoiName !== ''
+            ) {
+
+                $customerNameStatement->execute([
+                    $customerId,
+                    'kashikoi',
+                    $newCustomerKashikoiName,
+                    $newCustomerName === ''
+                        ? 1
+                        : 0,
+                ]);
+            }
+        }
+
+
+        if (
+            $customerStatus === 'repeat_unknown_id'
+            && $customerId !== null
+        ) {
+            $customerStatus = 'repeat';
+        }
+
+
         $beforeChangeData = [
             'store_id' =>
                 (int) $currentVisit['store_id'],
