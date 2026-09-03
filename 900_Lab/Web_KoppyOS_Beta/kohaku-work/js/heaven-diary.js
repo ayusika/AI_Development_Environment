@@ -250,6 +250,37 @@ function clearHeavenDiaryLocalDraft(
 }
 
 
+[
+  'heaven-diary-body',
+  'heaven-diary-note',
+  'heaven-diary-extra-note',
+]
+  .forEach((elementId) => {
+
+    document
+      .getElementById(
+        elementId
+      )
+      ?.addEventListener(
+        'input',
+        saveHeavenDiaryLocalDraft
+      );
+  });
+
+
+document
+  .querySelectorAll(
+    'input[name="heaven-place"]'
+  )
+  .forEach((input) => {
+
+    input.addEventListener(
+      'change',
+      saveHeavenDiaryLocalDraft
+    );
+  });
+
+
 function startHeavenDiary(
   visit
 ) {
