@@ -9,6 +9,11 @@
   width: 100%;
 }
 
+
+.schedule-page [hidden] {
+  display: none !important;
+}
+
 body:has(#view-schedule.is-active) .app-main,
 body:has(#view-schedule.is-active) .bottom-nav {
   max-width: 1500px;
