@@ -200,6 +200,38 @@ function koppyLogin(
     ] = time();
 
 
+    $_SESSION[
+        'koppy_last_activity_at'
+    ] = time();
+
+
+    $sessionLifetimeSeconds =
+        60 * 60 * 24 * 30;
+
+
+    setcookie(
+        session_name(),
+        session_id(),
+        [
+            'expires' =>
+                time()
+                + $sessionLifetimeSeconds,
+
+            'path' =>
+                '/',
+
+            'secure' =>
+                true,
+
+            'httponly' =>
+                true,
+
+            'samesite' =>
+                'Lax',
+        ]
+    );
+
+
     return true;
 }
 
