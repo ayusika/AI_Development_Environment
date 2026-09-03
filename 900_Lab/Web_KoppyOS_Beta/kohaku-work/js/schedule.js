@@ -7408,7 +7408,15 @@ function editCurrentScheduleVisit() {
 
 
   selectedCustomerStatus =
-    visit.customer_status;
+    (
+      visit.customer_status === 'repeat'
+      && !Number(
+        visit.customer_id
+        || 0
+      )
+    )
+      ? 'repeat_unknown_id'
+      : visit.customer_status;
 
 
   document
@@ -7423,6 +7431,9 @@ function editCurrentScheduleVisit() {
         === selectedCustomerStatus
       );
     });
+
+
+  syncScheduleNewCustomerFields();
 
 
   const visitOptions =
