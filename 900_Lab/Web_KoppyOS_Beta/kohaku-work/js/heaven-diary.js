@@ -850,7 +850,7 @@ async function loadSavedHeavenDiary(
     || !visit.id
     || !bodyElement
   ) {
-    return;
+    return false;
   }
 
 
@@ -903,7 +903,7 @@ async function loadSavedHeavenDiary(
 
 
     if (!diary) {
-      return;
+      return false;
     }
 
 
@@ -924,6 +924,9 @@ async function loadSavedHeavenDiary(
     }
 
 
+    return true;
+
+
   } catch (error) {
 
     console.error(
@@ -940,6 +943,9 @@ async function loadSavedHeavenDiary(
       statusElement.textContent =
         '保存済み日記の読み込みに失敗しました';
     }
+
+
+    return false;
   }
 }
 
