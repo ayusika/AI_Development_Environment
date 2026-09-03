@@ -64,6 +64,13 @@ window.addEventListener(
               && shift.worker_code
           )
         : [];
+
+
+    window.requestAnimationFrame(
+      () => {
+        renderMonthCalendar();
+      }
+    );
   }
 );
 
