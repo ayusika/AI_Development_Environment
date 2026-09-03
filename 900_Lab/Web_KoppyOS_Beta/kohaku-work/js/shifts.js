@@ -230,6 +230,7 @@ async function loadShift() {
     renderShiftStoreOptions();
     renderShiftWeek();
     renderShiftSelectedDays();
+    renderShiftLineShare();
 
 
   } catch (error) {
@@ -242,6 +243,357 @@ async function loadShift() {
       </p>
     `;
   }
+}
+
+
+/* ========================================
+   LINE SHARE
+======================================== */
+
+function renderShiftLineShare() {
+
+  const shareElement =
+    document.getElementById(
+      'shift-line-share'
+    );
+
+  const messageElement =
+    document.getElementById(
+      'shift-line-message'
+    );
+
+
+  if (
+    !shareElement
+    || !messageElement
+  ) {
+    return;
+  }
+
+
+  const weekEnd =
+    new Date(
+      shiftState.weekStart
+    );
+
+
+  weekEnd.setDate(
+    weekEnd.getDate() + 6
+  );
+
+
+  const weekStartText =
+    formatShiftDate(
+      shiftState.weekStart
+    );
+
+  const weekEndText =
+    formatShiftDate(
+      weekEnd
+    );
+
+
+  const shifts =
+    shiftState.shifts
+      .filter(
+        (shift) =>
+          (
+            shift.status
+            === 'confirmed'
+            ||
+            shift.status
+            === 'off'
+          )
+          &&
+          shift.shift_date
+          >= weekStartText
+          &&
+          shift.shift_date
+          <= weekEndText
+      )
+      .sort(
+        (a, b) =>
+          String(
+            a.shift_date
+          ).localeCompare(
+            String(
+              b.shift_date
+            )
+          )
+      );
+
+
+  if (
+    shifts.length
+    === 0
+  ) {
+
+    shareElement.hidden =
+      true;
+
+    messageElement.value =
+      '';
+
+    return;
+  }
+
+
+  const timeGroups =
+    new Map();
+
+  const offDates =
+    [];
+
+
+  shifts.forEach((shift) => {
+
+    if (
+      shift.status
+      === 'off'
+    ) {
+
+      offDates.push(
+        shift.shift_date
+      );
+
+      return;
+    }
+
+
+    const timeLabel =
+      formatShiftLineTime(
+        shift
+      );
+
+
+    if (!timeLabel) {
+      return;
+    }
+
+
+    if (
+      !timeGroups.has(
+        timeLabel
+      )
+    ) {
+
+      timeGroups.set(
+        timeLabel,
+        []
+      );
+    }
+
+
+    timeGroups
+      .get(
+        timeLabel
+      )
+      .push(
+        shift.shift_date
+      );
+  });
+
+
+  const lines = [
+    'お疲れ様です！シフトお願いします！',
+  ];
+
+
+  timeGroups.forEach(
+    (
+      dates,
+      timeLabel
+    ) => {
+
+      lines.push(
+        `${timeLabel} ${formatShiftLineDates(
+          dates
+        )}`
+      );
+    }
+  );
+
+
+  if (
+    offDates.length
+    > 0
+  ) {
+
+    lines.push(
+      `休み　${formatShiftLineDates(
+        offDates
+      )}`
+    );
+  }
+
+
+  if (
+    lines.length
+    === 1
+  ) {
+
+    shareElement.hidden =
+      true;
+
+    messageElement.value =
+      '';
+
+    return;
+  }
+
+
+  messageElement.value =
+    lines.join(
+      '\n'
+    );
+
+
+  shareElement.hidden =
+    false;
+}
+
+
+function formatShiftLineTime(
+  shift
+) {
+
+  const startTime =
+    String(
+      shift.start_at
+      || ''
+    ).slice(
+      11,
+      16
+    );
+
+
+  const endTime =
+    getSavedShiftEndTime(
+      shift
+    );
+
+
+  if (
+    !startTime
+    || !endTime
+  ) {
+    return '';
+  }
+
+
+  const compactTime =
+    (value) => {
+
+      const text =
+        String(
+          value
+        );
+
+
+      return text.endsWith(
+        ':00'
+      )
+        ? text.slice(
+            0,
+            -3
+          )
+        : text;
+    };
+
+
+  return `${compactTime(
+    startTime
+  )}-${compactTime(
+    endTime
+  )}時`;
+}
+
+
+function formatShiftLineDates(
+  dates
+) {
+
+  let previousMonth =
+    null;
+
+
+  const parts =
+    [...dates]
+      .sort()
+      .map((dateText) => {
+
+        const [
+          ,
+          monthText,
+          dayText,
+        ] =
+          String(
+            dateText
+          ).split(
+            '-'
+          );
+
+
+        const month =
+          Number(
+            monthText
+          );
+
+        const day =
+          Number(
+            dayText
+          );
+
+
+        const monthChanged =
+          month
+          !== previousMonth;
+
+
+        previousMonth =
+          month;
+
+
+        if (monthChanged) {
+
+          return `${
+            toFullWidthShiftNumber(
+              month
+            )
+          }月${
+            toFullWidthShiftNumber(
+              day
+            )
+          }`;
+        }
+
+
+        return toFullWidthShiftNumber(
+          day
+        );
+      });
+
+
+  return `${parts.join(
+    '、'
+  )}日`;
+}
+
+
+function toFullWidthShiftNumber(
+  value
+) {
+
+  return String(
+    value
+  ).replace(
+    /\d/g,
+    (digit) =>
+      String.fromCharCode(
+        digit.charCodeAt(0)
+        + 0xFEE0
+      )
+  );
 }
 
 
