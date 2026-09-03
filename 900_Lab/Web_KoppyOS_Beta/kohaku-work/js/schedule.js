@@ -3969,20 +3969,34 @@ async function saveScheduleVisit() {
         : selectedCustomerStatus,
 
     new_customer_name:
-      !editId
-      && (
+      (
         selectedCustomerStatus === 'new'
-        || selectedCustomerStatus === 'repeat_unknown_id'
+        || (
+          selectedCustomerStatus === 'repeat_unknown_id'
+          && document.querySelector(
+            '[data-schedule-customer-entry-mode].is-selected'
+          )
+            ?.dataset
+            ?.scheduleCustomerEntryMode
+            === 'new'
+        )
       )
       && scheduleNewCustomerName
         ? scheduleNewCustomerName.value.trim()
         : '',
 
     new_customer_kashikoi_name:
-      !editId
-      && (
+      (
         selectedCustomerStatus === 'new'
-        || selectedCustomerStatus === 'repeat_unknown_id'
+        || (
+          selectedCustomerStatus === 'repeat_unknown_id'
+          && document.querySelector(
+            '[data-schedule-customer-entry-mode].is-selected'
+          )
+            ?.dataset
+            ?.scheduleCustomerEntryMode
+            === 'new'
+        )
       )
       && scheduleNewCustomerKashikoiName
         ? scheduleNewCustomerKashikoiName.value.trim()
