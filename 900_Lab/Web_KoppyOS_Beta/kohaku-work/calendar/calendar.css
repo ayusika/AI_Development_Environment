@@ -942,6 +942,63 @@ button[data-calendar-today] {
 }
 
 
+.calendar-shift.is-preview {
+  opacity:
+    0.58;
+
+  border-style:
+    dashed;
+}
+
+
+.calendar-shift.is-preview[
+  data-worker-code="shii"
+] {
+  background:
+    rgba(
+      223,
+      243,
+      255,
+      0.72
+    );
+
+  border-color:
+    rgba(
+      72,
+      181,
+      223,
+      0.48
+    );
+}
+
+
+.calendar-shift.is-preview[
+  data-shift-kind="off"
+] {
+  opacity:
+    0.68;
+
+  background:
+    rgba(
+      255,
+      229,
+      238,
+      0.82
+    );
+
+  border-color:
+    rgba(
+      214,
+      112,
+      145,
+      0.46
+    );
+
+  color:
+    #a05f73;
+}
+
+
 .calendar-shift-worker {
   overflow:
     hidden;
