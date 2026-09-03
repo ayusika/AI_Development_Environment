@@ -20,17 +20,36 @@ function koppyStartSession(): void
     }
 
 
+    $sessionLifetimeSeconds =
+        60 * 60 * 24 * 30;
+
+
     session_name(
         'koppy_session'
     );
 
 
+    ini_set(
+        'session.gc_maxlifetime',
+        (string) $sessionLifetimeSeconds
+    );
+
+
     session_set_cookie_params([
-        'lifetime' => 60 * 60 * 24 * 30,
-        'path' => '/',
-        'secure' => true,
-        'httponly' => true,
-        'samesite' => 'Lax',
+        'lifetime' =>
+            $sessionLifetimeSeconds,
+
+        'path' =>
+            '/',
+
+        'secure' =>
+            true,
+
+        'httponly' =>
+            true,
+
+        'samesite' =>
+            'Lax',
     ]);
 
 
