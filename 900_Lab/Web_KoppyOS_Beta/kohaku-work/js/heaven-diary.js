@@ -1358,13 +1358,93 @@ async function saveHeavenDiary() {
     }
 
 
+    let draftCleanupSucceeded =
+      false;
+
+
+    try {
+
+      const draftDeleteResponse =
+        await fetch(
+          `/api/v1/heaven-diary-drafts.php?visit_id=${encodeURIComponent(
+            String(
+              visit.id
+            )
+          )}`,
+          {
+            method:
+              'DELETE',
+          }
+        );
+
+
+      const draftDeleteData =
+        await draftDeleteResponse.json();
+
+
+      if (
+        !draftDeleteResponse.ok
+        || !draftDeleteData.success
+      ) {
+
+        throw new Error(
+          draftDeleteData.error
+          || '下書きを削除できませんでした。'
+        );
+      }
+
+
+      clearHeavenDiaryLocalDraft(
+        visit.id
+      );
+
+
+      draftCleanupSucceeded =
+        true;
+
+
+      const draftStatusElement =
+        document.getElementById(
+          'heaven-diary-draft-save-status'
+        );
+
+
+      if (draftStatusElement) {
+
+        draftStatusElement.hidden =
+          true;
+
+        draftStatusElement.textContent =
+          '';
+      }
+
+
+    } catch (draftCleanupError) {
+
+      console.error(
+        'Failed to clean Heaven diary draft after final save:',
+        draftCleanupError
+      );
+    }
+
+
     if (statusElement) {
 
       statusElement.hidden =
         false;
 
       statusElement.textContent =
-        '✓ DBに保存しました';
+        draftCleanupSucceeded
+          ? '✓ DBに保存しました'
+          : '✓ DB保存済み（下書き削除のみ失敗）';
+    }
+
+
+    if (!draftCleanupSucceeded) {
+
+      window.alert(
+        '日記はDBに保存済みです。下書きの削除だけ失敗しました。'
+      );
     }
 
 
