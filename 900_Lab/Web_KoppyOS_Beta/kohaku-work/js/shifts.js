@@ -72,6 +72,248 @@ const shiftState = {
 
 
 /* ========================================
+   CALENDAR PREVIEW
+======================================== */
+
+function sendShiftCalendarPreview() {
+
+  const calendarFrame =
+    document.querySelector(
+      '.shift-shared-calendar-frame'
+    );
+
+
+  if (
+    !calendarFrame
+    || !calendarFrame.contentWindow
+  ) {
+    return;
+  }
+
+
+  const store =
+    shiftState.stores
+      .find(
+        (item) =>
+          String(
+            item.id
+          )
+          ===
+          String(
+            shiftState.selectedStoreId
+          )
+      )
+    || null;
+
+
+  const previewShifts =
+    shiftState.days
+      .filter(
+        (day) =>
+          shiftState.selectedDates
+            .has(
+              day.date
+            )
+      )
+      .map((day) => {
+
+        const row =
+          document.querySelector(
+            `[data-shift-row="${CSS.escape(
+              day.date
+            )}"]`
+          );
+
+
+        if (!row) {
+          return null;
+        }
+
+
+        const offButton =
+          row.querySelector(
+            '[data-shift-off]'
+          );
+
+
+        const isOff =
+          Boolean(
+            offButton
+              ?.classList
+              .contains(
+                'is-selected'
+              )
+          );
+
+
+        if (isOff) {
+
+          return {
+            shift_date:
+              day.date,
+
+            worker_code:
+              shiftState.workerCode,
+
+            status:
+              'off',
+
+            store_name:
+              null,
+
+            start_at:
+              null,
+
+            end_at:
+              null,
+          };
+        }
+
+
+        const startTime =
+          row
+            .querySelector(
+              '[data-shift-start]'
+            )
+            ?.value
+            ?.trim()
+          || '';
+
+        const endTime =
+          row
+            .querySelector(
+              '[data-shift-end]'
+            )
+            ?.value
+            ?.trim()
+          || '';
+
+
+        if (
+          !isShiftTimeValueValid(
+            startTime
+          )
+          ||
+          !isShiftTimeValueValid(
+            endTime
+          )
+          ||
+          shiftTimeToMinutes(
+            endTime
+          )
+          <=
+          shiftTimeToMinutes(
+            startTime
+          )
+        ) {
+          return null;
+        }
+
+
+        return {
+          shift_date:
+            day.date,
+
+          worker_code:
+            shiftState.workerCode,
+
+          status:
+            'draft',
+
+          store_name:
+            store?.name
+            || '',
+
+          start_at:
+            buildShiftPreviewDateTime(
+              day.date,
+              startTime
+            ),
+
+          end_at:
+            buildShiftPreviewDateTime(
+              day.date,
+              endTime
+            ),
+        };
+      })
+      .filter(Boolean);
+
+
+  calendarFrame.contentWindow
+    .postMessage(
+      {
+        type:
+          'kohaku-shift-preview',
+
+        shifts:
+          previewShifts,
+      },
+      window.location.origin
+    );
+}
+
+
+function buildShiftPreviewDateTime(
+  dateText,
+  timeText
+) {
+
+  const [
+    hourText,
+    minuteText,
+  ] =
+    String(
+      timeText
+    ).split(':');
+
+
+  const totalHour =
+    Number(
+      hourText
+    );
+
+  const minute =
+    Number(
+      minuteText
+    );
+
+
+  const date =
+    parseShiftDate(
+      dateText
+    );
+
+
+  date.setDate(
+    date.getDate()
+    + Math.floor(
+        totalHour / 24
+      )
+  );
+
+
+  const hour =
+    totalHour % 24;
+
+
+  return `${formatShiftDate(
+    date
+  )} ${String(
+    hour
+  ).padStart(
+    2,
+    '0'
+  )}:${String(
+    minute
+  ).padStart(
+    2,
+    '0'
+  )}`;
+}
+
+
+/* ========================================
    LOAD
 ======================================== */
 
