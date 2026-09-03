@@ -1833,6 +1833,8 @@ document.addEventListener(
           .shiftWorker
       );
 
+      sendShiftCalendarPreview();
+
       return;
     }
 
@@ -1858,6 +1860,8 @@ document.addEventListener(
             .shiftDate
         );
 
+        sendShiftCalendarPreview();
+
         return;
       }
 
@@ -1867,6 +1871,8 @@ document.addEventListener(
           .dataset
           .shiftDate
       );
+
+      sendShiftCalendarPreview();
 
       return;
     }
@@ -1888,6 +1894,8 @@ document.addEventListener(
         )
       );
 
+      sendShiftCalendarPreview();
+
       return;
     }
 
@@ -1901,6 +1909,8 @@ document.addEventListener(
     if (todayButton) {
 
       resetShiftWeekToToday();
+
+      sendShiftCalendarPreview();
 
       return;
     }
@@ -1919,7 +1929,29 @@ document.addEventListener(
           .dataset
           .shiftOff
       );
+
+      sendShiftCalendarPreview();
     }
+  }
+);
+
+
+document.addEventListener(
+  'input',
+  (event) => {
+
+    const timeInput =
+      event.target.closest(
+        '[data-shift-start], [data-shift-end]'
+      );
+
+
+    if (!timeInput) {
+      return;
+    }
+
+
+    sendShiftCalendarPreview();
   }
 );
 
@@ -1931,6 +1963,21 @@ shiftStoreSelect
 
       shiftState.selectedStoreId =
         shiftStoreSelect.value;
+
+      sendShiftCalendarPreview();
+    }
+  );
+
+
+document
+  .querySelector(
+    '.shift-shared-calendar-frame'
+  )
+  ?.addEventListener(
+    'load',
+    () => {
+
+      sendShiftCalendarPreview();
     }
   );
 
