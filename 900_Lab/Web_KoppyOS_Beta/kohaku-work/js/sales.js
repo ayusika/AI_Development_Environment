@@ -441,3 +441,36 @@ async function loadSales(
 
   return result;
 }
+
+document
+  .querySelectorAll(
+    '[data-sales-period]'
+  )
+  .forEach((button) => {
+
+    button.addEventListener(
+      'click',
+      () => {
+
+        const period =
+          String(
+            button.dataset.salesPeriod
+            || ''
+          );
+
+
+        if (
+          period !== 'today'
+          && period !== 'month'
+        ) {
+          return;
+        }
+
+
+        loadSales({
+          period,
+          date: null,
+        });
+      }
+    );
+  });
