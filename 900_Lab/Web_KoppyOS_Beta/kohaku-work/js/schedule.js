@@ -8073,6 +8073,110 @@ async function openScheduleSales() {
     result;
 
 
+  const preview =
+    result.preview || {};
+
+
+  const formatSalesPreviewMoney =
+    (value) => {
+
+      if (
+        value === null
+        || value === undefined
+      ) {
+        return '¥ −';
+      }
+
+
+      return `¥ ${Number(
+        value
+      ).toLocaleString('ja-JP')}`;
+    };
+
+
+  const salesValues = {
+    'schedule-sales-course-take-home':
+      preview.course_take_home_total,
+
+    'schedule-sales-option-take-home':
+      preview.option_take_home_total,
+
+    'schedule-sales-tip':
+      preview.tip_amount,
+
+    'schedule-sales-adjustment':
+      preview.adjustment_amount,
+
+    'schedule-sales-customer-payment':
+      preview.customer_payment_total,
+
+    'schedule-sales-take-home-total':
+      preview.take_home_total,
+  };
+
+
+  Object.entries(
+    salesValues
+  ).forEach(
+    ([id, value]) => {
+
+      const element =
+        document.getElementById(id);
+
+
+      if (!element) {
+        return;
+      }
+
+
+      element.textContent =
+        formatSalesPreviewMoney(
+          value
+        );
+    }
+  );
+
+
+  const salesMessage =
+    document.getElementById(
+      'schedule-sales-message'
+    );
+
+
+  if (salesMessage) {
+    salesMessage.textContent = '';
+    salesMessage.hidden = true;
+  }
+
+
+  if (scheduleCustomerPanel) {
+    scheduleCustomerPanel.hidden = true;
+  }
+
+
+  if (scheduleLinkedCustomerPanel) {
+    scheduleLinkedCustomerPanel.hidden = true;
+  }
+
+
+  const salesPanel =
+    document.getElementById(
+      'schedule-sales-panel'
+    );
+
+
+  if (salesPanel) {
+
+    salesPanel.hidden = false;
+
+
+    salesPanel.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+    });
+  }
+
+
   return result;
 }
 
