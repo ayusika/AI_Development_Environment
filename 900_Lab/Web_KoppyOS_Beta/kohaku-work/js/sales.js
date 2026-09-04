@@ -171,6 +171,170 @@ function renderSalesSummary(
         result.period
       );
   }
+
+
+  const salesVisitList =
+    document.getElementById(
+      'sales-visit-list'
+    );
+
+
+  if (salesVisitList) {
+
+    salesVisitList.replaceChildren();
+
+
+    const visits =
+      Array.isArray(result.visits)
+        ? result.visits
+        : [];
+
+
+    if (visits.length === 0) {
+
+      const emptyMessage =
+        document.createElement('p');
+
+
+      emptyMessage.textContent =
+        'この期間の接客はありません。';
+
+
+      salesVisitList.appendChild(
+        emptyMessage
+      );
+
+    } else {
+
+      visits.forEach((visit) => {
+
+        const row =
+          document.createElement('div');
+
+
+        row.className =
+          'menu-row';
+
+
+        const main =
+          document.createElement('span');
+
+
+        const title =
+          document.createElement('strong');
+
+
+        title.textContent =
+          visit.customer_name
+          || 'お客様';
+
+
+        const detail =
+          document.createElement('small');
+
+
+        const startedAt =
+          String(
+            visit.started_at || ''
+          );
+
+
+        const datePart =
+          startedAt.slice(
+            5,
+            10
+          ).replace(
+            '-',
+            '/'
+          );
+
+
+        const timePart =
+          startedAt.slice(
+            11,
+            16
+          );
+
+
+        const courseLabel =
+          visit.course_name
+          || (
+            visit.course_minutes
+              ? `${Number(
+                  visit.course_minutes
+                )}分`
+              : 'コース未登録'
+          );
+
+
+        detail.textContent =
+          [
+            datePart,
+            timePart,
+            visit.store_name,
+            courseLabel,
+          ]
+            .filter(Boolean)
+            .join(' · ');
+
+
+        main.append(
+          title,
+          detail
+        );
+
+
+        const salesSide =
+          document.createElement('span');
+
+
+        const amount =
+          document.createElement('strong');
+
+
+        const state =
+          document.createElement('small');
+
+
+        const confirmed =
+          visit.sales_state
+          === 'confirmed';
+
+
+        amount.textContent =
+          confirmed
+            ? formatSalesDashboardMoney(
+                visit.sales
+                  ? visit.sales.take_home_total
+                  : 0
+              )
+            : '¥ −';
+
+
+        state.textContent =
+          confirmed
+            ? '確定済'
+            : '未入力';
+
+
+        salesSide.append(
+          amount,
+          state
+        );
+
+
+        row.append(
+          main,
+          salesSide
+        );
+
+
+        salesVisitList.appendChild(
+          row
+        );
+      });
+    }
+  }
 }
 
 
