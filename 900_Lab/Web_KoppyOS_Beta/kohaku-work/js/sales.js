@@ -462,6 +462,489 @@ async function loadSales(
   return result;
 }
 
+
+async function openSalesDayConfirm() {
+
+  const panel =
+    document.getElementById(
+      'sales-day-confirm-panel'
+    );
+
+
+  const title =
+    document.getElementById(
+      'sales-day-confirm-title'
+    );
+
+
+  const countElement =
+    document.getElementById(
+      'sales-day-confirm-unentered-count'
+    );
+
+
+  const totalElement =
+    document.getElementById(
+      'sales-day-confirm-take-home-total'
+    );
+
+
+  const list =
+    document.getElementById(
+      'sales-day-confirm-list'
+    );
+
+
+  const message =
+    document.getElementById(
+      'sales-day-confirm-message'
+    );
+
+
+  const submitButton =
+    document.getElementById(
+      'sales-day-confirm-submit-button'
+    );
+
+
+  if (
+    !panel
+    || !list
+  ) {
+    throw new Error(
+      'Daily sales confirmation panel is not available.'
+    );
+  }
+
+
+  panel.hidden =
+    false;
+
+
+  list.replaceChildren();
+
+
+  const loadingMessage =
+    document.createElement('p');
+
+
+  loadingMessage.textContent =
+    'この日の売上を確認しています…';
+
+
+  list.appendChild(
+    loadingMessage
+  );
+
+
+  if (message) {
+    message.hidden = true;
+    message.textContent = '';
+  }
+
+
+  if (submitButton) {
+    submitButton.disabled = true;
+  }
+
+
+  try {
+
+    const result =
+      await loadSales({
+        period:
+          salesState.period,
+
+        date:
+          salesState.date,
+
+        storeId:
+          salesState.storeId,
+      });
+
+
+    const period =
+      result.period || {};
+
+
+    const anchorDate =
+      String(
+        period.anchor_date || ''
+      );
+
+
+    const [
+      ,
+      month,
+      day,
+    ] =
+      anchorDate
+        .split('-')
+        .map(Number);
+
+
+    if (title) {
+
+      title.textContent =
+        Number.isFinite(month)
+        && Number.isFinite(day)
+          ? `${month}/${day} の売上確認`
+          : 'この日の売上確認';
+    }
+
+
+    const visits =
+      Array.isArray(result.visits)
+        ? result.visits
+        : [];
+
+
+    const unenteredVisits =
+      visits.filter(
+        (visit) =>
+          visit.sales_state
+          !== 'confirmed'
+      );
+
+
+    if (countElement) {
+
+      countElement.textContent =
+        `${unenteredVisits.length.toLocaleString(
+          'ja-JP'
+        )}件`;
+    }
+
+
+    if (
+      unenteredVisits.length === 0
+    ) {
+
+      list.replaceChildren();
+
+
+      const emptyMessage =
+        document.createElement('p');
+
+
+      emptyMessage.textContent =
+        'この日の未確定売上はありません。';
+
+
+      list.appendChild(
+        emptyMessage
+      );
+
+
+      if (totalElement) {
+
+        totalElement.textContent =
+          formatSalesDashboardMoney(0);
+      }
+
+
+      if (message) {
+
+        message.textContent =
+          'この日の売上はすべて確定済みです。';
+
+        message.hidden =
+          false;
+      }
+
+
+      panel.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
+
+
+      return result;
+    }
+
+
+    const previewResults =
+      await Promise.all(
+        unenteredVisits.map(
+          async (visit) => {
+
+            try {
+
+              const response =
+                await fetch(
+                  `/api/v1/visit-sales.php?visit_id=${encodeURIComponent(
+                    String(visit.id)
+                  )}`
+                );
+
+
+              const previewResult =
+                await response.json();
+
+
+              if (
+                !response.ok
+                || !previewResult.success
+              ) {
+
+                throw new Error(
+                  previewResult.error
+                  || '売上プレビュー取得失敗'
+                );
+              }
+
+
+              return {
+                visit,
+                result:
+                  previewResult,
+                error: null,
+              };
+
+
+            } catch (error) {
+
+              return {
+                visit,
+                result: null,
+                error:
+                  error.message
+                  || '売上プレビュー取得失敗',
+              };
+            }
+          }
+        )
+      );
+
+
+    list.replaceChildren();
+
+
+    let takeHomeTotal =
+      0;
+
+
+    let hasIncompletePreview =
+      false;
+
+
+    previewResults.forEach(
+      (item) => {
+
+        const visit =
+          item.visit;
+
+
+        const preview =
+          item.result
+            ? item.result.preview || {}
+            : {};
+
+
+        const takeHome =
+          item.error
+            ? null
+            : preview.take_home_total;
+
+
+        if (
+          takeHome === null
+          || takeHome === undefined
+        ) {
+
+          hasIncompletePreview =
+            true;
+
+        } else {
+
+          takeHomeTotal +=
+            Number(takeHome);
+        }
+
+
+        const row =
+          document.createElement('div');
+
+
+        row.className =
+          'menu-row';
+
+
+        const main =
+          document.createElement('span');
+
+
+        const name =
+          document.createElement('strong');
+
+
+        name.textContent =
+          visit.customer_name
+          || 'お客様';
+
+
+        const detail =
+          document.createElement('small');
+
+
+        const startedAt =
+          String(
+            visit.started_at || ''
+          );
+
+
+        const timePart =
+          startedAt.slice(
+            11,
+            16
+          );
+
+
+        const courseLabel =
+          visit.course_name
+          || (
+            visit.course_minutes
+              ? `${Number(
+                  visit.course_minutes
+                )}分`
+              : 'コース未登録'
+          );
+
+
+        detail.textContent =
+          [
+            timePart,
+            visit.store_name,
+            courseLabel,
+          ]
+            .filter(Boolean)
+            .join(' · ');
+
+
+        main.append(
+          name,
+          detail
+        );
+
+
+        const side =
+          document.createElement('span');
+
+
+        const amount =
+          document.createElement('strong');
+
+
+        amount.textContent =
+          takeHome === null
+          || takeHome === undefined
+            ? '要確認'
+            : formatSalesDashboardMoney(
+                takeHome
+              );
+
+
+        const state =
+          document.createElement('small');
+
+
+        state.textContent =
+          item.error
+            ? item.error
+            : (
+                takeHome === null
+                || takeHome === undefined
+                  ? '料金未確認'
+                  : '確定可能'
+              );
+
+
+        side.append(
+          amount,
+          state
+        );
+
+
+        row.append(
+          main,
+          side
+        );
+
+
+        list.appendChild(
+          row
+        );
+      }
+    );
+
+
+    if (totalElement) {
+
+      totalElement.textContent =
+        hasIncompletePreview
+          ? '¥ −'
+          : formatSalesDashboardMoney(
+              takeHomeTotal
+            );
+    }
+
+
+    if (message) {
+
+      message.textContent =
+        hasIncompletePreview
+          ? '「要確認」の接客があります。料金を確認してから一括確定します。'
+          : 'この内容で一括確定できる状態です。';
+
+      message.hidden =
+        false;
+    }
+
+
+    panel.scrollIntoView({
+      behavior: 'smooth',
+      block: 'nearest',
+    });
+
+
+    return result;
+
+
+  } catch (error) {
+
+    list.replaceChildren();
+
+
+    const errorMessage =
+      document.createElement('p');
+
+
+    errorMessage.textContent =
+      error.message
+      || '日次売上の確認に失敗しました。';
+
+
+    list.appendChild(
+      errorMessage
+    );
+
+
+    if (message) {
+
+      message.textContent =
+        error.message
+        || '日次売上の確認に失敗しました。';
+
+      message.hidden =
+        false;
+    }
+
+
+    throw error;
+  }
+}
+
+
 document
   .querySelectorAll(
     '[data-sales-period]'
