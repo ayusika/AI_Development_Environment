@@ -2588,6 +2588,127 @@
               </div>
 
 
+              <div class="schedule-form-grid">
+
+                <label class="schedule-field">
+
+                  <span>
+                    チップ
+                  </span>
+
+                  <input
+                    id="schedule-sales-tip-input"
+                    type="number"
+                    min="0"
+                    step="1"
+                    inputmode="numeric"
+                    placeholder="0"
+                  >
+
+                </label>
+
+
+                <label class="schedule-field">
+
+                  <span>
+                    値引き
+                  </span>
+
+                  <input
+                    id="schedule-sales-discount-input"
+                    type="number"
+                    min="0"
+                    step="1"
+                    inputmode="numeric"
+                    placeholder="0"
+                  >
+
+                </label>
+
+
+                <label class="schedule-field">
+
+                  <span>
+                    調整
+                  </span>
+
+                  <input
+                    id="schedule-sales-adjustment-input"
+                    type="number"
+                    step="1"
+                    inputmode="numeric"
+                    placeholder="0"
+                  >
+
+                </label>
+
+
+                <label class="schedule-field">
+
+                  <span>
+                    値引き理由
+                  </span>
+
+                  <select id="schedule-sales-discount-reason">
+
+                    <option value="">
+                      なし
+                    </option>
+
+                    <option value="coupon">
+                      クーポン
+                    </option>
+
+                    <option value="early">
+                      早割
+                    </option>
+
+                    <option value="store">
+                      店舗調整
+                    </option>
+
+                    <option value="campaign">
+                      キャンペーン
+                    </option>
+
+                    <option value="other">
+                      その他
+                    </option>
+
+                  </select>
+
+                </label>
+
+              </div>
+
+
+              <label class="schedule-field">
+
+                <span>
+                  値引きメモ
+                </span>
+
+                <input
+                  id="schedule-sales-discount-note"
+                  type="text"
+                  maxlength="300"
+                  autocomplete="off"
+                  placeholder="必要な場合だけ"
+                >
+
+              </label>
+
+
+              <button
+                class="primary-button"
+                id="schedule-sales-confirm-button"
+                type="button"
+                data-action="confirm-schedule-sales"
+              >
+                この売上を確定
+              </button>
+
+
               <p
                 class="schedule-form-message"
                 id="schedule-sales-message"
