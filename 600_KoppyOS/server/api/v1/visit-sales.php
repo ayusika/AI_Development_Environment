@@ -1193,13 +1193,239 @@ try {
     }
 
 
+    if ($method === 'POST') {
+
+        if (
+            $existingSales[
+                'confirmed_at'
+            ] !== null
+        ) {
+
+            throw new RuntimeException(
+                'Sales are already confirmed.'
+            );
+        }
+
+
+        if ($takeHomeTotal === null) {
+
+            throw new RuntimeException(
+                'Sales cannot be confirmed because take-home pricing is incomplete.'
+            );
+        }
+
+
+        $storeCourseRateId =
+            $course[
+                'store_course_rate_id'
+            ] ?? null;
+
+
+        $basePriceSnapshot =
+            $coursePriceKnown
+                ? $coursePriceTotal
+                : null;
+
+
+        $existingSalesId =
+            $existingSales['id']
+                !== null
+                ? (int)
+                    $existingSales['id']
+                : null;
+
+
+        if ($existingSalesId !== null) {
+
+            $saveStatement =
+                $pdo->prepare(
+                    "
+                    UPDATE visit_sales_v2
+
+                    SET
+                        store_course_rate_id = ?,
+                        base_price_snapshot = ?,
+                        course_take_home_snapshot = ?,
+                        option_price_total_snapshot = ?,
+                        option_take_home_total_snapshot = ?,
+                        tip_amount = ?,
+                        discount_amount = ?,
+                        discount_reason_type = ?,
+                        discount_reason_note = ?,
+                        adjustment_amount = ?,
+                        customer_payment_total = ?,
+                        take_home_total = ?,
+                        confirmed_at =
+                            strftime(
+                                '%Y-%m-%d %H:%M',
+                                'now',
+                                'localtime'
+                            ),
+                        updated_at =
+                            strftime(
+                                '%Y-%m-%d %H:%M',
+                                'now',
+                                'localtime'
+                            )
+
+                    WHERE
+                        id = ?
+                        AND confirmed_at IS NULL
+                    "
+                );
+
+
+            $saveStatement->execute([
+                $storeCourseRateId,
+                $basePriceSnapshot,
+                $courseTakeHomeTotal,
+                $optionPriceKnown
+                    ? $optionPriceTotal
+                    : 0,
+                $optionTakeHomeTotal,
+                $tipAmount,
+                $discountAmount,
+                $discountReasonType,
+                $discountReasonNote,
+                $adjustmentAmount,
+                $customerPaymentTotal,
+                $takeHomeTotal,
+                $existingSalesId,
+            ]);
+
+
+            if (
+                $saveStatement->rowCount()
+                !== 1
+            ) {
+
+                throw new RuntimeException(
+                    'Sales confirmation failed.'
+                );
+            }
+
+        } else {
+
+            $saveStatement =
+                $pdo->prepare(
+                    "
+                    INSERT INTO visit_sales_v2 (
+                        visit_id,
+                        store_course_rate_id,
+                        base_price_snapshot,
+                        course_take_home_snapshot,
+                        option_price_total_snapshot,
+                        option_take_home_total_snapshot,
+                        tip_amount,
+                        discount_amount,
+                        discount_reason_type,
+                        discount_reason_note,
+                        adjustment_amount,
+                        customer_payment_total,
+                        take_home_total,
+                        confirmed_at
+                    )
+                    VALUES (
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        ?,
+                        strftime(
+                            '%Y-%m-%d %H:%M',
+                            'now',
+                            'localtime'
+                        )
+                    )
+                    "
+                );
+
+
+            $saveStatement->execute([
+                $visitId,
+                $storeCourseRateId,
+                $basePriceSnapshot,
+                $courseTakeHomeTotal,
+                $optionPriceKnown
+                    ? $optionPriceTotal
+                    : 0,
+                $optionTakeHomeTotal,
+                $tipAmount,
+                $discountAmount,
+                $discountReasonType,
+                $discountReasonNote,
+                $adjustmentAmount,
+                $customerPaymentTotal,
+                $takeHomeTotal,
+            ]);
+
+
+            $existingSalesId =
+                (int) $pdo->lastInsertId();
+        }
+
+
+        $confirmedStatement =
+            $pdo->prepare(
+                "
+                SELECT
+                    id,
+                    confirmed_at
+
+                FROM visit_sales_v2
+
+                WHERE visit_id = ?
+
+                LIMIT 1
+                "
+            );
+
+
+        $confirmedStatement->execute([
+            $visitId,
+        ]);
+
+
+        $confirmedSales =
+            $confirmedStatement->fetch();
+
+
+        if (!$confirmedSales) {
+
+            throw new RuntimeException(
+                'Confirmed sales could not be reloaded.'
+            );
+        }
+
+
+        $existingSales['id'] =
+            (int) $confirmedSales['id'];
+
+
+        $existingSales[
+            'confirmed_at'
+        ] =
+            $confirmedSales[
+                'confirmed_at'
+            ];
+    }
+
+
     echo json_encode(
         [
             'success' =>
                 true,
 
             'read_only' =>
-                true,
+                $method !== 'POST',
 
             'visit' => [
                 'id' =>
