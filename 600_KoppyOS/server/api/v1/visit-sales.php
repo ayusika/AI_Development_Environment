@@ -239,6 +239,59 @@ try {
 
 
     /*
+     * Shared sales engine
+     */
+    $sharedResult =
+        $method === 'POST'
+            ? koppyConfirmVisitSales(
+                $pdo,
+                $visitId,
+                $payload
+            )
+            : koppyCalculateVisitSales(
+                $pdo,
+                $visitId
+            );
+
+
+    echo json_encode(
+        [
+            'success' =>
+                true,
+
+            'read_only' =>
+                $method !== 'POST',
+
+            'visit' =>
+                $sharedResult['visit'],
+
+            'course' =>
+                $sharedResult['course'],
+
+            'extensions' =>
+                $sharedResult['extensions'],
+
+            'options' =>
+                $sharedResult['options'],
+
+            'sales' =>
+                $sharedResult['sales'],
+
+            'preview' =>
+                $sharedResult['preview'],
+
+            'error' =>
+                null,
+        ],
+        JSON_UNESCAPED_UNICODE
+        | JSON_PRETTY_PRINT
+    );
+
+
+    exit;
+
+
+    /*
      * Visit
      */
     $visitStatement =
