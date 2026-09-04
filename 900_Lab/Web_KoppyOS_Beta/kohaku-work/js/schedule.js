@@ -8077,6 +8077,82 @@ async function openScheduleSales() {
     result.preview || {};
 
 
+  const sales =
+    result.sales || {};
+
+
+  const tipInput =
+    document.getElementById(
+      'schedule-sales-tip-input'
+    );
+
+
+  const discountInput =
+    document.getElementById(
+      'schedule-sales-discount-input'
+    );
+
+
+  const adjustmentInput =
+    document.getElementById(
+      'schedule-sales-adjustment-input'
+    );
+
+
+  const discountReason =
+    document.getElementById(
+      'schedule-sales-discount-reason'
+    );
+
+
+  const discountNote =
+    document.getElementById(
+      'schedule-sales-discount-note'
+    );
+
+
+  if (tipInput) {
+    tipInput.value =
+      String(
+        Number(
+          preview.tip_amount || 0
+        )
+      );
+  }
+
+
+  if (discountInput) {
+    discountInput.value =
+      String(
+        Number(
+          preview.discount_amount || 0
+        )
+      );
+  }
+
+
+  if (adjustmentInput) {
+    adjustmentInput.value =
+      String(
+        Number(
+          preview.adjustment_amount || 0
+        )
+      );
+  }
+
+
+  if (discountReason) {
+    discountReason.value =
+      sales.discount_reason_type || '';
+  }
+
+
+  if (discountNote) {
+    discountNote.value =
+      sales.discount_reason_note || '';
+  }
+
+
   const formatSalesPreviewMoney =
     (value) => {
 
