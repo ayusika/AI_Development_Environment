@@ -248,6 +248,10 @@ function handleAction(action, button) {
       openSalesDayConfirm();
       break;
 
+    case 'confirm-sales-day':
+      confirmSalesDay();
+      break;
+
     case 'close-schedule-customer':
       closeScheduleCustomerPanel();
       break;
