@@ -132,7 +132,10 @@ try {
         );
 
 
-    if ($method !== 'GET') {
+    if (
+        $method !== 'GET'
+        && $method !== 'POST'
+    ) {
 
         http_response_code(405);
 
@@ -150,10 +153,65 @@ try {
     }
 
 
+    $payload =
+        [];
+
+
+    if ($method === 'POST') {
+
+        $rawBody =
+            file_get_contents(
+                'php://input'
+            );
+
+
+        if (
+            $rawBody !== false
+            && trim($rawBody) !== ''
+        ) {
+
+            $decodedBody =
+                json_decode(
+                    $rawBody,
+                    true
+                );
+
+
+            if (!is_array($decodedBody)) {
+
+                http_response_code(400);
+
+                echo json_encode(
+                    [
+                        'success' => false,
+                        'error' =>
+                            'Invalid JSON body.',
+                    ],
+                    JSON_UNESCAPED_UNICODE
+                    | JSON_PRETTY_PRINT
+                );
+
+                exit;
+            }
+
+
+            $payload =
+                $decodedBody;
+        }
+    }
+
+
     $visitId =
-        isset($_GET['visit_id'])
-            ? (int) $_GET['visit_id']
-            : 0;
+        $method === 'POST'
+            ? (int) (
+                $payload['visit_id']
+                ?? 0
+            )
+            : (
+                isset($_GET['visit_id'])
+                    ? (int) $_GET['visit_id']
+                    : 0
+            );
 
 
     if ($visitId <= 0) {
