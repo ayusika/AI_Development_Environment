@@ -607,6 +607,13 @@ async function openSalesDayConfirm() {
       );
 
 
+    if (submitButton) {
+
+      submitButton.hidden =
+        unenteredVisits.length === 0;
+    }
+
+
     if (countElement) {
 
       countElement.textContent =
