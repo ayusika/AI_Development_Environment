@@ -901,6 +901,13 @@ async function openSalesDayConfirm() {
     }
 
 
+    if (submitButton) {
+
+      submitButton.disabled =
+        hasIncompletePreview;
+    }
+
+
     panel.scrollIntoView({
       behavior: 'smooth',
       block: 'nearest',
