@@ -173,6 +173,26 @@ function renderSalesSummary(
   }
 
 
+  const salesDayConfirmButton =
+    document.getElementById(
+      'sales-day-confirm-button'
+    );
+
+
+  if (salesDayConfirmButton) {
+
+    const periodType =
+      result.period
+        ? result.period.type
+        : null;
+
+
+    salesDayConfirmButton.hidden =
+      periodType !== 'today'
+      && periodType !== 'day';
+  }
+
+
   const salesVisitList =
     document.getElementById(
       'sales-visit-list'
