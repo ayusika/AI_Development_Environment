@@ -128,6 +128,7 @@ function handleNav(navName) {
 
   if (navName === 'sales') {
     showView('sales');
+    loadSales();
     return;
   }
 
