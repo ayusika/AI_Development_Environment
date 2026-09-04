@@ -12,6 +12,8 @@ koppyRequireApiAuth();
 
 require_once __DIR__ . '/lib/database.php';
 
+require_once __DIR__ . '/lib/visit-sales-calculator.php';
+
 
 function fetchVisitSalesCourseRate(
     PDO $pdo,
