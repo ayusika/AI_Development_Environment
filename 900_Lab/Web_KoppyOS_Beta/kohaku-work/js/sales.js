@@ -952,6 +952,190 @@ async function openSalesDayConfirm() {
 }
 
 
+async function confirmSalesDay() {
+
+  const submitButton =
+    document.getElementById(
+      'sales-day-confirm-submit-button'
+    );
+
+
+  const message =
+    document.getElementById(
+      'sales-day-confirm-message'
+    );
+
+
+  if (submitButton) {
+    submitButton.disabled = true;
+  }
+
+
+  if (message) {
+
+    message.textContent =
+      'この日の売上をまとめて確定しています…';
+
+    message.hidden = false;
+  }
+
+
+  try {
+
+    const currentResult =
+      await loadSales({
+        period:
+          salesState.period,
+
+        date:
+          salesState.date,
+
+        storeId:
+          salesState.storeId,
+      });
+
+
+    const period =
+      currentResult.period || {};
+
+
+    if (
+      period.type !== 'today'
+      && period.type !== 'day'
+    ) {
+
+      throw new Error(
+        '日別売上を表示してから確定してください。'
+      );
+    }
+
+
+    const date =
+      String(
+        period.anchor_date || ''
+      );
+
+
+    if (
+      !/^\d{4}-\d{2}-\d{2}$/.test(
+        date
+      )
+    ) {
+
+      throw new Error(
+        '売上確定日の取得に失敗しました。'
+      );
+    }
+
+
+    const payload = {
+      date,
+    };
+
+
+    if (
+      salesState.storeId !== null
+      && salesState.storeId !== undefined
+      && Number(
+        salesState.storeId
+      ) > 0
+    ) {
+
+      payload.store_id =
+        Number(
+          salesState.storeId
+        );
+    }
+
+
+    const response =
+      await fetch(
+        '/api/v1/sales-day-confirm.php',
+        {
+          method: 'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify(
+              payload
+            ),
+        }
+      );
+
+
+    const result =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !result.success
+    ) {
+
+      throw new Error(
+        result.error
+        || '日次売上の一括確定に失敗しました。'
+      );
+    }
+
+
+    await loadSales({
+      period:
+        salesState.period,
+
+      date:
+        salesState.date,
+
+      storeId:
+        salesState.storeId,
+    });
+
+
+    await openSalesDayConfirm();
+
+
+    if (message) {
+
+      message.textContent =
+        `${Number(
+          result.confirmed_count || 0
+        ).toLocaleString(
+          'ja-JP'
+        )}件の売上をまとめて確定しました。`;
+
+      message.hidden = false;
+    }
+
+
+    return result;
+
+
+  } catch (error) {
+
+    if (message) {
+
+      message.textContent =
+        error.message
+        || '日次売上の一括確定に失敗しました。';
+
+      message.hidden = false;
+    }
+
+
+    if (submitButton) {
+      submitButton.disabled = false;
+    }
+
+
+    throw error;
+  }
+}
+
+
 document
   .querySelectorAll(
     '[data-sales-period]'
