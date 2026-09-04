@@ -3797,6 +3797,93 @@
 
           </div>
 
+
+          <div
+            id="sales-day-confirm-panel"
+            hidden
+          >
+
+            <div class="section-heading">
+
+              <div>
+                <p class="eyebrow">
+                  DAILY SALES CHECK
+                </p>
+
+                <h3 id="sales-day-confirm-title">
+                  この日の売上確認
+                </h3>
+              </div>
+
+
+              <button
+                class="text-button"
+                type="button"
+                data-action="close-sales-day-confirm"
+              >
+                閉じる
+              </button>
+
+            </div>
+
+
+            <div class="metric-grid">
+
+              <article class="metric-card">
+
+                <span>
+                  未確定
+                </span>
+
+                <strong id="sales-day-confirm-unentered-count">
+                  −件
+                </strong>
+
+              </article>
+
+
+              <article class="metric-card highlight">
+
+                <span>
+                  確定予定手取り
+                </span>
+
+                <strong id="sales-day-confirm-take-home-total">
+                  ¥ −
+                </strong>
+
+              </article>
+
+            </div>
+
+
+            <div id="sales-day-confirm-list">
+
+              <p>
+                売上確認データを読み込む準備中
+              </p>
+
+            </div>
+
+
+            <p
+              id="sales-day-confirm-message"
+              hidden
+            ></p>
+
+
+            <button
+              class="primary-button primary-button-large"
+              id="sales-day-confirm-submit-button"
+              type="button"
+              data-action="confirm-sales-day"
+              disabled
+            >
+              この日の未確定売上をまとめて確定
+            </button>
+
+          </div>
+
         </section>
 
       </section>
