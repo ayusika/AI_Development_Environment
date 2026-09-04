@@ -8257,6 +8257,238 @@ async function openScheduleSales() {
 }
 
 
+async function confirmScheduleSales() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+
+  if (
+    !visit
+    || !visit.id
+  ) {
+    throw new Error(
+      'Sales visit is not selected.'
+    );
+  }
+
+
+  const tipInput =
+    document.getElementById(
+      'schedule-sales-tip-input'
+    );
+
+
+  const discountInput =
+    document.getElementById(
+      'schedule-sales-discount-input'
+    );
+
+
+  const adjustmentInput =
+    document.getElementById(
+      'schedule-sales-adjustment-input'
+    );
+
+
+  const discountReason =
+    document.getElementById(
+      'schedule-sales-discount-reason'
+    );
+
+
+  const discountNote =
+    document.getElementById(
+      'schedule-sales-discount-note'
+    );
+
+
+  const confirmButton =
+    document.getElementById(
+      'schedule-sales-confirm-button'
+    );
+
+
+  const salesMessage =
+    document.getElementById(
+      'schedule-sales-message'
+    );
+
+
+  const readIntegerInput =
+    (input) => {
+
+      if (!input) {
+        return 0;
+      }
+
+
+      const value =
+        String(
+          input.value || ''
+        ).trim();
+
+
+      if (value === '') {
+        return 0;
+      }
+
+
+      if (!/^-?\d+$/.test(value)) {
+
+        throw new Error(
+          '金額は整数で入力してください。'
+        );
+      }
+
+
+      return Number(value);
+    };
+
+
+  try {
+
+    if (confirmButton) {
+      confirmButton.disabled = true;
+    }
+
+
+    if (salesMessage) {
+      salesMessage.textContent =
+        '売上を確定しています…';
+
+      salesMessage.hidden =
+        false;
+    }
+
+
+    const payload = {
+      visit_id:
+        Number(visit.id),
+
+      tip_amount:
+        readIntegerInput(
+          tipInput
+        ),
+
+      discount_amount:
+        readIntegerInput(
+          discountInput
+        ),
+
+      adjustment_amount:
+        readIntegerInput(
+          adjustmentInput
+        ),
+
+      discount_reason_type:
+        discountReason
+          ? discountReason.value
+          : '',
+
+      discount_reason_note:
+        discountNote
+          ? discountNote.value.trim()
+          : '',
+    };
+
+
+    const response =
+      await fetch(
+        visitSalesApiUrl,
+        {
+          method: 'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify(
+              payload
+            ),
+        }
+      );
+
+
+    const result =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !result.success
+    ) {
+
+      throw new Error(
+        result.error
+        || '売上の確定に失敗しました。'
+      );
+    }
+
+
+    scheduleState.selectedSalesPreview =
+      result;
+
+
+    await openScheduleSales();
+
+
+    updateScheduleDetailState(
+      scheduleDetailSalesState,
+      true,
+      '入力済',
+      '未入力'
+    );
+
+
+    if (confirmButton) {
+
+      confirmButton.disabled =
+        true;
+
+      confirmButton.textContent =
+        '売上確定済み';
+    }
+
+
+    if (salesMessage) {
+
+      salesMessage.textContent =
+        '売上を確定しました。';
+
+      salesMessage.hidden =
+        false;
+    }
+
+
+    return result;
+
+
+  } catch (error) {
+
+    if (confirmButton) {
+      confirmButton.disabled = false;
+    }
+
+
+    if (salesMessage) {
+
+      salesMessage.textContent =
+        error.message
+        || '売上の確定に失敗しました。';
+
+      salesMessage.hidden =
+        false;
+    }
+
+
+    throw error;
+  }
+}
+
+
 function openScheduleDiary() {
 
   const visit =
