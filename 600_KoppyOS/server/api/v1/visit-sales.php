@@ -443,6 +443,209 @@ try {
         );
 
 
+    $discountReasonType =
+        $existingSales[
+            'discount_reason_type'
+        ] ?? null;
+
+
+    $discountReasonNote =
+        $existingSales[
+            'discount_reason_note'
+        ] ?? null;
+
+
+    if ($method === 'POST') {
+
+        $readIntegerPayload =
+            static function (
+                array $payload,
+                string $key,
+                int $fallback
+            ): int {
+
+                if (
+                    !array_key_exists(
+                        $key,
+                        $payload
+                    )
+                ) {
+                    return $fallback;
+                }
+
+
+                $value =
+                    $payload[$key];
+
+
+                if (
+                    is_int($value)
+                ) {
+                    return $value;
+                }
+
+
+                if (
+                    is_string($value)
+                    && preg_match(
+                        '/^-?\d+$/',
+                        $value
+                    )
+                ) {
+                    return (int) $value;
+                }
+
+
+                throw new RuntimeException(
+                    $key
+                    . ' must be an integer.'
+                );
+            };
+
+
+        $tipAmount =
+            $readIntegerPayload(
+                $payload,
+                'tip_amount',
+                $tipAmount
+            );
+
+
+        $discountAmount =
+            $readIntegerPayload(
+                $payload,
+                'discount_amount',
+                $discountAmount
+            );
+
+
+        $adjustmentAmount =
+            $readIntegerPayload(
+                $payload,
+                'adjustment_amount',
+                $adjustmentAmount
+            );
+
+
+        if ($tipAmount < 0) {
+
+            throw new RuntimeException(
+                'tip_amount must be 0 or greater.'
+            );
+        }
+
+
+        if ($discountAmount < 0) {
+
+            throw new RuntimeException(
+                'discount_amount must be 0 or greater.'
+            );
+        }
+
+
+        $allowedDiscountReasons = [
+            'coupon',
+            'early',
+            'store',
+            'campaign',
+            'other',
+        ];
+
+
+        $requestedDiscountReason =
+            isset(
+                $payload[
+                    'discount_reason_type'
+                ]
+            )
+                ? trim(
+                    (string)
+                    $payload[
+                        'discount_reason_type'
+                    ]
+                )
+                : '';
+
+
+        if (
+            $requestedDiscountReason !== ''
+            && !in_array(
+                $requestedDiscountReason,
+                $allowedDiscountReasons,
+                true
+            )
+        ) {
+
+            throw new RuntimeException(
+                'Invalid discount_reason_type.'
+            );
+        }
+
+
+        $requestedDiscountNote =
+            isset(
+                $payload[
+                    'discount_reason_note'
+                ]
+            )
+                ? trim(
+                    (string)
+                    $payload[
+                        'discount_reason_note'
+                    ]
+                )
+                : '';
+
+
+        if (
+            mb_strlen(
+                $requestedDiscountNote
+            ) > 300
+        ) {
+
+            throw new RuntimeException(
+                'discount_reason_note is too long.'
+            );
+        }
+
+
+        if ($discountAmount > 0) {
+
+            $discountReasonType =
+                $requestedDiscountReason !== ''
+                    ? $requestedDiscountReason
+                    : null;
+
+
+            $discountReasonNote =
+                $requestedDiscountNote !== ''
+                    ? $requestedDiscountNote
+                    : null;
+
+        } else {
+
+            $discountReasonType =
+                null;
+
+
+            $discountReasonNote =
+                null;
+        }
+
+
+        $existingSales[
+            'discount_reason_type'
+        ] =
+            $discountReasonType;
+
+
+        $existingSales[
+            'discount_reason_note'
+        ] =
+            $discountReasonNote;
+    }
+
+
     /*
      * Main course
      */
