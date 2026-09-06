@@ -26,6 +26,7 @@ on:
           - migrate-sales-v2.php
           - migrate-sapporo-rates-v2.php
           - migrate-nomination-fee.php
+          - migrate-nomination-fee-rules.php
 
 permissions:
   contents: read
