@@ -1528,3 +1528,38 @@ document
       }
     );
   });
+
+const salesStoreFilterInput =
+  document.getElementById(
+    'sales-store-filter'
+  );
+
+
+if (salesStoreFilterInput) {
+
+  salesStoreFilterInput.addEventListener(
+    'change',
+    () => {
+
+      const selectedStoreId =
+        Number(
+          salesStoreFilterInput.value
+          || 0
+        );
+
+
+      loadSales({
+        period:
+          salesState.period,
+
+        date:
+          salesState.date,
+
+        storeId:
+          selectedStoreId > 0
+            ? selectedStoreId
+            : null,
+      });
+    }
+  );
+}
