@@ -242,6 +242,91 @@ function renderSalesSummary(
   }
 
 
+  const salesDayNavigation =
+    document.getElementById(
+      'sales-day-navigation'
+    );
+
+
+  const salesDayNavigationLabel =
+    document.getElementById(
+      'sales-day-navigation-label'
+    );
+
+
+  const periodType =
+    result.period
+      ? result.period.type
+      : null;
+
+
+  const anchorDate =
+    String(
+      result.period
+        ? result.period.anchor_date
+          || ''
+        : ''
+    );
+
+
+  const isDailyPeriod =
+    periodType === 'today'
+    || periodType === 'day';
+
+
+  if (salesDayNavigation) {
+
+    salesDayNavigation.hidden =
+      !isDailyPeriod;
+
+
+    salesDayNavigation.dataset.salesDate =
+      anchorDate;
+  }
+
+
+  if (
+    salesDayNavigationLabel
+    && isDailyPeriod
+  ) {
+
+    const [
+      ,
+      month,
+      day,
+    ] =
+      anchorDate
+        .split('-')
+        .map(Number);
+
+
+    salesDayNavigationLabel.textContent =
+      Number.isFinite(month)
+      && Number.isFinite(day)
+        ? `${month}/${day}`
+        : '--/--';
+  }
+
+
+  const salesDatePickerElement =
+    document.getElementById(
+      'sales-date-picker'
+    );
+
+
+  if (
+    salesDatePickerElement
+    && isDailyPeriod
+    && /^\d{4}-\d{2}-\d{2}$/.test(
+      anchorDate
+    )
+  ) {
+
+    salesDatePickerElement.value =
+      anchorDate;
+  }
+
+
   const salesVisitList =
     document.getElementById(
       'sales-visit-list'
