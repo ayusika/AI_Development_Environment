@@ -1512,6 +1512,7 @@ function koppyConfirmVisitSales(
                     store_course_rate_id,
                     base_price_snapshot,
                     course_take_home_snapshot,
+                    nomination_fee_snapshot,
                     option_price_total_snapshot,
                     option_take_home_total_snapshot,
                     tip_amount,
@@ -1524,6 +1525,7 @@ function koppyConfirmVisitSales(
                     confirmed_at
                 )
                 VALUES (
+                    ?,
                     ?,
                     ?,
                     ?,
@@ -1560,6 +1562,10 @@ function koppyConfirmVisitSales(
 
             $snapshot[
                 'course_take_home_snapshot'
+            ],
+
+            $snapshot[
+                'nomination_fee_snapshot'
             ],
 
             $snapshot[
