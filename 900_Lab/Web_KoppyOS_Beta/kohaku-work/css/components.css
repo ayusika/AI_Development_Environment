@@ -371,3 +371,33 @@
     padding: 21px;
   }
 }
+
+.sales-day-navigation {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto
+    minmax(0, 1fr);
+
+  align-items: center;
+  gap: 10px;
+
+  margin-top: 10px;
+}
+
+
+.sales-day-navigation .secondary-button {
+  min-width: 0;
+}
+
+
+#sales-day-navigation-label {
+  min-width: 58px;
+
+  text-align: center;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  color: var(--text);
+}
