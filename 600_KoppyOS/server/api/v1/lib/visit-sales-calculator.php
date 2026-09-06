@@ -1158,6 +1158,7 @@ function koppyCalculateVisitSales(
 
         $takeHomeTotal =
             $courseTakeHomeTotal
+            + $nominationFeeAmount
             + $optionTakeHomeTotal
             + $tipAmount
             + $adjustmentAmount;
