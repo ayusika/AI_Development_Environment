@@ -380,12 +380,175 @@ try {
 
 
     /*
+     * 千葉 180分超の合成コース。
+     *
+     * 店舗料金ルール上、
+     * 180分を超える予約は
+     *
+     * 180分 + 基本コース
+     *
+     * として計算する。
+     *
+     * 指名料は予約単位で別計算するため、
+     * ここには含めない。
+     */
+    $coursesByMinutes =
+        [];
+
+
+    foreach ($courses as $course) {
+
+        $coursesByMinutes[
+            (int) $course['minutes']
+        ] =
+            $course;
+    }
+
+
+    $compositeCourseParts = [
+
+        240 => [180, 60],
+
+        255 => [180, 75],
+
+        270 => [180, 90],
+
+        300 => [180, 120],
+
+        330 => [180, 150],
+
+        360 => [180, 180],
+    ];
+
+
+    foreach (
+        $compositeCourseParts
+        as $totalMinutes => $parts
+    ) {
+
+        $basePrice =
+            0;
+
+
+        $takeHome =
+            0;
+
+
+        $basePriceKnown =
+            true;
+
+
+        foreach ($parts as $partMinutes) {
+
+            if (
+                !isset(
+                    $coursesByMinutes[
+                        $partMinutes
+                    ]
+                )
+            ) {
+
+                throw new RuntimeException(
+                    'Composite course source was not found: '
+                    . $partMinutes
+                );
+            }
+
+
+            $part =
+                $coursesByMinutes[
+                    $partMinutes
+                ];
+
+
+            if (
+                $part['base_price']
+                === null
+            ) {
+
+                $basePriceKnown =
+                    false;
+
+            } else {
+
+                $basePrice +=
+                    (int)
+                    $part['base_price'];
+            }
+
+
+            $takeHome +=
+                (int)
+                $part['take_home'];
+        }
+
+
+        $courseCode =
+            'regular_'
+            . str_pad(
+                (string) $totalMinutes,
+                3,
+                '0',
+                STR_PAD_LEFT
+            );
+
+
+        $courseName =
+            $totalMinutes
+            . '分';
+
+
+        $courseInsertStatement->execute([
+            $storeId,
+            $courseCode,
+            $courseName,
+            $totalMinutes,
+            100 + $totalMinutes,
+        ]);
+
+
+        $courseFindStatement->execute([
+            $storeId,
+            $courseCode,
+        ]);
+
+
+        $storeCourseId =
+            (int)
+            $courseFindStatement->fetchColumn();
+
+
+        if ($storeCourseId <= 0) {
+
+            throw new RuntimeException(
+                'Composite store_course was not found: '
+                . $courseCode
+            );
+        }
+
+
+        $courseRateInsertStatement->execute([
+            $storeCourseId,
+            $basePriceKnown
+                ? $basePrice
+                : null,
+            $takeHome,
+            $effectiveFrom,
+        ]);
+
+
+        $courseIdsByMinutes[
+            $totalMinutes
+        ] =
+            $storeCourseId;
+    }
+
+
+    /*
      * 既存の千葉予約で
      * store_course_idが未設定の場合、
-     * 既知の基本コース時間だけ補完する。
-     *
-     * 180分超は次段階で
-     * 合成コースとして対応する。
+     * 既知の基本コース時間と
+     * 合成コース時間を補完する。
      */
     $visitCourseBackfillStatement =
         $pdo->prepare(
