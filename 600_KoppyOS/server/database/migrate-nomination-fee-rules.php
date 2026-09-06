@@ -282,4 +282,132 @@ try {
 
                 updated_at =
                     strftime(
-                        '%Y-%m
+                        '%Y-%m-%d %H:%M',
+                        'now',
+                        'localtime'
+                    )
+            "
+        );
+
+
+    foreach ($rules as $rule) {
+
+        $ruleStatement->execute(
+            $rule
+        );
+    }
+
+
+    /*
+     * 既存の未確定予約を
+     * 現在のルールへ補正する。
+     *
+     * 確定済み売上は変更しない。
+     */
+
+    /*
+     * 札幌は全区分2000円。
+     */
+    $sapporoUpdate =
+        $pdo->prepare(
+            "
+            UPDATE visits
+
+            SET
+                nomination_fee_amount = 2000
+
+            WHERE
+                store_id = ?
+
+                AND NOT EXISTS (
+                    SELECT 1
+
+                    FROM visit_sales_v2 AS vs
+
+                    WHERE
+                        vs.visit_id = visits.id
+
+                        AND vs.confirmed_at
+                            IS NOT NULL
+                )
+            "
+        );
+
+
+    $sapporoUpdate->execute([
+        $sapporoStoreId,
+    ]);
+
+
+    /*
+     * 千葉は店舗内リピートだけ2000円。
+     *
+     * new / other_store_repeat は0円。
+     * repeat / repeat_unknown_id は2000円。
+     */
+    $chibaUpdate =
+        $pdo->prepare(
+            "
+            UPDATE visits
+
+            SET
+                nomination_fee_amount =
+                    CASE
+                        WHEN customer_status IN (
+                            'repeat',
+                            'repeat_unknown_id'
+                        )
+                        THEN 2000
+
+                        ELSE 0
+                    END
+
+            WHERE
+                store_id = ?
+
+                AND NOT EXISTS (
+                    SELECT 1
+
+                    FROM visit_sales_v2 AS vs
+
+                    WHERE
+                        vs.visit_id = visits.id
+
+                        AND vs.confirmed_at
+                            IS NOT NULL
+                )
+            "
+        );
+
+
+    $chibaUpdate->execute([
+        $chibaStoreId,
+    ]);
+
+
+    $pdo->commit();
+
+
+    fwrite(
+        STDOUT,
+        "nomination fee rules migration completed.\n"
+    );
+
+
+} catch (Throwable $error) {
+
+    if ($pdo->inTransaction()) {
+
+        $pdo->rollBack();
+    }
+
+
+    fwrite(
+        STDERR,
+        $error->getMessage()
+        . "\n"
+    );
+
+
+    exit(1);
+}
