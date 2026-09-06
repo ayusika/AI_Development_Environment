@@ -8174,6 +8174,9 @@ async function openScheduleSales() {
     'schedule-sales-course-take-home':
       preview.course_take_home_total,
 
+    'schedule-sales-nomination-fee':
+      preview.nomination_fee_amount,
+
     'schedule-sales-option-take-home':
       preview.option_take_home_total,
 
