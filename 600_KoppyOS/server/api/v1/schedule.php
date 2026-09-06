@@ -2650,6 +2650,15 @@ try {
         }
 
 
+        $nominationFeeAmount =
+            resolveNominationFeeAmount(
+                $pdo,
+                $storeId,
+                $customerStatus,
+                $startedAt
+            );
+
+
         $beforeChangeData = [
             'store_id' =>
                 (int) $currentVisit['store_id'],
