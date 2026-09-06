@@ -173,6 +173,38 @@ function renderSalesSummary(
   }
 
 
+  const salesSummaryTitle =
+    document.getElementById(
+      'sales-summary-title'
+    );
+
+
+  if (salesSummaryTitle) {
+
+    const periodType =
+      result.period
+        ? result.period.type
+        : null;
+
+
+    if (periodType === 'today') {
+
+      salesSummaryTitle.textContent =
+        '今日の手取り';
+
+    } else if (periodType === 'day') {
+
+      salesSummaryTitle.textContent =
+        'この日の手取り';
+
+    } else {
+
+      salesSummaryTitle.textContent =
+        '今月の手取り';
+    }
+  }
+
+
   const salesDayConfirmButton =
     document.getElementById(
       'sales-day-confirm-button'
