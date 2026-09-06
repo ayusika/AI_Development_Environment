@@ -73,6 +73,11 @@
    BUTTONS
 ======================================== */
 
+[hidden] {
+  display: none !important;
+}
+
+
 .primary-button,
 .secondary-button,
 .text-button,
