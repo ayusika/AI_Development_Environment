@@ -329,6 +329,9 @@ function koppyCalculateVisitSales(
             'course_take_home_snapshot' =>
                 0,
 
+            'nomination_fee_snapshot' =>
+                0,
+
             'option_price_total_snapshot' =>
                 0,
 
