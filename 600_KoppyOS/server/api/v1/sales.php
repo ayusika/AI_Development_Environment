@@ -709,10 +709,9 @@ try {
         "
         GROUP BY
             v.store_id,
-            substr(
+            date(
                 v.started_at,
-                1,
-                10
+                '-12 hours'
             )
         ";
 
