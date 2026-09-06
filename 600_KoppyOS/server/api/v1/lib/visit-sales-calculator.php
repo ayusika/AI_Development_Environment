@@ -1312,6 +1312,9 @@ function koppyCalculateVisitSales(
             'course_take_home_snapshot' =>
                 $courseTakeHomeTotal,
 
+            'nomination_fee_snapshot' =>
+                $nominationFeeAmount,
+
             'option_price_total_snapshot' =>
                 $optionPriceKnown
                     ? $optionPriceTotal
