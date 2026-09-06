@@ -180,16 +180,25 @@ try {
 
 
     $startAt =
-        $dateObject->format(
-            'Y-m-d 00:00'
-        );
+        $dateObject
+            ->setTime(
+                12,
+                0
+            )
+            ->format(
+                'Y-m-d H:i'
+            );
 
 
     $endAt =
         $dateObject
             ->modify('+1 day')
+            ->setTime(
+                12,
+                0
+            )
             ->format(
-                'Y-m-d 00:00'
+                'Y-m-d H:i'
             );
 
 
