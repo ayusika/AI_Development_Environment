@@ -46,7 +46,13 @@ try {
 
     /*
      * DBと同じlocaltime基準で
-     * 現在日時を取得する。
+     * 現在日時と営業日を取得する。
+     *
+     * Kohaku Workの営業日は
+     * 毎日12:00で切り替わる。
+     *
+     * 00:00〜11:59は
+     * 前営業日として扱う。
      */
     $clock =
         $pdo
@@ -56,8 +62,9 @@ try {
                     strftime(
                         '%Y-%m-%d',
                         'now',
-                        'localtime'
-                    ) AS today,
+                        'localtime',
+                        '-12 hours'
+                    ) AS business_today,
 
                     strftime(
                         '%Y-%m-%d %H:%M',
@@ -77,8 +84,9 @@ try {
     }
 
 
-    $today =
-        (string) $clock['today'];
+    $businessToday =
+        (string)
+        $clock['business_today'];
 
 
     $nowAt =
@@ -125,14 +133,14 @@ try {
     if ($period === 'today') {
 
         $anchorDate =
-            $today;
+            $businessToday;
 
     } else {
 
         $anchorDate =
             $requestedDate !== ''
                 ? $requestedDate
-                : $today;
+                : $businessToday;
     }
 
 
@@ -194,7 +202,7 @@ try {
         $startAt =
             $anchor
                 ->setTime(
-                    0,
+                    12,
                     0
                 )
                 ->format(
@@ -208,7 +216,7 @@ try {
                     '+1 day'
                 )
                 ->setTime(
-                    0,
+                    12,
                     0
                 )
                 ->format(
@@ -223,7 +231,7 @@ try {
                     'first day of this month'
                 )
                 ->setTime(
-                    0,
+                    12,
                     0
                 );
 
