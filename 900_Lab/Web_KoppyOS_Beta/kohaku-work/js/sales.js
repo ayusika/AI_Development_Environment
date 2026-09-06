@@ -327,6 +327,79 @@ function renderSalesSummary(
   }
 
 
+  const salesStoreFilter =
+    document.getElementById(
+      'sales-store-filter'
+    );
+
+
+  if (salesStoreFilter) {
+
+    const stores =
+      Array.isArray(result.stores)
+        ? result.stores
+        : [];
+
+
+    const selectedStoreId =
+      Number(
+        salesState.storeId
+        || 0
+      );
+
+
+    salesStoreFilter.replaceChildren();
+
+
+    const allStoresOption =
+      document.createElement(
+        'option'
+      );
+
+
+    allStoresOption.value = '';
+    allStoresOption.textContent =
+      '全店舗';
+
+
+    salesStoreFilter.appendChild(
+      allStoresOption
+    );
+
+
+    stores.forEach((store) => {
+
+      const option =
+        document.createElement(
+          'option'
+        );
+
+
+      option.value =
+        String(
+          Number(store.id)
+        );
+
+
+      option.textContent =
+        String(
+          store.name || ''
+        );
+
+
+      salesStoreFilter.appendChild(
+        option
+      );
+    });
+
+
+    salesStoreFilter.value =
+      selectedStoreId > 0
+        ? String(selectedStoreId)
+        : '';
+  }
+
+
   const salesVisitList =
     document.getElementById(
       'sales-visit-list'
