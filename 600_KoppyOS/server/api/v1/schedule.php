@@ -2706,6 +2706,7 @@ try {
                     course_minutes = ?,
                     store_course_id = ?,
                     customer_status = ?,
+                    nomination_fee_amount = ?,
                     customer_features = ?,
                     visitor_type = ?,
                     status = ?,
