@@ -30,6 +30,12 @@ const salesUnenteredCount =
   );
 
 
+const salesDailyFeeTotal =
+  document.getElementById(
+    'sales-daily-fee-total'
+  );
+
+
 const salesState = {
   period: 'month',
   date: null,
