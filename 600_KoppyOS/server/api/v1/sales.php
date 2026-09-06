@@ -637,20 +637,21 @@ try {
     /*
      * 日次手数料。
      *
-     * 店舗 × 接客日ごとに
-     * 確定済み売上件数を数え、
-     * その件数を満たす有効ルールのうち
-     * 最大のmin_visit_countを採用する。
+     * 店舗 × 営業日ごとに
+     * 確定済み売上件数を数える。
+     *
+     * 営業日は12:00境界なので、
+     * started_atから12時間引いた日付を
+     * sales_dateとして扱う。
      */
     $dailyFeeSql =
         "
         SELECT
             v.store_id,
 
-            substr(
+            date(
                 v.started_at,
-                1,
-                10
+                '-12 hours'
             ) AS sales_date,
 
             COUNT(*) AS confirmed_visit_count
