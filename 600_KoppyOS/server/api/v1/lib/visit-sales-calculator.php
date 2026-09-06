@@ -1139,6 +1139,7 @@ function koppyCalculateVisitSales(
             max(
                 0,
                 $coursePriceTotal
+                + $nominationFeeAmount
                 + $optionPriceTotal
                 + $tipAmount
                 - $discountAmount
