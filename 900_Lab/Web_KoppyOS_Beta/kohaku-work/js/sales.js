@@ -1345,3 +1345,113 @@ if (salesDatePicker) {
     }
   );
 }
+
+
+document
+  .querySelectorAll(
+    '[data-sales-day-step]'
+  )
+  .forEach((button) => {
+
+    button.addEventListener(
+      'click',
+      () => {
+
+        const step =
+          Number(
+            button.dataset.salesDayStep
+            || 0
+          );
+
+
+        if (
+          step !== -1
+          && step !== 1
+        ) {
+          return;
+        }
+
+
+        const navigation =
+          document.getElementById(
+            'sales-day-navigation'
+          );
+
+
+        const currentDate =
+          String(
+            navigation
+              ? navigation.dataset.salesDate
+                || ''
+              : ''
+          ).trim();
+
+
+        if (
+          !/^\d{4}-\d{2}-\d{2}$/.test(
+            currentDate
+          )
+        ) {
+          return;
+        }
+
+
+        const [
+          year,
+          month,
+          day,
+        ] =
+          currentDate
+            .split('-')
+            .map(Number);
+
+
+        const shiftedDate =
+          new Date(
+            Date.UTC(
+              year,
+              month - 1,
+              day
+            )
+          );
+
+
+        shiftedDate.setUTCDate(
+          shiftedDate.getUTCDate()
+          + step
+        );
+
+
+        const nextDate =
+          [
+            shiftedDate
+              .getUTCFullYear(),
+
+            String(
+              shiftedDate
+                .getUTCMonth()
+              + 1
+            ).padStart(
+              2,
+              '0'
+            ),
+
+            String(
+              shiftedDate
+                .getUTCDate()
+            ).padStart(
+              2,
+              '0'
+            ),
+          ].join('-');
+
+
+        loadSales({
+          period: 'day',
+          date: nextDate,
+          storeId:
+            salesState.storeId,
+        });
+      }
+    );
+  });
