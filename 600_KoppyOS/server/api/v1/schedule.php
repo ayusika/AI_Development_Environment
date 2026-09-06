@@ -1772,6 +1772,15 @@ try {
         }
 
 
+        $nominationFeeAmount =
+            resolveNominationFeeAmount(
+                $pdo,
+                $storeId,
+                $customerStatus,
+                $startedAt
+            );
+
+
         $statement =
             $pdo->prepare(
                 'INSERT INTO visits
@@ -1783,10 +1792,11 @@ try {
                     course_minutes,
                     store_course_id,
                     customer_status,
+                    nomination_fee_amount,
                     is_dummy,
                     status
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, 0, ?)'
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?)'
             );
 
         $statement->execute([
@@ -1797,6 +1807,7 @@ try {
             $courseMinutes,
             $storeCourseId,
             $customerStatus,
+            $nominationFeeAmount,
             'scheduled',
         ]);
 
