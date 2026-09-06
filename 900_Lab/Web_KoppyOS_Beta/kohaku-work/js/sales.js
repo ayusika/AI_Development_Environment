@@ -143,7 +143,18 @@ function renderSalesSummary(
 
     salesTakeHomeTotal.textContent =
       formatSalesDashboardMoney(
-        summary.take_home_total
+        summary.net_take_home_total
+        ?? summary.take_home_total
+      );
+  }
+
+
+  if (salesDailyFeeTotal) {
+
+    salesDailyFeeTotal.textContent =
+      formatSalesDashboardMoney(
+        summary.daily_fee_total
+        ?? 0
       );
   }
 
