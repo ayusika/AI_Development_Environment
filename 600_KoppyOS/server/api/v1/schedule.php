@@ -2732,6 +2732,7 @@ try {
             $courseMinutes,
             $storeCourseId,
             $customerStatus,
+            $nominationFeeAmount,
             $customerFeatures,
             $visitorType,
             $status,
