@@ -196,6 +196,7 @@ function koppyCalculateVisitSales(
                 v.started_at,
                 v.course_minutes,
                 v.store_course_id,
+                v.nomination_fee_amount,
                 v.customer_status,
                 v.status,
 
