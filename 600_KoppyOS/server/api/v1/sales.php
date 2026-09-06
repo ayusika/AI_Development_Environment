@@ -626,6 +626,192 @@ try {
     }
 
 
+    /*
+     * 日次手数料。
+     *
+     * 店舗 × 接客日ごとに
+     * 確定済み売上件数を数え、
+     * その件数を満たす有効ルールのうち
+     * 最大のmin_visit_countを採用する。
+     */
+    $dailyFeeSql =
+        "
+        SELECT
+            v.store_id,
+
+            substr(
+                v.started_at,
+                1,
+                10
+            ) AS sales_date,
+
+            COUNT(*) AS confirmed_visit_count
+
+        FROM visits AS v
+
+        INNER JOIN visit_sales_v2 AS vs
+            ON vs.visit_id =
+                v.id
+
+        WHERE
+            v.started_at >= :start_at
+
+            AND v.started_at < :end_at
+
+            AND v.started_at <= :now_at
+
+            AND v.status NOT IN (
+                'cancelled',
+                'no_show'
+            )
+
+            AND vs.confirmed_at IS NOT NULL
+        ";
+
+
+    $dailyFeeParameters = [
+        ':start_at' =>
+            $startAt,
+
+        ':end_at' =>
+            $endAt,
+
+        ':now_at' =>
+            $nowAt,
+    ];
+
+
+    if ($storeId > 0) {
+
+        $dailyFeeSql .=
+            "
+            AND v.store_id = :store_id
+            ";
+
+
+        $dailyFeeParameters[
+            ':store_id'
+        ] =
+            $storeId;
+    }
+
+
+    $dailyFeeSql .=
+        "
+        GROUP BY
+            v.store_id,
+            substr(
+                v.started_at,
+                1,
+                10
+            )
+        ";
+
+
+    $dailyFeeVisitStatement =
+        $pdo->prepare(
+            $dailyFeeSql
+        );
+
+
+    $dailyFeeVisitStatement->execute(
+        $dailyFeeParameters
+    );
+
+
+    $dailyFeeGroups =
+        $dailyFeeVisitStatement->fetchAll();
+
+
+    $dailyFeeRuleStatement =
+        $pdo->prepare(
+            "
+            SELECT
+                id,
+                min_visit_count,
+                fee_amount
+
+            FROM store_daily_fee_rules
+
+            WHERE
+                store_id = :store_id
+
+                AND active = 1
+
+                AND min_visit_count
+                    <= :visit_count
+
+                AND effective_from
+                    <= :sales_date
+
+                AND (
+                    effective_to IS NULL
+                    OR effective_to
+                        >= :sales_date
+                )
+
+            ORDER BY
+                min_visit_count DESC,
+                effective_from DESC,
+                id DESC
+
+            LIMIT 1
+            "
+        );
+
+
+    $dailyFeeTotal =
+        0;
+
+
+    foreach (
+        $dailyFeeGroups
+        as $dailyFeeGroup
+    ) {
+
+        $dailyFeeRuleStatement->execute([
+            ':store_id' =>
+                (int)
+                $dailyFeeGroup[
+                    'store_id'
+                ],
+
+            ':visit_count' =>
+                (int)
+                $dailyFeeGroup[
+                    'confirmed_visit_count'
+                ],
+
+            ':sales_date' =>
+                (string)
+                $dailyFeeGroup[
+                    'sales_date'
+                ],
+        ]);
+
+
+        $dailyFeeRule =
+            $dailyFeeRuleStatement->fetch();
+
+
+        if (!$dailyFeeRule) {
+            continue;
+        }
+
+
+        $dailyFeeTotal +=
+            (int)
+            $dailyFeeRule[
+                'fee_amount'
+            ];
+    }
+
+
+    $netTakeHomeTotal =
+        $takeHomeTotal
+        - $dailyFeeTotal;
+
+
     echo json_encode(
         [
             'success' =>
@@ -658,6 +844,12 @@ try {
             'summary' => [
                 'take_home_total' =>
                     $takeHomeTotal,
+
+                'daily_fee_total' =>
+                    $dailyFeeTotal,
+
+                'net_take_home_total' =>
+                    $netTakeHomeTotal,
 
                 'visit_count' =>
                     $visitCount,
