@@ -1247,7 +1247,7 @@ try {
                     ON cn.customer_id = c.id
                    AND cn.is_primary = 1
 
-                LEFT JOIN visit_sales vs
+                LEFT JOIN visit_sales_v2 vs
                     ON vs.visit_id = v.id
 
                 WHERE
