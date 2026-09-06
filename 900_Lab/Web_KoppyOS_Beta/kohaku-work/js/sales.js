@@ -1224,3 +1224,39 @@ document
       }
     );
   });
+
+const salesDatePicker =
+  document.getElementById(
+    'sales-date-picker'
+  );
+
+
+if (salesDatePicker) {
+
+  salesDatePicker.addEventListener(
+    'change',
+    () => {
+
+      const selectedDate =
+        String(
+          salesDatePicker.value
+          || ''
+        ).trim();
+
+
+      if (
+        !/^\d{4}-\d{2}-\d{2}$/.test(
+          selectedDate
+        )
+      ) {
+        return;
+      }
+
+
+      loadSales({
+        period: 'day',
+        date: selectedDate,
+      });
+    }
+  );
+}
