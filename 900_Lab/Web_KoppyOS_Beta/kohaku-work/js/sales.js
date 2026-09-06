@@ -1234,7 +1234,7 @@ const salesDatePicker =
 if (salesDatePicker) {
 
   salesDatePicker.addEventListener(
-    'change',
+    'input',
     () => {
 
       const selectedDate =
