@@ -25,6 +25,7 @@ on:
           - migrate-customer-name-kashikoi.php
           - migrate-sales-v2.php
           - migrate-sapporo-rates-v2.php
+          - migrate-nomination-fee.php
 
 permissions:
   contents: read
