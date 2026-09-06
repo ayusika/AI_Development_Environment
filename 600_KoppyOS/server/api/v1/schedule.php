@@ -124,6 +124,89 @@ function validateCustomerStatus(
 }
 
 
+function resolveNominationFeeAmount(
+    PDO $pdo,
+    int $storeId,
+    string $customerStatus,
+    string $startedAt
+): int {
+
+    $businessDate =
+        (
+            new DateTimeImmutable(
+                $startedAt,
+                new DateTimeZone(
+                    'Asia/Tokyo'
+                )
+            )
+        )
+            ->modify(
+                '-12 hours'
+            )
+            ->format(
+                'Y-m-d'
+            );
+
+
+    $statement =
+        $pdo->prepare(
+            "
+            SELECT
+                fee_amount
+
+            FROM store_nomination_fee_rules
+
+            WHERE
+                store_id = ?
+
+                AND customer_status = ?
+
+                AND active = 1
+
+                AND effective_from <= ?
+
+                AND (
+                    effective_to IS NULL
+                    OR effective_to >= ?
+                )
+
+            ORDER BY
+                effective_from DESC,
+                id DESC
+
+            LIMIT 1
+            "
+        );
+
+
+    $statement->execute([
+        $storeId,
+        $customerStatus,
+        $businessDate,
+        $businessDate,
+    ]);
+
+
+    $feeAmount =
+        $statement->fetchColumn();
+
+
+    if ($feeAmount === false) {
+
+        throw new RuntimeException(
+            'Nomination fee rule was not found.'
+        );
+    }
+
+
+    return
+        max(
+            0,
+            (int) $feeAmount
+        );
+}
+
+
 function validateStore(
     PDO $pdo,
     int $storeId
