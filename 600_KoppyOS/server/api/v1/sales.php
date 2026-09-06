@@ -731,6 +731,95 @@ try {
         $dailyFeeVisitStatement->fetchAll();
 
 
+    /*
+     * 一括確定後の予定日次手数料。
+     *
+     * 現在の確定済み件数ではなく、
+     * この期間内の売上対象接客が
+     * すべて確定済みになった場合の
+     * 店舗 × 営業日ごとの件数を使う。
+     */
+    $projectedDailyFeeSql =
+        "
+        SELECT
+            v.store_id,
+
+            date(
+                v.started_at,
+                '-12 hours'
+            ) AS sales_date,
+
+            COUNT(*) AS projected_visit_count
+
+        FROM visits AS v
+
+        WHERE
+            v.started_at >= :start_at
+
+            AND v.started_at < :end_at
+
+            AND v.started_at <= :now_at
+
+            AND v.status NOT IN (
+                'cancelled',
+                'no_show'
+            )
+        ";
+
+
+    $projectedDailyFeeParameters = [
+        ':start_at' =>
+            $startAt,
+
+        ':end_at' =>
+            $endAt,
+
+        ':now_at' =>
+            $nowAt,
+    ];
+
+
+    if ($storeId > 0) {
+
+        $projectedDailyFeeSql .=
+            "
+            AND v.store_id = :store_id
+            ";
+
+
+        $projectedDailyFeeParameters[
+            ':store_id'
+        ] =
+            $storeId;
+    }
+
+
+    $projectedDailyFeeSql .=
+        "
+        GROUP BY
+            v.store_id,
+            date(
+                v.started_at,
+                '-12 hours'
+            )
+        ";
+
+
+    $projectedDailyFeeVisitStatement =
+        $pdo->prepare(
+            $projectedDailyFeeSql
+        );
+
+
+    $projectedDailyFeeVisitStatement->execute(
+        $projectedDailyFeeParameters
+    );
+
+
+    $projectedDailyFeeGroups =
+        $projectedDailyFeeVisitStatement->fetchAll();
+
+
     $dailyFeeRuleStatement =
         $pdo->prepare(
             "
@@ -810,6 +899,53 @@ try {
         $dailyFeeTotal +=
             (int)
             $dailyFeeRule[
+                'fee_amount'
+            ];
+    }
+
+
+    $projectedDailyFeeTotal =
+        0;
+
+
+    foreach (
+        $projectedDailyFeeGroups
+        as $projectedDailyFeeGroup
+    ) {
+
+        $dailyFeeRuleStatement->execute([
+            ':store_id' =>
+                (int)
+                $projectedDailyFeeGroup[
+                    'store_id'
+                ],
+
+            ':visit_count' =>
+                (int)
+                $projectedDailyFeeGroup[
+                    'projected_visit_count'
+                ],
+
+            ':sales_date' =>
+                (string)
+                $projectedDailyFeeGroup[
+                    'sales_date'
+                ],
+        ]);
+
+
+        $projectedDailyFeeRule =
+            $dailyFeeRuleStatement->fetch();
+
+
+        if (!$projectedDailyFeeRule) {
+            continue;
+        }
+
+
+        $projectedDailyFeeTotal +=
+            (int)
+            $projectedDailyFeeRule[
                 'fee_amount'
             ];
     }
