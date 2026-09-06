@@ -913,7 +913,7 @@ function fetchVisit(
                 END AS customer_linked,
 
                 CASE
-                    WHEN vs.id IS NOT NULL
+                    WHEN vs.confirmed_at IS NOT NULL
                     THEN 1
                     ELSE 0
                 END AS sales_entered,
