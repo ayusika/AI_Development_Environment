@@ -1449,6 +1449,10 @@ function koppyConfirmVisitSales(
             ],
 
             $snapshot[
+                'nomination_fee_snapshot'
+            ],
+
+            $snapshot[
                 'option_price_total_snapshot'
             ],
 
