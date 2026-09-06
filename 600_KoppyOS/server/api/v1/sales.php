@@ -992,6 +992,9 @@ try {
                 'daily_fee_total' =>
                     $dailyFeeTotal,
 
+                'projected_daily_fee_total' =>
+                    $projectedDailyFeeTotal,
+
                 'net_take_home_total' =>
                     $netTakeHomeTotal,
 
