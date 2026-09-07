@@ -8308,6 +8308,284 @@ function editScheduleSales() {
 }
 
 
+async function saveScheduleSalesEdit() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+
+  if (
+    !visit
+    || !visit.id
+  ) {
+    throw new Error(
+      'Sales visit is not selected.'
+    );
+  }
+
+
+  const tipInput =
+    document.getElementById(
+      'schedule-sales-tip-input'
+    );
+
+
+  const discountInput =
+    document.getElementById(
+      'schedule-sales-discount-input'
+    );
+
+
+  const adjustmentInput =
+    document.getElementById(
+      'schedule-sales-adjustment-input'
+    );
+
+
+  const discountReason =
+    document.getElementById(
+      'schedule-sales-discount-reason'
+    );
+
+
+  const discountNote =
+    document.getElementById(
+      'schedule-sales-discount-note'
+    );
+
+
+  const editButton =
+    document.getElementById(
+      'schedule-sales-edit-button'
+    );
+
+
+  const confirmButton =
+    document.getElementById(
+      'schedule-sales-confirm-button'
+    );
+
+
+  const salesMessage =
+    document.getElementById(
+      'schedule-sales-message'
+    );
+
+
+  const readIntegerInput =
+    (input) => {
+
+      if (!input) {
+        return 0;
+      }
+
+
+      const value =
+        String(
+          input.value || ''
+        ).trim();
+
+
+      if (value === '') {
+        return 0;
+      }
+
+
+      if (!/^-?\d+$/.test(value)) {
+
+        throw new Error(
+          '金額は整数で入力してください。'
+        );
+      }
+
+
+      return Number(value);
+    };
+
+
+  try {
+
+    if (editButton) {
+
+      editButton.disabled =
+        true;
+
+      editButton.textContent =
+        '保存中…';
+    }
+
+
+    if (salesMessage) {
+
+      salesMessage.textContent =
+        '売上の修正を保存しています…';
+
+      salesMessage.hidden =
+        false;
+    }
+
+
+    const payload = {
+      mode:
+        'revise',
+
+      visit_id:
+        Number(visit.id),
+
+      tip_amount:
+        readIntegerInput(
+          tipInput
+        ),
+
+      discount_amount:
+        readIntegerInput(
+          discountInput
+        ),
+
+      adjustment_amount:
+        readIntegerInput(
+          adjustmentInput
+        ),
+
+      discount_reason_type:
+        discountReason
+          ? discountReason.value
+          : '',
+
+      discount_reason_note:
+        discountNote
+          ? discountNote.value.trim()
+          : '',
+
+      change_reason:
+        'manual_correction',
+    };
+
+
+    const response =
+      await fetch(
+        visitSalesApiUrl,
+        {
+          method: 'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify(
+              payload
+            ),
+        }
+      );
+
+
+    const result =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !result.success
+    ) {
+
+      throw new Error(
+        result.error
+        || '売上の修正に失敗しました。'
+      );
+    }
+
+
+    scheduleState.selectedSalesPreview =
+      result;
+
+
+    await openScheduleSales();
+
+
+    updateScheduleDetailState(
+      scheduleDetailSalesState,
+      true,
+      '入力済',
+      '未入力'
+    );
+
+
+    if (confirmButton) {
+
+      confirmButton.hidden =
+        true;
+
+      confirmButton.disabled =
+        true;
+
+      confirmButton.textContent =
+        'この売上を確定';
+    }
+
+
+    if (editButton) {
+
+      editButton.hidden =
+        false;
+
+      editButton.disabled =
+        false;
+
+      editButton.textContent =
+        '売上を修正';
+
+      editButton.dataset.action =
+        'edit-schedule-sales';
+
+      editButton.classList.remove(
+        'is-editing'
+      );
+    }
+
+
+    if (salesMessage) {
+
+      salesMessage.textContent =
+        '売上を修正しました。';
+
+      salesMessage.hidden =
+        false;
+    }
+
+
+    return result;
+
+
+  } catch (error) {
+
+    if (editButton) {
+
+      editButton.disabled =
+        false;
+
+      editButton.textContent =
+        '修正を保存';
+    }
+
+
+    if (salesMessage) {
+
+      salesMessage.textContent =
+        error.message
+        || '売上の修正に失敗しました。';
+
+      salesMessage.hidden =
+        false;
+    }
+
+
+    throw error;
+  }
+}
+
+
 async function confirmScheduleSales() {
 
   const visit =
