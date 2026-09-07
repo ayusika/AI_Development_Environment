@@ -8132,6 +8132,25 @@ async function openScheduleSales() {
   }
 
 
+  const recalculateButton =
+    document.getElementById(
+      'schedule-sales-recalculate-button'
+    );
+
+
+  if (recalculateButton) {
+
+    recalculateButton.hidden =
+      !isConfirmed;
+
+    recalculateButton.disabled =
+      false;
+
+    recalculateButton.textContent =
+      '予約内容から売上を再計算';
+  }
+
+
   const tipInput =
     document.getElementById(
       'schedule-sales-tip-input'
