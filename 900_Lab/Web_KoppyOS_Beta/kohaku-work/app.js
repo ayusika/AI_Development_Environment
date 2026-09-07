@@ -244,6 +244,10 @@ function handleAction(action, button) {
       editScheduleSales();
       break;
 
+    case 'save-schedule-sales-edit':
+      saveScheduleSalesEdit();
+      break;
+
     case 'confirm-schedule-sales':
       confirmScheduleSales();
       break;
