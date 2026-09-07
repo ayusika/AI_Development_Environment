@@ -241,17 +241,56 @@ try {
     /*
      * Shared sales engine
      */
-    $sharedResult =
+    $isRevision =
         $method === 'POST'
-            ? koppyConfirmVisitSales(
-                $pdo,
-                $visitId,
-                $payload
-            )
-            : koppyCalculateVisitSales(
-                $pdo,
-                $visitId
-            );
+        && (
+            $payload['mode']
+            ?? ''
+        ) === 'revise';
+
+
+    if ($isRevision) {
+
+        $pdo->beginTransaction();
+
+
+        try {
+
+            $sharedResult =
+                koppyReviseVisitSales(
+                    $pdo,
+                    $visitId,
+                    $payload
+                );
+
+
+            $pdo->commit();
+
+        } catch (Throwable $error) {
+
+            if ($pdo->inTransaction()) {
+
+                $pdo->rollBack();
+            }
+
+
+            throw $error;
+        }
+
+    } else {
+
+        $sharedResult =
+            $method === 'POST'
+                ? koppyConfirmVisitSales(
+                    $pdo,
+                    $visitId,
+                    $payload
+                )
+                : koppyCalculateVisitSales(
+                    $pdo,
+                    $visitId
+                );
+    }
 
 
     echo json_encode(
