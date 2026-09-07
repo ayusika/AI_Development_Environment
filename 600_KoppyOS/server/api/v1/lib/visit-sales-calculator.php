@@ -1965,4 +1965,278 @@ function koppyReviseVisitSales(
 
     $afterData[
         'discount_amount'
-    ]
+    ] =
+        $discountAmount;
+
+
+    $afterData[
+        'discount_reason_type'
+    ] =
+        $discountReasonType;
+
+
+    $afterData[
+        'discount_reason_note'
+    ] =
+        $discountReasonNote;
+
+
+    $afterData[
+        'adjustment_amount'
+    ] =
+        $adjustmentAmount;
+
+
+    $afterData[
+        'customer_payment_total'
+    ] =
+        $customerPaymentTotal;
+
+
+    $afterData[
+        'take_home_total'
+    ] =
+        $takeHomeTotal;
+
+
+    $changeReason =
+        isset(
+            $overrides[
+                'change_reason'
+            ]
+        )
+            ? trim(
+                (string)
+                $overrides[
+                    'change_reason'
+                ]
+            )
+            : '';
+
+
+    if ($changeReason === '') {
+
+        $changeReason =
+            'manual_correction';
+    }
+
+
+    $changedAt =
+        (string)
+        $pdo
+            ->query(
+                "
+                SELECT strftime(
+                    '%Y-%m-%d %H:%M',
+                    'now',
+                    'localtime'
+                )
+                "
+            )
+            ->fetchColumn();
+
+
+    $beforeJson =
+        json_encode(
+            $beforeData,
+            JSON_UNESCAPED_UNICODE
+            | JSON_UNESCAPED_SLASHES
+            | JSON_THROW_ON_ERROR
+        );
+
+
+    $afterJson =
+        json_encode(
+            $afterData,
+            JSON_UNESCAPED_UNICODE
+            | JSON_UNESCAPED_SLASHES
+            | JSON_THROW_ON_ERROR
+        );
+
+
+    $updateStatement =
+        $pdo->prepare(
+            "
+            UPDATE visit_sales_v2
+
+            SET
+                tip_amount = ?,
+                discount_amount = ?,
+                discount_reason_type = ?,
+                discount_reason_note = ?,
+                adjustment_amount = ?,
+                customer_payment_total = ?,
+                take_home_total = ?,
+                updated_at = ?
+
+            WHERE
+                id = ?
+                AND confirmed_at IS NOT NULL
+            "
+        );
+
+
+    $updateStatement->execute([
+        $tipAmount,
+        $discountAmount,
+        $discountReasonType,
+        $discountReasonNote,
+        $adjustmentAmount,
+        $customerPaymentTotal,
+        $takeHomeTotal,
+        $changedAt,
+        (int) $existingSales['id'],
+    ]);
+
+
+    $historyStatement =
+        $pdo->prepare(
+            "
+            INSERT INTO visit_sales_history (
+                visit_sales_id,
+                before_data,
+                after_data,
+                change_reason,
+                changed_at
+            )
+            VALUES (
+                ?,
+                ?,
+                ?,
+                ?,
+                ?
+            )
+            "
+        );
+
+
+    $historyStatement->execute([
+        (int) $existingSales['id'],
+        $beforeJson,
+        $afterJson,
+        $changeReason,
+        $changedAt,
+    ]);
+
+
+    $result =
+        koppyCalculateVisitSales(
+            $pdo,
+            $visitId
+        );
+
+
+    $result['sales']['id'] =
+        (int) $existingSales['id'];
+
+
+    $result[
+        'sales'
+    ][
+        'confirmed_at'
+    ] =
+        $existingSales[
+            'confirmed_at'
+        ];
+
+
+    $result[
+        'sales'
+    ][
+        'discount_reason_type'
+    ] =
+        $discountReasonType;
+
+
+    $result[
+        'sales'
+    ][
+        'discount_reason_note'
+    ] =
+        $discountReasonNote;
+
+
+    $result['preview'] = [
+        'course_price_total' =>
+            $basePriceSnapshot,
+
+        'course_take_home_total' =>
+            $courseTakeHomeSnapshot,
+
+        'nomination_fee_amount' =>
+            $nominationFeeSnapshot,
+
+        'option_price_total' =>
+            $optionPriceSnapshot,
+
+        'option_take_home_total' =>
+            $optionTakeHomeSnapshot,
+
+        'tip_amount' =>
+            $tipAmount,
+
+        'discount_amount' =>
+            $discountAmount,
+
+        'adjustment_amount' =>
+            $adjustmentAmount,
+
+        'customer_payment_total' =>
+            $customerPaymentTotal,
+
+        'take_home_total' =>
+            $takeHomeTotal,
+    ];
+
+
+    $result['snapshot'] = [
+        'store_course_rate_id' =>
+            $existingSales[
+                'store_course_rate_id'
+            ] !== null
+                ? (int)
+                    $existingSales[
+                        'store_course_rate_id'
+                    ]
+                : null,
+
+        'base_price_snapshot' =>
+            $basePriceSnapshot,
+
+        'course_take_home_snapshot' =>
+            $courseTakeHomeSnapshot,
+
+        'nomination_fee_snapshot' =>
+            $nominationFeeSnapshot,
+
+        'option_price_total_snapshot' =>
+            $optionPriceSnapshot,
+
+        'option_take_home_total_snapshot' =>
+            $optionTakeHomeSnapshot,
+
+        'tip_amount' =>
+            $tipAmount,
+
+        'discount_amount' =>
+            $discountAmount,
+
+        'discount_reason_type' =>
+            $discountReasonType,
+
+        'discount_reason_note' =>
+            $discountReasonNote,
+
+        'adjustment_amount' =>
+            $adjustmentAmount,
+
+        'customer_payment_total' =>
+            $customerPaymentTotal,
+
+        'take_home_total' =>
+            $takeHomeTotal,
+    ];
+
+
+    return $result;
+}
