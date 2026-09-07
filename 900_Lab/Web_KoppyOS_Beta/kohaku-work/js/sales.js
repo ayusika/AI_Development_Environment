@@ -1104,13 +1104,57 @@ async function openSalesDayConfirm() {
     );
 
 
+    const summary =
+      result.summary || {};
+
+
+    const confirmedTakeHomeTotal =
+      Number(
+        summary.take_home_total
+        || 0
+      );
+
+
+    const projectedDailyFeeTotal =
+      Number(
+        summary.projected_daily_fee_total
+        || 0
+      );
+
+
+    const projectedGrossTakeHomeTotal =
+      confirmedTakeHomeTotal
+      + takeHomeTotal;
+
+
     if (totalElement) {
 
       totalElement.textContent =
         hasIncompletePreview
           ? '¥ −'
           : formatSalesDashboardMoney(
-              takeHomeTotal
+              projectedGrossTakeHomeTotal
+            );
+    }
+
+
+    if (dailyFeeElement) {
+
+      dailyFeeElement.textContent =
+        formatSalesDashboardMoney(
+          projectedDailyFeeTotal
+        );
+    }
+
+
+    if (netTakeHomeElement) {
+
+      netTakeHomeElement.textContent =
+        hasIncompletePreview
+          ? '¥ −'
+          : formatSalesDashboardMoney(
+              projectedGrossTakeHomeTotal
+              - projectedDailyFeeTotal
             );
     }
 
