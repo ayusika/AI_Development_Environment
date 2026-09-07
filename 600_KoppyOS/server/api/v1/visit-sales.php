@@ -249,7 +249,18 @@ try {
         ) === 'revise';
 
 
-    if ($isRevision) {
+    $isRecalculation =
+        $method === 'POST'
+        && (
+            $payload['mode']
+            ?? ''
+        ) === 'recalculate';
+
+
+    if (
+        $isRevision
+        || $isRecalculation
+    ) {
 
         $pdo->beginTransaction();
 
@@ -257,11 +268,17 @@ try {
         try {
 
             $sharedResult =
-                koppyReviseVisitSales(
-                    $pdo,
-                    $visitId,
-                    $payload
-                );
+                $isRevision
+                    ? koppyReviseVisitSales(
+                        $pdo,
+                        $visitId,
+                        $payload
+                    )
+                    : koppyRecalculateConfirmedVisitSales(
+                        $pdo,
+                        $visitId,
+                        $payload
+                    );
 
 
             $pdo->commit();
