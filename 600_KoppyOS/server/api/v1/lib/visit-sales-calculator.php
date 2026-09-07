@@ -1662,3 +1662,307 @@ function koppyConfirmVisitSales(
 
     return $result;
 }
+
+function koppyReviseVisitSales(
+    PDO $pdo,
+    int $visitId,
+    array $overrides = []
+): array {
+
+    if ($visitId <= 0) {
+
+        throw new RuntimeException(
+            'visit_id is required.'
+        );
+    }
+
+
+    if (!$pdo->inTransaction()) {
+
+        throw new RuntimeException(
+            'Sales revision requires an active transaction.'
+        );
+    }
+
+
+    $salesStatement =
+        $pdo->prepare(
+            "
+            SELECT
+                id,
+                visit_id,
+                store_course_rate_id,
+                base_price_snapshot,
+                course_take_home_snapshot,
+                nomination_fee_snapshot,
+                option_price_total_snapshot,
+                option_take_home_total_snapshot,
+                tip_amount,
+                discount_amount,
+                discount_reason_type,
+                discount_reason_note,
+                adjustment_amount,
+                customer_payment_total,
+                take_home_total,
+                confirmed_at
+
+            FROM visit_sales_v2
+
+            WHERE visit_id = ?
+
+            LIMIT 1
+            "
+        );
+
+
+    $salesStatement->execute([
+        $visitId,
+    ]);
+
+
+    $existingSales =
+        $salesStatement->fetch();
+
+
+    if (
+        !$existingSales
+        || $existingSales[
+            'confirmed_at'
+        ] === null
+    ) {
+
+        throw new RuntimeException(
+            'Sales are not confirmed.'
+        );
+    }
+
+
+    $tipAmount =
+        koppyReadVisitSalesIntegerOverride(
+            $overrides,
+            'tip_amount',
+            (int) $existingSales[
+                'tip_amount'
+            ]
+        );
+
+
+    $discountAmount =
+        koppyReadVisitSalesIntegerOverride(
+            $overrides,
+            'discount_amount',
+            (int) $existingSales[
+                'discount_amount'
+            ]
+        );
+
+
+    $adjustmentAmount =
+        koppyReadVisitSalesIntegerOverride(
+            $overrides,
+            'adjustment_amount',
+            (int) $existingSales[
+                'adjustment_amount'
+            ]
+        );
+
+
+    if ($tipAmount < 0) {
+
+        throw new RuntimeException(
+            'tip_amount must be 0 or greater.'
+        );
+    }
+
+
+    if ($discountAmount < 0) {
+
+        throw new RuntimeException(
+            'discount_amount must be 0 or greater.'
+        );
+    }
+
+
+    $discountReasonType =
+        $existingSales[
+            'discount_reason_type'
+        ] ?? null;
+
+
+    $discountReasonNote =
+        $existingSales[
+            'discount_reason_note'
+        ] ?? null;
+
+
+    if (
+        array_key_exists(
+            'discount_reason_type',
+            $overrides
+        )
+    ) {
+
+        $requestedDiscountReason =
+            trim(
+                (string) (
+                    $overrides[
+                        'discount_reason_type'
+                    ]
+                    ?? ''
+                )
+            );
+
+
+        $allowedDiscountReasons = [
+            'coupon',
+            'early',
+            'store',
+            'campaign',
+            'other',
+        ];
+
+
+        if (
+            $requestedDiscountReason !== ''
+            && !in_array(
+                $requestedDiscountReason,
+                $allowedDiscountReasons,
+                true
+            )
+        ) {
+
+            throw new RuntimeException(
+                'Invalid discount_reason_type.'
+            );
+        }
+
+
+        $discountReasonType =
+            $requestedDiscountReason !== ''
+                ? $requestedDiscountReason
+                : null;
+    }
+
+
+    if (
+        array_key_exists(
+            'discount_reason_note',
+            $overrides
+        )
+    ) {
+
+        $requestedDiscountNote =
+            trim(
+                (string) (
+                    $overrides[
+                        'discount_reason_note'
+                    ]
+                    ?? ''
+                )
+            );
+
+
+        if (
+            mb_strlen(
+                $requestedDiscountNote
+            ) > 300
+        ) {
+
+            throw new RuntimeException(
+                'discount_reason_note is too long.'
+            );
+        }
+
+
+        $discountReasonNote =
+            $requestedDiscountNote !== ''
+                ? $requestedDiscountNote
+                : null;
+    }
+
+
+    if ($discountAmount === 0) {
+
+        $discountReasonType =
+            null;
+
+        $discountReasonNote =
+            null;
+    }
+
+
+    $basePriceSnapshot =
+        $existingSales[
+            'base_price_snapshot'
+        ] !== null
+            ? (int) $existingSales[
+                'base_price_snapshot'
+            ]
+            : null;
+
+
+    $courseTakeHomeSnapshot =
+        (int) $existingSales[
+            'course_take_home_snapshot'
+        ];
+
+
+    $nominationFeeSnapshot =
+        max(
+            0,
+            (int) $existingSales[
+                'nomination_fee_snapshot'
+            ]
+        );
+
+
+    $optionPriceSnapshot =
+        (int) $existingSales[
+            'option_price_total_snapshot'
+        ];
+
+
+    $optionTakeHomeSnapshot =
+        (int) $existingSales[
+            'option_take_home_total_snapshot'
+        ];
+
+
+    $customerPaymentTotal =
+        $basePriceSnapshot !== null
+            ? max(
+                0,
+                $basePriceSnapshot
+                + $nominationFeeSnapshot
+                + $optionPriceSnapshot
+                + $tipAmount
+                - $discountAmount
+            )
+            : null;
+
+
+    $takeHomeTotal =
+        $courseTakeHomeSnapshot
+        + $nominationFeeSnapshot
+        + $optionTakeHomeSnapshot
+        + $tipAmount
+        + $adjustmentAmount;
+
+
+    $beforeData =
+        $existingSales;
+
+
+    $afterData =
+        $existingSales;
+
+
+    $afterData[
+        'tip_amount'
+    ] =
+        $tipAmount;
+
+
+    $afterData[
+        'discount_amount'
+    ]
