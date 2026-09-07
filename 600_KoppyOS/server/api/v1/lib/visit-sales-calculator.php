@@ -2369,3 +2369,376 @@ function koppyReviseVisitSales(
 
     return $result;
 }
+
+
+function koppyRecalculateConfirmedVisitSales(
+    PDO $pdo,
+    int $visitId,
+    array $overrides = []
+): array {
+
+    if ($visitId <= 0) {
+
+        throw new RuntimeException(
+            'visit_id is required.'
+        );
+    }
+
+
+    if (!$pdo->inTransaction()) {
+
+        throw new RuntimeException(
+            'Sales recalculation requires an active transaction.'
+        );
+    }
+
+
+    $salesStatement =
+        $pdo->prepare(
+            "
+            SELECT
+                id,
+                visit_id,
+                store_course_rate_id,
+                base_price_snapshot,
+                course_take_home_snapshot,
+                nomination_fee_snapshot,
+                option_price_total_snapshot,
+                option_take_home_total_snapshot,
+                tip_amount,
+                discount_amount,
+                discount_reason_type,
+                discount_reason_note,
+                adjustment_amount,
+                customer_payment_total,
+                take_home_total,
+                confirmed_at
+
+            FROM visit_sales_v2
+
+            WHERE visit_id = ?
+
+            LIMIT 1
+            "
+        );
+
+
+    $salesStatement->execute([
+        $visitId,
+    ]);
+
+
+    $existingSales =
+        $salesStatement->fetch();
+
+
+    if (
+        !$existingSales
+        || $existingSales[
+            'confirmed_at'
+        ] === null
+    ) {
+
+        throw new RuntimeException(
+            'Sales are not confirmed.'
+        );
+    }
+
+
+    $calculationOverrides = [
+        '__recalculate_from_reservation' =>
+            true,
+
+        'tip_amount' =>
+            (int)
+            $existingSales[
+                'tip_amount'
+            ],
+
+        'discount_amount' =>
+            (int)
+            $existingSales[
+                'discount_amount'
+            ],
+
+        'discount_reason_type' =>
+            $existingSales[
+                'discount_reason_type'
+            ]
+            ?? '',
+
+        'discount_reason_note' =>
+            $existingSales[
+                'discount_reason_note'
+            ]
+            ?? '',
+
+        'adjustment_amount' =>
+            (int)
+            $existingSales[
+                'adjustment_amount'
+            ],
+    ];
+
+
+    $calculatedResult =
+        koppyCalculateVisitSales(
+            $pdo,
+            $visitId,
+            $calculationOverrides
+        );
+
+
+    $snapshot =
+        $calculatedResult[
+            'snapshot'
+        ];
+
+
+    if (
+        $snapshot[
+            'take_home_total'
+        ] === null
+    ) {
+
+        throw new RuntimeException(
+            'Sales cannot be recalculated because take-home pricing is incomplete.'
+        );
+    }
+
+
+    $beforeData =
+        $existingSales;
+
+
+    $afterData =
+        $existingSales;
+
+
+    $snapshotFields = [
+        'store_course_rate_id',
+        'base_price_snapshot',
+        'course_take_home_snapshot',
+        'nomination_fee_snapshot',
+        'option_price_total_snapshot',
+        'option_take_home_total_snapshot',
+        'tip_amount',
+        'discount_amount',
+        'discount_reason_type',
+        'discount_reason_note',
+        'adjustment_amount',
+        'customer_payment_total',
+        'take_home_total',
+    ];
+
+
+    foreach (
+        $snapshotFields
+        as $field
+    ) {
+
+        $afterData[
+            $field
+        ] =
+            $snapshot[
+                $field
+            ];
+    }
+
+
+    $changeReason =
+        isset(
+            $overrides[
+                'change_reason'
+            ]
+        )
+            ? trim(
+                (string)
+                $overrides[
+                    'change_reason'
+                ]
+            )
+            : '';
+
+
+    if ($changeReason === '') {
+
+        $changeReason =
+            'reservation_recalculation';
+    }
+
+
+    $changedAt =
+        (string)
+        $pdo
+            ->query(
+                "
+                SELECT strftime(
+                    '%Y-%m-%d %H:%M',
+                    'now',
+                    'localtime'
+                )
+                "
+            )
+            ->fetchColumn();
+
+
+    $beforeJson =
+        json_encode(
+            $beforeData,
+            JSON_UNESCAPED_UNICODE
+            | JSON_UNESCAPED_SLASHES
+            | JSON_THROW_ON_ERROR
+        );
+
+
+    $afterJson =
+        json_encode(
+            $afterData,
+            JSON_UNESCAPED_UNICODE
+            | JSON_UNESCAPED_SLASHES
+            | JSON_THROW_ON_ERROR
+        );
+
+
+    $updateStatement =
+        $pdo->prepare(
+            "
+            UPDATE visit_sales_v2
+
+            SET
+                store_course_rate_id = ?,
+                base_price_snapshot = ?,
+                course_take_home_snapshot = ?,
+                nomination_fee_snapshot = ?,
+                option_price_total_snapshot = ?,
+                option_take_home_total_snapshot = ?,
+                tip_amount = ?,
+                discount_amount = ?,
+                discount_reason_type = ?,
+                discount_reason_note = ?,
+                adjustment_amount = ?,
+                customer_payment_total = ?,
+                take_home_total = ?,
+                updated_at = ?
+
+            WHERE
+                id = ?
+                AND confirmed_at IS NOT NULL
+            "
+        );
+
+
+    $updateStatement->execute([
+        $snapshot[
+            'store_course_rate_id'
+        ],
+
+        $snapshot[
+            'base_price_snapshot'
+        ],
+
+        $snapshot[
+            'course_take_home_snapshot'
+        ],
+
+        $snapshot[
+            'nomination_fee_snapshot'
+        ],
+
+        $snapshot[
+            'option_price_total_snapshot'
+        ],
+
+        $snapshot[
+            'option_take_home_total_snapshot'
+        ],
+
+        $snapshot[
+            'tip_amount'
+        ],
+
+        $snapshot[
+            'discount_amount'
+        ],
+
+        $snapshot[
+            'discount_reason_type'
+        ],
+
+        $snapshot[
+            'discount_reason_note'
+        ],
+
+        $snapshot[
+            'adjustment_amount'
+        ],
+
+        $snapshot[
+            'customer_payment_total'
+        ],
+
+        $snapshot[
+            'take_home_total'
+        ],
+
+        $changedAt,
+
+        (int)
+        $existingSales[
+            'id'
+        ],
+    ]);
+
+
+    if (
+        $updateStatement->rowCount()
+        !== 1
+    ) {
+
+        throw new RuntimeException(
+            'Sales recalculation failed.'
+        );
+    }
+
+
+    $historyStatement =
+        $pdo->prepare(
+            "
+            INSERT INTO visit_sales_history (
+                visit_sales_id,
+                before_data,
+                after_data,
+                change_reason,
+                changed_at
+            )
+            VALUES (
+                ?,
+                ?,
+                ?,
+                ?,
+                ?
+            )
+            "
+        );
+
+
+    $historyStatement->execute([
+        (int)
+        $existingSales[
+            'id'
+        ],
+
+        $beforeJson,
+        $afterJson,
+        $changeReason,
+        $changedAt,
+    ]);
+
+
+    return
+        koppyCalculateVisitSales(
+            $pdo,
+            $visitId
+        );
+}
