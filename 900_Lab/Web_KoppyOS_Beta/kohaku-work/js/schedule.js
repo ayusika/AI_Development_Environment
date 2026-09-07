@@ -8448,11 +8448,27 @@ async function confirmScheduleSales() {
 
     if (confirmButton) {
 
+      confirmButton.hidden =
+        true;
+
       confirmButton.disabled =
         true;
 
       confirmButton.textContent =
-        '売上確定済み';
+        'この売上を確定';
+    }
+
+
+    const editButton =
+      document.getElementById(
+        'schedule-sales-edit-button'
+      );
+
+
+    if (editButton) {
+
+      editButton.hidden =
+        false;
     }
 
 
