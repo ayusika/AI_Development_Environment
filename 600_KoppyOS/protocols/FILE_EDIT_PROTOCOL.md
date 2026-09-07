@@ -63,6 +63,32 @@ Executorの一つとして扱う。
 将来Writer以外の編集手段が導入された場合でも、
 File Edit Protocolの基本安全原則は維持する。
 
+Executorの選択は、
+
+`600_KoppyOS/protocols/EXECUTOR_SELECTION_PROTOCOL.md`
+
+に従う。
+
+Koppyは先に作業内容を判断し、
+EXECUTOR_SELECTION_PROTOCOLに基づいて
+WriterまたはCodex等のExecutorを選択する。
+
+その後、
+選択されたExecutorが管理対象ファイルへ変更を加える場合は、
+本File Edit Protocolの安全原則を適用する。
+
+役割は以下のように分離する。
+
+```text
+EXECUTOR_SELECTION_PROTOCOL
+↓
+どのExecutorで実行するかを決定
+
+FILE_EDIT_PROTOCOL
+↓
+選択されたExecutorが
+どのように安全にファイルを変更するかを定義
+
 ---
 
 # 3. Core Safety Principles
