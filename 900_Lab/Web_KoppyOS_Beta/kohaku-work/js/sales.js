@@ -696,6 +696,18 @@ async function openSalesDayConfirm() {
     );
 
 
+  const dailyFeeElement =
+    document.getElementById(
+      'sales-day-confirm-daily-fee-total'
+    );
+
+
+  const netTakeHomeElement =
+    document.getElementById(
+      'sales-day-confirm-net-take-home-total'
+    );
+
+
   const list =
     document.getElementById(
       'sales-day-confirm-list'
