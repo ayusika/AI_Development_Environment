@@ -8380,6 +8380,19 @@ async function confirmScheduleSales() {
 
     editButton.hidden =
       true;
+
+    editButton.disabled =
+      false;
+
+    editButton.textContent =
+      '売上を修正';
+
+    editButton.dataset.action =
+      'edit-schedule-sales';
+
+    editButton.classList.remove(
+      'is-editing'
+    );
   }
 
 
