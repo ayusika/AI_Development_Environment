@@ -8656,6 +8656,169 @@ async function saveScheduleSalesEdit() {
 }
 
 
+async function recalculateScheduleSales() {
+
+  const visit =
+    scheduleState.selectedVisit;
+
+
+  if (
+    !visit
+    || !visit.id
+  ) {
+    throw new Error(
+      'Sales visit is not selected.'
+    );
+  }
+
+
+  const confirmed =
+    window.confirm(
+      '予約内容から確定済み売上を再計算する？\n'
+      + 'コース・延長・OP・指名料を現在の予約内容で更新します。\n'
+      + 'チップ・値引き・調整は現在の確定値を維持します。'
+    );
+
+
+  if (!confirmed) {
+    return null;
+  }
+
+
+  const recalculateButton =
+    document.getElementById(
+      'schedule-sales-recalculate-button'
+    );
+
+
+  const salesMessage =
+    document.getElementById(
+      'schedule-sales-message'
+    );
+
+
+  try {
+
+    if (recalculateButton) {
+
+      recalculateButton.disabled =
+        true;
+
+      recalculateButton.textContent =
+        '再計算中…';
+    }
+
+
+    if (salesMessage) {
+
+      salesMessage.textContent =
+        '予約内容から売上を再計算しています…';
+
+      salesMessage.hidden =
+        false;
+    }
+
+
+    const response =
+      await fetch(
+        visitSalesApiUrl,
+        {
+          method: 'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              mode:
+                'recalculate',
+
+              visit_id:
+                Number(
+                  visit.id
+                ),
+
+              change_reason:
+                'reservation_recalculation',
+            }),
+        }
+      );
+
+
+    const result =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !result.success
+    ) {
+
+      throw new Error(
+        result.error
+        || '売上の再計算に失敗しました。'
+      );
+    }
+
+
+    scheduleState.selectedSalesPreview =
+      result;
+
+
+    await openScheduleSales();
+
+
+    updateScheduleDetailState(
+      scheduleDetailSalesState,
+      true,
+      '入力済',
+      '未入力'
+    );
+
+
+    if (salesMessage) {
+
+      salesMessage.textContent =
+        '予約内容から売上を再計算しました。';
+
+      salesMessage.hidden =
+        false;
+    }
+
+
+    return result;
+
+
+  } catch (error) {
+
+    if (recalculateButton) {
+
+      recalculateButton.disabled =
+        false;
+
+      recalculateButton.textContent =
+        '予約内容から売上を再計算';
+    }
+
+
+    if (salesMessage) {
+
+      salesMessage.textContent =
+        error.message
+        || '売上の再計算に失敗しました。';
+
+      salesMessage.hidden =
+        false;
+    }
+
+
+    throw error;
+  }
+}
+
+
 async function confirmScheduleSales() {
 
   const visit =
