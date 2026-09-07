@@ -942,6 +942,32 @@ button[data-calendar-today] {
 }
 
 
+.calendar-shift[
+  data-shift-kind="off"
+][
+  data-worker-code="shii"
+] {
+  background:
+    #eaf1f4;
+
+  border-color:
+    #bfd3dd;
+}
+
+
+.calendar-shift[
+  data-shift-kind="off"
+][
+  data-worker-code="ui"
+] {
+  background:
+    #f3eee9;
+
+  border-color:
+    #dec8bb;
+}
+
+
 .calendar-shift.is-preview {
   opacity:
     0.58;
