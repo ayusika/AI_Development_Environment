@@ -8260,6 +8260,54 @@ async function openScheduleSales() {
 }
 
 
+function editScheduleSales() {
+
+  const editButton =
+    document.getElementById(
+      'schedule-sales-edit-button'
+    );
+
+
+  const salesMessage =
+    document.getElementById(
+      'schedule-sales-message'
+    );
+
+
+  const adjustmentInput =
+    document.getElementById(
+      'schedule-sales-adjustment-input'
+    );
+
+
+  if (editButton) {
+
+    editButton.textContent =
+      '修正を保存';
+
+    editButton.dataset.action =
+      'save-schedule-sales-edit';
+
+    editButton.classList.add(
+      'is-editing'
+    );
+  }
+
+
+  if (salesMessage) {
+
+    salesMessage.textContent =
+      'チップ・値引き・調整を修正して保存できます。';
+  }
+
+
+  if (adjustmentInput) {
+
+    adjustmentInput.focus();
+  }
+}
+
+
 async function confirmScheduleSales() {
 
   const visit =
