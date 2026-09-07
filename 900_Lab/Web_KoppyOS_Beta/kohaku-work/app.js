@@ -240,6 +240,10 @@ function handleAction(action, button) {
       openScheduleSales();
       break;
 
+    case 'edit-schedule-sales':
+      editScheduleSales();
+      break;
+
     case 'confirm-schedule-sales':
       confirmScheduleSales();
       break;
