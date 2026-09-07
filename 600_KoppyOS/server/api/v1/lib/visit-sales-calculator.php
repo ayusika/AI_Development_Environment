@@ -1177,6 +1177,106 @@ function koppyCalculateVisitSales(
             : null;
 
 
+    /*
+     * 確定済み売上は、
+     * 現在の予約内容・料金マスタではなく
+     * 確定時snapshotを正本として表示する。
+     */
+    if (
+        $existingSales[
+            'confirmed_at'
+        ] !== null
+    ) {
+
+        $storeCourseRateId =
+            $existingSales[
+                'store_course_rate_id'
+            ] !== null
+                ? (int)
+                    $existingSales[
+                        'store_course_rate_id'
+                    ]
+                : null;
+
+
+        $basePriceSnapshot =
+            $existingSales[
+                'base_price_snapshot'
+            ] !== null
+                ? (int)
+                    $existingSales[
+                        'base_price_snapshot'
+                    ]
+                : null;
+
+
+        $coursePriceKnown =
+            $basePriceSnapshot !== null;
+
+        $coursePriceTotal =
+            $basePriceSnapshot
+            ?? 0;
+
+
+        $courseTakeHomeKnown =
+            true;
+
+        $courseTakeHomeTotal =
+            (int)
+            $existingSales[
+                'course_take_home_snapshot'
+            ];
+
+
+        $optionPriceKnown =
+            true;
+
+        $optionPriceTotal =
+            (int)
+            $existingSales[
+                'option_price_total_snapshot'
+            ];
+
+
+        $optionTakeHomeKnown =
+            true;
+
+        $optionTakeHomeTotal =
+            (int)
+            $existingSales[
+                'option_take_home_total_snapshot'
+            ];
+
+
+        $nominationFeeAmount =
+            max(
+                0,
+                (int)
+                $existingSales[
+                    'nomination_fee_snapshot'
+                ]
+            );
+
+
+        $customerPaymentTotal =
+            $existingSales[
+                'customer_payment_total'
+            ] !== null
+                ? (int)
+                    $existingSales[
+                        'customer_payment_total'
+                    ]
+                : null;
+
+
+        $takeHomeTotal =
+            (int)
+            $existingSales[
+                'take_home_total'
+            ];
+    }
+
+
     return [
         'visit' => [
             'id' =>
