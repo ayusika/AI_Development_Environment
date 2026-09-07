@@ -8081,6 +8081,57 @@ async function openScheduleSales() {
     result.sales || {};
 
 
+  const isConfirmed =
+    Boolean(
+      sales.confirmed_at
+    );
+
+
+  const confirmButton =
+    document.getElementById(
+      'schedule-sales-confirm-button'
+    );
+
+
+  const editButton =
+    document.getElementById(
+      'schedule-sales-edit-button'
+    );
+
+
+  if (confirmButton) {
+
+    confirmButton.hidden =
+      isConfirmed;
+
+    confirmButton.disabled =
+      isConfirmed;
+
+    confirmButton.textContent =
+      'この売上を確定';
+  }
+
+
+  if (editButton) {
+
+    editButton.hidden =
+      !isConfirmed;
+
+    editButton.disabled =
+      false;
+
+    editButton.textContent =
+      '売上を修正';
+
+    editButton.dataset.action =
+      'edit-schedule-sales';
+
+    editButton.classList.remove(
+      'is-editing'
+    );
+  }
+
+
   const tipInput =
     document.getElementById(
       'schedule-sales-tip-input'
