@@ -248,6 +248,10 @@ function handleAction(action, button) {
       saveScheduleSalesEdit();
       break;
 
+    case 'recalculate-schedule-sales':
+      recalculateScheduleSales();
+      break;
+
     case 'confirm-schedule-sales':
       confirmScheduleSales();
       break;
