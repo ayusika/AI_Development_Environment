@@ -1181,11 +1181,26 @@ function koppyCalculateVisitSales(
      * 確定済み売上は、
      * 現在の予約内容・料金マスタではなく
      * 確定時snapshotを正本として表示する。
+     *
+     * ただし、確定済み売上を
+     * 現在の予約内容から再snapshotする内部処理では、
+     * 現在の料金計算結果を取得するため
+     * snapshotへの差し戻しを行わない。
      */
+    $useConfirmedSnapshot =
+        (
+            $overrides[
+                '__recalculate_from_reservation'
+            ]
+            ?? false
+        ) !== true;
+
+
     if (
         $existingSales[
             'confirmed_at'
         ] !== null
+        && $useConfirmedSnapshot
     ) {
 
         $storeCourseRateId =
