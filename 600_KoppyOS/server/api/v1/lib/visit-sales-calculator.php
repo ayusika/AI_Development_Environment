@@ -407,14 +407,28 @@ function koppyCalculateVisitSales(
     /*
      * 指名料。
      *
-     * 未確定売上は予約側の値を使う。
-     * 確定済み売上は確定時snapshotを使い、
-     * 後から予約側が変わっても過去売上を動かさない。
+     * 通常の確定済み売上は
+     * 確定時snapshotを使う。
+     *
+     * ただし予約内容から再snapshotする内部処理では、
+     * 現在の予約側の指名料を使用する。
      */
+    $recalculateFromReservation =
+        (
+            $overrides[
+                '__recalculate_from_reservation'
+            ]
+            ?? false
+        ) === true;
+
+
     $nominationFeeAmount =
-        $existingSales[
-            'confirmed_at'
-        ] !== null
+        (
+            $existingSales[
+                'confirmed_at'
+            ] !== null
+            && !$recalculateFromReservation
+        )
             ? max(
                 0,
                 (int) (
