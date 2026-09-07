@@ -8312,6 +8312,29 @@ async function confirmScheduleSales() {
     );
 
 
+  const editButton =
+    document.getElementById(
+      'schedule-sales-edit-button'
+    );
+
+
+  if (confirmButton) {
+
+    confirmButton.hidden =
+      false;
+
+    confirmButton.textContent =
+      'この売上を確定';
+  }
+
+
+  if (editButton) {
+
+    editButton.hidden =
+      true;
+  }
+
+
   const salesMessage =
     document.getElementById(
       'schedule-sales-message'
