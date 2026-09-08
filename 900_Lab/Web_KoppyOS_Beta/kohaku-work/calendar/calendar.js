@@ -383,7 +383,8 @@ function formatDaySummaryEventMeta(
 function appendDaySummaryItem(
   section,
   mainText,
-  metaText = ''
+  metaText = '',
+  onActivate = null
 ) {
   const item =
     document.createElement(
@@ -392,6 +393,50 @@ function appendDaySummaryItem(
 
   item.className =
     'calendar-day-summary-item';
+
+
+  if (
+    typeof onActivate
+    === 'function'
+  ) {
+
+    item.classList.add(
+      'is-actionable'
+    );
+
+    item.setAttribute(
+      'role',
+      'button'
+    );
+
+    item.tabIndex =
+      0;
+
+
+    item.addEventListener(
+      'click',
+      onActivate
+    );
+
+
+    item.addEventListener(
+      'keydown',
+      (event) => {
+
+        if (
+          event.key !== 'Enter'
+          && event.key !== ' '
+        ) {
+          return;
+        }
+
+
+        event.preventDefault();
+
+        onActivate();
+      }
+    );
+  }
 
 
   const main =
@@ -411,7 +456,11 @@ function appendDaySummaryItem(
   );
 
 
-  if (metaText !== '') {
+  if (
+    metaText !== ''
+    || typeof onActivate
+      === 'function'
+  ) {
 
     const meta =
       document.createElement(
@@ -422,7 +471,14 @@ function appendDaySummaryItem(
       'calendar-day-summary-item-meta';
 
     meta.textContent =
-      metaText;
+      typeof onActivate
+        === 'function'
+          ? (
+              metaText !== ''
+                ? `${metaText}  ›`
+                : '›'
+            )
+          : metaText;
 
     item.appendChild(
       meta
