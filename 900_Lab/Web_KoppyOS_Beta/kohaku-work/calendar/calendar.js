@@ -1191,7 +1191,10 @@ function createShiftElement(shift) {
     );
 
 
-    if (shift.store_name) {
+    if (
+      shift.store_name
+      && !isPortraitPhone
+    ) {
       detailElement.append(
         document.createTextNode(
           ` ${shift.store_name}`
