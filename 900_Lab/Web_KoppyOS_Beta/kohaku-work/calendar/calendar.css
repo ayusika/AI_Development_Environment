@@ -4563,3 +4563,171 @@ button[data-calendar-today] {
       );
   }
 }
+
+/* =====================================================
+   Portrait smartphone day summary actions
+===================================================== */
+
+@media (
+  max-width: 700px
+) and (
+  orientation: portrait
+) {
+
+  .calendar-day-summary-item.is-actionable {
+    margin:
+      0 -5px;
+
+    padding:
+      7px 6px;
+
+    border-radius:
+      10px;
+
+    cursor:
+      pointer;
+
+    touch-action:
+      manipulation;
+
+    -webkit-tap-highlight-color:
+      transparent;
+
+    transition:
+      background 120ms ease,
+      transform 100ms ease;
+  }
+
+
+  .calendar-day-summary-item.is-actionable:active {
+    transform:
+      scale(0.985);
+
+    background:
+      rgba(
+        72,
+        181,
+        223,
+        0.1
+      );
+  }
+
+
+  .calendar-day-summary-item.is-actionable:focus-visible {
+    outline:
+      2px solid
+      rgba(
+        72,
+        181,
+        223,
+        0.72
+      );
+
+    outline-offset:
+      2px;
+  }
+
+
+  .calendar-day-summary-item.is-actionable
+  .calendar-day-summary-item-meta {
+    color:
+      var(--calendar-accent);
+
+    font-weight:
+      850;
+  }
+
+
+  .calendar-day-summary-add {
+    width:
+      100%;
+
+    min-height:
+      50px;
+
+    margin-top:
+      4px;
+
+    padding:
+      0 16px;
+
+    border:
+      1px solid
+      rgba(
+        72,
+        181,
+        223,
+        0.5
+      );
+
+    border-radius:
+      15px;
+
+    background:
+      var(--calendar-accent);
+
+    color:
+      #ffffff;
+
+    font:
+      inherit;
+
+    font-size:
+      15px;
+
+    font-weight:
+      850;
+
+    cursor:
+      pointer;
+
+    box-shadow:
+      0 7px 20px
+      rgba(
+        72,
+        181,
+        223,
+        0.22
+      );
+
+    touch-action:
+      manipulation;
+
+    -webkit-tap-highlight-color:
+      transparent;
+
+    transition:
+      transform 100ms ease,
+      box-shadow 120ms ease;
+  }
+
+
+  .calendar-day-summary-add:active {
+    transform:
+      scale(0.98);
+
+    box-shadow:
+      0 3px 10px
+      rgba(
+        72,
+        181,
+        223,
+        0.18
+      );
+  }
+
+
+  .calendar-day-summary-add:focus-visible {
+    outline:
+      3px solid
+      rgba(
+        72,
+        181,
+        223,
+        0.28
+      );
+
+    outline-offset:
+      3px;
+  }
+}
