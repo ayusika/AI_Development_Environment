@@ -4817,3 +4817,33 @@ button[data-calendar-today] {
       0.1
     );
 }
+
+/* =====================================================
+   Portrait smartphone time input overflow fix
+===================================================== */
+
+@media (
+  max-width: 700px
+) and (
+  orientation: portrait
+) {
+
+  .calendar-event-time-row
+  > .calendar-event-field {
+    min-width:
+      0;
+  }
+
+
+  .calendar-event-time-row
+  input[type="time"] {
+    width:
+      100%;
+
+    min-width:
+      0;
+
+    max-width:
+      100%;
+  }
+}
