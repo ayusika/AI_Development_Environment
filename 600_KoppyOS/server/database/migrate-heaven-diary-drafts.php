@@ -119,7 +119,8 @@ try {
                 CHECK (
                     place IN (
                         \'hotel\',
-                        \'room\'
+                        \'room\',
+                        \'home\'
                     )
                 ),
 
@@ -145,6 +146,122 @@ try {
         )
         '
     );
+
+
+    $tableSql =
+        (string) (
+            $pdo
+                ->query(
+                    '
+                    SELECT sql
+                    FROM sqlite_master
+                    WHERE type = \'table\'
+                      AND name = \'heaven_diary_drafts\'
+                    LIMIT 1
+                    '
+                )
+                ->fetchColumn()
+            ?: ''
+        );
+
+
+    if (
+        $tableSql !== ''
+        && strpos(
+            $tableSql,
+            '\'home\''
+        ) === false
+    ) {
+
+        $pdo->exec(
+            '
+            CREATE TABLE heaven_diary_drafts_new (
+
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+                visit_id INTEGER NOT NULL,
+
+                body TEXT NOT NULL DEFAULT \'\',
+
+                note TEXT NOT NULL DEFAULT \'\',
+
+                extra_note TEXT NOT NULL DEFAULT \'\',
+
+                place TEXT NOT NULL DEFAULT \'hotel\'
+                    CHECK (
+                        place IN (
+                            \'hotel\',
+                            \'room\',
+                            \'home\'
+                        )
+                    ),
+
+                created_at TEXT NOT NULL DEFAULT (
+                    strftime(
+                        \'%Y-%m-%d %H:%M\',
+                        \'now\',
+                        \'localtime\'
+                    )
+                ),
+
+                updated_at TEXT NOT NULL DEFAULT (
+                    strftime(
+                        \'%Y-%m-%d %H:%M\',
+                        \'now\',
+                        \'localtime\'
+                    )
+                ),
+
+                FOREIGN KEY (visit_id)
+                    REFERENCES visits(id)
+                    ON DELETE CASCADE
+            )
+            '
+        );
+
+
+        $pdo->exec(
+            '
+            INSERT INTO heaven_diary_drafts_new (
+                id,
+                visit_id,
+                body,
+                note,
+                extra_note,
+                place,
+                created_at,
+                updated_at
+            )
+
+            SELECT
+                id,
+                visit_id,
+                body,
+                note,
+                extra_note,
+                place,
+                created_at,
+                updated_at
+
+            FROM heaven_diary_drafts
+            '
+        );
+
+
+        $pdo->exec(
+            '
+            DROP TABLE heaven_diary_drafts
+            '
+        );
+
+
+        $pdo->exec(
+            '
+            ALTER TABLE heaven_diary_drafts_new
+            RENAME TO heaven_diary_drafts
+            '
+        );
+    }
 
 
     $pdo->exec(
