@@ -111,3 +111,26 @@ Koppy Writer UIへ統合する。
 
 Adaptive分割、Chunk Upload、Finalize、完全性検証は
 Writer内部処理として隠蔽する。
+
+---
+
+## 2026-09-08 Writer / Codex Dual Executor運用開始
+
+KoppyOSに、
+WriterとCodexを役割分担して使用する
+Dual Executor構成を正式導入した。
+
+### 基本構成
+
+```text
+Koppy
+↓
+作業内容・仕様・安全性を判断
+↓
+Executor Selection
+├─ Writer
+└─ Codex
+↓
+Execution
+↓
+Verification
