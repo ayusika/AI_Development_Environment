@@ -1129,11 +1129,21 @@ function createShiftElement(shift) {
 
   } else {
 
+    const isPortraitPhone =
+      window.matchMedia(
+        '(max-width: 700px) and (orientation: portrait)'
+      ).matches;
+
     const startElement =
       document.createElement('span');
 
     startElement.textContent =
-      startTime;
+      isPortraitPhone
+        ? startTime.replace(
+            /:00$/,
+            ''
+          )
+        : startTime;
 
 
     if (
