@@ -744,6 +744,40 @@ function openDaySummary(
   }
 
 
+  const addButton =
+    document.createElement(
+      'button'
+    );
+
+  addButton.type =
+    'button';
+
+  addButton.className =
+    'calendar-day-summary-add';
+
+  addButton.textContent =
+    '＋ この日に予定を追加';
+
+
+  addButton.addEventListener(
+    'click',
+    () => {
+
+      closeDaySummary();
+
+      openEventModal(
+        dateKey,
+        'shared'
+      );
+    }
+  );
+
+
+  daySummaryContent.appendChild(
+    addButton
+  );
+
+
   daySummaryModal.hidden =
     false;
 }
