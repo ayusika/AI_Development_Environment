@@ -42,6 +42,105 @@ document.addEventListener('click', (event) => {
 
 
 
+async function refreshLatestVersion(
+  button
+) {
+  const refreshToken =
+    Date.now().toString();
+
+
+  if (button) {
+
+    button.disabled =
+      true;
+
+    button.textContent =
+      '…';
+  }
+
+
+  try {
+
+    const documentUrl =
+      new URL(
+        window.location.href
+      );
+
+
+    documentUrl.search =
+      '';
+
+    documentUrl.hash =
+      '';
+
+
+    const assetUrls =
+      Array.from(
+        new Set([
+          documentUrl.href,
+
+          ...Array.from(
+            document.querySelectorAll(
+              'link[rel="stylesheet"][href]'
+            ),
+            (link) =>
+              link.href
+          ),
+
+          ...Array.from(
+            document.querySelectorAll(
+              'script[src]'
+            ),
+            (script) =>
+              script.src
+          ),
+        ])
+      );
+
+
+    await Promise.allSettled(
+      assetUrls.map(
+        (url) =>
+          fetch(
+            url,
+            {
+              cache:
+                'reload',
+
+              credentials:
+                'same-origin',
+            }
+          )
+      )
+    );
+
+  } catch (error) {
+
+    console.error(
+      'Failed to refresh latest assets.',
+      error
+    );
+  }
+
+
+  const latestUrl =
+    new URL(
+      window.location.href
+    );
+
+
+  latestUrl.searchParams.set(
+    '_refresh',
+    refreshToken
+  );
+
+
+  window.location.replace(
+    latestUrl.toString()
+  );
+}
+
+
 function handleAction(action, button) {
   switch (action) {
     case 'new-diary':
