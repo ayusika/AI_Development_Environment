@@ -669,6 +669,15 @@ document
         heavenDiaryPlaceTouched =
           true;
 
+
+        if (activeHeavenDiaryVisit) {
+
+          renderHeavenDiaryBody(
+            activeHeavenDiaryVisit
+          );
+        }
+
+
         saveHeavenDiaryLocalDraft();
       }
     );
