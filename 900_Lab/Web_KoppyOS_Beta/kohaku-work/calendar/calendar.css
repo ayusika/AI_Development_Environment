@@ -4847,3 +4847,51 @@ button[data-calendar-today] {
       100%;
   }
 }
+
+/* =====================================================
+   Portrait smartphone main start/end time layout
+===================================================== */
+
+@media (
+  max-width: 700px
+) and (
+  orientation: portrait
+) {
+
+  .calendar-event-time-row:has(
+    [data-event-start-time]
+  ) {
+    grid-template-columns:
+      minmax(0, 1fr);
+
+    gap:
+      12px;
+  }
+
+
+  .calendar-event-time-row:has(
+    [data-event-start-time]
+  )
+  .calendar-event-field {
+    width:
+      100%;
+
+    min-width:
+      0;
+  }
+
+
+  .calendar-event-time-row:has(
+    [data-event-start-time]
+  )
+  input[type="time"] {
+    width:
+      100%;
+
+    min-width:
+      0;
+
+    max-width:
+      none;
+  }
+}
