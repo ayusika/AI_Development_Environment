@@ -202,6 +202,551 @@ if (refreshButton) {
 }
 
 
+const daySummaryModal =
+  document.querySelector(
+    '[data-day-summary-modal]'
+  );
+
+const daySummaryDate =
+  document.querySelector(
+    '[data-day-summary-date]'
+  );
+
+const daySummaryContent =
+  document.querySelector(
+    '[data-day-summary-content]'
+  );
+
+const daySummaryCloseButtons =
+  document.querySelectorAll(
+    '[data-day-summary-close]'
+  );
+
+
+function isPortraitPhoneCalendar() {
+  return window.matchMedia(
+    '(max-width: 700px) and (orientation: portrait)'
+  ).matches;
+}
+
+
+function getDaySummaryShift(
+  dateKey,
+  workerCode
+) {
+  const previewShift =
+    calendarState.previewShifts.find(
+      (shift) =>
+        String(
+          shift.shift_date
+          || ''
+        ) === dateKey
+        &&
+        String(
+          shift.worker_code
+          || ''
+        ) === workerCode
+    );
+
+
+  if (previewShift) {
+    return previewShift;
+  }
+
+
+  return calendarState.shifts.find(
+    (shift) =>
+      String(
+        shift.shift_date
+        || ''
+      ) === dateKey
+      &&
+      String(
+        shift.worker_code
+        || ''
+      ) === workerCode
+  ) || null;
+}
+
+
+function formatDaySummaryShift(
+  shift,
+  dateKey
+) {
+  if (!shift) {
+    return null;
+  }
+
+
+  if (shift.status === 'off') {
+    return {
+      main:
+        '休み',
+
+      meta:
+        '',
+    };
+  }
+
+
+  const startTime =
+    getExtendedShiftTime(
+      shift.start_at,
+      dateKey
+    );
+
+  const endTime =
+    getExtendedShiftTime(
+      shift.end_at,
+      dateKey
+    );
+
+
+  let main =
+    `${startTime}〜${endTime}`;
+
+
+  if (
+    startTime === ''
+    && endTime === ''
+  ) {
+    main =
+      '出勤';
+  }
+
+
+  return {
+    main,
+
+    meta:
+      String(
+        shift.store_name
+        || ''
+      ),
+  };
+}
+
+
+function formatDaySummaryEventMeta(
+  calendarEvent
+) {
+  if (
+    Number(
+      calendarEvent.all_day
+      || 0
+    ) === 1
+  ) {
+    return '終日';
+  }
+
+
+  const startMatch =
+    String(
+      calendarEvent.start_at
+      || ''
+    ).match(
+      /(\d{2}:\d{2})/
+    );
+
+  const endMatch =
+    String(
+      calendarEvent.end_at
+      || ''
+    ).match(
+      /(\d{2}:\d{2})/
+    );
+
+
+  const startTime =
+    startMatch
+      ? startMatch[1]
+      : '';
+
+  const endTime =
+    endMatch
+      ? endMatch[1]
+      : '';
+
+
+  if (
+    startTime !== ''
+    && endTime !== ''
+  ) {
+    return `${startTime}〜${endTime}`;
+  }
+
+
+  return startTime;
+}
+
+
+function appendDaySummaryItem(
+  section,
+  mainText,
+  metaText = ''
+) {
+  const item =
+    document.createElement(
+      'div'
+    );
+
+  item.className =
+    'calendar-day-summary-item';
+
+
+  const main =
+    document.createElement(
+      'div'
+    );
+
+  main.className =
+    'calendar-day-summary-item-main';
+
+  main.textContent =
+    mainText;
+
+
+  item.appendChild(
+    main
+  );
+
+
+  if (metaText !== '') {
+
+    const meta =
+      document.createElement(
+        'div'
+      );
+
+    meta.className =
+      'calendar-day-summary-item-meta';
+
+    meta.textContent =
+      metaText;
+
+    item.appendChild(
+      meta
+    );
+  }
+
+
+  section.appendChild(
+    item
+  );
+}
+
+
+function appendDaySummarySection(
+  ownerCode,
+  title,
+  dateKey,
+  dayEvents
+) {
+  const section =
+    document.createElement(
+      'section'
+    );
+
+  section.className =
+    'calendar-day-summary-section';
+
+  section.dataset.ownerCode =
+    ownerCode;
+
+
+  const heading =
+    document.createElement(
+      'h3'
+    );
+
+  heading.className =
+    'calendar-day-summary-section-title';
+
+  heading.textContent =
+    title;
+
+
+  section.appendChild(
+    heading
+  );
+
+
+  let itemCount =
+    0;
+
+
+  if (
+    ownerCode === 'ui'
+    || ownerCode === 'shii'
+  ) {
+
+    const shift =
+      getDaySummaryShift(
+        dateKey,
+        ownerCode
+      );
+
+    const shiftSummary =
+      formatDaySummaryShift(
+        shift,
+        dateKey
+      );
+
+
+    if (shiftSummary) {
+
+      appendDaySummaryItem(
+        section,
+        shiftSummary.main,
+        shiftSummary.meta
+      );
+
+      itemCount +=
+        1;
+    }
+  }
+
+
+  dayEvents
+    .filter(
+      (calendarEvent) =>
+        String(
+          calendarEvent.owner_code
+          || ''
+        ) === ownerCode
+    )
+    .forEach(
+      (calendarEvent) => {
+
+        appendDaySummaryItem(
+          section,
+          String(
+            calendarEvent.title
+            || '予定'
+          ),
+          formatDaySummaryEventMeta(
+            calendarEvent
+          )
+        );
+
+        itemCount +=
+          1;
+      }
+    );
+
+
+  if (itemCount === 0) {
+
+    appendDaySummaryItem(
+      section,
+      '予定なし'
+    );
+  }
+
+
+  daySummaryContent.appendChild(
+    section
+  );
+}
+
+
+function openDaySummary(
+  dateKey
+) {
+  if (
+    !daySummaryModal
+    || !daySummaryDate
+    || !daySummaryContent
+  ) {
+    return;
+  }
+
+
+  const dateParts =
+    dateKey
+      .split('-')
+      .map(
+        (value) =>
+          Number(value)
+      );
+
+
+  if (
+    dateParts.length !== 3
+    || dateParts.some(
+      (value) =>
+        !Number.isFinite(value)
+    )
+  ) {
+    return;
+  }
+
+
+  const [
+    year,
+    month,
+    day,
+  ] =
+    dateParts;
+
+
+  const date =
+    new Date(
+      year,
+      month - 1,
+      day
+    );
+
+  const weekdayNames = [
+    '日',
+    '月',
+    '火',
+    '水',
+    '木',
+    '金',
+    '土',
+  ];
+
+
+  daySummaryDate.textContent =
+    `${year}年${month}月${day}日（${
+      weekdayNames[
+        date.getDay()
+      ]
+    }）`;
+
+
+  daySummaryContent.textContent =
+    '';
+
+
+  const eventsByDate =
+    groupEventsByDate(
+      calendarState.events
+    );
+
+  const dayEvents =
+    eventsByDate.get(
+      dateKey
+    ) || [];
+
+
+  appendDaySummarySection(
+    'shared',
+    '共通',
+    dateKey,
+    dayEvents
+  );
+
+  appendDaySummarySection(
+    'ui',
+    'うい',
+    dateKey,
+    dayEvents
+  );
+
+  appendDaySummarySection(
+    'shii',
+    'しい',
+    dateKey,
+    dayEvents
+  );
+
+
+  daySummaryModal.hidden =
+    false;
+}
+
+
+function closeDaySummary() {
+  if (!daySummaryModal) {
+    return;
+  }
+
+
+  daySummaryModal.hidden =
+    true;
+}
+
+
+daySummaryCloseButtons.forEach(
+  (button) => {
+
+    button.addEventListener(
+      'click',
+      closeDaySummary
+    );
+  }
+);
+
+
+monthCalendarElement.addEventListener(
+  'click',
+  (event) => {
+
+    if (
+      !isPortraitPhoneCalendar()
+    ) {
+      return;
+    }
+
+
+    const dateNumber =
+      event.target.closest(
+        '.calendar-date-number'
+      );
+
+
+    if (
+      !dateNumber
+      || !monthCalendarElement.contains(
+        dateNumber
+      )
+    ) {
+      return;
+    }
+
+
+    const dayElement =
+      dateNumber.closest(
+        '.calendar-day'
+      );
+
+
+    if (
+      !dayElement
+      || !dayElement.dataset.dateKey
+    ) {
+      return;
+    }
+
+
+    event.preventDefault();
+    event.stopPropagation();
+
+
+    openDaySummary(
+      dayElement.dataset.dateKey
+    );
+  }
+);
+
+
+document.addEventListener(
+  'keydown',
+  (event) => {
+
+    if (
+      event.key === 'Escape'
+      && daySummaryModal
+      && !daySummaryModal.hidden
+    ) {
+      closeDaySummary();
+    }
+  }
+);
+
+
 const moveButtons =
   document.querySelectorAll(
     '[data-calendar-move]'
