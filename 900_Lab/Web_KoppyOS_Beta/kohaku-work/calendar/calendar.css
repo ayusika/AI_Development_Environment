@@ -3733,10 +3733,7 @@ button[data-calendar-today] {
       0 -3px -3px;
 
     grid-template-rows:
-      repeat(
-        2,
-        minmax(33px, auto)
-      );
+      1fr 1fr;
   }
 
 
