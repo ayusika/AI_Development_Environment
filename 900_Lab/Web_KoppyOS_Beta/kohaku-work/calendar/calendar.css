@@ -3416,3 +3416,316 @@ button[data-calendar-today] {
       11px;
   }
 }
+
+/* =====================================================
+   Portrait smartphone calendar
+   iPhone / future large phones
+===================================================== */
+
+@media (
+  max-width: 700px
+) and (
+  orientation: portrait
+) {
+
+  /*
+   * 端末名ではなくviewport幅で判定する。
+   * タブレット横表示には適用しない。
+   */
+
+
+  .calendar-app {
+    width:
+      calc(100% - 8px);
+
+    padding-top:
+      10px;
+  }
+
+
+  /* ----- 月タイトル周辺 ----- */
+
+  .calendar-toolbar {
+    grid-template-columns:
+      38px
+      minmax(0, 1fr)
+      38px;
+
+    gap:
+      4px;
+
+    margin-bottom:
+      8px;
+  }
+
+
+  .calendar-toolbar button {
+    width:
+      38px;
+
+    height:
+      38px;
+
+    font-size:
+      24px;
+  }
+
+
+  .calendar-month-heading {
+    gap:
+      6px;
+  }
+
+
+  .calendar-month-navigation {
+    gap:
+      4px;
+  }
+
+
+  .calendar-toolbar h2 {
+    font-size:
+      19px;
+  }
+
+
+  .calendar-person-legend {
+    gap:
+      4px;
+  }
+
+
+  .calendar-person-legend-item {
+    min-width:
+      44px;
+
+    min-height:
+      26px;
+
+    padding:
+      2px 7px;
+
+    font-size:
+      10px;
+  }
+
+
+  /* ----- 曜日 ----- */
+
+  .calendar-weekday {
+    min-height:
+      36px;
+
+    font-size:
+      12px;
+  }
+
+
+  /* ----- 1日のセル ----- */
+
+  .calendar-grid {
+    grid-template-rows:
+      repeat(
+        var(
+          --calendar-week-count,
+          6
+        ),
+        minmax(94px, auto)
+      );
+  }
+
+
+  .calendar-day {
+    min-height:
+      94px;
+
+    padding:
+      3px;
+
+    border-right-width:
+      1px;
+
+    border-bottom-width:
+      1px;
+  }
+
+
+  /* ----- 日付 ----- */
+
+  .calendar-day-top {
+    min-height:
+      27px;
+
+    margin:
+      0 -3px;
+
+    padding:
+      1px 3px 2px;
+
+    gap:
+      2px;
+  }
+
+
+  .calendar-day-top
+  .calendar-date {
+    min-height:
+      24px;
+  }
+
+
+  .calendar-day-top
+  .calendar-date-number {
+    width:
+      24px;
+
+    height:
+      24px;
+
+    flex-basis:
+      24px;
+
+    font-size:
+      13px;
+  }
+
+
+  /*
+   * 狭いセルでは祝日名を省略。
+   * 日曜・祝日の赤色表示自体は残す。
+   */
+
+  .calendar-holiday-name {
+    display:
+      none;
+  }
+
+
+  /* ----- うい / しい の2段 ----- */
+
+  .calendar-day-lanes {
+    min-height:
+      66px;
+
+    margin:
+      0 -3px -3px;
+
+    grid-template-rows:
+      repeat(
+        2,
+        minmax(33px, auto)
+      );
+  }
+
+
+  .calendar-day-lane {
+    min-height:
+      33px;
+
+    grid-template-rows:
+      20px
+      minmax(0, 1fr);
+
+    gap:
+      1px;
+
+    padding:
+      1px 3px 2px;
+  }
+
+
+  /* ----- 出勤 / 休み ----- */
+
+  .calendar-work-line {
+    margin-left:
+      -4px;
+
+    margin-right:
+      -4px;
+
+    width:
+      calc(100% + 8px);
+  }
+
+
+  .calendar-shift {
+    padding:
+      2px 3px;
+
+    border-radius:
+      4px;
+  }
+
+
+  /*
+   * 上段=うい、下段=しいで判別できるため
+   * 狭いスマホでは名前を省略。
+   */
+
+  .calendar-shift-worker {
+    display:
+      none;
+  }
+
+
+  .calendar-shift-detail {
+    width:
+      100%;
+
+    font-size:
+      9.5px;
+
+    text-align:
+      center;
+
+    letter-spacing:
+      -0.02em;
+  }
+
+
+  /* ----- 個人予定 ----- */
+
+  .calendar-event {
+    min-width:
+      0;
+
+    padding:
+      1px 2px;
+
+    font-size:
+      10px;
+  }
+
+
+  /*
+   * 時間あり予定はタイトルを優先して表示。
+   * 時刻は予定を開いた時に確認できる。
+   */
+
+  .calendar-event.is-timed-single
+  .calendar-event-time {
+    display:
+      none;
+  }
+
+
+  .calendar-event-title {
+    width:
+      100%;
+
+    line-height:
+      1.2;
+  }
+
+
+  .calendar-multi-day-title {
+    max-width:
+      calc(100% - 6px);
+
+    padding:
+      0 2px;
+
+    font-size:
+      9.5px;
+  }
+}
