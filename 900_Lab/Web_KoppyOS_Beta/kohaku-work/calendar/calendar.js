@@ -90,6 +90,118 @@ const todayButton =
     '[data-calendar-today]'
   );
 
+const refreshButton =
+  document.querySelector(
+    '[data-calendar-refresh]'
+  );
+
+
+async function refreshLatestCalendar() {
+  const refreshToken =
+    Date.now().toString();
+
+
+  if (refreshButton) {
+
+    refreshButton.disabled =
+      true;
+
+    refreshButton.textContent =
+      '…';
+  }
+
+
+  try {
+
+    const documentUrl =
+      new URL(
+        window.location.href
+      );
+
+
+    documentUrl.search =
+      '';
+
+    documentUrl.hash =
+      '';
+
+
+    const assetUrls =
+      Array.from(
+        new Set([
+          documentUrl.href,
+
+          ...Array.from(
+            document.querySelectorAll(
+              'link[rel="stylesheet"][href]'
+            ),
+            (link) =>
+              link.href
+          ),
+
+          ...Array.from(
+            document.querySelectorAll(
+              'script[src]'
+            ),
+            (script) =>
+              script.src
+          ),
+        ])
+      );
+
+
+    await Promise.allSettled(
+      assetUrls.map(
+        (url) =>
+          fetch(
+            url,
+            {
+              cache:
+                'reload',
+
+              credentials:
+                'same-origin',
+            }
+          )
+      )
+    );
+
+  } catch (error) {
+
+    console.error(
+      'Failed to refresh latest calendar assets.',
+      error
+    );
+  }
+
+
+  const latestUrl =
+    new URL(
+      window.location.href
+    );
+
+
+  latestUrl.searchParams.set(
+    '_refresh',
+    refreshToken
+  );
+
+
+  window.location.replace(
+    latestUrl.toString()
+  );
+}
+
+
+if (refreshButton) {
+
+  refreshButton.addEventListener(
+    'click',
+    refreshLatestCalendar
+  );
+}
+
+
 const moveButtons =
   document.querySelectorAll(
     '[data-calendar-move]'
