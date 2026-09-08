@@ -99,11 +99,11 @@
             <button
               class="secondary-button diary-platform-button heaven"
               type="button"
-              disabled
+              data-action="open-heaven-diary"
             >
               <span class="diary-platform-label">ヘブン</span>
               <strong>写メ日記を書く</strong>
-              <small>準備中</small>
+              <small>通常投稿</small>
             </button>
 
           </div>
@@ -387,6 +387,95 @@
 
             <span>›</span>
           </button>
+
+        </section>
+
+      </section>
+
+
+      <!-- ======================================
+           HEAVEN PHOTO DIARY / STANDALONE
+      ======================================= -->
+
+      <section
+        class="view"
+        id="view-heaven-diary"
+        data-view="heaven-diary"
+      >
+
+        <div class="page-heading">
+
+          <button
+            class="back-button"
+            type="button"
+            data-action="go-home"
+          >
+            ←
+          </button>
+
+          <div>
+            <p class="eyebrow">
+              HEAVEN PHOTO DIARY
+            </p>
+
+            <h1>
+              写メ日記
+            </h1>
+          </div>
+
+        </div>
+
+
+        <section class="mode-banner">
+
+          <div>
+            <span>
+              札幌
+            </span>
+
+            <strong>
+              ヘブン
+            </strong>
+          </div>
+
+          <span class="mode-chip">
+            投稿準備
+          </span>
+
+        </section>
+
+
+        <section class="content-card">
+
+          <label for="heaven-standalone-body">
+
+            <strong>
+              投稿本文
+            </strong>
+
+          </label>
+
+
+          <textarea
+            id="heaven-standalone-body"
+            rows="14"
+            placeholder="ヘブンへ投稿する本文をここで準備"
+          ></textarea>
+
+
+          <button
+            class="primary-button primary-button-large"
+            id="heaven-bridge-send"
+            type="button"
+            disabled
+          >
+            🩷 ヘブンへ送る
+          </button>
+
+
+          <p id="heaven-bridge-status">
+            Userscripts Bridgeを確認中…
+          </p>
 
         </section>
 

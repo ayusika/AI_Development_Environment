@@ -4,6 +4,7 @@ const views = {
   home: document.querySelector('[data-view="home"]'),
   diary: document.querySelector('[data-view="diary"]'),
   nukinaviCreate: document.querySelector('[data-view="nukinavi-create"]'),
+  heavenDiary: document.querySelector('[data-view="heaven-diary"]'),
   heavenCreate: document.querySelector('[data-view="heaven-create"]'),
   diaryEdit: document.querySelector('[data-view="diary-edit"]'),
   postPrep: document.querySelector('[data-view="post-prep"]'),
@@ -58,6 +59,7 @@ function updateBottomNav(viewName) {
   if (
     viewName === 'diary' ||
     viewName === 'nukinaviCreate' ||
+    viewName === 'heavenDiary' ||
     viewName === 'diaryEdit' ||
     viewName === 'postPrep'
   ) {

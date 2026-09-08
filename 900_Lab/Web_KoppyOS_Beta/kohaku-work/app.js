@@ -156,6 +156,10 @@ function handleAction(action, button) {
       showView('diary');
       break;
 
+    case 'open-heaven-diary':
+      showView('heavenDiary');
+      break;
+
     case 'back-to-schedule':
       showView('schedule');
       break;
