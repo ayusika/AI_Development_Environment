@@ -475,87 +475,6 @@
 
         <section class="content-card">
 
-          <label>
-
-            <strong>
-              ヘブン投稿本文
-            </strong>
-
-            <textarea
-              id="heaven-diary-body"
-              rows="12"
-              placeholder="ここに投稿本文が入ります"
-            ></textarea>
-
-          </label>
-
-
-          <button
-            class="secondary-button"
-            type="button"
-            data-action="copy-heaven-diary"
-          >
-            📋 クリップボードにコピー
-          </button>
-
-
-          <button
-            class="secondary-button"
-            type="button"
-            data-action="save-heaven-diary-draft"
-          >
-            ☁️ 下書きをクラウド保存
-          </button>
-
-
-          <p
-            id="heaven-diary-draft-save-status"
-            hidden
-          ></p>
-
-        </section>
-
-
-        <section class="content-card">
-
-          <label>
-
-            <strong>
-              接客で書きたいこと
-            </strong>
-
-            <textarea
-              id="heaven-diary-note"
-              rows="7"
-              placeholder="例：今日は○○の話で盛り上がった、差し入れありがとう、また会えるの楽しみにしてる"
-            ></textarea>
-
-          </label>
-
-        </section>
-
-
-        <section class="content-card">
-
-          <label>
-
-            <strong>
-              Koppyに追加で伝えること
-            </strong>
-
-            <textarea
-              id="heaven-diary-extra-note"
-              rows="4"
-              placeholder="例：今日は少し甘め、短めで、お礼を強めに"
-            ></textarea>
-
-          </label>
-
-        </section>
-
-
-        <section class="content-card">
-
           <div class="section-heading">
 
             <div>
@@ -603,18 +522,67 @@
 
             </label>
 
+
+            <label>
+
+              <input
+                type="radio"
+                name="heaven-place"
+                value="home"
+              >
+
+              <span>
+                🏠 自宅
+              </span>
+
+            </label>
+
           </div>
 
         </section>
 
 
-        <button
-          class="primary-button primary-button-large"
-          type="button"
-          data-action="generate-heaven-diary"
-        >
-          このお客様の日記を作る
-        </button>
+        <section class="content-card">
+
+          <label>
+
+            <strong>
+              ヘブン投稿本文
+            </strong>
+
+            <textarea
+              id="heaven-diary-body"
+              rows="12"
+              placeholder="ここに投稿本文が入ります"
+            ></textarea>
+
+          </label>
+
+
+          <button
+            class="secondary-button"
+            type="button"
+            data-action="copy-heaven-diary"
+          >
+            📋 クリップボードにコピー
+          </button>
+
+
+          <button
+            class="secondary-button"
+            type="button"
+            data-action="save-heaven-diary-draft"
+          >
+            ☁️ 下書きをクラウド保存
+          </button>
+
+
+          <p
+            id="heaven-diary-draft-save-status"
+            hidden
+          ></p>
+
+        </section>
 
 
         <section class="content-card">
@@ -628,7 +596,7 @@
             <textarea
               id="heaven-diary-saved-body"
               rows="10"
-              placeholder="過去に実際に投稿した日記をここへ貼り付け"
+              placeholder="実際に投稿した日記をここへ貼り付け"
             ></textarea>
 
           </label>
@@ -649,6 +617,53 @@
           ></p>
 
         </section>
+
+
+        <section class="content-card">
+
+          <label>
+
+            <strong>
+              接客で書きたいこと
+            </strong>
+
+            <textarea
+              id="heaven-diary-note"
+              rows="7"
+              placeholder="例：今日は○○の話で盛り上がった、差し入れありがとう、また会えるの楽しみにしてる"
+            ></textarea>
+
+          </label>
+
+        </section>
+
+
+        <section class="content-card">
+
+          <label>
+
+            <strong>
+              Koppyに追加で伝えること
+            </strong>
+
+            <textarea
+              id="heaven-diary-extra-note"
+              rows="4"
+              placeholder="例：今日は少し甘め、短めで、お礼を強めに"
+            ></textarea>
+
+          </label>
+
+        </section>
+
+
+        <button
+          class="primary-button primary-button-large"
+          type="button"
+          data-action="generate-heaven-diary"
+        >
+          このお客様の日記を作る
+        </button>
 
       </section>
 
