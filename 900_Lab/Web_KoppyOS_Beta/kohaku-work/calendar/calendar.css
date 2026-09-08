@@ -212,6 +212,57 @@ button {
 }
 
 
+button[data-calendar-refresh] {
+  position:
+    fixed;
+
+  right:
+    calc(
+      114px
+      + env(safe-area-inset-right)
+    );
+
+  bottom:
+    calc(
+      20px
+      + env(safe-area-inset-bottom)
+    );
+
+  z-index:
+    20;
+
+  min-width:
+    48px;
+
+  width:
+    48px;
+
+  min-height:
+    48px;
+
+  padding: 0;
+
+  border-radius:
+    999px;
+
+  background:
+    #ffffff;
+
+  color:
+    var(--calendar-accent);
+
+  font-size:
+    24px;
+
+  font-weight:
+    800;
+
+  box-shadow:
+    0 8px 24px
+    rgba(72, 181, 223, 0.18);
+}
+
+
 button[data-calendar-today] {
   position:
     fixed;
