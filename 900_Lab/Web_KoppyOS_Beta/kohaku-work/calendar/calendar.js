@@ -536,17 +536,15 @@ function appendDaySummarySection(
 
 
   if (itemCount === 0) {
-
-    appendDaySummaryItem(
-      section,
-      '予定なし'
-    );
+    return false;
   }
 
 
   daySummaryContent.appendChild(
     section
   );
+
+  return true;
 }
 
 
@@ -631,26 +629,53 @@ function openDaySummary(
     ) || [];
 
 
-  appendDaySummarySection(
-    'shared',
-    '共通',
-    dateKey,
-    dayEvents
-  );
+  const hasShared =
+    appendDaySummarySection(
+      'shared',
+      '共通',
+      dateKey,
+      dayEvents
+    );
 
-  appendDaySummarySection(
-    'ui',
-    'うい',
-    dateKey,
-    dayEvents
-  );
+  const hasUi =
+    appendDaySummarySection(
+      'ui',
+      'うい',
+      dateKey,
+      dayEvents
+    );
 
-  appendDaySummarySection(
-    'shii',
-    'しい',
-    dateKey,
-    dayEvents
-  );
+  const hasShii =
+    appendDaySummarySection(
+      'shii',
+      'しい',
+      dateKey,
+      dayEvents
+    );
+
+
+  if (
+    !hasShared
+    && !hasUi
+    && !hasShii
+  ) {
+
+    const emptyMessage =
+      document.createElement(
+        'p'
+      );
+
+    emptyMessage.className =
+      'calendar-day-summary-empty';
+
+    emptyMessage.textContent =
+      'この日の予定はありません';
+
+
+    daySummaryContent.appendChild(
+      emptyMessage
+    );
+  }
 
 
   daySummaryModal.hidden =
