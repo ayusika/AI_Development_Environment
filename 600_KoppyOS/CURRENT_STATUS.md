@@ -352,3 +352,226 @@ WriterとCodexは競合させず、
 AUTO → CODEXを使用し、
 不足するCodexルールが判明した場合のみ
 AGENTS.mdまたは追加ルールを段階的に拡張する。
+
+---
+
+## 2026-09-08 VS Code Agent Executor正式採用
+
+Codexの利用上限をきっかけに、
+VS Code AgentがKoppyOSの代替・補完Executorとして安全に利用できるか実機検証を行った。
+
+検証結果を受け、
+VS Code Agentを正式に
+
+Intelligent Local Workspace Executor
+
+としてKoppyOSへ追加した。
+
+### 現在のExecutor構成
+
+```text
+AUTO
+├─ WRITER
+├─ CODEX
+└─ VSCODE_AGENT
+```
+
+Koppyが作業内容・対象環境・安全性を判断し、
+最適なExecutorを選択する。
+
+### VS Code Agentの役割
+
+VS Code Agentは、
+VS Codeからアクセス可能なローカルworkspace・実ファイル・Terminalを使用して作業する。
+
+主な用途：
+
+- VS Code workspace内のコード編集
+- ローカルファイルの作成・編集・削除
+- 複数ファイル実装
+- Terminalコマンド実行
+- テスト・lint・動作確認
+- diff / Git状態確認
+- Codex利用不能時のfallback
+- Git管理外ローカルファイルの操作
+- macOS上で利用可能なiCloud Drive同期ファイルの操作
+
+### 実機検証結果
+
+2026-09-08のテストで以下を確認した。
+
+```text
+正本参照
+↓
+Git状態確認
+↓
+ローカルファイル作成
+↓
+実行
+↓
+既存ファイルとして再読込
+↓
+部分変更
+↓
+再実行
+↓
+結果検証
+↓
+自己修正
+↓
+最終確認
+```
+
+確認済み：
+
+- AGENTS.md参照
+- EXECUTOR_SELECTION_PROTOCOL.md参照
+- FILE_EDIT_PROTOCOL.md参照
+- git status / branch / origin/main差分確認
+- ローカルファイル作成
+- 既存ファイル編集
+- Terminal実行
+- 実行結果確認
+- 問題検出後の追加修正
+- unrelated filesを変更しない作業
+- commit / push禁止指示の遵守
+- テストファイルの安全な削除
+
+### Safe STOP確認
+
+Node.jsを必要とする初回テストでは、
+ローカル環境に`node` / `nodejs`が存在しなかった。
+
+VS Code Agentは、
+勝手にNode.jsをインストールせず、
+
+```text
+runtime unavailable
+↓
+STOP
+```
+
+と判断した。
+
+この結果から、
+Intelligent Executor共通ルールとして、
+
+- 必要なruntime / toolが存在しない場合は勝手にインストールしない
+- OS・アプリ・権限・環境設定を無断変更しない
+- 安全に継続できない場合はSTOPする
+
+を正式化した。
+
+### iCloud Drive実機確認
+
+VS Code Agentについて、
+Finder上の
+
+```text
+iCloud Drive / Userscripts
+```
+
+に対応する実パスを特定し、
+同一ディレクトリ内でテストファイルの
+
+```text
+作成
+↓
+読込
+↓
+内容検証
+↓
+削除
+```
+
+を正常完了した。
+
+既存の
+
+```text
+kohaku-heaven-bridge.user.js
+```
+
+については、
+読み取り前後でSHA-256不変を確認し、
+既存ファイルへ変更を加えていないことを確認した。
+
+iCloud Drive操作は無条件に可能とみなさず、
+毎回、
+
+- 実パス
+- 対象実ファイル
+- 親ディレクトリ
+- 同期状態
+- アクセス可能状態
+
+を確認してから変更する。
+
+### Fallback更新
+
+通常のコード作業では、
+
+```text
+CODEX
+↓
+VSCODE_AGENT
+↓
+WRITERで安全に代替可能か判定
+↓
+安全に代替できなければSTOP
+```
+
+を基本fallbackとする。
+
+ただし、
+VS Code Agentは単なるCodexの縮小版ではなく、
+
+Intelligent Local Workspace Executor
+
+として独立した適性を持つ。
+
+ローカルworkspace・Git管理外ファイル・iCloud Drive同期ファイル等では、
+AUTO判定でVS Code Agentを直接選択できる。
+
+### 正本更新
+
+以下を更新した。
+
+```text
+600_KoppyOS/protocols/EXECUTOR_SELECTION_PROTOCOL.md
+040_Koppy/性格/README.md
+```
+
+Executor Selection Protocolはv0.2へ更新し、
+VSCODE_AGENTモード・fallback・安全ルール・確認済み能力を追加した。
+
+Koppy OS表示ルールにも、
+VS Code Agentへそのまま渡せる完全な作業指示形式を追加した。
+
+### 現在の標準開発フロー
+
+```text
+しいちゃん
+↓
+Koppyへ作業依頼
+↓
+Koppyが目的・仕様・対象環境・安全性を判断
+↓
+AUTO
+├─ WRITER
+├─ CODEX
+└─ VSCODE_AGENT
+↓
+Executor実行
+↓
+結果検証
+↓
+必要に応じてGitHub正本反映
+↓
+Koppyが再確認
+↓
+節目でセーブ！
+```
+
+Writer / Codex / VS Code Agentは競合させず、
+それぞれ得意な作業へ割り当てる。
