@@ -3443,6 +3443,128 @@ button[data-calendar-today] {
   }
 
 
+  /* ----- スマホ常駐ヘッダー ----- */
+
+  .calendar-header {
+    position:
+      sticky;
+
+    top:
+      calc(
+        env(safe-area-inset-top)
+        + 4px
+      );
+
+    z-index:
+      80;
+
+    gap:
+      8px;
+
+    margin-bottom:
+      8px;
+
+    padding:
+      6px 8px;
+
+    border:
+      1px solid
+      rgba(191, 228, 245, 0.82);
+
+    border-radius:
+      16px;
+
+    background:
+      rgba(248, 253, 255, 0.94);
+
+    box-shadow:
+      0 6px 20px
+      rgba(70, 126, 153, 0.12);
+
+    backdrop-filter:
+      blur(16px);
+
+    -webkit-backdrop-filter:
+      blur(16px);
+  }
+
+
+  .calendar-brand {
+    display:
+      none;
+  }
+
+
+  .calendar-header h1 {
+    font-size:
+      17px;
+
+    white-space:
+      nowrap;
+  }
+
+
+  .calendar-header-actions {
+    gap:
+      6px;
+
+    flex:
+      0 0 auto;
+  }
+
+
+  button[data-calendar-refresh],
+  button[data-calendar-today] {
+    position:
+      static;
+
+    right:
+      auto;
+
+    bottom:
+      auto;
+
+    z-index:
+      auto;
+
+    min-height:
+      38px;
+
+    height:
+      38px;
+  }
+
+
+  button[data-calendar-refresh] {
+    min-width:
+      38px;
+
+    width:
+      38px;
+
+    padding:
+      0;
+
+    font-size:
+      21px;
+  }
+
+
+  button[data-calendar-today] {
+    min-width:
+      58px;
+
+    padding:
+      0 12px;
+  }
+
+
+  .calendar-month-section {
+    scroll-margin-top:
+      70px;
+  }
+
+
   /* ----- 月タイトル周辺 ----- */
 
   .calendar-toolbar {
