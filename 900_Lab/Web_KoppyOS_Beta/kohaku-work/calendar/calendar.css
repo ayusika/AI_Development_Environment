@@ -4377,3 +4377,138 @@ button[data-calendar-today] {
       none;
   }
 }
+
+/* =====================================================
+   Portrait smartphone sticky weekdays
+===================================================== */
+
+.calendar-sticky-weekdays {
+  display:
+    none;
+}
+
+
+@media (
+  max-width: 700px
+) and (
+  orientation: portrait
+) {
+
+  .calendar-sticky-weekdays {
+    position:
+      sticky;
+
+    top:
+      calc(
+        env(safe-area-inset-top)
+        + 58px
+      );
+
+    z-index:
+      70;
+
+    display:
+      grid;
+
+    grid-template-columns:
+      repeat(
+        7,
+        minmax(0, 1fr)
+      );
+
+    width:
+      100%;
+
+    min-height:
+      30px;
+
+    margin:
+      -2px 0 8px;
+
+    border:
+      1px solid
+      rgba(
+        191,
+        228,
+        245,
+        0.84
+      );
+
+    border-radius:
+      11px;
+
+    background:
+      rgba(
+        248,
+        253,
+        255,
+        0.96
+      );
+
+    box-shadow:
+      0 4px 14px
+      rgba(
+        70,
+        126,
+        153,
+        0.1
+      );
+
+    backdrop-filter:
+      blur(14px);
+
+    -webkit-backdrop-filter:
+      blur(14px);
+  }
+
+
+  .calendar-sticky-weekday {
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      center;
+
+    min-width:
+      0;
+
+    min-height:
+      30px;
+
+    border-right:
+      1px solid
+      rgba(
+        216,
+        234,
+        244,
+        0.78
+      );
+
+    color:
+      var(--calendar-text);
+
+    font-size:
+      11px;
+
+    font-weight:
+      850;
+  }
+
+
+  .calendar-sticky-weekday:last-child {
+    border-right:
+      0;
+
+    color:
+      #5499cf;
+  }
+
+
+  .calendar-sticky-weekday:first-child {
+    color:
+      #dc7693;
+  }
+}
