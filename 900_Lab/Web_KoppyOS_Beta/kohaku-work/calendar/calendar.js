@@ -582,7 +582,17 @@ function appendDaySummarySection(
           ),
           formatDaySummaryEventMeta(
             calendarEvent
-          )
+          ),
+          () => {
+
+            closeDaySummary();
+
+            openEventModal(
+              dateKey,
+              ownerCode,
+              calendarEvent
+            );
+          }
         );
 
         itemCount +=
