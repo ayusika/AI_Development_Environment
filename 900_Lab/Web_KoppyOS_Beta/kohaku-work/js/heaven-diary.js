@@ -2,7 +2,22 @@
    HEAVEN DIARY
 ======================================== */
 
-let activeHeavenDiaryVisit = null;
+  document
+    .querySelectorAll(
+      'input[name="heaven-place"]'
+    )
+    .forEach((input) => {
+
+      input.checked =
+        input.value
+        === (
+          draft.place
+          || 'hotel'
+        );
+    });
+
+
+  return true;
 
 
 function heavenDiaryLocalDraftKey(
