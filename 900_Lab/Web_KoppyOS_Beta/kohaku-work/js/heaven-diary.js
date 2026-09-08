@@ -1733,10 +1733,23 @@ function renderHeavenDiaryBody(
     );
 
 
+  const placeTextMap = {
+    hotel:
+      'ホテルで',
+
+    room:
+      'Rで',
+
+    home:
+      '自宅で',
+  };
+
+
   const placeText =
-    selectedPlace?.value === 'room'
-      ? 'Rで'
-      : 'ホテルで';
+    placeTextMap[
+      selectedPlace?.value
+    ]
+    || 'ホテルで';
 
 
   const opening =
