@@ -4,6 +4,9 @@
 
 let activeHeavenDiaryVisit = null;
 
+let heavenDiaryPlaceTouched =
+  false;
+
 
 function heavenDiaryLocalDraftKey(
   visitId
