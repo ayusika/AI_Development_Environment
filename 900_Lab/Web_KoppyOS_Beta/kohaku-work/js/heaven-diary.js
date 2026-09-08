@@ -658,7 +658,13 @@ document
 
     input.addEventListener(
       'change',
-      saveHeavenDiaryLocalDraft
+      () => {
+
+        heavenDiaryPlaceTouched =
+          true;
+
+        saveHeavenDiaryLocalDraft();
+      }
     );
   });
 
