@@ -264,6 +264,7 @@ try {
                 [
                     'hotel',
                     'room',
+                    'home',
                 ],
                 true
             )
