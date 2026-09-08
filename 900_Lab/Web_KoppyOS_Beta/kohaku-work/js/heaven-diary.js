@@ -681,6 +681,9 @@ function startHeavenDiary(
   activeHeavenDiaryVisit =
     visit;
 
+  heavenDiaryPlaceTouched =
+    false;
+
 
   renderHeavenDiaryVisit(
     visit
