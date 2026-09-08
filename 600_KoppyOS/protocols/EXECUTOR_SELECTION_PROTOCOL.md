@@ -1,6 +1,6 @@
 # KoppyOS Executor Selection Protocol
 
-Version: v0.1  
+Version: v0.2  
 Status: ACTIVE
 
 ---
@@ -123,13 +123,47 @@ Koppyの代わりに設計方針を決定する存在ではない。
 
 ---
 
+## 2.4 VS Code Agent
+
+VS Code Agentは、
+
+Intelligent Local Workspace Executor
+
+として扱う。
+
+VS Code Agentは、
+VS Codeからアクセス可能なローカル実ファイル・workspace・Terminalを使用し、
+Koppyから渡された仕様・制約・成功条件をもとに作業を行う。
+
+主な用途：
+
+- VS Code workspace内のコード編集
+- ローカルファイルの作成・編集・削除
+- 複数ファイルをまたぐ実装
+- Terminalコマンドの実行
+- テスト・lint・動作確認
+- diff / Git状態の確認
+- Codexが利用できない場合のコード作業fallback
+- Koppyが安全と判断したローカル作業
+- macOS上でローカルファイルとして利用可能なiCloud Drive同期ファイルの操作
+
+iCloud Drive等の同期領域を扱う場合も、
+推測したパスへ書き込まず、
+対象実ファイル・親ディレクトリ・アクセス可能状態を確認してから作業する。
+
+VS Code Agentは、
+Koppyの代わりに設計方針を決定する存在ではない。
+
+---
+
 # 3. Executor Modes
 
-KoppyOSでは以下の3モードを使用する。
+KoppyOSでは以下の4モードを使用する。
 
 AUTO
 WRITER
 CODEX
+VSCODE_AGENT
 
 ---
 
@@ -146,9 +180,15 @@ Task
 ↓
 Koppy判定
 ↓
-WRITER または CODEX
+WRITER / CODEX / VSCODE_AGENT
 
 とする。
+
+コード作業では原則としてCodexを優先する。
+
+ただしCodexが利用できない場合や、
+VS Code上のローカルworkspace・ローカルファイル操作が適している場合は、
+VSCODE_AGENTを選択できる。
 
 ---
 
@@ -167,7 +207,7 @@ writerで進めたい
 
 ただしWriterでは安全または合理的に実行できない場合、
 Koppyは理由を説明し、
-Codexへの切り替えを提案できる。
+CodexまたはVS Code Agentへの切り替えを提案できる。
 
 最終判断はユーザーが行う。
 
@@ -190,6 +230,36 @@ codexで進めたい
 Writerの方が安全性・再現性が高い場合は、
 KoppyがWriterを提案できる。
 
+Codexが利用できない場合は、
+VSCODE_AGENTへのfallbackを提案できる。
+
+ユーザーがCODEXを明示指定している場合、
+Koppyは無断でVSCODE_AGENTへ切り替えない。
+
+最終判断はユーザーが行う。
+
+---
+
+## 3.4 VSCODE_AGENT
+
+ユーザーがVS Code Agentを明示指定した場合に使用する。
+
+例：
+
+VS Code Agentで
+VSCODE_AGENTで
+VSコードのAIで
+今回はVS Code Agent
+
+この場合、
+原則としてVS Code Agent用の作業指示を出力する。
+
+VS Code Agentが対象ファイル・workspace・Terminalへ安全にアクセスできない場合は、
+無理に作業を継続しない。
+
+必要に応じて、
+CodexまたはWriterへの切り替えをKoppyが提案できる。
+
 最終判断はユーザーが行う。
 
 ---
@@ -211,6 +281,32 @@ AUTOでは以下を基本とする。
 - テスト・lint・diff確認が必要
 - Git操作と一体で行う開発作業
 
+Codexが利用可能で、
+Codexを使用することに明確な不利益がない場合、
+通常のコード開発ではCodexを第一候補とする。
+
+---
+
+## VSCODE_AGENT優先・適合
+
+以下ではVS Code Agentを選択できる。
+
+- Codexが利用上限等で使用できない
+- VS Code workspace内で直接作業することが合理的
+- ローカルファイル操作が中心
+- Terminal実行を伴うローカル作業
+- ローカル環境で実行・確認・自己修正する必要がある
+- Git管理外のローカルファイルを扱う
+- iCloud Drive等、Mac上で利用可能な同期ファイルを扱う
+- CodexよりVS Code Agentの方が対象へのアクセス経路として適している
+
+VSCODE_AGENTは、
+単なるCodexの縮小版ではなく、
+
+Intelligent Local Workspace Executor
+
+として独立した適性を持つExecutorとして扱う。
+
 ---
 
 ## WRITER優先
@@ -227,7 +323,7 @@ AUTOでは以下を基本とする。
 - セーブ処理
 - 小規模で変更内容が完全に確定している編集
 - Exact Matchによる限定的変更
-- Codexを使用するメリットが小さい作業
+- Intelligent Executorを使用するメリットが小さい作業
 
 ---
 
@@ -255,7 +351,7 @@ KoppyOSの認識・判断・状態を正本へ固定する処理
 
 だからである。
 
-Codexによるコード作業と、
+CodexまたはVS Code Agentによる実装作業と、
 KoppyOSの状態確定処理は分離する。
 
 ---
@@ -299,12 +395,12 @@ Koppy OSパネル / Koppy OS表示の既存ルールと
 
 ---
 
-# 7. Codex Output Format
+# 7. Intelligent Executor Output Format
 
-Codexを選択した場合、
+CodexまたはVS Code Agentを選択した場合、
 Koppyは原則として置換前・置換後コードそのものを作成しない。
 
-代わりにCodexへ、
+代わりにExecutorへ、
 
 何を実現するか
 何を変更してよいか
@@ -324,16 +420,16 @@ Koppyは原則として置換前・置換後コードそのものを作成しな
 確認項目
 commit / push方針
 
-Codexはその指示をもとに、
-ローカル正本を確認して実装する。
+Executorはその指示をもとに、
+アクセス可能な実ファイルと実環境を確認して作業する。
 
 ---
 
-# 8. Standard Codex Instruction
+# 8. Standard Intelligent Executor Instruction
 
-Codex用出力の基本構造は以下とする。
+Codex / VS Code Agent用出力の基本構造は以下とする。
 
-【Codex用】
+【Executor用】
 
 目的:
 ...
@@ -356,15 +452,18 @@ Codex用出力の基本構造は以下とする。
 - 必要な関連ファイル
 
 実行:
-1. 現在のローカル実ファイルを確認
-2. git statusを確認
-3. origin/mainとの差分を確認
+1. 現在の実ファイルを確認
+2. Git管理対象の場合はgit statusを確認
+3. 必要に応じてorigin/mainとの差分を確認
 4. 最小安全変更で実装
-5. diffを確認
+5. 実行・テスト・diff等で結果を確認
 6. 結果を報告
 
 commit / push:
 その時点のKoppyまたはユーザー指示に従う。
+
+Git管理外の作業では、
+不要なGit操作を要求しない。
 
 実際のタスクに不要な項目は省略できる。
 
@@ -373,16 +472,16 @@ commit / push:
 
 ---
 
-# 9. Codex Safety Rules
+# 9. Intelligent Executor Safety Rules
 
-Codexを使用する場合でも、
+CodexまたはVS Code Agentを使用する場合でも、
 File Edit Protocolの基本安全原則を維持する。
 
 特に以下を守る。
 
 - 古い記憶だけで変更しない
-- ローカル実ファイルを確認する
-- git statusを確認する
+- アクセス可能な実ファイルを確認する
+- Git管理対象ではgit statusを確認する
 - 必要に応じてorigin/mainとの差分を確認する
 - 意図しないファイルを変更しない
 - 最小安全変更を優先する
@@ -390,12 +489,20 @@ File Edit Protocolの基本安全原則を維持する。
 - conflictを勝手に解決しない
 - 不明な仕様を推測して確定しない
 - ユーザーが禁止した操作を行わない
+- 必要なruntime / toolが存在しない場合、勝手にインストールしない
+- 必要なruntime / toolがなく安全に続行できない場合はSTOPする
+- OS・アプリ・権限・環境設定を無断で変更しない
+- 同期領域では対象の実在・アクセス可能状態を確認してから変更する
+
+ExecutorがSTOPした場合、
+Koppyはその理由を確認し、
+仕様判断・代替手段・Executor変更のいずれが適切か判断する。
 
 ---
 
 # 10. Commit / Push Policy
 
-Codexでコード変更を行った場合でも、
+Intelligent Executorでコード変更を行った場合でも、
 
 commit / pushを自動的に行うことを標準とはしない。
 
@@ -410,9 +517,27 @@ pushまで
 
 force pushは原則禁止する。
 
+Git管理外のファイルでは、
+commit / pushを要求しない。
+
 ---
 
 # 11. Fallback
+
+Executorが利用できない場合、
+Koppyは作業内容と利用可能なExecutorを再評価する。
+
+通常のコード作業では、
+
+CODEX
+↓
+VSCODE_AGENT
+↓
+WRITERで安全に代替可能か判定
+↓
+安全に代替できなければSTOP
+
+を基本fallbackとする。
 
 Codexが、
 
@@ -423,12 +548,14 @@ Codexが、
 - その他の理由
 
 によって使用できない場合、
+VSCODE_AGENTで安全に代替できるかを先に判定する。
 
-KoppyはWriterで安全に代替できるか判定する。
+VSCODE_AGENTも利用できない場合のみ、
+Writerで安全に代替できるかを判定する。
 
-安全に代替可能：
+Writerで安全に代替可能：
 
-CODEX
+CODEX / VSCODE_AGENT
 ↓
 WRITER fallback
 
@@ -438,8 +565,12 @@ STOP
 ↓
 理由を説明
 
-Codexが使用できないことを理由に、
+Intelligent Executorが使用できないことを理由に、
 危険なWriter変更を作成してはならない。
+
+ユーザーがExecutorを明示指定している場合は、
+無断で別Executorへ切り替えず、
+fallback候補として提案する。
 
 ---
 
@@ -451,6 +582,8 @@ AUTO判定後でも、
 
 writerで
 codexで
+VS Code Agentで
+VSCODE_AGENTで
 
 と指定された場合は、
 その指定を優先する。
@@ -460,17 +593,54 @@ Koppyが警告・代替案を提示する。
 
 ---
 
-# 13. Core Principle
+# 13. Verified VS Code Agent Capabilities
+
+2026-09-08の実機試験で、
+VS Code Agentについて以下を確認した。
+
+- `AGENTS.md`を参照できる
+- `EXECUTOR_SELECTION_PROTOCOL.md`を参照できる
+- `FILE_EDIT_PROTOCOL.md`を参照できる
+- Git状態・branch・origin/mainとの差分を確認できる
+- ローカルファイルを新規作成できる
+- 既存ファイルを読み戻して変更できる
+- Terminalコマンドを実行できる
+- 実行結果を確認して追加修正できる
+- unrelated filesを変更せず作業できる
+- 必要runtimeが存在しない場合にSTOPできる
+- ローカルテストファイルを安全確認後に削除できる
+- iCloud Drive同期領域の実パスを確認できる
+- iCloud Drive同期ファイルと同一ディレクトリへファイルを作成できる
+- 作成ファイルを読み戻して検証できる
+- 既存ファイルの不変性を確認できる
+- テストファイルを削除して後片付けできる
+
+これらは、
+
+VS Code Agentがすべてのローカルファイルへ無条件にアクセスできる
+
+ことを意味しない。
+
+実際のアクセス可否は、
+macOS権限・VS Codeの権限・workspace・同期状態・対象ファイルの状態等に依存する。
+
+そのため、
+実タスクでは毎回対象へのアクセス可能性を確認する。
+
+---
+
+# 14. Core Principle
 
 KoppyOSでは、
 
 Koppy = 考える
 Writer = 決めた変更を正確に反映する
 Codex = 実装を理解してコードを変更する
+VS Code Agent = ローカルworkspaceと実環境を使って作業する
 
 を基本とする。
 
-WriterとCodexは競合する仕組みではない。
+Writer / Codex / VS Code Agentは競合する仕組みではない。
 
 異なる性質を持つExecutorとして併存させる。
 
