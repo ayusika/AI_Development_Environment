@@ -683,14 +683,21 @@ const heavenPlaceSelector =
 
 if (heavenPlaceSelector) {
 
-  heavenPlaceSelector.addEventListener(
-    'pointerup',
+  const selectHeavenPlaceFromEvent =
     (event) => {
 
+      const target =
+        event.target instanceof Element
+          ? event.target
+          : null;
+
+
       const label =
-        event.target.closest(
-          'label'
-        );
+        target
+          ? target.closest(
+              'label'
+            )
+          : null;
 
 
       if (
@@ -729,6 +736,20 @@ if (heavenPlaceSelector) {
               true,
           }
         )
+      );
+    };
+
+
+  [
+    'pointerup',
+    'touchend',
+    'click',
+  ].forEach(
+    (eventName) => {
+
+      heavenPlaceSelector.addEventListener(
+        eventName,
+        selectHeavenPlaceFromEvent
       );
     }
   );
