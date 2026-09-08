@@ -199,7 +199,7 @@ KoppyOSでは、
 に従ってExecutorを選択します。
 
 ユーザーがExecutorを指定していない場合はAUTOとして扱い、
-Koppyが作業内容を確認したうえでWriterまたはCodexを選択します。
+Koppyが作業内容を確認したうえでWriter / Codex / VS Code Agentから適切なExecutorを選択します。
 
 ---
 
@@ -299,7 +299,62 @@ Codexでは、
 
 ---
 
-##### 5.3 AUTOでの標準表示
+##### 5.3 VS Code Agentでの標準表示
+
+VS Code AgentをExecutorとして使用する場合、
+Koppyは原則としてWriter用の
+
+- 探す文字列
+- 置換後コード
+
+を生成しません。
+
+代わりに、
+
+VS Code Agentがローカルworkspace・実ファイル・Terminalを確認して作業できるよう、
+
+- 目的
+- 対象
+- 変更要件
+- 変更禁止事項
+- 必ず読むファイル
+- 実行手順
+- 確認項目
+- Git / commit / push方針
+- ローカル環境・同期領域に関する安全条件
+
+などを含む「VS Code Agent用作業指示」を作成します。
+
+VS Code Agent用作業指示は原則として、
+
+「VS Code Agentへそのまま貼り付けられる完全な1つの指示文」
+
+として表示します。
+
+Koppyの説明・補足・判断は、
+VS Code Agentへ渡す実データへ混入させません。
+
+VS Code Agent用作業指示をKoppy OSパネルで完全にコピーできる場合は、
+1つのコピペ対象としてKoppy OSパネルを使用します。
+
+完全性を保証できない場合は、
+内容を省略・加工せず、
+完全性を保持できる別の表示形式へ切り替えます。
+
+VS Code Agentでは、
+
+「Koppyが実装内容をすべて確定して渡す」
+
+ことではなく、
+
+「Koppyが目的・仕様・制約・成功条件を確定し、
+VS Code Agentがアクセス可能な実環境を確認して作業する」
+
+ことを基本とします。
+
+---
+
+##### 5.4 AUTOでの標準表示
 
 AUTOでは、
 Koppyが作業内容からExecutorを判定します。
@@ -310,12 +365,18 @@ Writerを選択した場合
 Codexを選択した場合
 → Codexの標準表示を使用
 
+VS Code Agentを選択した場合
+→ VS Code Agentの標準表示を使用
+
 ユーザーが
 
 - writerで
 - writer用で
 - codexで
 - codex用で
+- VS Code Agentで
+- VSCODE_AGENTで
+- VSコードのAIで
 
 などと明示した場合は、
 原則としてその指定を優先します。
@@ -323,6 +384,9 @@ Codexを選択した場合
 ただし、
 指定されたExecutorより安全または合理的な方法が明確に存在する場合、
 Koppyは理由と代替案を提示できます。
+
+ユーザーが特定Executorを明示指定している場合、
+Koppyは無断で別Executorへ切り替えません。
 
 最終判断はユーザーが行います。
 
