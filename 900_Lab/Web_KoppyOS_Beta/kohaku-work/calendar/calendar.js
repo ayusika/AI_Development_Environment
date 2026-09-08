@@ -1165,7 +1165,12 @@ function createShiftElement(shift) {
       document.createElement('span');
 
     endElement.textContent =
-      endTime;
+      isPortraitPhone
+        ? endTime.replace(
+            /:00$/,
+            ''
+          )
+        : endTime;
 
 
     if (
