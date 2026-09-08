@@ -157,6 +157,57 @@
 
 
   <div
+    class="calendar-day-summary-modal"
+    data-day-summary-modal
+    hidden
+  >
+    <div
+      class="calendar-day-summary-backdrop"
+      data-day-summary-close
+    ></div>
+
+    <section
+      class="calendar-day-summary-dialog"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="calendar-day-summary-title"
+    >
+
+      <header class="calendar-day-summary-header">
+
+        <div>
+          <p
+            class="calendar-day-summary-date"
+            data-day-summary-date
+          ></p>
+
+          <h2 id="calendar-day-summary-title">
+            1日の予定
+          </h2>
+        </div>
+
+        <button
+          type="button"
+          class="calendar-day-summary-close"
+          data-day-summary-close
+          aria-label="閉じる"
+        >
+          ×
+        </button>
+
+      </header>
+
+
+      <div
+        class="calendar-day-summary-content"
+        data-day-summary-content
+      ></div>
+
+    </section>
+  </div>
+
+
+  <div
     class="calendar-event-modal"
     data-event-modal
     hidden
