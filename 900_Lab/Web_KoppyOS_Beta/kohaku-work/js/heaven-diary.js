@@ -207,19 +207,22 @@ function restoreHeavenDiaryLocalDraft(
   }
 
 
-  document
-    .querySelectorAll(
-      'input[name="heaven-place"]'
-    )
-    .forEach((input) => {
+  if (!heavenDiaryPlaceTouched) {
 
-      input.checked =
-        input.value
-        === (
-          draft.place
-          || 'hotel'
-        );
-    });
+    document
+      .querySelectorAll(
+        'input[name="heaven-place"]'
+      )
+      .forEach((input) => {
+
+        input.checked =
+          input.value
+          === (
+            draft.place
+            || 'hotel'
+          );
+      });
+  }
 
 
   return true;
