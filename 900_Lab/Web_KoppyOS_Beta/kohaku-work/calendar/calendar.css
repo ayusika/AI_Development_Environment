@@ -4512,3 +4512,54 @@ button[data-calendar-today] {
       #dc7693;
   }
 }
+
+/* =====================================================
+   Portrait smartphone sticky weekdays final polish
+===================================================== */
+
+@media (
+  max-width: 700px
+) and (
+  orientation: portrait
+) {
+
+  /*
+   * スマホでは上部sticky曜日を正本表示とし、
+   * 各月カード内の曜日行は重複するため非表示。
+   */
+
+  .calendar-month-section
+  > .calendar-weekdays {
+    display:
+      none;
+  }
+
+
+  /*
+   * 下を流れる月タイトルや予定が
+   * sticky曜日越しに透けないよう完全不透明にする。
+   */
+
+  .calendar-sticky-weekdays {
+    background:
+      #f8fdff;
+
+    margin-bottom:
+      10px;
+  }
+
+
+  /*
+   * 「今日」や月移動で月先頭へジャンプした時に、
+   * stickyヘッダー＋曜日バーの裏へ
+   * 月タイトルが隠れない位置で止める。
+   */
+
+  .calendar-month-section {
+    scroll-margin-top:
+      calc(
+        env(safe-area-inset-top)
+        + 106px
+      );
+  }
+}
