@@ -447,7 +447,32 @@
 
         <section class="content-card">
 
-          <label for="heaven-standalone-body">
+          <div class="dummy-field">
+
+            <label
+              class="field-label"
+              for="heaven-standalone-title"
+            >
+
+              日記タイトル
+
+            </label>
+
+
+            <input
+              class="text-input"
+              id="heaven-standalone-title"
+              type="text"
+              placeholder="ヘブンの日記タイトル"
+            >
+
+          </div>
+
+
+          <label
+            class="field-label"
+            for="heaven-standalone-body"
+          >
 
             <strong>
               投稿本文
@@ -457,6 +482,7 @@
 
 
           <textarea
+            class="text-area"
             id="heaven-standalone-body"
             rows="14"
             placeholder="ヘブンへ投稿する本文をここで準備"
