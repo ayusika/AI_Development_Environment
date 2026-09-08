@@ -675,6 +675,66 @@ document
   });
 
 
+const heavenPlaceSelector =
+  document.querySelector(
+    '.heaven-place-selector'
+  );
+
+
+if (heavenPlaceSelector) {
+
+  heavenPlaceSelector.addEventListener(
+    'pointerup',
+    (event) => {
+
+      const label =
+        event.target.closest(
+          'label'
+        );
+
+
+      if (
+        !label
+        || !heavenPlaceSelector.contains(
+          label
+        )
+      ) {
+        return;
+      }
+
+
+      const input =
+        label.querySelector(
+          'input[name="heaven-place"]'
+        );
+
+
+      if (
+        !input
+        || input.checked
+      ) {
+        return;
+      }
+
+
+      input.checked =
+        true;
+
+
+      input.dispatchEvent(
+        new Event(
+          'change',
+          {
+            bubbles:
+              true,
+          }
+        )
+      );
+    }
+  );
+}
+
+
 function startHeavenDiary(
   visit
 ) {
