@@ -438,6 +438,12 @@ function handleAction(action, button) {
       );
       break;
 
+    case 'refresh-latest':
+      refreshLatestVersion(
+        button
+      );
+      break;
+
     case 'settings':
       showPlaceholder('設定');
       break;
