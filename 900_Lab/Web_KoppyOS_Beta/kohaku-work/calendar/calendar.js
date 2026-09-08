@@ -4291,6 +4291,25 @@ function renderMonthCalendar() {
       );
 
 
+    const today =
+      new Date();
+
+    const isCurrentMonth =
+      monthDate.getFullYear()
+        === today.getFullYear()
+      &&
+      monthDate.getMonth()
+        === today.getMonth();
+
+
+    if (isCurrentMonth) {
+
+      monthSection.classList.add(
+        'is-current-month'
+      );
+    }
+
+
     const monthHeading =
       document.createElement(
         'h3'
