@@ -447,6 +447,123 @@
 
         <section class="content-card">
 
+          <div class="heaven-standalone-toolbar">
+
+            <div class="heaven-standalone-type-field">
+              <span class="field-label">日記タイプ</span>
+
+              <div
+                class="heaven-diary-type-segment"
+                role="radiogroup"
+                aria-label="日記タイプ"
+              >
+                <label>
+                  <input
+                    type="radio"
+                    name="heaven-standalone-type"
+                    value="attendance"
+                    checked
+                  >
+                  <span>出勤</span>
+                </label>
+
+                <label>
+                  <input
+                    type="radio"
+                    name="heaven-standalone-type"
+                    value="next"
+                  >
+                  <span>次回予告</span>
+                </label>
+
+                <label>
+                  <input
+                    type="radio"
+                    name="heaven-standalone-type"
+                    value="chat"
+                  >
+                  <span>雑談</span>
+                </label>
+              </div>
+            </div>
+
+            <div
+              class="heaven-standalone-next-controls"
+              id="heaven-standalone-next-controls"
+              hidden
+            >
+              <label class="field-label" for="heaven-standalone-reservation">
+                次回予告の対象予約
+              </label>
+              <select
+                class="text-input"
+                id="heaven-standalone-reservation"
+              ></select>
+
+              <label class="field-label" for="heaven-standalone-sequence">
+                連続数
+              </label>
+              <select
+                class="text-input"
+                id="heaven-standalone-sequence"
+              >
+                <option value="auto">自動</option>
+                <option value="1">1人目</option>
+                <option value="2">2人目</option>
+                <option value="3">3人目以降</option>
+              </select>
+            </div>
+
+            <div
+              class="heaven-standalone-closing-choice"
+              id="heaven-standalone-closing-choice"
+              hidden
+            >
+              <span class="field-label">出勤終了後の扱い</span>
+              <div class="heaven-closing-buttons">
+                <button
+                  class="secondary-button"
+                  type="button"
+                  data-heaven-closing-choice="finished"
+                >
+                  本日終了
+                </button>
+                <button
+                  class="secondary-button"
+                  type="button"
+                  data-heaven-closing-choice="consultation"
+                >
+                  まだ続ける
+                </button>
+              </div>
+            </div>
+
+            <div
+              class="heaven-standalone-navigator"
+              id="heaven-standalone-navigator"
+              aria-live="polite"
+            >
+              予約・シフトを確認中…
+            </div>
+
+            <p
+              class="heaven-standalone-chat-note"
+              id="heaven-standalone-chat-note"
+              hidden
+            >
+              雑談テンプレはこれから調整予定。タイトルと本文は手入力できます。
+            </p>
+
+            <button
+              class="secondary-button"
+              id="heaven-standalone-generate"
+              type="button"
+            >
+              この内容で作る
+            </button>
+
+          </div>
+
           <div class="dummy-field">
 
             <label
@@ -4285,5 +4402,6 @@
   <script src="./js/schedule-identity.js"></script>
   <script src="./js/schedule-drag.js"></script>
   <script src="./js/heaven-diary.js"></script>
+  <script src="./js/heaven-standalone.js"></script>
 </body>
 </html>

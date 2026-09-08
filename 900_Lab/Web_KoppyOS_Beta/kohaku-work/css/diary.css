@@ -6,6 +6,90 @@
   position: relative;
 }
 
+.heaven-standalone-toolbar {
+  display: grid;
+  gap: 14px;
+
+  margin-bottom: 18px;
+  padding: 14px;
+
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  background: var(--accent-softer);
+}
+
+.heaven-diary-type-segment,
+.heaven-closing-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.heaven-diary-type-segment label {
+  position: relative;
+  flex: 1 1 90px;
+}
+
+.heaven-diary-type-segment input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.heaven-diary-type-segment span {
+  min-height: 40px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+
+  color: var(--text-soft);
+  background: var(--surface-strong);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.heaven-diary-type-segment input:checked + span {
+  color: var(--accent-deep);
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.heaven-standalone-next-controls,
+.heaven-standalone-closing-choice {
+  display: grid;
+  gap: 8px;
+}
+
+.heaven-standalone-closing-choice .secondary-button {
+  width: auto;
+  flex: 1 1 130px;
+}
+
+.heaven-standalone-navigator {
+  white-space: pre-line;
+
+  padding: 12px 14px;
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius-sm);
+
+  color: var(--text-soft);
+  background: var(--surface-strong);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.heaven-standalone-chat-note {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
 .timeline-entry {
   position: relative;
 }
