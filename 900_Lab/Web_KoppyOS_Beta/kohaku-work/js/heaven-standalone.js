@@ -227,9 +227,32 @@ function heavenStandaloneParagraphs(lines) {
   const content = lines.filter(Boolean);
   const signature = heavenStandaloneSettings().basic.signature || '❄︎こはく❄︎';
   const paragraphs = Number(heavenStandaloneSettings().basic.paragraphs) || 3;
-  if (paragraphs === 2) return [content.slice(0, -1).join('\n'), signature].join('\n\n');
-  if (paragraphs === 4) return [...content.slice(0, -1), signature].join('\n\n');
-  return [...content.slice(0, -1).join('\n\n'), signature].join('\n\n');
+
+  const first = content[0] || '';
+  const second = content[1] || '';
+  const third = content[2] || '';
+
+  if (paragraphs === 2) {
+    return [
+      [first, second].filter(Boolean).join('\n'),
+      [third, signature].filter(Boolean).join('\n'),
+    ].filter(Boolean).join('\n\n');
+  }
+
+  if (paragraphs === 4) {
+    return [
+      first,
+      second,
+      third,
+      signature,
+    ].filter(Boolean).join('\n\n');
+  }
+
+  return [
+    first,
+    second,
+    [third, signature].filter(Boolean).join('\n'),
+  ].filter(Boolean).join('\n\n');
 }
 
 function heavenStandaloneTitleTemplate(key, fallback, values = {}) {
