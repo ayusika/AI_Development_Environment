@@ -65,26 +65,107 @@ const heavenStandaloneDefaultSettings = {
   },
 };
 
+function isLegacyHeavenSignaturePhrase(phrase) {
+  return Boolean(
+    phrase
+    && phrase.id === 'common_close_2'
+    && phrase.category === 'common_close'
+    && phrase.text === '❄︎こはく❄︎'
+  );
+}
+
 function cloneHeavenStandaloneDefaults() {
-  return JSON.parse(JSON.stringify(heavenStandaloneDefaultSettings));
+  const defaults =
+    JSON.parse(
+      JSON.stringify(
+        heavenStandaloneDefaultSettings
+      )
+    );
+
+  defaults.phrases =
+    defaults.phrases.filter(
+      (phrase) =>
+        !isLegacyHeavenSignaturePhrase(phrase)
+    );
+
+  return defaults;
 }
 
 function normalizeHeavenStandaloneSettings(value) {
   const defaults = cloneHeavenStandaloneDefaults();
-  if (!value || typeof value !== 'object') return defaults;
+
+  if (!value || typeof value !== 'object') {
+    return defaults;
+  }
+
   const merged = {
     ...defaults,
     ...value,
-    basic: { ...defaults.basic, ...(value.basic || {}) },
-    rules: { ...defaults.rules, ...(value.rules || {}) },
-    title: { ...defaults.title, ...(value.title || {}) },
-    phrases: Array.isArray(value.phrases) ? value.phrases : defaults.phrases,
-    op_phrases: Array.isArray(value.op_phrases) ? value.op_phrases : [],
-    title_templates: { ...defaults.title_templates, ...(value.title_templates || {}) },
+    basic: {
+      ...defaults.basic,
+      ...(value.basic || {}),
+    },
+    rules: {
+      ...defaults.rules,
+      ...(value.rules || {}),
+    },
+    title: {
+      ...defaults.title,
+      ...(value.title || {}),
+    },
+    phrases:
+      Array.isArray(value.phrases)
+        ? value.phrases
+        : defaults.phrases,
+    op_phrases:
+      Array.isArray(value.op_phrases)
+        ? value.op_phrases
+        : [],
+    title_templates: {
+      ...defaults.title_templates,
+      ...(value.title_templates || {}),
+    },
   };
-  merged.rules.minimum_minutes = Math.min(600, Math.max(1, Number(merged.rules.minimum_minutes) || 60));
-  merged.rules.buffer_minutes = Math.min(180, Math.max(0, Number(merged.rules.buffer_minutes) || 0));
-  merged.basic.paragraphs = [2, 3, 4].includes(Number(merged.basic.paragraphs)) ? Number(merged.basic.paragraphs) : 3;
+
+  merged.phrases =
+    merged.phrases.filter(
+      (phrase) =>
+        !isLegacyHeavenSignaturePhrase(phrase)
+    );
+
+  merged.rules.minimum_minutes =
+    Math.min(
+      600,
+      Math.max(
+        1,
+        Number(
+          merged.rules.minimum_minutes
+        ) || 60
+      )
+    );
+
+  merged.rules.buffer_minutes =
+    Math.min(
+      180,
+      Math.max(
+        0,
+        Number(
+          merged.rules.buffer_minutes
+        ) || 0
+      )
+    );
+
+  merged.basic.paragraphs =
+    [2, 3, 4].includes(
+      Number(
+        merged.basic.paragraphs
+      )
+    )
+      ? Number(
+        merged.basic.paragraphs
+      )
+      : 3;
+
   return merged;
 }
 
