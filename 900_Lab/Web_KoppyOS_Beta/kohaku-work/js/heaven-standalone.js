@@ -359,14 +359,20 @@ function heavenStandaloneFallbackPhrase(
 
 function heavenStandaloneOptionsText(visit) {
   const names = Array.isArray(visit?.options)
-    ? visit.options
-      .map(
-        (option) =>
-          option.name
-          || option.custom_name
-          || ''
-      )
-      .filter(Boolean)
+    ? [
+      ...new Set(
+        visit.options
+          .map(
+            (option) =>
+              String(
+                option.name
+                || option.custom_name
+                || ''
+              ).trim()
+          )
+          .filter(Boolean)
+      ),
+    ]
     : [];
 
   if (!names.length) {
@@ -378,33 +384,47 @@ function heavenStandaloneOptionsText(visit) {
 
   const settings = heavenStandaloneSettings();
 
-  const selectedOpName =
-    names[0];
+  /*
+   * OPが1つだけの場合は、
+   * OP別の専用フレーズを優先する。
+   *
+   * 複数OPの場合は1つだけを特別扱いせず、
+   * 全OP名を汎用フレーズへまとめる。
+   */
+  if (names.length === 1) {
+    const selectedOpName = names[0];
 
-  const specific =
-    settings.op_phrases.filter(
-      (phrase) =>
-        phrase.enabled
-        && names.some(
-          (name) => name === phrase.op_name
-        )
-    );
-
-  const phrase =
-    heavenStandalonePickCandidate(specific);
-
-  if (phrase) {
-    const text =
-      heavenStandaloneRegisterPhrase(
-        phrase,
-        `op:${phrase.op_name}`
+    const specific =
+      settings.op_phrases.filter(
+        (phrase) =>
+          phrase.enabled
+          && phrase.op_name === selectedOpName
       );
 
-    return text.replace(
-      /\{op\}/g,
-      () => phrase.op_name
-    );
+    const phrase =
+      heavenStandalonePickCandidate(specific);
+
+    if (phrase) {
+      const text =
+        heavenStandaloneRegisterPhrase(
+          phrase,
+          `op:${phrase.op_name}`
+        );
+
+      return text
+        .replace(
+          /\{op\}/g,
+          () => selectedOpName
+        )
+        .replace(
+          /\{ops\}/g,
+          () => selectedOpName
+        );
+    }
   }
+
+  const allOpNames =
+    names.join('・');
 
   const genericText =
     heavenStandalonePickPhrase(
@@ -412,10 +432,15 @@ function heavenStandaloneOptionsText(visit) {
       '{op}つけてくれたから楽しみ☺️'
     );
 
-  return genericText.replace(
-    /\{op\}/g,
-    () => selectedOpName
-  );
+  return genericText
+    .replace(
+      /\{op\}/g,
+      () => allOpNames
+    )
+    .replace(
+      /\{ops\}/g,
+      () => allOpNames
+    );
 }
 
 function heavenStandalonePickPhrase(
