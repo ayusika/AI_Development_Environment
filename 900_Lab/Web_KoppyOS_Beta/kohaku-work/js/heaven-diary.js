@@ -573,6 +573,11 @@ async function loadHeavenDiaryCloudDraft(
     }
 
 
+    const titleElement =
+      document.getElementById(
+        'heaven-diary-title'
+      );
+
     const bodyElement =
       document.getElementById(
         'heaven-diary-body'
@@ -587,6 +592,16 @@ async function loadHeavenDiaryCloudDraft(
       document.getElementById(
         'heaven-diary-extra-note'
       );
+
+
+    if (titleElement) {
+
+      titleElement.value =
+        String(
+          draft.title
+          || ''
+        );
+    }
 
 
     if (bodyElement) {
