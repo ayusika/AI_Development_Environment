@@ -11,6 +11,7 @@ const heavenStandaloneMinimumMinutes = 60;
 const heavenStandaloneBufferMinutes = 15;
 // 正式な入力上限ではなく、表示上長く感じるUI目安。
 const HEAVEN_TITLE_WARNING_LENGTH = 24;
+const HEAVEN_TITLE_STRONG_WARNING_LENGTH = 28;
 
 const heavenStandaloneState = {
   businessDate: '',
@@ -220,11 +221,13 @@ function updateHeavenStandaloneTitleCount() {
   const titleField = document.getElementById('heaven-standalone-title');
   const count = document.getElementById('heaven-standalone-title-count');
   const warning = document.getElementById('heaven-standalone-title-warning');
-  if (!(titleField instanceof HTMLInputElement) || !count || !warning) return;
+  const strongWarning = document.getElementById('heaven-standalone-title-strong-warning');
+  if (!(titleField instanceof HTMLInputElement) || !count || !warning || !strongWarning) return;
 
   const length = [...titleField.value].length;
   count.textContent = `${length}文字`;
-  warning.hidden = length < HEAVEN_TITLE_WARNING_LENGTH;
+  warning.hidden = length < HEAVEN_TITLE_WARNING_LENGTH || length >= HEAVEN_TITLE_STRONG_WARNING_LENGTH;
+  strongWarning.hidden = length < HEAVEN_TITLE_STRONG_WARNING_LENGTH;
 }
 
 function heavenStandaloneSelectedVisit() {

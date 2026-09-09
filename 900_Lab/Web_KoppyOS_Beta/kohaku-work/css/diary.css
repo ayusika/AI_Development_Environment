@@ -104,6 +104,14 @@
   font-weight: 800;
 }
 
+.heaven-title-meta small {
+  color: var(--text-faint);
+}
+
+.heaven-title-meta #heaven-standalone-title-strong-warning {
+  color: #d18a4d;
+}
+
 .timeline-entry {
   position: relative;
 }
