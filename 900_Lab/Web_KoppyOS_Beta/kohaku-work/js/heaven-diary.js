@@ -299,6 +299,11 @@ async function saveHeavenDiaryCloudDraft() {
   }
 
 
+  const titleElement =
+    document.getElementById(
+      'heaven-diary-title'
+    );
+
   const bodyElement =
     document.getElementById(
       'heaven-diary-body'
@@ -330,6 +335,11 @@ async function saveHeavenDiaryCloudDraft() {
     );
 
 
+  const title =
+    titleElement
+      ? titleElement.value
+      : '';
+
   const body =
     bodyElement
       ? bodyElement.value
@@ -352,7 +362,8 @@ async function saveHeavenDiaryCloudDraft() {
 
 
   if (
-    !body.trim()
+    !title.trim()
+    && !body.trim()
     && !note.trim()
     && !extraNote.trim()
   ) {
