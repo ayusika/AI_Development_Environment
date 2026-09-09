@@ -264,6 +264,49 @@ try {
     }
 
 
+    /*
+     * 予約カードから作るヘブン日記の
+     * タイトル下書き保存用。
+     *
+     * 既存DBでは title 列がまだ存在しないため、
+     * 存在確認してから安全に追加する。
+     */
+    $draftColumns =
+        $pdo
+            ->query(
+                '
+                PRAGMA table_info(
+                    heaven_diary_drafts
+                )
+                '
+            )
+            ->fetchAll();
+
+
+    $draftColumnNames =
+        array_column(
+            $draftColumns,
+            'name'
+        );
+
+
+    if (
+        !in_array(
+            'title',
+            $draftColumnNames,
+            true
+        )
+    ) {
+
+        $pdo->exec(
+            '
+            ALTER TABLE heaven_diary_drafts
+            ADD COLUMN title TEXT NOT NULL DEFAULT \'\'
+            '
+        );
+    }
+
+
     $pdo->exec(
         '
         CREATE UNIQUE INDEX IF NOT EXISTS
