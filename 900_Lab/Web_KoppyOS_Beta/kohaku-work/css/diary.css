@@ -112,6 +112,67 @@
   color: #d18a4d;
 }
 
+.heaven-settings-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.heaven-settings-panel h2 {
+  margin: 14px 0 0;
+  font-size: 16px;
+}
+
+.heaven-settings-status,
+.heaven-settings-help {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 12px;
+}
+
+.heaven-settings-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.heaven-settings-phrase-groups,
+.heaven-settings-template-list {
+  display: grid;
+  gap: 10px;
+}
+
+.heaven-settings-phrase-groups details {
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--accent-softer);
+}
+
+.heaven-settings-phrase-groups summary {
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.heaven-settings-phrase-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto auto;
+  gap: 6px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.heaven-settings-phrase-row input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+}
+
+.heaven-settings-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+
 .timeline-entry {
   position: relative;
 }

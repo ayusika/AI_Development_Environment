@@ -293,10 +293,11 @@ function handleAction(action, button) {
       break;
 
     case 'open-rules':
-      showPlaceholder(
-        '写メ日記ルール',
-        'diary'
-      );
+      if (window.KohakuHeavenSettingsUi) {
+        void window.KohakuHeavenSettingsUi.open();
+      } else {
+        showPlaceholder('写メ日記ルール', 'diary');
+      }
       break;
 
     case 'shift-detail':
@@ -449,7 +450,11 @@ function handleAction(action, button) {
       break;
 
     case 'settings':
-      showPlaceholder('設定');
+      if (window.KohakuHeavenSettingsUi) {
+        void window.KohakuHeavenSettingsUi.open();
+      } else {
+        showPlaceholder('設定');
+      }
       break;
 
     default:
