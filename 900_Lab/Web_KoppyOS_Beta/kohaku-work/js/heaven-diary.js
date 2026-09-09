@@ -417,6 +417,9 @@ async function saveHeavenDiaryCloudDraft() {
                   visit.id
                 ),
 
+              title:
+                title,
+
               body:
                 body,
 
