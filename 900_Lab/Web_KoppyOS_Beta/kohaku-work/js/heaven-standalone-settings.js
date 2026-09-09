@@ -37,6 +37,10 @@ const heavenStandaloneDefaultSettings = {
     { id: 'next_repeat_2', category: 'next_repeat', text: 'また会えるのうれしい♡', enabled: true },
     { id: 'next_fun_1', category: 'next_fun', text: '会えるの楽しみ♡', enabled: true },
     { id: 'next_fun_2', category: 'next_fun', text: 'いっぱい楽しもー☺️', enabled: true },
+
+    { id: 'next_op_generic_1', category: 'next_op_generic', text: '{op}つけてくれたから楽しみ☺️', enabled: true },
+    { id: 'next_op_generic_2', category: 'next_op_generic', text: '{op}ありがと♡いっぱい楽しもー！', enabled: true },
+
     { id: 'next_invite_1', category: 'next_invite', text: 'どんどんお誘いまってるよー！', enabled: true },
     { id: 'next_invite_2', category: 'next_invite', text: 'まだまだえっちなお誘い大歓迎♪', enabled: true },
     { id: 'next_last_1', category: 'next_last', text: 'ラスト1枠よろしくね♡', enabled: true },
