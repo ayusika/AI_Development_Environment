@@ -426,6 +426,16 @@ function heavenStandaloneOptionsText(visit) {
   const allOpNames =
     names.join('・');
 
+  const opVolumeText =
+    names.length >= 4
+      ? 'もりもりたくさん'
+      : names.length === 3
+        ? 'いっぱい'
+        : '';
+
+  const opDisplayText =
+    `${allOpNames}${opVolumeText}`;
+
   const genericText =
     heavenStandalonePickPhrase(
       'next_op_generic',
@@ -435,11 +445,11 @@ function heavenStandaloneOptionsText(visit) {
   return genericText
     .replace(
       /\{op\}/g,
-      () => allOpNames
+      () => opDisplayText
     )
     .replace(
       /\{ops\}/g,
-      () => allOpNames
+      () => opDisplayText
     );
 }
 
