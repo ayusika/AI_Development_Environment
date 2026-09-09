@@ -1038,11 +1038,18 @@ function initializeHeavenStandalone() {
   const bridgeStatus = document.getElementById('heaven-bridge-status');
   if (bridgeStatus) {
     new MutationObserver(() => {
-      if (bridgeStatus.textContent.includes('送信準備できました')) {
+      if (
+        bridgeStatus.textContent.includes(
+          '送信準備できました'
+        )
+        && !window
+          .KohakuReservationHeavenBridgeActive
+      ) {
         void window.KohakuHeavenSettings?.record(
           heavenStandaloneState.businessDate,
           heavenStandaloneState.pendingUsage
         );
+
         heavenStandaloneState.pendingUsage = [];
       }
     }).observe(bridgeStatus, { childList: true, characterData: true, subtree: true });
