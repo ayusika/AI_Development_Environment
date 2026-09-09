@@ -9,6 +9,8 @@ const heavenStandaloneShiftsApiUrl =
 const heavenStandaloneStoreName = '札幌';
 const heavenStandaloneMinimumMinutes = 60;
 const heavenStandaloneBufferMinutes = 15;
+// 正式な入力上限ではなく、表示上長く感じるUI目安。
+const HEAVEN_TITLE_WARNING_LENGTH = 24;
 
 const heavenStandaloneState = {
   businessDate: '',
@@ -214,6 +216,17 @@ function heavenStandaloneCurrentType() {
   return document.querySelector('input[name="heaven-standalone-type"]:checked')?.value || 'attendance';
 }
 
+function updateHeavenStandaloneTitleCount() {
+  const titleField = document.getElementById('heaven-standalone-title');
+  const count = document.getElementById('heaven-standalone-title-count');
+  const warning = document.getElementById('heaven-standalone-title-warning');
+  if (!(titleField instanceof HTMLInputElement) || !count || !warning) return;
+
+  const length = [...titleField.value].length;
+  count.textContent = `${length}文字`;
+  warning.hidden = length < HEAVEN_TITLE_WARNING_LENGTH;
+}
+
 function heavenStandaloneSelectedVisit() {
   return heavenStandaloneState.visits.find((visit) => String(visit.id) === String(heavenStandaloneState.selectedVisitId)) || null;
 }
@@ -416,6 +429,7 @@ function heavenStandaloneGenerate() {
   if (type === 'chat') {
     titleField.value = titleField.value || 'ちょっと雑談♡';
     bodyField.value = bodyField.value || '';
+    updateHeavenStandaloneTitleCount();
     return;
   }
 
@@ -424,6 +438,7 @@ function heavenStandaloneGenerate() {
     : heavenStandaloneBuildAttendance();
   titleField.value = generated.title;
   bodyField.value = generated.body;
+  updateHeavenStandaloneTitleCount();
 }
 
 async function heavenStandaloneLoad() {
@@ -489,6 +504,12 @@ function initializeHeavenStandalone() {
       heavenStandaloneState.sequenceOverride = event.target.value;
     }
   });
+
+  document.getElementById('heaven-standalone-title')?.addEventListener(
+    'input',
+    updateHeavenStandaloneTitleCount
+  );
+  updateHeavenStandaloneTitleCount();
 
   root.addEventListener('click', (event) => {
     const closingButton = event.target.closest('[data-heaven-closing-choice]');

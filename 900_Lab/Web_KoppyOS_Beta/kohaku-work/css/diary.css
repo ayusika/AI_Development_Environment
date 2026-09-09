@@ -90,6 +90,20 @@
   line-height: 1.6;
 }
 
+.heaven-title-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+  color: var(--text-faint);
+  font-size: 11px;
+}
+
+.heaven-title-meta span:last-child {
+  color: var(--warning);
+  font-weight: 800;
+}
+
 .timeline-entry {
   position: relative;
 }

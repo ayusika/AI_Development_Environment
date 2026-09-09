@@ -198,6 +198,62 @@ img {
   transform: scale(0.96);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.api-usage-control {
+  position: relative;
+}
+
+.api-usage-chip {
+  min-height: 32px;
+  max-width: 118px;
+  padding: 6px 9px;
+
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  color: var(--accent-deep);
+  background: var(--accent-softer);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.api-usage-popover {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 100;
+
+  width: min(250px, calc(100vw - 32px));
+  display: grid;
+  gap: 6px;
+  padding: 13px;
+
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  color: var(--text-soft);
+  background: var(--surface-strong);
+  box-shadow: var(--shadow-card);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.api-usage-popover strong {
+  color: var(--text);
+  font-size: 12px;
+}
+
+.api-usage-popover small {
+  color: var(--text-faint);
+}
+
 
 /* ========================================
    MAIN / VIEWS

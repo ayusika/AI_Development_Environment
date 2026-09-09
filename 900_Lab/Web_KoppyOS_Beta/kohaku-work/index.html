@@ -35,15 +35,45 @@
         <span class="brand-section">Kohaku Work</span>
       </div>
 
-      <button
-        class="icon-button"
-        type="button"
-        aria-label="最新版に更新"
-        title="最新版に更新"
-        data-action="refresh-latest"
-      >
-        ↻
-      </button>
+      <div class="header-actions">
+        <div class="api-usage-control">
+          <button
+            class="api-usage-chip"
+            id="openai-usage-chip"
+            type="button"
+            aria-label="OpenAI API利用状況を表示"
+            title="OpenAI API利用状況を表示"
+            aria-expanded="false"
+            aria-controls="openai-usage-popover"
+          >
+            <span id="openai-usage-chip-label">✦ API ---</span>
+          </button>
+
+          <div
+            class="api-usage-popover"
+            id="openai-usage-popover"
+            role="dialog"
+            aria-label="OpenAI API利用状況"
+            hidden
+          >
+            <strong>OpenAI API</strong>
+            <span id="openai-usage-status">確認中…</span>
+            <span id="openai-usage-balance">推定残高 ---</span>
+            <span id="openai-usage-total">基準日時以降の使用額 ---</span>
+            <small id="openai-usage-updated">最終更新 ---</small>
+          </div>
+        </div>
+
+        <button
+          class="icon-button"
+          type="button"
+          aria-label="最新版に更新"
+          title="最新版に更新"
+          data-action="refresh-latest"
+        >
+          ↻
+        </button>
+      </div>
     </header>
 
 
@@ -583,6 +613,19 @@
               placeholder="ヘブンの日記タイトル"
             >
 
+            <div
+              class="heaven-title-meta"
+              aria-live="polite"
+            >
+              <span id="heaven-standalone-title-count">0文字</span>
+              <span
+                id="heaven-standalone-title-warning"
+                hidden
+              >
+                ⚠️ 長めです。ヘブンで見切れる可能性あり
+              </span>
+            </div>
+
           </div>
 
 
@@ -896,8 +939,17 @@
           class="primary-button primary-button-large"
           type="button"
           data-action="generate-heaven-diary"
+            title="OpenAI APIを使用します"
+            aria-label="このお客様の日記を作る。OpenAI APIを使用します"
         >
           このお客様の日記を作る
+            <span
+              class="api-usage-badge"
+              title="OpenAI APIを使用します"
+              aria-label="OpenAI APIを使用します"
+            >
+              ✦ API
+            </span>
         </button>
 
       </section>
@@ -4403,5 +4455,6 @@
   <script src="./js/schedule-drag.js"></script>
   <script src="./js/heaven-diary.js"></script>
   <script src="./js/heaven-standalone.js"></script>
+  <script src="./js/openai-usage.js"></script>
 </body>
 </html>
