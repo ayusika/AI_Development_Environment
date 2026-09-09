@@ -378,6 +378,9 @@ function heavenStandaloneOptionsText(visit) {
 
   const settings = heavenStandaloneSettings();
 
+  const selectedOpName =
+    names[0];
+
   const specific =
     settings.op_phrases.filter(
       (phrase) =>
@@ -391,15 +394,27 @@ function heavenStandaloneOptionsText(visit) {
     heavenStandalonePickCandidate(specific);
 
   if (phrase) {
-    return heavenStandaloneRegisterPhrase(
-      phrase,
-      `op:${phrase.op_name}`
+    const text =
+      heavenStandaloneRegisterPhrase(
+        phrase,
+        `op:${phrase.op_name}`
+      );
+
+    return text.replace(
+      /\{op\}/g,
+      () => phrase.op_name
     );
   }
 
-  return heavenStandalonePickPhrase(
-    'next_fun',
-    'いっぱいOPつけてくれたから楽しみ☺️'
+  const genericText =
+    heavenStandalonePickPhrase(
+      'next_op_generic',
+      '{op}つけてくれたから楽しみ☺️'
+    );
+
+  return genericText.replace(
+    /\{op\}/g,
+    () => selectedOpName
   );
 }
 
