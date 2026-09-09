@@ -179,6 +179,13 @@ function heavenStandaloneOptionsText(visit) {
   return names.length ? 'いっぱいOPつけてくれたから楽しみ☺️' : '会えるの楽しみ♡いっぱい楽しもうね☺️';
 }
 
+function heavenStandaloneBuildCompactTitle(candidates) {
+  const validCandidates = candidates.filter(Boolean);
+  return validCandidates.find((candidate) => [...candidate].length <= 23)
+    || validCandidates[validCandidates.length - 1]
+    || '';
+}
+
 function heavenStandaloneParagraphs(lines) {
   return lines.filter(Boolean).join('\n\n');
 }
@@ -338,18 +345,29 @@ function heavenStandaloneBuildAttendance() {
     && reservations.length > 0
     && heavenStandaloneBuildCalculation(shiftTimes.start, reservations).status !== 'closed'
   );
-  const nextText = calculation?.status === 'closed'
-    ? heavenStandaloneState.closingChoice === 'consultation' && calculation.candidate !== null
-      ? `次回${heavenStandaloneFormatCompactTime(calculation.candidate)}から要相談♡`
-      : ''
-    : calculation?.status === 'last'
-      ? `次回${heavenStandaloneFormatCompactTime(calculation.candidate)}からラスト1枠！`
-      : calculation?.status === 'available'
-        ? `最速${heavenStandaloneFormatCompactTime(calculation.candidate)}過ぎから！`
-        : '';
-
   let title = '出勤準備中♡';
-  if (nextText) title += nextText;
+  if (reservations.length === 0) {
+    title = '出勤準備中♡';
+  } else if (calculation?.status === 'closed') {
+    if (heavenStandaloneState.closingChoice === 'consultation' && calculation.candidate !== null) {
+      title = heavenStandaloneBuildCompactTitle([
+        `出勤準備中♡${heavenStandaloneFormatCompactTime(calculation.candidate)}〜要相談`,
+        `次回${heavenStandaloneFormatCompactTime(calculation.candidate)}〜要相談♡`,
+      ]);
+    } else {
+      title = '本日終了！';
+    }
+  } else if (calculation?.status === 'last') {
+    title = heavenStandaloneBuildCompactTitle([
+      `出勤準備中♡${heavenStandaloneFormatCompactTime(calculation.candidate)}〜ラスト1枠！`,
+      `${heavenStandaloneFormatCompactTime(calculation.candidate)}〜ラスト1枠！`,
+    ]);
+  } else if (calculation?.status === 'available') {
+    title = heavenStandaloneBuildCompactTitle([
+      `出勤準備中♡最速${heavenStandaloneFormatCompactTime(calculation.candidate)}〜！`,
+      `最速${heavenStandaloneFormatCompactTime(calculation.candidate)}〜！`,
+    ]);
+  }
 
   const firstLine = first
     ? `スタートから${heavenStandaloneCustomerWord(first)}ありがと♡`
@@ -384,16 +402,21 @@ function heavenStandaloneBuildNextNotice() {
 
   if (!visit) return { title: '', body: '' };
 
-  let title = '';
-  if (sequence === 1) title = `この後の${heavenStandaloneCustomerWord(visit, true)}ありがと♡`;
-  else if (sequence === 2) title = '連続ありがと♡';
-  else if (sequence === 3) title = '3連続ありがと♡';
-  else title = 'この後の仲良しさんありがと♡';
+  const customerTitleWord = heavenStandaloneCustomerWord(visit, true);
+  const titleBase = sequence === 1
+    ? `${customerTitleWord}ありがと♡`
+    : sequence === 2
+      ? '連続ありがと♡'
+      : sequence === 3
+        ? '3連続ありがと♡'
+        : '仲良しさんありがと♡';
 
   if (calculation?.status === 'closed') {
     return heavenStandaloneState.closingChoice === 'consultation'
       ? {
-        title,
+        title: calculation.candidate !== null
+          ? `次回${heavenStandaloneFormatCompactTime(calculation.candidate)}〜要相談♡`
+          : '要相談♡',
         body: heavenStandaloneParagraphs([
           `${heavenStandaloneCustomerWord(visit)}ありがとー♡${heavenStandaloneOptionsText(visit)}`,
           `そのあとは${calculation.candidate !== null ? `${heavenStandaloneFormatCompactTime(calculation.candidate)}から` : ''}要相談♡`,
@@ -413,8 +436,19 @@ function heavenStandaloneBuildNextNotice() {
   const nextText = calculation?.status === 'last'
     ? `そのあとは${heavenStandaloneFormatCompactTime(calculation.candidate)}からラスト1枠☆`
     : `そのあとは最速${heavenStandaloneFormatCompactTime(calculation?.candidate)}から☆`;
+  const title = !calculation || calculation.candidate === null
+    ? titleBase
+    : calculation.status === 'last'
+    ? heavenStandaloneBuildCompactTitle([
+      `${customerTitleWord}♡${heavenStandaloneFormatCompactTime(calculation.candidate)}〜ラスト1枠！`,
+      `${customerTitleWord}ありがと♡${heavenStandaloneFormatCompactTime(calculation.candidate)}〜ラスト1枠！`,
+    ])
+    : heavenStandaloneBuildCompactTitle([
+      `${titleBase}最速${heavenStandaloneFormatCompactTime(calculation?.candidate)}〜！`,
+      `${titleBase}${heavenStandaloneFormatCompactTime(calculation?.candidate)}〜！`,
+    ]);
   return {
-    title: `${title}${calculation?.candidate ? `最速${heavenStandaloneFormatCompactTime(calculation.candidate)}から！` : ''}`,
+    title,
     body: heavenStandaloneParagraphs([
       `${heavenStandaloneCustomerWord(visit)}ありがとー♡${heavenStandaloneOptionsText(visit)}`,
       nextText,
