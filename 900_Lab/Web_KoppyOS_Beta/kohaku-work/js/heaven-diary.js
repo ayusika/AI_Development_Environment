@@ -1834,3 +1834,341 @@ function renderHeavenDiaryBody(
       '\n\n\n'
     );
 }
+
+/* ========================================
+   RESERVATION HEAVEN BRIDGE
+======================================== */
+
+const heavenDiaryBridgeSendButton =
+  document.getElementById(
+    'heaven-diary-bridge-send'
+  );
+
+const heavenStandaloneBridgeSendButton =
+  document.getElementById(
+    'heaven-bridge-send'
+  );
+
+
+function syncHeavenDiaryBridgeButton() {
+
+  if (
+    !(heavenDiaryBridgeSendButton
+      instanceof HTMLButtonElement)
+  ) {
+    return;
+  }
+
+
+  if (
+    !(heavenStandaloneBridgeSendButton
+      instanceof HTMLButtonElement)
+  ) {
+
+    heavenDiaryBridgeSendButton.disabled =
+      true;
+
+    return;
+  }
+
+
+  heavenDiaryBridgeSendButton.disabled =
+    heavenStandaloneBridgeSendButton.disabled;
+}
+
+
+syncHeavenDiaryBridgeButton();
+
+
+if (
+  heavenStandaloneBridgeSendButton
+  instanceof HTMLButtonElement
+) {
+
+  new MutationObserver(
+    syncHeavenDiaryBridgeButton
+  ).observe(
+    heavenStandaloneBridgeSendButton,
+    {
+      attributes:
+        true,
+
+      attributeFilter: [
+        'disabled',
+      ],
+    }
+  );
+}
+
+
+if (
+  heavenDiaryBridgeSendButton
+  instanceof HTMLButtonElement
+) {
+
+  heavenDiaryBridgeSendButton.addEventListener(
+    'click',
+    () => {
+
+      const titleElement =
+        document.getElementById(
+          'heaven-diary-title'
+        );
+
+      const bodyElement =
+        document.getElementById(
+          'heaven-diary-body'
+        );
+
+      const standaloneTitleElement =
+        document.getElementById(
+          'heaven-standalone-title'
+        );
+
+      const standaloneBodyElement =
+        document.getElementById(
+          'heaven-standalone-body'
+        );
+
+      const bridgeStatusElement =
+        document.getElementById(
+          'heaven-bridge-status'
+        );
+
+
+      if (
+        !(titleElement
+          instanceof HTMLInputElement)
+        || !(bodyElement
+          instanceof HTMLTextAreaElement)
+      ) {
+        return;
+      }
+
+
+      const title =
+        titleElement.value.trim();
+
+      const body =
+        bodyElement.value.trim();
+
+
+      if (!title) {
+
+        window.alert(
+          '日記タイトルを入力してください。'
+        );
+
+        titleElement.focus();
+
+        return;
+      }
+
+
+      if (!body) {
+
+        window.alert(
+          'ヘブン投稿本文がありません。'
+        );
+
+        bodyElement.focus();
+
+        return;
+      }
+
+
+      if (
+        !(standaloneTitleElement
+          instanceof HTMLInputElement)
+        || !(standaloneBodyElement
+          instanceof HTMLTextAreaElement)
+        || !(heavenStandaloneBridgeSendButton
+          instanceof HTMLButtonElement)
+        || heavenStandaloneBridgeSendButton.disabled
+      ) {
+
+        window.alert(
+          'Userscripts Bridgeがまだ準備できていません。'
+        );
+
+        return;
+      }
+
+
+      const originalTitle =
+        standaloneTitleElement.value;
+
+      const originalBody =
+        standaloneBodyElement.value;
+
+
+      let bridgeFinished =
+        false;
+
+      let bridgeObserver =
+        null;
+
+
+      const restoreBridgeFields =
+        () => {
+
+          if (bridgeFinished) {
+            return;
+          }
+
+
+          bridgeFinished =
+            true;
+
+
+          bridgeObserver
+            ?.disconnect();
+
+
+          standaloneTitleElement.value =
+            originalTitle;
+
+          standaloneBodyElement.value =
+            originalBody;
+
+
+          standaloneTitleElement.dispatchEvent(
+            new Event(
+              'input',
+              {
+                bubbles:
+                  true,
+              }
+            )
+          );
+
+          standaloneBodyElement.dispatchEvent(
+            new Event(
+              'input',
+              {
+                bubbles:
+                  true,
+              }
+            )
+          );
+
+
+          window.setTimeout(
+            () => {
+
+              window.KohakuReservationHeavenBridgeActive =
+                false;
+            },
+            0
+          );
+
+
+          heavenDiaryBridgeSendButton.disabled =
+            false;
+
+          heavenDiaryBridgeSendButton.textContent =
+            '🩷 ヘブンへ送る';
+
+
+          syncHeavenDiaryBridgeButton();
+        };
+
+
+      window.KohakuReservationHeavenBridgeActive =
+        true;
+
+
+      standaloneTitleElement.value =
+        title;
+
+      standaloneBodyElement.value =
+        body;
+
+
+      standaloneTitleElement.dispatchEvent(
+        new Event(
+          'input',
+          {
+            bubbles:
+              true,
+          }
+        )
+      );
+
+      standaloneBodyElement.dispatchEvent(
+        new Event(
+          'input',
+          {
+            bubbles:
+              true,
+          }
+        )
+      );
+
+
+      saveHeavenDiaryLocalDraft();
+
+
+      heavenDiaryBridgeSendButton.disabled =
+        true;
+
+      heavenDiaryBridgeSendButton.textContent =
+        '🩷 送信準備中…';
+
+
+      if (bridgeStatusElement) {
+
+        bridgeObserver =
+          new MutationObserver(
+            () => {
+
+              const statusText =
+                bridgeStatusElement.textContent
+                  || '';
+
+
+              if (
+                statusText.includes(
+                  '送信準備できました'
+                )
+              ) {
+
+                heavenDiaryBridgeSendButton.textContent =
+                  '✓ 送信準備できました';
+
+
+                window.setTimeout(
+                  restoreBridgeFields,
+                  1200
+                );
+              }
+            }
+          );
+
+
+        bridgeObserver.observe(
+          bridgeStatusElement,
+          {
+            childList:
+              true,
+
+            characterData:
+              true,
+
+            subtree:
+              true,
+          }
+        );
+      }
+
+
+      heavenStandaloneBridgeSendButton.click();
+
+
+      window.setTimeout(
+        restoreBridgeFields,
+        8000
+      );
+    }
+  );
+}
