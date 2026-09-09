@@ -216,6 +216,13 @@ try {
                 : 0;
 
 
+        $title =
+            (string) (
+                $payload['title']
+                ?? ''
+            );
+
+
         $body =
             (string) (
                 $payload['body']
@@ -247,7 +254,8 @@ try {
 
 
         if (
-            trim($body) === ''
+            trim($title) === ''
+            && trim($body) === ''
             && trim($note) === ''
             && trim($extraNote) === ''
         ) {
@@ -299,6 +307,7 @@ try {
                     UPDATE heaven_diary_drafts
 
                     SET
+                        title = ?,
                         body = ?,
                         note = ?,
                         extra_note = ?,
@@ -315,6 +324,7 @@ try {
 
 
             $statement->execute([
+                $title,
                 $body,
                 $note,
                 $extraNote,
@@ -330,6 +340,7 @@ try {
                     '
                     INSERT INTO heaven_diary_drafts (
                         visit_id,
+                        title,
                         body,
                         note,
                         extra_note,
@@ -337,6 +348,7 @@ try {
                     )
 
                     VALUES (
+                        ?,
                         ?,
                         ?,
                         ?,
@@ -349,6 +361,7 @@ try {
 
             $statement->execute([
                 $visitId,
+                $title,
                 $body,
                 $note,
                 $extraNote,
