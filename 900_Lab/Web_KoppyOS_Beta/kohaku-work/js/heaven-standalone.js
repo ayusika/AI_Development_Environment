@@ -721,7 +721,9 @@ function heavenStandaloneBuildNextNotice() {
 
   if (!visit) return { title: '', body: '' };
 
-  const customerTitleWord = heavenStandaloneCustomerWord(visit, true);
+  const customerTitleWord =
+    heavenStandaloneCustomerWord(visit, true);
+
   const titleBase = sequence === 1
     ? `${customerTitleWord}ありがと♡`
     : sequence === 2
@@ -730,48 +732,153 @@ function heavenStandaloneBuildNextNotice() {
         ? '3連続ありがと♡'
         : '仲良しさんありがと♡';
 
+  const thanksLine = heavenStandalonePickPhrase(
+    visit.customer_status === 'new'
+      ? 'next_new'
+      : 'next_repeat',
+    `${heavenStandaloneCustomerWord(visit)}ありがとー♡`
+  );
+
+  const funLine =
+    heavenStandaloneOptionsText(visit);
+
+  const firstParagraph = [
+    thanksLine,
+    funLine,
+  ].filter(Boolean).join('\n');
+
   if (calculation?.status === 'closed') {
-    return heavenStandaloneState.closingChoice === 'consultation'
-      ? {
+    if (
+      heavenStandaloneState.closingChoice
+      === 'consultation'
+    ) {
+      const consultationText =
+        calculation.candidate !== null
+          ? `そのあとは${heavenStandaloneFormatCompactTime(
+            calculation.candidate
+          )}から要相談♡`
+          : 'そのあとは要相談♡';
+
+      return {
         title: calculation.candidate !== null
-          ? heavenStandaloneTitleTemplate('next_consultation', `次回{time}〜要相談♡`, { time: heavenStandaloneFormatCompactTime(calculation.candidate) })
+          ? heavenStandaloneTitleTemplate(
+            'next_consultation',
+            '次回{time}〜要相談♡',
+            {
+              time:
+                heavenStandaloneFormatCompactTime(
+                  calculation.candidate
+                ),
+            }
+          )
           : '要相談♡',
+
         body: heavenStandaloneParagraphs([
-          `${heavenStandaloneCustomerWord(visit)}ありがとー♡${heavenStandaloneOptionsText(visit)}`,
-          `そのあとは${calculation.candidate !== null ? `${heavenStandaloneFormatCompactTime(calculation.candidate)}から` : ''}要相談♡`,
-          'まだまだお誘いまってるよー！',
-        ]),
-      }
-      : {
-        title: '本日終了！',
-        body: heavenStandaloneParagraphs([
-          '今日もありがと♡',
-          'いっぱい楽しかったよー！',
-          'また遊びにきてね☺️',
+          firstParagraph,
+          consultationText,
+          heavenStandalonePickPhrase(
+            'next_consultation',
+            '要相談でまってるね♡'
+          ),
         ]),
       };
+    }
+
+    return {
+      title: '本日終了！',
+
+      body: heavenStandaloneParagraphs([
+        heavenStandalonePickPhrase(
+          'next_finished',
+          '今日もありがと♡'
+        ),
+        heavenStandalonePickPhrase(
+          'next_finished',
+          'いっぱい楽しかったよー！'
+        ),
+        heavenStandalonePickPhrase(
+          'next_finished',
+          'また遊びにきてね☺️'
+        ),
+      ]),
+    };
   }
 
-  const nextText = calculation?.status === 'last'
-    ? `そのあとは${heavenStandaloneFormatCompactTime(calculation.candidate)}からラスト1枠☆`
-    : `そのあとは最速${heavenStandaloneFormatCompactTime(calculation?.candidate)}から☆`;
-  const title = !calculation || calculation.candidate === null
-    ? titleBase
-    : calculation.status === 'last'
-    ? heavenStandaloneBuildCompactTitle([
-      heavenStandaloneTitleTemplate('next_last', `{customer}♡{time}〜ラスト1枠！`, { customer: customerTitleWord, time: heavenStandaloneFormatCompactTime(calculation.candidate) }),
-      `${customerTitleWord}ありがと♡${heavenStandaloneFormatCompactTime(calculation.candidate)}〜ラスト1枠！`,
-    ])
-    : heavenStandaloneBuildCompactTitle([
-      heavenStandaloneTitleTemplate(sequence === 1 && visit.customer_status === 'new' ? 'next_new' : sequence === 1 ? 'next_repeat' : sequence === 2 ? 'next_sequence_2' : 'next_sequence_3', `${titleBase}最速{time}〜！`, { customer: customerTitleWord, time: heavenStandaloneFormatCompactTime(calculation?.candidate) }),
-      `${titleBase}${heavenStandaloneFormatCompactTime(calculation?.candidate)}〜！`,
-    ]);
+  const nextText =
+    calculation?.status === 'last'
+      ? `そのあとは${heavenStandaloneFormatCompactTime(
+        calculation.candidate
+      )}からラスト1枠☆`
+      : `そのあとは最速${heavenStandaloneFormatCompactTime(
+        calculation?.candidate
+      )}から☆`;
+
+  const title =
+    !calculation
+    || calculation.candidate === null
+      ? titleBase
+      : calculation.status === 'last'
+        ? heavenStandaloneBuildCompactTitle([
+          heavenStandaloneTitleTemplate(
+            'next_last',
+            '{customer}♡{time}〜ラスト1枠！',
+            {
+              customer: customerTitleWord,
+              time:
+                heavenStandaloneFormatCompactTime(
+                  calculation.candidate
+                ),
+            }
+          ),
+          `${customerTitleWord}ありがと♡${heavenStandaloneFormatCompactTime(
+            calculation.candidate
+          )}〜ラスト1枠！`,
+        ])
+        : heavenStandaloneBuildCompactTitle([
+          heavenStandaloneTitleTemplate(
+            sequence === 1
+              && visit.customer_status === 'new'
+              ? 'next_new'
+              : sequence === 1
+                ? 'next_repeat'
+                : sequence === 2
+                  ? 'next_sequence_2'
+                  : 'next_sequence_3',
+            `${titleBase}最速{time}〜！`,
+            {
+              customer: customerTitleWord,
+              time:
+                heavenStandaloneFormatCompactTime(
+                  calculation?.candidate
+                ),
+            }
+          ),
+          `${titleBase}${heavenStandaloneFormatCompactTime(
+            calculation?.candidate
+          )}〜！`,
+        ]);
+
+  const closingLine =
+    calculation?.status === 'last'
+      ? heavenStandalonePickPhrase(
+        'next_last',
+        'ラスト1枠よろしくね♡'
+      )
+      : heavenStandalonePickPhrase(
+        [
+          'next_invite',
+          'common_close',
+        ],
+        'どんどんお誘いまってるよー！'
+      );
+
   return {
     title,
+
     body: heavenStandaloneParagraphs([
-      `${heavenStandaloneCustomerWord(visit)}ありがとー♡${heavenStandaloneOptionsText(visit)}`,
+      firstParagraph,
       nextText,
-      'どんどんお誘いまってるよー！',
+      closingLine,
     ]),
   };
 }
