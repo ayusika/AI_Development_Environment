@@ -191,28 +191,248 @@ function heavenStandaloneSequence(visit) {
   return Math.min(index + 1, 3);
 }
 
-function heavenStandaloneOptionsText(visit) {
-  const names = Array.isArray(visit?.options)
-    ? visit.options.map((option) => option.name || option.custom_name || '').filter(Boolean)
-    : [];
-  if (!names.length) return heavenStandalonePickPhrase('next_fun', '会えるの楽しみ♡いっぱい楽しもうね☺️');
-  const settings = heavenStandaloneSettings();
-  const specific = settings.op_phrases.filter((phrase) => phrase.enabled && names.some((name) => name === phrase.op_name));
-  const phrase = specific.length ? specific[Math.floor(Math.random() * specific.length)] : null;
-  if (phrase) {
-    heavenStandaloneState.pendingUsage.push({ phrase_id: phrase.id, category: `op:${phrase.op_name}` });
-    return phrase.text;
+let heavenStandaloneCurrentPhraseIds = [];
+let heavenStandaloneCurrentPhraseTexts = [];
+let heavenStandalonePendingUsageReference =
+  heavenStandaloneState.pendingUsage;
+
+function heavenStandaloneEnsurePhraseGenerationScope() {
+  if (
+    heavenStandalonePendingUsageReference
+    === heavenStandaloneState.pendingUsage
+  ) {
+    return;
   }
-  return heavenStandalonePickPhrase('next_fun', 'いっぱいOPつけてくれたから楽しみ☺️');
+
+  heavenStandalonePendingUsageReference =
+    heavenStandaloneState.pendingUsage;
+
+  heavenStandaloneCurrentPhraseIds = [];
+  heavenStandaloneCurrentPhraseTexts = [];
 }
 
-function heavenStandalonePickPhrase(category, fallback = '') {
-  const picked = window.KohakuHeavenSettings?.pick(category, heavenStandaloneState.generatedPhraseIds) || { text: '', phrase_id: '' };
-  if (picked.phrase_id) {
-    heavenStandaloneState.generatedPhraseIds.push(picked.phrase_id);
-    heavenStandaloneState.pendingUsage.push({ phrase_id: picked.phrase_id, category });
+function heavenStandalonePickCandidate(candidates) {
+  heavenStandaloneEnsurePhraseGenerationScope();
+
+  const settings = heavenStandaloneSettings();
+  const usage =
+    window.KohakuHeavenSettings?.usage
+    || new Set();
+
+  const signature =
+    String(settings.basic.signature || '').trim();
+
+  const available = candidates.filter((phrase) => {
+    const text =
+      String(phrase?.text || '').trim();
+
+    if (
+      !phrase?.enabled
+      || !phrase?.id
+      || !text
+    ) {
+      return false;
+    }
+
+    if (
+      phrase.category === 'common_close'
+      && signature
+      && text === signature
+    ) {
+      return false;
+    }
+
+    return (
+      !heavenStandaloneCurrentPhraseIds.includes(
+        phrase.id
+      )
+      && !heavenStandaloneCurrentPhraseTexts.includes(
+        text
+      )
+    );
+  });
+
+  if (!available.length) {
+    return null;
   }
-  return picked.text || fallback;
+
+  const fresh =
+    settings.basic.avoid_same_day
+      ? available.filter(
+        (phrase) => !usage.has(phrase.id)
+      )
+      : available;
+
+  const rerollFresh =
+    settings.basic.reroll_enabled
+      ? fresh.filter(
+        (phrase) =>
+          !heavenStandaloneState
+            .generatedPhraseIds
+            .includes(phrase.id)
+      )
+      : fresh;
+
+  const rerollAvailable =
+    settings.basic.reroll_enabled
+      ? available.filter(
+        (phrase) =>
+          !heavenStandaloneState
+            .generatedPhraseIds
+            .includes(phrase.id)
+      )
+      : available;
+
+  const pool =
+    rerollFresh.length
+      ? rerollFresh
+      : fresh.length
+        ? fresh
+        : rerollAvailable.length
+          ? rerollAvailable
+          : available;
+
+  return pool[
+    Math.floor(Math.random() * pool.length)
+  ];
+}
+
+function heavenStandaloneRegisterPhrase(
+  phrase,
+  category
+) {
+  const text =
+    String(phrase?.text || '').trim();
+
+  if (!text) {
+    return '';
+  }
+
+  heavenStandaloneCurrentPhraseIds.push(
+    phrase.id
+  );
+
+  heavenStandaloneCurrentPhraseTexts.push(
+    text
+  );
+
+  if (
+    !heavenStandaloneState
+      .generatedPhraseIds
+      .includes(phrase.id)
+  ) {
+    heavenStandaloneState
+      .generatedPhraseIds
+      .push(phrase.id);
+  }
+
+  heavenStandaloneState.pendingUsage.push({
+    phrase_id: phrase.id,
+    category,
+  });
+
+  return phrase.text;
+}
+
+function heavenStandaloneFallbackPhrase(
+  fallback
+) {
+  heavenStandaloneEnsurePhraseGenerationScope();
+
+  const text =
+    String(fallback || '').trim();
+
+  if (
+    !text
+    || heavenStandaloneCurrentPhraseTexts
+      .includes(text)
+  ) {
+    return '';
+  }
+
+  heavenStandaloneCurrentPhraseTexts.push(
+    text
+  );
+
+  return fallback;
+}
+
+function heavenStandaloneOptionsText(visit) {
+  const names = Array.isArray(visit?.options)
+    ? visit.options
+      .map(
+        (option) =>
+          option.name
+          || option.custom_name
+          || ''
+      )
+      .filter(Boolean)
+    : [];
+
+  if (!names.length) {
+    return heavenStandalonePickPhrase(
+      'next_fun',
+      '会えるの楽しみ♡いっぱい楽しもうね☺️'
+    );
+  }
+
+  const settings = heavenStandaloneSettings();
+
+  const specific =
+    settings.op_phrases.filter(
+      (phrase) =>
+        phrase.enabled
+        && names.some(
+          (name) => name === phrase.op_name
+        )
+    );
+
+  const phrase =
+    heavenStandalonePickCandidate(specific);
+
+  if (phrase) {
+    return heavenStandaloneRegisterPhrase(
+      phrase,
+      `op:${phrase.op_name}`
+    );
+  }
+
+  return heavenStandalonePickPhrase(
+    'next_fun',
+    'いっぱいOPつけてくれたから楽しみ☺️'
+  );
+}
+
+function heavenStandalonePickPhrase(
+  category,
+  fallback = ''
+) {
+  const categories =
+    Array.isArray(category)
+      ? category
+      : [category];
+
+  const settings = heavenStandaloneSettings();
+
+  const candidates =
+    settings.phrases.filter(
+      (phrase) =>
+        categories.includes(phrase.category)
+    );
+
+  const phrase =
+    heavenStandalonePickCandidate(candidates);
+
+  if (!phrase) {
+    return heavenStandaloneFallbackPhrase(
+      fallback
+    );
+  }
+
+  return heavenStandaloneRegisterPhrase(
+    phrase,
+    phrase.category || categories[0]
+  );
 }
 
 function heavenStandaloneBuildCompactTitle(candidates) {
