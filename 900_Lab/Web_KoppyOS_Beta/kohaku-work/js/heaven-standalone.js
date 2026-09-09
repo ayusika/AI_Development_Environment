@@ -670,11 +670,37 @@ function heavenStandaloneBuildAttendance() {
     : heavenStandalonePickPhrase('attendance_empty', '今日も元気にがんばるよー！！');
   const thirdLine = calculation?.status === 'closed'
     ? heavenStandaloneState.closingChoice === 'consultation'
-      ? heavenStandalonePickPhrase('attendance_consultation', `まだ続けるよー！${calculation.candidate !== null ? `次回${heavenStandaloneFormatCompactTime(calculation.candidate)}から要相談♡` : '次回要相談♡'}`)
-      : '本日終了！今日もありがと♡'
-    : hasStartSlot && first
-      ? `${heavenStandalonePickPhrase('attendance_start_open', 'スタートはまだ空いてるよ☆')} ${heavenStandalonePickPhrase('attendance_invite', 'どしどしお誘いまってるからね♡')}`
-      : heavenStandalonePickPhrase('attendance_invite', 'どしどしお誘いまってるからね♡');
+      ? heavenStandalonePickPhrase(
+        'attendance_consultation',
+        `まだ続けるよー！${calculation.candidate !== null ? `次回${heavenStandaloneFormatCompactTime(calculation.candidate)}から要相談♡` : '次回要相談♡'}`
+      )
+      : heavenStandalonePickPhrase(
+        'attendance_finished',
+        '本日終了！今日もありがと♡'
+      )
+    : calculation?.status === 'last'
+      ? heavenStandalonePickPhrase(
+        'attendance_last',
+        'ラスト1枠もよろしくね♡'
+      )
+      : hasStartSlot && first
+        ? `${heavenStandalonePickPhrase(
+          'attendance_start_open',
+          'スタートはまだ空いてるよ☆'
+        )} ${heavenStandalonePickPhrase(
+          [
+            'attendance_invite',
+            'common_close',
+          ],
+          'どしどしお誘いまってるからね♡'
+        )}`
+        : heavenStandalonePickPhrase(
+          [
+            'attendance_invite',
+            'common_close',
+          ],
+          'どしどしお誘いまってるからね♡'
+        );
 
   return {
     title,
