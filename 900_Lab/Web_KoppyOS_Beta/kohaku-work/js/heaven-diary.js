@@ -35,6 +35,11 @@ function saveHeavenDiaryLocalDraft() {
   }
 
 
+  const titleElement =
+    document.getElementById(
+      'heaven-diary-title'
+    );
+
   const bodyElement =
     document.getElementById(
       'heaven-diary-body'
@@ -57,6 +62,11 @@ function saveHeavenDiaryLocalDraft() {
 
 
   const draft = {
+    title:
+      titleElement
+        ? titleElement.value
+        : '',
+
     body:
       bodyElement
         ? bodyElement.value
