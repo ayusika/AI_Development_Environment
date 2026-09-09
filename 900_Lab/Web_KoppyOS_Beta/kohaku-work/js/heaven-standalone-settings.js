@@ -227,6 +227,7 @@ function initializeHeavenSettingsUi() {
     ['attendance_invite', '出勤・通常のお誘い'], ['attendance_last', '出勤・ラスト1枠'],
     ['attendance_consultation', '出勤・要相談'], ['attendance_finished', '出勤・本日終了'],
     ['next_new', '次回・新規'], ['next_repeat', '次回・リピ'], ['next_fun', '次回・楽しみ'],
+    ['next_op_generic', '次回・OPあり汎用'],
     ['next_invite', '次回・お誘い'], ['next_last', '次回・ラスト1枠'],
     ['next_consultation', '次回・要相談'], ['next_finished', '次回・本日終了'],
     ['common_close', '共通・締め文'],
