@@ -308,8 +308,180 @@ function initializeHeavenSettingsUi() {
       const response = await fetch(heavenStandaloneSettingsApiUrl, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin', body: JSON.stringify({ settings: state.settings }) });
       const payload = await response.json();
       if (!response.ok || !payload.success) throw new Error('save failed');
-      state.settings = normalizeHeavenStandaloneSettings(payload.data.settings); state.dirty = false; if (status) status.textContent = '✓ 保存しました';
-      window.KohakuHeavenSettings?.apply(state.settings);
+      state.settings =
+        normalizeHeavenStandaloneSettings(
+          payload.data.settings
+        );
+
+      state.dirty =
+        false;
+
+      if (status) {
+        status.textContent =
+          '✓ 保存しました';
+      }
+
+      window.KohakuHeavenSettings?.apply(
+        state.settings
+      );
+
+
+      const saveButton =
+        view.querySelector(
+          '[data-save-heaven-settings]'
+        );
+
+
+      if (saveButton) {
+
+        document
+          .getElementById(
+            'heaven-settings-save-popup'
+          )
+          ?.remove();
+
+
+        const popup =
+          document.createElement(
+            'div'
+          );
+
+
+        popup.id =
+          'heaven-settings-save-popup';
+
+        popup.textContent =
+          '✓ 保存しました';
+
+
+        Object.assign(
+          popup.style,
+          {
+            position:
+              'fixed',
+
+            zIndex:
+              '9999',
+
+            padding:
+              '8px 14px',
+
+            borderRadius:
+              '999px',
+
+            background:
+              'rgba(55, 181, 226, 0.96)',
+
+            color:
+              '#ffffff',
+
+            fontSize:
+              '13px',
+
+            fontWeight:
+              '700',
+
+            lineHeight:
+              '1',
+
+            boxShadow:
+              '0 6px 20px rgba(28, 117, 156, 0.22)',
+
+            opacity:
+              '0',
+
+            transform:
+              'translateY(4px)',
+
+            transition:
+              'opacity 160ms ease, transform 160ms ease',
+
+            pointerEvents:
+              'none',
+          }
+        );
+
+
+        document.body.appendChild(
+          popup
+        );
+
+
+        const buttonRect =
+          saveButton.getBoundingClientRect();
+
+        const popupRect =
+          popup.getBoundingClientRect();
+
+
+        const left =
+          Math.min(
+            window.innerWidth
+            - popupRect.width
+            - 12,
+
+            Math.max(
+              12,
+
+              buttonRect.left
+              + (
+                buttonRect.width
+                - popupRect.width
+              ) / 2
+            )
+          );
+
+
+        const top =
+          Math.max(
+            12,
+
+            buttonRect.top
+            - popupRect.height
+            - 10
+          );
+
+
+        popup.style.left =
+          `${left}px`;
+
+        popup.style.top =
+          `${top}px`;
+
+
+        requestAnimationFrame(
+          () => {
+
+            popup.style.opacity =
+              '1';
+
+            popup.style.transform =
+              'translateY(0)';
+          }
+        );
+
+
+        window.setTimeout(
+          () => {
+
+            popup.style.opacity =
+              '0';
+
+            popup.style.transform =
+              'translateY(-3px)';
+          },
+          1500
+        );
+
+
+        window.setTimeout(
+          () => {
+
+            popup.remove();
+          },
+          1800
+        );
+      }
     } catch (error) { console.error('Failed to save Heaven settings.', error); if (status) status.textContent = '⚠ 保存できませんでした'; }
   }
   window.KohakuHeavenSettingsUi = { open: async () => { try { const response = await fetch(heavenStandaloneSettingsApiUrl, { credentials: 'same-origin', cache: 'no-store' }); const payload = await response.json(); if (response.ok && payload.success && payload.data.settings) state.settings = normalizeHeavenStandaloneSettings(payload.data.settings); } catch (error) { console.error('Failed to load Heaven settings.', error); } render(); showView('heavenSettings'); } };
