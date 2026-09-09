@@ -174,6 +174,11 @@ function restoreHeavenDiaryLocalDraft(
   }
 
 
+  const titleElement =
+    document.getElementById(
+      'heaven-diary-title'
+    );
+
   const bodyElement =
     document.getElementById(
       'heaven-diary-body'
@@ -188,6 +193,15 @@ function restoreHeavenDiaryLocalDraft(
     document.getElementById(
       'heaven-diary-extra-note'
     );
+
+
+  if (titleElement) {
+    titleElement.value =
+      String(
+        draft.title
+        || ''
+      );
+  }
 
 
   if (bodyElement) {
