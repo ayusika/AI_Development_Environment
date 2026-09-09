@@ -119,6 +119,7 @@ function fetchHeavenDiaryDraft(
             SELECT
                 id,
                 visit_id,
+                title,
                 body,
                 note,
                 extra_note,
