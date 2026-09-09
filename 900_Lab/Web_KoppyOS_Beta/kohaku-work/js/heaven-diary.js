@@ -663,6 +663,7 @@ async function loadHeavenDiaryCloudDraft(
 
 
 [
+  'heaven-diary-title',
   'heaven-diary-body',
   'heaven-diary-note',
   'heaven-diary-extra-note',
