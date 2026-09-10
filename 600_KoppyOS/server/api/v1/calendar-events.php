@@ -1146,6 +1146,7 @@ try {
                     category,
                     memo,
                     text_color,
+                    birth_year,
                     repeat_type,
                     repeat_interval,
                     repeat_weekdays,
@@ -1178,6 +1179,7 @@ try {
                     ?,
                     ?,
                     ?,
+                    ?,
                     'manual'
                 )
                 "
@@ -1192,6 +1194,7 @@ try {
             $fields['category'],
             $fields['memo'],
             $fields['text_color'],
+            $fields['birth_year'],
             $fields['repeat_type'],
             $fields['repeat_interval'],
             $fields['repeat_weekdays'],
