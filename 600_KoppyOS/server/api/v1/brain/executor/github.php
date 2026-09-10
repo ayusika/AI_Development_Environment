@@ -667,14 +667,76 @@ switch ($operation) {
                 $existingContent,
                 $search
             );
-
         if ($matchCount === 0) {
+            $normalizedSearch =
+                str_replace(
+                    [
+                        "\r\n",
+                        "\r",
+                    ],
+                    "\n",
+                    $search
+                );
+
+            $normalizedExistingContent =
+                str_replace(
+                    [
+                        "\r\n",
+                        "\r",
+                    ],
+                    "\n",
+                    $existingContent
+                );
+
+            $normalizedMatchCount =
+                substr_count(
+                    $normalizedExistingContent,
+                    $normalizedSearch
+                );
+
+            $trimmedSearch =
+                trim(
+                    $search
+                );
+
+            $trimmedMatchCount =
+                $trimmedSearch !== ''
+                    ? substr_count(
+                        $existingContent,
+                        $trimmedSearch
+                    )
+                    : 0;
+
+            $containsNonAscii =
+                preg_match(
+                    '/[^\x00-\x7F]/',
+                    $search
+                )
+                === 1;
+
+            $diagnostic =
+                ' Diagnostic:'
+                . ' search_length='
+                . strlen($search)
+                . ', normalized_match_count='
+                . $normalizedMatchCount
+                . ', trimmed_match_count='
+                . $trimmedMatchCount
+                . ', non_ascii='
+                . (
+                    $containsNonAscii
+                        ? 'yes'
+                        : 'no'
+                )
+                . '.';
+
             respondError(
-                'Patch target was not found. GitHub has not been modified.',
+                'Patch target was not found. GitHub has not been modified.'
+                . $diagnostic,
                 409
             );
         }
-
+        
         if ($matchCount > 1) {
             respondError(
                 'Patch target matched multiple locations. GitHub has not been modified.',

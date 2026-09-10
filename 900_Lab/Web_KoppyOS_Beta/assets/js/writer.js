@@ -1405,6 +1405,13 @@ proposalApproveButton.addEventListener(
       '承認中…';
 
 
+    let proposalApproved =
+      false;
+
+    let executionFailedAfterApproval =
+      false;
+
+
     try {
       await fetchProposalApi(
         'approve.php',
@@ -1415,11 +1422,15 @@ proposalApproveButton.addEventListener(
       );
 
 
+      proposalApproved =
+        true;
+
+
       setProposalStatus(
         'working',
         'GitHubへ保存中…'
       );
-
+      
       proposalApproveButton.textContent =
         'GitHubへ保存中…';
 
@@ -1476,12 +1487,31 @@ proposalApproveButton.addEventListener(
       currentProposalId =
         null;
 
+            } catch (error) {
 
-    } catch (error) {
-      showProposalError(
+      const errorMessage =
         error instanceof Error
           ? error.message
-          : 'GitHubへの保存に失敗したよ。'
+          : 'GitHubへの保存に失敗したよ.';
+
+
+      if (proposalApproved) {
+
+        executionFailedAfterApproval =
+          true;
+
+        currentProposalId =
+          null;
+
+        proposalSafetyText.textContent =
+          'このProposalは承認済みのため再利用できません。内容を確認して、新しい変更案を作ってください。';
+      }
+
+
+      showProposalError(
+        proposalApproved
+          ? `${errorMessage} このProposalは再利用できないので、新しい変更案を作ってね。`
+          : errorMessage
       );
 
 
@@ -1489,6 +1519,15 @@ proposalApproveButton.addEventListener(
       setProposalBusy(
         false
       );
+
+
+      if (
+        executionFailedAfterApproval
+      ) {
+        proposalApproveButton.disabled =
+          true;
+      }
+
 
       proposalApproveButton.innerHTML =
         '<span aria-hidden="true">✓</span> 採用してGitHubへ保存';
