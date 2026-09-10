@@ -1218,6 +1218,18 @@ function setCalendarEventKind(
   );
 
 
+  const birthYearField =
+    eventForm.querySelector(
+      '[data-event-birth-year-field]'
+    );
+
+
+  if (birthYearField) {
+    birthYearField.hidden =
+      !isBirthday;
+  }
+
+
   if (eventTitleLabel) {
     eventTitleLabel.textContent =
       isBirthday
