@@ -270,6 +270,39 @@ function initializeHeavenSettingsUi() {
       const input = view.querySelector(`[data-title-template="${key}"]`);
       if (input) input.value = value;
     });
+
+    view
+      .querySelectorAll(
+        '[data-thank-you-setting]'
+      )
+      .forEach(
+        (input) => {
+
+          const key =
+            input.dataset
+              .thankYouSetting;
+
+          if (
+            !key
+            || !Object.prototype.hasOwnProperty.call(
+              state.settings.thank_you,
+              key
+            )
+          ) {
+            return;
+          }
+
+          input.value =
+            String(
+              state.settings
+                .thank_you[
+                  key
+                ]
+              ?? ''
+            );
+        }
+      );
+
     renderHeavenSettingsOpList(view.querySelector('[data-op-phrase-list]'), state.settings);
   };
   const markDirty = () => { state.dirty = true; if (status) status.textContent = '変更あり'; };
