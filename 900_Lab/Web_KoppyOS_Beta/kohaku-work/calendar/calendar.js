@@ -1085,6 +1085,322 @@ const repeatCountInput =
   );
 
 
+/* ========================================
+   CALENDAR EVENT KIND
+======================================== */
+
+const eventKindButtons =
+  document.querySelectorAll(
+    '[data-event-kind]'
+  );
+
+const eventTitleInput =
+  eventForm.querySelector(
+    '[name="title"]'
+  );
+
+const eventCategoryInput =
+  eventForm.querySelector(
+    '[name="category"]'
+  );
+
+const eventTitleField =
+  eventTitleInput
+    ?.closest(
+      '.calendar-event-field'
+    )
+  || null;
+
+const eventTitleLabel =
+  eventTitleField
+    ?.querySelector(
+      ':scope > span'
+    )
+  || null;
+
+const eventOwnerField =
+  eventOwnerSelect
+    ?.closest(
+      '.calendar-event-field'
+    )
+  || null;
+
+const eventCategoryField =
+  eventCategoryInput
+    ?.closest(
+      '.calendar-event-field'
+    )
+  || null;
+
+const eventTextColorField =
+  eventTextColorInput
+    ?.closest(
+      '.calendar-event-field'
+    )
+  || null;
+
+const eventColorPalette =
+  document.querySelector(
+    '[data-color-palette]'
+  );
+
+const eventTimeRow =
+  eventStartTimeInput
+    ?.closest(
+      '.calendar-event-time-row'
+    )
+  || null;
+
+const eventAllDayField =
+  eventAllDayInput
+    ?.closest(
+      '.calendar-event-all-day'
+    )
+  || null;
+
+const eventMultiDayField =
+  eventMultiDayInput
+    ?.closest(
+      '.calendar-event-all-day'
+    )
+  || null;
+
+
+function setCalendarEventKind(
+  kind,
+  applyDefaults = true
+) {
+
+  const normalizedKind =
+    kind === 'birthday'
+      ? 'birthday'
+      : 'normal';
+
+  const isBirthday =
+    normalizedKind
+    === 'birthday';
+
+
+  eventKindButtons.forEach(
+    (button) => {
+
+      const selected =
+        button.dataset
+          .eventKind
+        === normalizedKind;
+
+      button.classList.toggle(
+        'is-selected',
+        selected
+      );
+
+      button.setAttribute(
+        'aria-pressed',
+        selected
+          ? 'true'
+          : 'false'
+      );
+    }
+  );
+
+
+  eventForm.classList.toggle(
+    'is-birthday-mode',
+    isBirthday
+  );
+
+
+  if (eventTitleLabel) {
+    eventTitleLabel.textContent =
+      isBirthday
+        ? 'だれの誕生日？'
+        : '予定';
+  }
+
+
+  if (eventTitleInput) {
+    eventTitleInput.placeholder =
+      isBirthday
+        ? '例：ういちゃん'
+        : '美容室、病院、荷物受取など';
+  }
+
+
+  if (eventOwnerField) {
+    eventOwnerField.hidden =
+      isBirthday;
+  }
+
+  if (repeatTypeSelect) {
+    repeatTypeSelect
+      .closest(
+        '.calendar-repeat-panel'
+      )
+      .hidden =
+      isBirthday;
+  }
+
+  if (eventAllDayField) {
+    eventAllDayField.hidden =
+      isBirthday;
+  }
+
+  if (eventMultiDayField) {
+    eventMultiDayField.hidden =
+      isBirthday;
+  }
+
+  if (eventEndDateField) {
+    eventEndDateField.hidden =
+      isBirthday
+      ? true
+      : !eventMultiDayInput.checked;
+  }
+
+  if (eventTimeRow) {
+    eventTimeRow.hidden =
+      isBirthday;
+  }
+
+  if (eventCategoryField) {
+    eventCategoryField.hidden =
+      isBirthday;
+  }
+
+
+  if (!applyDefaults) {
+    return;
+  }
+
+
+  if (isBirthday) {
+
+    eventOwnerSelect.value =
+      'shared';
+
+    eventAllDayInput.checked =
+      true;
+
+    eventMultiDayInput.checked =
+      false;
+
+    eventStartTimeInput.value =
+      '';
+
+    eventEndTimeInput.value =
+      '';
+
+    eventStartTimeInput.disabled =
+      true;
+
+    eventEndTimeInput.disabled =
+      true;
+
+    repeatTypeSelect.value =
+      'yearly';
+
+    repeatIntervalInput.value =
+      '1';
+
+    repeatEndTypeSelect.value =
+      'none';
+
+
+    const dateParts =
+      String(
+        eventDateInput.value
+        || ''
+      )
+        .split('-')
+        .map(Number);
+
+
+    if (
+      dateParts.length === 3
+      &&
+      dateParts.every(
+        Number.isFinite
+      )
+    ) {
+
+      repeatMonthInput.value =
+        String(
+          dateParts[1]
+        );
+
+      repeatYearlyDayInput.value =
+        String(
+          dateParts[2]
+        );
+    }
+
+
+    if (eventCategoryInput) {
+      eventCategoryInput.value =
+        'birthday';
+    }
+
+
+    syncRepeatFields();
+    syncMultiDayFields();
+
+  } else {
+
+    if (
+      eventCategoryInput
+      &&
+      eventCategoryInput.value
+        === 'birthday'
+    ) {
+      eventCategoryInput.value =
+        '';
+    }
+
+    repeatTypeSelect.value =
+      'none';
+
+    repeatIntervalInput.value =
+      '1';
+
+    repeatEndTypeSelect.value =
+      'none';
+
+    eventAllDayInput.checked =
+      false;
+
+    eventMultiDayInput.checked =
+      false;
+
+    eventStartTimeInput.disabled =
+      false;
+
+    eventEndTimeInput.disabled =
+      false;
+
+    syncRepeatFields();
+    syncMultiDayFields();
+  }
+}
+
+
+eventKindButtons.forEach(
+  (button) => {
+
+    button.addEventListener(
+      'click',
+      () => {
+
+        setCalendarEventKind(
+          button.dataset
+            .eventKind
+          || 'normal'
+        );
+      }
+    );
+  }
+);
+
+
 function syncRepeatEndFields() {
   const repeatEndType =
     repeatEndTypeSelect.value;
