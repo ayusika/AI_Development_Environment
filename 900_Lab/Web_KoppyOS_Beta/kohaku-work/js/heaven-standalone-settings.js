@@ -349,6 +349,30 @@ function initializeHeavenSettingsUi() {
     state.settings.basic = { signature: view.querySelector('[name="signature"]').value, avoid_same_day: view.querySelector('[name="avoid_same_day"]').checked, reroll_enabled: view.querySelector('[name="reroll_enabled"]').checked, paragraphs: Number(view.querySelector('[name="paragraphs"]').value) };
     state.settings.rules = { minimum_minutes: minimum, buffer_minutes: buffer };
     state.settings.title = { recommended, warning, strong };
+
+    view
+      .querySelectorAll(
+        '[data-thank-you-setting]'
+      )
+      .forEach(
+        (input) => {
+
+          const key =
+            input.dataset
+              .thankYouSetting;
+
+          if (!key) {
+            return;
+          }
+
+          state.settings
+            .thank_you[
+              key
+            ] =
+            input.value;
+        }
+      );
+
     view.querySelectorAll('[data-phrase-id]').forEach((input) => {
       const phrase = state.settings.phrases.find((item) => item.id === input.dataset.phraseId);
       if (!phrase) return;
