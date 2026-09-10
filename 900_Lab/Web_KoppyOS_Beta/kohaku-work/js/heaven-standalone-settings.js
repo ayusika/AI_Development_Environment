@@ -528,3 +528,1048 @@ window.KohakuHeavenSettings = {
 };
 
 window.addEventListener('load', initializeHeavenSettingsUi);
+
+/* ========================================
+   HEAVEN SETTINGS LIVE PREVIEW
+======================================== */
+
+const heavenSettingsPreviewPhraseMeta = {
+
+  attendance_empty: {
+    mode:
+      '通常ヘブン日記・出勤',
+
+    target:
+      '本文 / 予約なし時',
+
+    line:
+      0,
+
+    title:
+      '出勤準備中♡',
+  },
+
+  attendance_new: {
+    mode:
+      '通常ヘブン日記・出勤',
+
+    target:
+      '本文 / 新規のお客様へのお礼',
+
+    line:
+      0,
+
+    title:
+      '出勤準備中♡最速18:30〜！',
+  },
+
+  attendance_repeat: {
+    mode:
+      '通常ヘブン日記・出勤',
+
+    target:
+      '本文 / リピのお客様へのお礼',
+
+    line:
+      0,
+
+    title:
+      '出勤準備中♡最速18:30〜！',
+  },
+
+  attendance_start_open: {
+    mode:
+      '通常ヘブン日記・出勤',
+
+    target:
+      '本文 / スタート空き案内',
+
+    line:
+      2,
+
+    title:
+      '出勤準備中♡最速18:30〜！',
+  },
+
+  attendance_invite: {
+    mode:
+      '通常ヘブン日記・出勤',
+
+    target:
+      '本文 / お誘い・締め',
+
+    line:
+      2,
+
+    title:
+      '出勤準備中♡最速18:30〜！',
+  },
+
+  attendance_last: {
+    mode:
+      '通常ヘブン日記・出勤',
+
+    target:
+      '本文 / ラスト1枠案内',
+
+    line:
+      2,
+
+    title:
+      '出勤準備中♡21:00〜ラスト1枠！',
+  },
+
+  attendance_consultation: {
+    mode:
+      '通常ヘブン日記・出勤',
+
+    target:
+      '本文 / 要相談案内',
+
+    line:
+      2,
+
+    title:
+      '出勤準備中♡23:00〜要相談',
+  },
+
+  attendance_finished: {
+    mode:
+      '通常ヘブン日記・出勤',
+
+    target:
+      '本文 / 本日終了時',
+
+    line:
+      2,
+
+    title:
+      '本日終了！',
+  },
+
+  next_new: {
+    mode:
+      '通常ヘブン日記・次回予告',
+
+    target:
+      '本文 / 新規のお客様へのお礼',
+
+    line:
+      0,
+
+    title:
+      'お兄さんありがと♡最速18:30〜！',
+  },
+
+  next_repeat: {
+    mode:
+      '通常ヘブン日記・次回予告',
+
+    target:
+      '本文 / リピのお客様へのお礼',
+
+    line:
+      0,
+
+    title:
+      '仲良しさんありがと♡最速18:30〜！',
+  },
+
+  next_fun: {
+    mode:
+      '通常ヘブン日記・次回予告',
+
+    target:
+      '本文 / 楽しみ文',
+
+    line:
+      1,
+
+    title:
+      '仲良しさんありがと♡最速18:30〜！',
+  },
+
+  next_op_generic: {
+    mode:
+      '通常ヘブン日記・次回予告',
+
+    target:
+      '本文 / OPあり時の文章',
+
+    line:
+      1,
+
+    title:
+      '仲良しさんありがと♡最速18:30〜！',
+  },
+
+  next_invite: {
+    mode:
+      '通常ヘブン日記・次回予告',
+
+    target:
+      '本文 / お誘い・締め',
+
+    line:
+      2,
+
+    title:
+      '仲良しさんありがと♡最速18:30〜！',
+  },
+
+  next_last: {
+    mode:
+      '通常ヘブン日記・次回予告',
+
+    target:
+      '本文 / ラスト1枠案内',
+
+    line:
+      2,
+
+    title:
+      '仲良しさん♡21:00〜ラスト1枠！',
+  },
+
+  next_consultation: {
+    mode:
+      '通常ヘブン日記・次回予告',
+
+    target:
+      '本文 / 要相談案内',
+
+    line:
+      2,
+
+    title:
+      '次回23:00〜要相談♡',
+  },
+
+  next_finished: {
+    mode:
+      '通常ヘブン日記・次回予告',
+
+    target:
+      '本文 / 本日終了時',
+
+    line:
+      2,
+
+    title:
+      '本日終了！',
+  },
+
+  common_close: {
+    mode:
+      '通常ヘブン日記・共通',
+
+    target:
+      '本文 / 共通の締め候補',
+
+    line:
+      2,
+
+    title:
+      '仲良しさんありがと♡最速18:30〜！',
+  },
+};
+
+
+const heavenSettingsPreviewTitleMeta = {
+
+  attendance_available: {
+    mode:
+      '通常ヘブン日記・出勤',
+
+    target:
+      'タイトル / 通常空き',
+  },
+
+  attendance_last: {
+    mode:
+      '通常ヘブン日記・出勤',
+
+    target:
+      'タイトル / ラスト1枠',
+  },
+
+  attendance_consultation: {
+    mode:
+      '通常ヘブン日記・出勤',
+
+    target:
+      'タイトル / 要相談',
+  },
+
+  next_new: {
+    mode:
+      '通常ヘブン日記・次回予告',
+
+    target:
+      'タイトル / 新規',
+  },
+
+  next_repeat: {
+    mode:
+      '通常ヘブン日記・次回予告',
+
+    target:
+      'タイトル / リピ',
+  },
+
+  next_last: {
+    mode:
+      '通常ヘブン日記・次回予告',
+
+    target:
+      'タイトル / ラスト1枠',
+  },
+
+  next_consultation: {
+    mode:
+      '通常ヘブン日記・次回予告',
+
+    target:
+      'タイトル / 要相談',
+  },
+
+  thank_you_new: {
+    mode:
+      '個別お礼日記',
+
+    target:
+      '予約カード / 新規タイトル',
+
+    thankYou:
+      true,
+  },
+
+  thank_you_repeat: {
+    mode:
+      '個別お礼日記',
+
+    target:
+      '予約カード / リピタイトル',
+
+    thankYou:
+      true,
+  },
+};
+
+
+function heavenSettingsPreviewExpandTemplate(
+  value
+) {
+
+  return String(
+    value
+    || ''
+  )
+    .replace(
+      /\{time\}/g,
+      '18:30'
+    )
+    .replace(
+      /\{customer\}/g,
+      '仲良しさん'
+    );
+}
+
+
+function heavenSettingsPreviewSetTitle(
+  element,
+  text,
+  highlighted = false
+) {
+
+  if (!element) {
+    return;
+  }
+
+
+  element.replaceChildren();
+
+
+  if (!highlighted) {
+
+    element.textContent =
+      text;
+
+    return;
+  }
+
+
+  const mark =
+    document.createElement(
+      'mark'
+    );
+
+
+  mark.textContent =
+    text;
+
+
+  element.appendChild(
+    mark
+  );
+}
+
+
+function heavenSettingsPreviewSetBody(
+  element,
+  lines,
+  highlightedLine = -1
+) {
+
+  if (!element) {
+    return;
+  }
+
+
+  element.replaceChildren();
+
+
+  lines.forEach(
+    (
+      line,
+      index
+    ) => {
+
+      const paragraph =
+        document.createElement(
+          'p'
+        );
+
+
+      if (
+        index
+        === highlightedLine
+      ) {
+
+        const mark =
+          document.createElement(
+            'mark'
+          );
+
+
+        mark.textContent =
+          line;
+
+
+        paragraph.appendChild(
+          mark
+        );
+
+      } else {
+
+        paragraph.textContent =
+          line;
+      }
+
+
+      element.appendChild(
+        paragraph
+      );
+    }
+  );
+}
+
+
+function heavenSettingsPreviewShowForField(
+  field
+) {
+
+  const view =
+    field.closest(
+      '#view-heaven-settings'
+    );
+
+
+  if (!view) {
+    return;
+  }
+
+
+  const preview =
+    view.querySelector(
+      '[data-heaven-settings-preview]'
+    );
+
+  const modeElement =
+    view.querySelector(
+      '[data-heaven-preview-mode]'
+    );
+
+  const targetElement =
+    view.querySelector(
+      '[data-heaven-preview-target]'
+    );
+
+  const titleElement =
+    view.querySelector(
+      '[data-heaven-preview-title]'
+    );
+
+  const bodyElement =
+    view.querySelector(
+      '[data-heaven-preview-body]'
+    );
+
+
+  if (!preview) {
+    return;
+  }
+
+
+  let mode =
+    '通常ヘブン日記';
+
+  let target =
+    '設定の反映先';
+
+  let title =
+    '出勤準備中♡最速18:30〜！';
+
+  let lines = [
+    'スタートから仲良しさんありがと♡',
+    '聖水つけてくれたから楽しみ☺️',
+    'どしどしお誘いまってるよー！',
+  ];
+
+  let highlightedLine =
+    -1;
+
+  let highlightTitle =
+    false;
+
+  let thankYou =
+    false;
+
+
+  const titleTemplate =
+    field.dataset
+      .titleTemplate;
+
+
+  if (titleTemplate) {
+
+    const meta =
+      heavenSettingsPreviewTitleMeta[
+        titleTemplate
+      ];
+
+
+    if (meta) {
+
+      mode =
+        meta.mode;
+
+      target =
+        meta.target;
+
+      thankYou =
+        Boolean(
+          meta.thankYou
+        );
+    }
+
+
+    title =
+      heavenSettingsPreviewExpandTemplate(
+        field.value
+      )
+      || '（タイトル未設定）';
+
+
+    highlightTitle =
+      true;
+
+
+    if (thankYou) {
+
+      lines = [
+        titleTemplate
+          === 'thank_you_repeat'
+          ? '仲良しさん今日もありがと♡'
+          : '今日は会いに来てくれてありがと♡',
+
+        'いっぱい楽しかったよ☺️',
+
+        'また会えるの楽しみにしてるね♡',
+      ];
+    }
+
+
+    preview.classList.toggle(
+      'is-thank-you',
+      thankYou
+    );
+
+
+    if (modeElement) {
+      modeElement.textContent =
+        mode;
+    }
+
+
+    if (targetElement) {
+      targetElement.textContent =
+        target;
+    }
+
+
+    heavenSettingsPreviewSetTitle(
+      titleElement,
+      title,
+      highlightTitle
+    );
+
+
+    heavenSettingsPreviewSetBody(
+      bodyElement,
+      lines,
+      highlightedLine
+    );
+
+
+    return;
+  }
+
+
+  const phraseCategory =
+    field.dataset
+      .phraseCategory;
+
+
+  if (phraseCategory) {
+
+    const meta =
+      heavenSettingsPreviewPhraseMeta[
+        phraseCategory
+      ];
+
+
+    if (meta) {
+
+      mode =
+        meta.mode;
+
+      target =
+        meta.target;
+
+      title =
+        meta.title;
+
+      highlightedLine =
+        meta.line;
+    }
+
+
+    const phraseText =
+      String(
+        field.value
+        || ''
+      ).trim()
+      || '（この候補は空欄です）';
+
+
+    lines[
+      Math.max(
+        0,
+        highlightedLine
+      )
+    ] =
+      phraseText;
+
+
+    preview.classList.remove(
+      'is-thank-you'
+    );
+
+
+    if (modeElement) {
+      modeElement.textContent =
+        mode;
+    }
+
+
+    if (targetElement) {
+      targetElement.textContent =
+        target;
+    }
+
+
+    heavenSettingsPreviewSetTitle(
+      titleElement,
+      title
+    );
+
+
+    heavenSettingsPreviewSetBody(
+      bodyElement,
+      lines,
+      highlightedLine
+    );
+
+
+    return;
+  }
+
+
+  const opField =
+    field.dataset
+      .opField;
+
+
+  if (opField) {
+
+    const row =
+      field.closest(
+        '.heaven-settings-phrase-row'
+      );
+
+    const opNameInput =
+      row
+        ?.querySelector(
+          '[data-op-field="op_name"]'
+        );
+
+    const opTextInput =
+      row
+        ?.querySelector(
+          '[data-op-field="text"]'
+        );
+
+
+    const opName =
+      String(
+        opNameInput
+          ?.value
+        || 'OP名'
+      ).trim()
+      || 'OP名';
+
+    const opText =
+      String(
+        opTextInput
+          ?.value
+        || 'OPフレーズ'
+      ).trim()
+      || 'OPフレーズ';
+
+
+    mode =
+      '通常ヘブン日記・次回予告';
+
+    target =
+      opField
+      === 'op_name'
+        ? `使用条件 / OP「${opName}」`
+        : '本文 / OP別フレーズ';
+
+
+    title =
+      '仲良しさんありがと♡最速18:30〜！';
+
+    lines = [
+      '仲良しさん今日もありがと♡',
+      opText,
+      'どんどんお誘いまってるよー！',
+    ];
+
+
+    preview.classList.remove(
+      'is-thank-you'
+    );
+
+
+    if (modeElement) {
+      modeElement.textContent =
+        mode;
+    }
+
+
+    if (targetElement) {
+      targetElement.textContent =
+        target;
+    }
+
+
+    heavenSettingsPreviewSetTitle(
+      titleElement,
+      title
+    );
+
+
+    heavenSettingsPreviewSetBody(
+      bodyElement,
+      lines,
+      1
+    );
+
+
+    return;
+  }
+
+
+  switch (
+    field.name
+  ) {
+
+    case 'signature':
+
+      mode =
+        '通常ヘブン日記';
+
+      target =
+        '本文 / 最後に付く署名';
+
+      lines = [
+        'スタートから仲良しさんありがと♡',
+        'いっぱい楽しもー☺️',
+        'どしどしお誘いまってるよー！',
+        String(
+          field.value
+          || ''
+        )
+        || '（署名なし）',
+      ];
+
+      highlightedLine =
+        3;
+
+      break;
+
+
+    case 'paragraphs':
+
+      mode =
+        '通常ヘブン日記';
+
+      target =
+        `本文 / ${field.value}段落に整形`;
+
+      lines = [
+        '文章の内容はそのままで、',
+        `最終的に${field.value}段落へ組み直します。`,
+        '署名も段落構成に合わせて配置されます。',
+      ];
+
+      break;
+
+
+    case 'minimum_minutes':
+
+      mode =
+        '通常ヘブン日記・受付計算';
+
+      target =
+        `次回受付計算 / 最小${field.value || 60}分`;
+
+      title =
+        '例：最速18:30〜！';
+
+      lines = [
+        '本文へ直接入る文章ではありません。',
+        '次に受付できる時刻の計算へ反映されます。',
+      ];
+
+      break;
+
+
+    case 'buffer_minutes':
+
+      mode =
+        '通常ヘブン日記・受付計算';
+
+      target =
+        `次回受付計算 / バッファ${field.value || 0}分`;
+
+      title =
+        '例：最速18:30〜！';
+
+      lines = [
+        '予約と予約の間に必要な余白です。',
+        '「最速○○〜」の判定へ反映されます。',
+      ];
+
+      break;
+
+
+    case 'title_recommended':
+    case 'title_warning':
+    case 'title_strong':
+
+      mode =
+        '通常ヘブン日記・タイトル';
+
+      target =
+        'タイトル / 文字数カウンター・警告';
+
+      title =
+        '仲良しさんありがと♡最速18:30〜！';
+
+      lines = [
+        'タイトル本文そのものは変わりません。',
+        '入力中の文字数表示と警告タイミングに反映されます。',
+      ];
+
+      highlightTitle =
+        true;
+
+      break;
+
+
+    case 'avoid_same_day':
+
+      mode =
+        '通常ヘブン日記・候補選択';
+
+      target =
+        '言い回し候補の選び方';
+
+      lines = [
+        '本文へ直接表示される値ではありません。',
+        '同じ日に同じフレーズが続くのを避ける設定です。',
+      ];
+
+      break;
+
+
+    case 'reroll_enabled':
+
+      mode =
+        '通常ヘブン日記・候補選択';
+
+      target =
+        '作り直し時の候補選択';
+
+      lines = [
+        '本文へ直接表示される値ではありません。',
+        '押し直した時に別候補を優先する設定です。',
+      ];
+
+      break;
+
+
+    default:
+
+      return;
+  }
+
+
+  preview.classList.remove(
+    'is-thank-you'
+  );
+
+
+  if (modeElement) {
+    modeElement.textContent =
+      mode;
+  }
+
+
+  if (targetElement) {
+    targetElement.textContent =
+      target;
+  }
+
+
+  heavenSettingsPreviewSetTitle(
+    titleElement,
+    title,
+    highlightTitle
+  );
+
+
+  heavenSettingsPreviewSetBody(
+    bodyElement,
+    lines,
+    highlightedLine
+  );
+}
+
+
+function heavenSettingsPreviewHandleEvent(
+  event
+) {
+
+  let field =
+    event.target;
+
+
+  if (
+    !(
+      field
+      instanceof HTMLInputElement
+    )
+    && !(
+      field
+      instanceof HTMLSelectElement
+    )
+  ) {
+    return;
+  }
+
+
+  if (
+    !field.closest(
+      '#view-heaven-settings'
+    )
+  ) {
+    return;
+  }
+
+
+  if (
+    field.matches(
+      'input[type="checkbox"][data-phrase-id]'
+    )
+  ) {
+
+    const row =
+      field.closest(
+        '.heaven-settings-phrase-row'
+      );
+
+
+    const phraseInput =
+      row
+        ?.querySelector(
+          '[data-phrase-category]'
+        );
+
+
+    if (
+      phraseInput
+      instanceof HTMLInputElement
+    ) {
+
+      field =
+        phraseInput;
+    }
+  }
+
+
+  heavenSettingsPreviewShowForField(
+    field
+  );
+}
+
+
+document.addEventListener(
+  'focusin',
+  heavenSettingsPreviewHandleEvent
+);
+
+
+document.addEventListener(
+  'input',
+  heavenSettingsPreviewHandleEvent
+);
+
+
+document.addEventListener(
+  'change',
+  heavenSettingsPreviewHandleEvent
+);
