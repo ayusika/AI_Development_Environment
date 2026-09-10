@@ -105,6 +105,22 @@ try {
     }
 
 
+    if (
+        !in_array(
+            'birth_year',
+            $columnNames,
+            true
+        )
+    ) {
+        $pdo->exec(
+            "
+            ALTER TABLE calendar_events
+            ADD COLUMN birth_year INTEGER
+            "
+        );
+    }
+
+
     $repeatColumns = [
         'repeat_type' =>
             "TEXT NOT NULL DEFAULT 'none'",
