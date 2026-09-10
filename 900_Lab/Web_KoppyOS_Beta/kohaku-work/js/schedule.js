@@ -3409,6 +3409,115 @@ function filterScheduleRepeatCustomers() {
               );
 
 
+        const now =
+          new Date();
+
+        const nowText =
+          `${scheduleFormatDate(now)} `
+          + `${String(
+              now.getHours()
+            ).padStart(2, '0')}:`
+          + `${String(
+              now.getMinutes()
+            ).padStart(2, '0')}`;
+
+
+        const visits =
+          Array.isArray(
+            customer.visits
+          )
+            ? customer.visits
+            : [];
+
+
+        const pastVisits =
+          visits
+            .filter((visit) => {
+
+              const startedAt =
+                String(
+                  visit.started_at
+                  || ''
+                );
+
+              if (!startedAt) {
+                return false;
+              }
+
+              return (
+                visit.status === 'completed'
+                || (
+                  visit.status === 'scheduled'
+                  && startedAt <= nowText
+                )
+              );
+            })
+            .sort(
+              (a, b) =>
+                String(
+                  b.started_at
+                  || ''
+                ).localeCompare(
+                  String(
+                    a.started_at
+                    || ''
+                  )
+                )
+            );
+
+
+        const pastVisitHtml =
+          pastVisits.length
+            ? pastVisits
+                .slice(0, 3)
+                .map((visit) => {
+
+                  const startedAt =
+                    String(
+                      visit.started_at
+                      || ''
+                    );
+
+                  const dateText =
+                    startedAt
+                      .slice(0, 10)
+                      .replaceAll(
+                        '-',
+                        '/'
+                      );
+
+                  const timeText =
+                    startedAt.slice(
+                      11,
+                      16
+                    );
+
+                  const courseText =
+                    visit.course_minutes
+                      ? `${Number(
+                          visit.course_minutes
+                        )}分`
+                      : '';
+
+                  return `
+                    <span>
+                      ${escapeHtml(
+                        `${dateText} ${timeText} ${courseText}`
+                      )}
+                    </span>
+                  `;
+                })
+                .join('')
+            : '<span>履歴なし</span>';
+
+
+        const remainingVisitCount =
+          Math.max(
+            0,
+            pastVisits.length - 3
+          );
+
+
         const isSelected =
           Number(
             selectedScheduleCustomerId
@@ -3430,9 +3539,11 @@ function filterScheduleRepeatCustomers() {
             </strong>
 
             <small>
-              顧客 #${escapeHtml(
+              統合ID
+              ${escapeHtml(
                 String(
-                  customer.id
+                  customer.customer_code
+                  || `#${customer.id}`
                 )
               )}
               ・来店 ${escapeHtml(
@@ -3441,6 +3552,16 @@ function filterScheduleRepeatCustomers() {
                   || 0
                 )
               )}回
+            </small>
+
+            <small>
+              過去予約
+              ${pastVisitHtml}
+              ${
+                remainingVisitCount
+                  ? `ほか${remainingVisitCount}件`
+                  : ''
+              }
             </small>
 
             <button
