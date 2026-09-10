@@ -815,6 +815,55 @@ function calendarEventReadCommonFields(
         );
 
 
+    $birthYear =
+        null;
+
+    $birthYearRaw =
+        isset($body['birth_year'])
+            ? trim(
+                (string)
+                $body['birth_year']
+            )
+            : '';
+
+
+    if (
+        $category === 'birthday'
+        && $birthYearRaw !== ''
+    ) {
+        if (
+            !preg_match(
+                '/^\d{4}$/',
+                $birthYearRaw
+            )
+        ) {
+            throw new RuntimeException(
+                'Invalid birth_year.'
+            );
+        }
+
+
+        $birthYear =
+            (int)
+            $birthYearRaw;
+
+        $currentYear =
+            (int)
+            date('Y');
+
+
+        if (
+            $birthYear < 1900
+            ||
+            $birthYear > $currentYear
+        ) {
+            throw new RuntimeException(
+                'Invalid birth_year.'
+            );
+        }
+    }
+
+
     $repeatFields =
         calendarEventReadRepeatFields(
             $body
@@ -844,6 +893,8 @@ function calendarEventReadCommonFields(
                 : null,
         'text_color' =>
             $textColor,
+        'birth_year' =>
+            $birthYear,
         ...$repeatFields,
     ];
 }
