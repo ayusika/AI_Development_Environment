@@ -917,6 +917,7 @@ function calendarEventSelectById(
                 category,
                 memo,
                 text_color,
+                birth_year,
                 repeat_type,
                 repeat_interval,
                 repeat_weekdays,
