@@ -3473,9 +3473,41 @@ function createCalendarEventElement(
       );
 
 
+    const birthYear =
+      Number(
+        event.birth_year
+        || 0
+      );
+
+    const displayYear =
+      Number(
+        String(
+          dateKey
+          || ''
+        ).slice(
+          0,
+          4
+        )
+      );
+
+    const birthdayAge =
+      isBirthday
+      && birthYear > 0
+      && Number.isFinite(
+        displayYear
+      )
+      && displayYear >= birthYear
+        ? displayYear - birthYear
+        : null;
+
+
     titleElement.textContent =
       isBirthday
-        ? `🎂 ${eventTitle}`
+        ? (
+            birthdayAge !== null
+              ? `🎂 ${eventTitle} ${birthdayAge}歳`
+              : `🎂 ${eventTitle}`
+          )
         : eventTitle;
 
 
