@@ -259,6 +259,19 @@ try {
                     customer_features,
                     conversation_notes,
                     visit_notes,
+
+                    (
+                        SELECT
+                            hd.body
+
+                        FROM heaven_diaries hd
+
+                        WHERE
+                            hd.visit_id = visits.id
+
+                        LIMIT 1
+                    ) AS heaven_diary_body,
+
                     is_dummy,
                     status,
                     cancelled_at,
