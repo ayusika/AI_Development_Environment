@@ -1899,33 +1899,91 @@ function renderHeavenDiaryBody(
     || 'ホテルで';
 
 
-  const opening =
-    optionText
-      ? `さっき${placeText}${courseMinutes}分${optionText}希望の${repeatText}お兄さん♡`
-      : `さっき${placeText}${courseMinutes}分の${repeatText}お兄さん♡`;
+  const thankYouSettings =
+    window
+      .KohakuHeavenSettings
+      ?.current
+      ?.thank_you
+    || {};
 
 
-  const bodyParts = [
-    opening,
-  ];
-
-
-  if (note) {
-    bodyParts.push(
-      note
+  const bodyTemplate =
+    String(
+      thankYouSettings
+        .body_template
+      || (
+        'さっき{place}{course}分'
+        + '{options_part}{repeat}お兄さん♡'
+        + '\n\n\n{body}'
+        + '\n\n\n{signature}'
+      )
     );
+
+
+  const signature =
+    String(
+      thankYouSettings
+        .signature
+      ?? '❄︎こはく❄︎'
+    );
+
+
+  const optionsPart =
+    optionText
+      ? `${optionText}希望の`
+      : 'の';
+
+
+  const values = {
+    place:
+      placeText,
+
+    course:
+      String(
+        courseMinutes
+      ),
+
+    options_part:
+      optionsPart,
+
+    repeat:
+      repeatText,
+
+    body:
+      String(
+        note
+        || ''
+      ),
+
+    signature:
+      signature,
+  };
+
+
+  let renderedBody =
+    bodyTemplate.replace(
+      /\{(place|course|options_part|repeat|body|signature)\}/g,
+      (
+        match,
+        key
+      ) =>
+        values[key]
+        ?? match
+    );
+
+
+  if (!note) {
+
+    renderedBody =
+      renderedBody.replace(
+        /\n{4,}/g,
+        '\n\n\n'
+      );
   }
 
 
-  bodyParts.push(
-    '❄︎こはく❄︎'
-  );
-
-
   bodyElement.value =
-    bodyParts.join(
-      '\n\n\n'
-    );
+    renderedBody;
 }
 
 /* ========================================
