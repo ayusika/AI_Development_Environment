@@ -4447,3 +4447,1034 @@ button {
       92px;
   }
 }
+
+/* ========================================
+   RESERVATION FORM POLISH V3
+======================================== */
+
+
+/* ========================================
+   BASIC INFO
+======================================== */
+
+#schedule-form-card
+> .schedule-form-grid:first-of-type {
+  border-color:
+    rgba(
+      40,
+      169,
+      225,
+      0.28
+    );
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(
+        220,
+        244,
+        255,
+        0.96
+      ),
+      rgba(
+        240,
+        250,
+        255,
+        0.98
+      )
+    );
+
+  box-shadow:
+    inset
+    4px
+    0
+    0
+    rgba(
+      35,
+      174,
+      230,
+      0.72
+    ),
+    0
+    5px
+    18px
+    rgba(
+      42,
+      132,
+      174,
+      0.06
+    );
+}
+
+
+#schedule-form-card
+> .schedule-form-grid:first-of-type::before {
+  content:
+    "▦  予約情報";
+
+  color:
+    #1177ad;
+
+  font-size:
+    16px;
+}
+
+
+#schedule-form-card
+> .schedule-customer-change {
+  border-color:
+    rgba(
+      40,
+      169,
+      225,
+      0.28
+    );
+
+  background:
+    rgba(
+      232,
+      248,
+      255,
+      0.98
+    );
+
+  box-shadow:
+    inset
+    4px
+    0
+    0
+    rgba(
+      35,
+      174,
+      230,
+      0.72
+    );
+}
+
+
+/* ========================================
+   SECTION CARDS
+======================================== */
+
+#schedule-form-card
+.schedule-choice-section {
+  border-color:
+    rgba(
+      63,
+      128,
+      160,
+      0.16
+    );
+
+  box-shadow:
+    0
+    8px
+    22px
+    rgba(
+      39,
+      91,
+      118,
+      0.07
+    );
+}
+
+
+#schedule-form-card
+.schedule-choice-label {
+  padding-bottom:
+    9px;
+
+  border-bottom:
+    1px solid
+    rgba(
+      74,
+      138,
+      169,
+      0.10
+    );
+
+  color:
+    #163b52;
+
+  font-size:
+    17px;
+}
+
+
+/* ========================================
+   COURSE
+======================================== */
+
+#schedule-form-card
+.schedule-choice-section:
+has(
+  #schedule-course-master-list
+) {
+  border-left:
+    4px solid
+    #4d95e8;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f6f9ff,
+      #edf2ff
+    );
+}
+
+
+#schedule-form-card
+.schedule-choice-section:
+has(
+  #schedule-course-master-list
+)
+.schedule-choice-label::before {
+  content:
+    "▰";
+
+  color:
+    #407ed0;
+}
+
+
+/* ---------- CATEGORY TABS ---------- */
+
+#schedule-form-card
+.schedule-course-category-tabs {
+  display:
+    inline-grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(
+        86px,
+        1fr
+      )
+    );
+
+  gap:
+    4px;
+
+  margin-bottom:
+    11px;
+
+  padding:
+    4px;
+
+  border:
+    1px solid
+    rgba(
+      76,
+      145,
+      204,
+      0.20
+    );
+
+  border-radius:
+    12px;
+
+  background:
+    rgba(
+      220,
+      232,
+      248,
+      0.68
+    );
+}
+
+
+#schedule-form-card
+.schedule-course-category-tab {
+  min-height:
+    34px;
+
+  padding:
+    7px
+    16px;
+
+  border:
+    0;
+
+  border-radius:
+    9px;
+
+  color:
+    #65798b;
+
+  background:
+    transparent;
+
+  font-size:
+    11px;
+
+  font-weight:
+    900;
+
+  transition:
+    color 120ms ease,
+    background-color 120ms ease,
+    box-shadow 120ms ease,
+    transform 120ms ease;
+}
+
+
+#schedule-form-card
+.schedule-course-category-tab:hover {
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.72
+    );
+}
+
+
+#schedule-form-card
+.schedule-course-category-tab.is-selected {
+  color:
+    #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #43c7ef,
+      #1e9fdb
+    );
+
+  box-shadow:
+    0
+    5px
+    13px
+    rgba(
+      31,
+      160,
+      218,
+      0.22
+    );
+}
+
+
+/* ---------- COURSE BUTTONS ---------- */
+
+#schedule-form-card
+.schedule-master-course-button {
+  transition:
+    transform 120ms ease,
+    border-color 120ms ease,
+    box-shadow 120ms ease,
+    background-color 120ms ease;
+}
+
+
+#schedule-form-card
+.schedule-master-course-button:hover {
+  transform:
+    translateY(
+      -1px
+    );
+
+  border-color:
+    rgba(
+      44,
+      160,
+      218,
+      0.60
+    );
+
+  box-shadow:
+    0
+    7px
+    17px
+    rgba(
+      44,
+      130,
+      176,
+      0.10
+    );
+}
+
+
+#schedule-form-card
+.schedule-master-course-button.is-selected {
+  transform:
+    translateY(
+      -1px
+    );
+
+  box-shadow:
+    0
+    0
+    0
+    2px
+    rgba(
+      255,
+      255,
+      255,
+      0.80
+    ),
+    0
+    8px
+    20px
+    rgba(
+      27,
+      157,
+      215,
+      0.28
+    );
+}
+
+
+/* ---------- PRICE + EXTENSION ---------- */
+
+#schedule-form-card
+.schedule-course-price-summary {
+  border-left:
+    4px solid
+    #e6a11b;
+
+  background:
+    linear-gradient(
+      90deg,
+      #fff9e9,
+      #fff5cf
+    );
+
+  box-shadow:
+    0
+    3px
+    10px
+    rgba(
+      189,
+      139,
+      30,
+      0.07
+    );
+}
+
+
+#schedule-form-card
+.schedule-extension-master-list {
+  margin-top:
+    7px;
+
+  padding:
+    7px;
+
+  border:
+    1px solid
+    rgba(
+      230,
+      161,
+      27,
+      0.28
+    );
+
+  border-radius:
+    11px;
+
+  background:
+    rgba(
+      255,
+      247,
+      218,
+      0.72
+    );
+}
+
+
+#schedule-form-card
+.schedule-extension-master-list
+button {
+  border-color:
+    rgba(
+      218,
+      157,
+      35,
+      0.28
+    );
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.82
+    );
+}
+
+
+/* ========================================
+   CUSTOM COURSE
+======================================== */
+
+#schedule-form-card
+.schedule-custom-course {
+  border-left:
+    4px solid
+    #7659d8;
+
+  background:
+    linear-gradient(
+      90deg,
+      #f5f1ff,
+      #faf8ff
+    );
+}
+
+
+/* ========================================
+   CUSTOMER
+======================================== */
+
+#schedule-form-card
+.schedule-choice-section:
+has(
+  #schedule-repeat-customer-results
+) {
+  border-left:
+    4px solid
+    #22b58b;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f1fff9,
+      #e9fbf4
+    );
+}
+
+
+#schedule-form-card
+.schedule-choice-section:
+has(
+  #schedule-repeat-customer-results
+)
+.schedule-choice-label::before {
+  content:
+    "●";
+
+  color:
+    #18aa80;
+}
+
+
+#schedule-form-card
+.schedule-choice-section:
+has(
+  #schedule-repeat-customer-results
+)
+.schedule-status-grid
+button {
+  box-shadow:
+    0
+    2px
+    8px
+    rgba(
+      35,
+      108,
+      88,
+      0.035
+    );
+}
+
+
+/* ---------- SEARCH RESULT ---------- */
+
+#schedule-form-card
+.schedule-identity-search-result {
+  border-color:
+    rgba(
+      30,
+      177,
+      133,
+      0.30
+    );
+
+  box-shadow:
+    0
+    5px
+    14px
+    rgba(
+      29,
+      118,
+      91,
+      0.07
+    );
+
+  transition:
+    transform 120ms ease,
+    border-color 120ms ease,
+    background-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+
+#schedule-form-card
+.schedule-identity-search-result:hover {
+  transform:
+    translateY(
+      -1px
+    );
+
+  border-color:
+    rgba(
+      24,
+      170,
+      126,
+      0.52
+    );
+
+  box-shadow:
+    0
+    8px
+    20px
+    rgba(
+      29,
+      118,
+      91,
+      0.10
+    );
+}
+
+
+#schedule-form-card
+.schedule-identity-search-result:
+has(
+  > button.primary-button
+) {
+  border-color:
+    rgba(
+      26,
+      178,
+      132,
+      0.62
+    );
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(
+        230,
+        255,
+        246,
+        0.98
+      ),
+      rgba(
+        246,
+        255,
+        251,
+        0.98
+      )
+    );
+
+  box-shadow:
+    0
+    0
+    0
+    2px
+    rgba(
+      40,
+      194,
+      147,
+      0.10
+    ),
+    0
+    8px
+    20px
+    rgba(
+      29,
+      118,
+      91,
+      0.10
+    );
+}
+
+
+#schedule-form-card
+.schedule-identity-search-result
+> small:first-of-type {
+  color:
+    #466b62;
+
+  font-weight:
+    800;
+}
+
+
+#schedule-form-card
+.schedule-identity-search-result
+> small:nth-of-type(2) {
+  color:
+    #668279;
+}
+
+
+#schedule-form-card
+.schedule-identity-search-result
+> small:nth-of-type(2)::first-line {
+  color:
+    #328c73;
+
+  font-weight:
+    900;
+}
+
+
+#schedule-form-card
+.schedule-identity-search-result
+> small:nth-of-type(2)
+span {
+  margin-top:
+    3px;
+
+  padding:
+    3px
+    8px;
+
+  border-left:
+    2px solid
+    rgba(
+      32,
+      173,
+      132,
+      0.25
+    );
+
+  border-radius:
+    0
+    6px
+    6px
+    0;
+
+  background:
+    rgba(
+      231,
+      249,
+      243,
+      0.72
+    );
+}
+
+
+/* ========================================
+   OP
+======================================== */
+
+#schedule-form-card
+.schedule-choice-section:
+has(
+  #schedule-option-grid
+) {
+  border-left:
+    4px solid
+    #ea5b8c;
+
+  background:
+    linear-gradient(
+      145deg,
+      #fff8fb,
+      #fff0f5
+    );
+}
+
+
+#schedule-form-card
+.schedule-choice-section:
+has(
+  #schedule-option-grid
+)
+.schedule-choice-label::before {
+  content:
+    "◆";
+
+  color:
+    #e84d82;
+}
+
+
+#schedule-form-card
+.schedule-option-grid
+label {
+  transition:
+    transform 120ms ease,
+    border-color 120ms ease,
+    background-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+
+#schedule-form-card
+.schedule-option-grid
+label:hover {
+  transform:
+    translateY(
+      -1px
+    );
+}
+
+
+#schedule-form-card
+.schedule-option-grid
+label:
+has(
+  input:checked
+) {
+  border-color:
+    rgba(
+      232,
+      77,
+      130,
+      0.62
+    );
+
+  color:
+    #be3567;
+
+  background:
+    #ffe5ef;
+
+  box-shadow:
+    0
+    0
+    0
+    2px
+    rgba(
+      234,
+      91,
+      140,
+      0.09
+    );
+}
+
+
+/* ========================================
+   OTHER OP
+======================================== */
+
+#schedule-form-card
+.schedule-option-section
+.schedule-field:
+has(
+  #schedule-custom-option
+),
+#schedule-form-card
+.schedule-option-section
+.schedule-field:
+has(
+  #schedule-custom-option-amount
+) {
+  border-left:
+    3px solid
+    #18aabd;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ecfbfd,
+      #f7feff
+    );
+}
+
+
+#schedule-form-card
+.schedule-option-section
+.schedule-field:
+has(
+  #schedule-custom-option
+)
+> span,
+#schedule-form-card
+.schedule-option-section
+.schedule-field:
+has(
+  #schedule-custom-option-amount
+)
+> span {
+  color:
+    #167d8b;
+}
+
+
+/* ========================================
+   TIP / ADJUSTMENT
+======================================== */
+
+#schedule-form-card
+.schedule-option-section
+.schedule-field:
+has(
+  #schedule-tip-amount
+),
+#schedule-form-card
+.schedule-option-section
+.schedule-field:
+has(
+  #schedule-adjustment-amount
+) {
+  border-left:
+    3px solid
+    #ef922d;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fff5e8,
+      #fffaf3
+    );
+}
+
+
+#schedule-form-card
+.schedule-option-section
+.schedule-field:
+has(
+  #schedule-tip-amount
+)
+> span,
+#schedule-form-card
+.schedule-option-section
+.schedule-field:
+has(
+  #schedule-adjustment-amount
+)
+> span {
+  color:
+    #a45d19;
+}
+
+
+/* ========================================
+   FOOTER
+======================================== */
+
+#schedule-form-card
+.schedule-form-actions {
+  box-shadow:
+    0
+    -8px
+    24px
+    rgba(
+      45,
+      96,
+      122,
+      0.07
+    );
+}
+
+
+#schedule-form-card
+.schedule-form-actions
+.secondary-button {
+  border:
+    1px solid
+    rgba(
+      27,
+      160,
+      219,
+      0.42
+    );
+
+  color:
+    #1594cf;
+
+  background:
+    #f7fcff;
+}
+
+
+#schedule-form-card
+#schedule-save-button {
+  background:
+    linear-gradient(
+      135deg,
+      #38c5ef,
+      #148fd5
+    );
+
+  box-shadow:
+    0
+    9px
+    22px
+    rgba(
+      18,
+      143,
+      207,
+      0.28
+    );
+}
+
+
+#schedule-form-card
+#schedule-save-button:hover {
+  filter:
+    brightness(
+      1.035
+    );
+
+  transform:
+    translateY(
+      -1px
+    );
+}
+
+
+/* ========================================
+   MOBILE FINE TUNING
+======================================== */
+
+@media (
+  max-width:
+  680px
+) {
+
+  #schedule-form-card
+  .schedule-course-category-tabs {
+    width:
+      100%;
+  }
+
+
+  #schedule-form-card
+  .schedule-course-category-tab {
+    width:
+      100%;
+  }
+
+
+  #schedule-form-card
+  .schedule-identity-search-result
+  > small:nth-of-type(2)
+  span {
+    padding-left:
+      6px;
+  }
+}
+
+
+@media (
+  max-width:
+  430px
+) {
+
+  #schedule-form-card
+  .schedule-choice-label {
+    font-size:
+      15px;
+  }
+
+
+  #schedule-form-card
+  .schedule-course-category-tabs {
+    display:
+      grid;
+  }
+
+
+  #schedule-form-card
+  .schedule-extension-master-list {
+    padding:
+      6px;
+  }
+}
