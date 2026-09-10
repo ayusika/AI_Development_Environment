@@ -78,14 +78,31 @@ try {
 
                     COUNT(
                         DISTINCT CASE
-                            WHEN v.status = 'completed'
+                            WHEN
+                                v.status = 'completed'
+                                OR (
+                                    v.status = 'scheduled'
+                                    AND v.started_at <=
+                                        strftime(
+                                            '%Y-%m-%d %H:%M',
+                                            'now',
+                                            'localtime'
+                                        )
+                                )
                             THEN v.id
                         END
                     ) AS visit_count,
 
                     COUNT(
                         DISTINCT CASE
-                            WHEN v.status = 'scheduled'
+                            WHEN
+                                v.status = 'scheduled'
+                                AND v.started_at >
+                                    strftime(
+                                        '%Y-%m-%d %H:%M',
+                                        'now',
+                                        'localtime'
+                                    )
                             THEN v.id
                         END
                     ) AS scheduled_count,
