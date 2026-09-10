@@ -999,74 +999,396 @@
         </div>
 
         <section class="content-card heaven-settings-panel">
-          <p class="heaven-settings-status" data-heaven-settings-status>設定を読み込み中…</p>
-          <h2>基本設定</h2>
-          <label class="field-label">署名<input class="text-input" name="signature" type="text"></label>
-          <label class="heaven-settings-check"><input name="avoid_same_day" type="checkbox"> 同じ日の同一フレーズをなるべく避ける</label>
-          <label class="heaven-settings-check"><input name="reroll_enabled" type="checkbox"> 押し直しで別候補を優先する</label>
-          <label class="field-label">本文段落数<select class="text-input" name="paragraphs"><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></label>
 
-          <h2>受付ルール</h2>
-          <p class="heaven-settings-help">次回受付時刻の計算に使います。</p>
-          <label class="field-label">最小受付時間<input class="text-input" name="minimum_minutes" type="number" min="1" max="600">分</label>
-          <label class="field-label">予約間バッファ<input class="text-input" name="buffer_minutes" type="number" min="0" max="180">分</label>
+          <div class="heaven-settings-intro">
+            <p
+              class="heaven-settings-status"
+              data-heaven-settings-status
+            >
+              設定を読み込み中…
+            </p>
 
-          <h2>タイトル</h2>
-          <label class="field-label">推奨文字数<input class="text-input" name="title_recommended" type="number" min="1"></label>
-          <label class="field-label">軽警告開始<input class="text-input" name="title_warning" type="number" min="2"></label>
-          <label class="field-label">強警告開始<input class="text-input" name="title_strong" type="number" min="2"></label>
-
-          <h2>言い回し辞書</h2>
-          <div class="heaven-settings-phrase-groups">
-            <details open><summary>出勤</summary><div data-phrase-list="attendance_empty"></div><button class="text-button" type="button" data-add-phrase-category="attendance_empty">＋予約なしを追加</button><div data-phrase-list="attendance_new"></div><button class="text-button" type="button" data-add-phrase-category="attendance_new">＋新規を追加</button><div data-phrase-list="attendance_repeat"></div><button class="text-button" type="button" data-add-phrase-category="attendance_repeat">＋リピを追加</button><div data-phrase-list="attendance_start_open"></div><button class="text-button" type="button" data-add-phrase-category="attendance_start_open">＋スタート空きを追加</button><div data-phrase-list="attendance_invite"></div><button class="text-button" type="button" data-add-phrase-category="attendance_invite">＋お誘いを追加</button><div data-phrase-list="attendance_last"></div><button class="text-button" type="button" data-add-phrase-category="attendance_last">＋ラストを追加</button><div data-phrase-list="attendance_consultation"></div><button class="text-button" type="button" data-add-phrase-category="attendance_consultation">＋要相談を追加</button><div data-phrase-list="attendance_finished"></div><button class="text-button" type="button" data-add-phrase-category="attendance_finished">＋終了文を追加</button></details>
-            <details><summary>次回予告</summary><div data-phrase-list="next_new"></div><button class="text-button" type="button" data-add-phrase-category="next_new">＋新規を追加</button><div data-phrase-list="next_repeat"></div><button class="text-button" type="button" data-add-phrase-category="next_repeat">＋リピを追加</button><div data-phrase-list="next_fun"></div><button class="text-button" type="button" data-add-phrase-category="next_fun">＋楽しみ文を追加</button><div data-phrase-list="next_op_generic"></div><button class="text-button" type="button" data-add-phrase-category="next_op_generic">＋OPあり汎用文を追加</button><div data-phrase-list="next_invite"></div><button class="text-button" type="button" data-add-phrase-category="next_invite">＋お誘いを追加</button><div data-phrase-list="next_last"></div><button class="text-button" type="button" data-add-phrase-category="next_last">＋ラストを追加</button><div data-phrase-list="next_consultation"></div><button class="text-button" type="button" data-add-phrase-category="next_consultation">＋要相談を追加</button><div data-phrase-list="next_finished"></div><button class="text-button" type="button" data-add-phrase-category="next_finished">＋終了文を追加</button></details>
-            <details><summary>共通</summary><div data-phrase-list="common_close"></div><button class="text-button" type="button" data-add-phrase-category="common_close">＋締め文を追加</button></details>
-          </div>
-
-          <h2>タイトルテンプレ</h2>
-          <p class="heaven-settings-help">使用可能placeholderは {time} と {customer} です。</p>
-          <div class="heaven-settings-template-list">
-            <label class="field-label">出勤通常空き<input class="text-input" data-title-template="attendance_available"></label>
-            <label class="field-label">出勤ラスト<input class="text-input" data-title-template="attendance_last"></label>
-            <label class="field-label">出勤要相談<input class="text-input" data-title-template="attendance_consultation"></label>
-            <label class="field-label">次回新規<input class="text-input" data-title-template="next_new"></label>
-            <label class="field-label">次回リピ<input class="text-input" data-title-template="next_repeat"></label>
-            <label class="field-label">次回ラスト<input class="text-input" data-title-template="next_last"></label>
-            <label class="field-label">次回要相談<input class="text-input" data-title-template="next_consultation"></label>
+            <p class="heaven-settings-help">
+              反映先ごとに設定を分けています。
+              必要なところだけ開いて編集できます。
+            </p>
           </div>
 
 
-          <h2>🩷 個別お礼日記</h2>
+          <section
+            class="heaven-settings-scope heaven-settings-scope-standard"
+          >
 
-          <p class="heaven-settings-help">
-            予約カード →「日記を書く」で開く個別お礼日記の
-            デフォルトタイトルに自動反映されます。
-          </p>
+            <div class="heaven-settings-scope-header">
+              <div>
+                <span class="heaven-settings-scope-label">
+                  📝 通常ヘブン日記
+                </span>
 
-          <div class="heaven-settings-template-list">
+                <h2>
+                  通常投稿の設定
+                </h2>
 
-            <label class="field-label">
-              新規のお客様
-              <input
-                class="text-input"
-                data-title-template="thank_you_new"
-              >
-            </label>
+                <p class="heaven-settings-help">
+                  ホーム → ヘブン →「写メ日記を書く」
+                  に反映されます。
+                </p>
+              </div>
 
-            <label class="field-label">
-              リピのお客様
-              <input
-                class="text-input"
-                data-title-template="thank_you_repeat"
-              >
-            </label>
+              <span class="heaven-settings-scope-badge">
+                通常日記
+              </span>
+            </div>
+
+
+            <details
+              class="heaven-settings-block"
+              open
+            >
+              <summary>
+                基本・文章設定
+              </summary>
+
+              <div class="heaven-settings-block-body">
+
+                <label class="field-label">
+                  署名
+                  <input
+                    class="text-input"
+                    name="signature"
+                    type="text"
+                  >
+                </label>
+
+                <label class="heaven-settings-check">
+                  <input
+                    name="avoid_same_day"
+                    type="checkbox"
+                  >
+                  同じ日の同一フレーズをなるべく避ける
+                </label>
+
+                <label class="heaven-settings-check">
+                  <input
+                    name="reroll_enabled"
+                    type="checkbox"
+                  >
+                  押し直しで別候補を優先する
+                </label>
+
+                <label class="field-label">
+                  本文段落数
+                  <select
+                    class="text-input"
+                    name="paragraphs"
+                  >
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                  </select>
+                </label>
+
+              </div>
+            </details>
+
+
+            <details class="heaven-settings-block">
+              <summary>
+                受付・タイトル文字数
+              </summary>
+
+              <div class="heaven-settings-block-body">
+
+                <h3>
+                  受付ルール
+                </h3>
+
+                <p class="heaven-settings-help">
+                  次回受付時刻の計算に使います。
+                </p>
+
+                <label class="field-label">
+                  最小受付時間
+                  <input
+                    class="text-input"
+                    name="minimum_minutes"
+                    type="number"
+                    min="1"
+                    max="600"
+                  >
+                  分
+                </label>
+
+                <label class="field-label">
+                  予約間バッファ
+                  <input
+                    class="text-input"
+                    name="buffer_minutes"
+                    type="number"
+                    min="0"
+                    max="180"
+                  >
+                  分
+                </label>
+
+
+                <h3>
+                  タイトル文字数
+                </h3>
+
+                <label class="field-label">
+                  推奨文字数
+                  <input
+                    class="text-input"
+                    name="title_recommended"
+                    type="number"
+                    min="1"
+                  >
+                </label>
+
+                <label class="field-label">
+                  軽警告開始
+                  <input
+                    class="text-input"
+                    name="title_warning"
+                    type="number"
+                    min="2"
+                  >
+                </label>
+
+                <label class="field-label">
+                  強警告開始
+                  <input
+                    class="text-input"
+                    name="title_strong"
+                    type="number"
+                    min="2"
+                  >
+                </label>
+
+              </div>
+            </details>
+
+
+            <details class="heaven-settings-block">
+              <summary>
+                言い回し辞書
+              </summary>
+
+              <div class="heaven-settings-block-body">
+
+                <p class="heaven-settings-help">
+                  通常日記を自動作成するときの文章候補です。
+                </p>
+
+                <div class="heaven-settings-phrase-groups">
+
+                  <details open>
+                    <summary>出勤</summary>
+                    <div data-phrase-list="attendance_empty"></div>
+                    <button class="text-button" type="button" data-add-phrase-category="attendance_empty">＋予約なしを追加</button>
+                    <div data-phrase-list="attendance_new"></div>
+                    <button class="text-button" type="button" data-add-phrase-category="attendance_new">＋新規を追加</button>
+                    <div data-phrase-list="attendance_repeat"></div>
+                    <button class="text-button" type="button" data-add-phrase-category="attendance_repeat">＋リピを追加</button>
+                    <div data-phrase-list="attendance_start_open"></div>
+                    <button class="text-button" type="button" data-add-phrase-category="attendance_start_open">＋スタート空きを追加</button>
+                    <div data-phrase-list="attendance_invite"></div>
+                    <button class="text-button" type="button" data-add-phrase-category="attendance_invite">＋お誘いを追加</button>
+                    <div data-phrase-list="attendance_last"></div>
+                    <button class="text-button" type="button" data-add-phrase-category="attendance_last">＋ラストを追加</button>
+                    <div data-phrase-list="attendance_consultation"></div>
+                    <button class="text-button" type="button" data-add-phrase-category="attendance_consultation">＋要相談を追加</button>
+                    <div data-phrase-list="attendance_finished"></div>
+                    <button class="text-button" type="button" data-add-phrase-category="attendance_finished">＋終了文を追加</button>
+                  </details>
+
+                  <details>
+                    <summary>次回予告</summary>
+                    <div data-phrase-list="next_new"></div>
+                    <button class="text-button" type="button" data-add-phrase-category="next_new">＋新規を追加</button>
+                    <div data-phrase-list="next_repeat"></div>
+                    <button class="text-button" type="button" data-add-phrase-category="next_repeat">＋リピを追加</button>
+                    <div data-phrase-list="next_fun"></div>
+                    <button class="text-button" type="button" data-add-phrase-category="next_fun">＋楽しみ文を追加</button>
+                    <div data-phrase-list="next_op_generic"></div>
+                    <button class="text-button" type="button" data-add-phrase-category="next_op_generic">＋OPあり汎用文を追加</button>
+                    <div data-phrase-list="next_invite"></div>
+                    <button class="text-button" type="button" data-add-phrase-category="next_invite">＋お誘いを追加</button>
+                    <div data-phrase-list="next_last"></div>
+                    <button class="text-button" type="button" data-add-phrase-category="next_last">＋ラストを追加</button>
+                    <div data-phrase-list="next_consultation"></div>
+                    <button class="text-button" type="button" data-add-phrase-category="next_consultation">＋要相談を追加</button>
+                    <div data-phrase-list="next_finished"></div>
+                    <button class="text-button" type="button" data-add-phrase-category="next_finished">＋終了文を追加</button>
+                  </details>
+
+                  <details>
+                    <summary>共通</summary>
+                    <div data-phrase-list="common_close"></div>
+                    <button class="text-button" type="button" data-add-phrase-category="common_close">＋締め文を追加</button>
+                  </details>
+
+                </div>
+
+              </div>
+            </details>
+
+
+            <details class="heaven-settings-block">
+              <summary>
+                タイトルテンプレ
+              </summary>
+
+              <div class="heaven-settings-block-body">
+
+                <p class="heaven-settings-help">
+                  使用可能placeholderは
+                  {time} と {customer} です。
+                </p>
+
+                <div class="heaven-settings-template-list">
+
+                  <label class="field-label">
+                    出勤通常空き
+                    <input class="text-input" data-title-template="attendance_available">
+                  </label>
+
+                  <label class="field-label">
+                    出勤ラスト
+                    <input class="text-input" data-title-template="attendance_last">
+                  </label>
+
+                  <label class="field-label">
+                    出勤要相談
+                    <input class="text-input" data-title-template="attendance_consultation">
+                  </label>
+
+                  <label class="field-label">
+                    次回新規
+                    <input class="text-input" data-title-template="next_new">
+                  </label>
+
+                  <label class="field-label">
+                    次回リピ
+                    <input class="text-input" data-title-template="next_repeat">
+                  </label>
+
+                  <label class="field-label">
+                    次回ラスト
+                    <input class="text-input" data-title-template="next_last">
+                  </label>
+
+                  <label class="field-label">
+                    次回要相談
+                    <input class="text-input" data-title-template="next_consultation">
+                  </label>
+
+                </div>
+
+              </div>
+            </details>
+
+
+            <details class="heaven-settings-block">
+              <summary>
+                OP別フレーズ
+              </summary>
+
+              <div class="heaven-settings-block-body">
+
+                <p class="heaven-settings-help">
+                  通常日記の次回予告で、
+                  予約の実OP名と一致したときに使う専用候補です。
+                </p>
+
+                <div data-op-phrase-list></div>
+
+                <button
+                  class="text-button"
+                  type="button"
+                  data-add-op-phrase
+                >
+                  ＋OPルールを追加
+                </button>
+
+              </div>
+            </details>
+
+          </section>
+
+
+          <section
+            class="heaven-settings-scope heaven-settings-scope-thank-you"
+          >
+
+            <div class="heaven-settings-scope-header">
+
+              <div>
+                <span class="heaven-settings-scope-label">
+                  💗 個別お礼日記
+                </span>
+
+                <h2>
+                  予約カードから作る日記
+                </h2>
+
+                <p class="heaven-settings-help">
+                  予約カード →「日記を書く」で開く
+                  個別お礼日記にだけ反映されます。
+                </p>
+              </div>
+
+              <span class="heaven-settings-scope-badge">
+                予約カード
+              </span>
+
+            </div>
+
+
+            <div class="heaven-settings-block-body">
+
+              <label class="field-label">
+                新規のお客様のデフォルトタイトル
+                <input
+                  class="text-input"
+                  data-title-template="thank_you_new"
+                >
+              </label>
+
+              <label class="field-label">
+                リピのお客様のデフォルトタイトル
+                <input
+                  class="text-input"
+                  data-title-template="thank_you_repeat"
+                >
+              </label>
+
+            </div>
+
+          </section>
+
+
+          <div class="heaven-settings-actions">
+
+            <button
+              class="primary-button"
+              type="button"
+              data-save-heaven-settings
+            >
+              設定を保存
+            </button>
+
+            <button
+              class="secondary-button"
+              type="button"
+              data-reset-heaven-settings
+            >
+              初期値に戻す
+            </button>
 
           </div>
-          <h2>OP別フレーズ</h2>
-          <p class="heaven-settings-help">予約の実OP名と一致したとき、専用候補を最大1つ使います。</p>
-          <div data-op-phrase-list></div>
-          <button class="text-button" type="button" data-add-op-phrase>＋OPルールを追加</button>
-          <div class="heaven-settings-actions"><button class="primary-button" type="button" data-save-heaven-settings>設定を保存</button><button class="secondary-button" type="button" data-reset-heaven-settings>初期値に戻す</button></div>
+
         </section>
       </section>
 
