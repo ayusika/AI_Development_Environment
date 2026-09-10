@@ -2651,3 +2651,194 @@ body:has(#view-schedule.is-active) .bottom-nav {
     font-size: 15px;
   }
 }
+
+/* ========================================
+   CUSTOMER VISIT HISTORY
+   readable accordion cards
+======================================== */
+
+.schedule-customer-visit-detail {
+  margin-top: 9px;
+
+  overflow: hidden;
+
+  border: 1px solid var(--line);
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  transition:
+    border-color 120ms ease,
+    box-shadow 120ms ease,
+    background-color 120ms ease;
+}
+
+
+.schedule-customer-visit-detail
++ .schedule-customer-visit-detail {
+  margin-top: 8px;
+}
+
+
+.schedule-customer-visit-detail
+> summary {
+  display: grid;
+  grid-template-columns:
+    minmax(0, 1fr)
+    auto
+    16px;
+
+  align-items: center;
+  gap: 8px;
+
+  padding: 10px 11px;
+
+  border: 0;
+
+  background:
+    rgba(
+      245,
+      251,
+      254,
+      0.92
+    );
+
+  cursor: pointer;
+  list-style: none;
+}
+
+
+.schedule-customer-visit-detail
+> summary::-webkit-details-marker {
+  display: none;
+}
+
+
+.schedule-customer-visit-detail
+> summary::after {
+  content: "›";
+
+  color: var(--accent-deep);
+
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1;
+
+  transform:
+    rotate(90deg);
+
+  transition:
+    transform 120ms ease;
+}
+
+
+.schedule-customer-visit-detail[open] {
+  border-color:
+    var(--accent-strong);
+
+  background:
+    rgba(
+      247,
+      253,
+      255,
+      0.96
+    );
+
+  box-shadow:
+    0 5px 16px
+    rgba(
+      69,
+      185,
+      233,
+      0.10
+    );
+}
+
+
+.schedule-customer-visit-detail[open]
+> summary {
+  border-bottom:
+    1px solid
+    var(--line);
+
+  background:
+    rgba(
+      217,
+      244,
+      255,
+      0.78
+    );
+}
+
+
+.schedule-customer-visit-detail[open]
+> summary::after {
+  transform:
+    rotate(-90deg);
+}
+
+
+.schedule-customer-visit-detail
+> summary
+> span {
+  min-width: 0;
+
+  color: var(--text-soft);
+
+  font-size: 11px;
+  font-weight: 800;
+}
+
+
+.schedule-customer-visit-detail
+> summary
+> strong {
+  white-space: nowrap;
+
+  color: var(--text);
+
+  font-size: 12px;
+  font-weight: 900;
+}
+
+
+.schedule-customer-visit-detail-body {
+  padding:
+    2px
+    12px
+    12px;
+}
+
+
+.schedule-customer-visit-detail-body
+> p {
+  margin: 0;
+
+  padding:
+    11px
+    0;
+
+  line-height: 1.65;
+
+  overflow-wrap: anywhere;
+}
+
+
+.schedule-customer-visit-detail-body
+> p
++ p {
+  border-top:
+    1px solid
+    var(--line);
+}
+
+
+.schedule-customer-visit-detail-body
+> p
+> strong {
+  display: inline-block;
+
+  margin-bottom: 3px;
+
+  color: var(--accent-deep);
+}
