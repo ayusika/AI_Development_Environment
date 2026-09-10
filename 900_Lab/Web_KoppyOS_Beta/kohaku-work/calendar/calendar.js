@@ -3431,11 +3431,33 @@ function createCalendarEventElement(
     titleElement.className =
       'calendar-event-title';
 
-    titleElement.textContent =
+
+    const isBirthday =
+      String(
+        event.category
+        || ''
+      ) === 'birthday';
+
+
+    if (isBirthday) {
+      eventElement.classList.add(
+        'is-birthday'
+      );
+    }
+
+
+    const eventTitle =
       String(
         event.title
         || ''
       );
+
+
+    titleElement.textContent =
+      isBirthday
+        ? `🎂 ${eventTitle}`
+        : eventTitle;
+
 
     eventElement.appendChild(
       titleElement
