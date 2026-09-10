@@ -577,9 +577,17 @@ function appendDaySummarySection(
         appendDaySummaryItem(
           section,
           String(
-            calendarEvent.title
-            || '予定'
-          ),
+            calendarEvent.category
+            || ''
+          ) === 'birthday'
+            ? `🎂 ${String(
+                calendarEvent.title
+                || '予定'
+              )}`
+            : String(
+                calendarEvent.title
+                || '予定'
+              ),
           formatDaySummaryEventMeta(
             calendarEvent
           ),
