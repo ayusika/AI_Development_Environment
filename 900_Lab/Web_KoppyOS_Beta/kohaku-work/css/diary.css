@@ -536,6 +536,248 @@ input[type="checkbox"] {
 
 
 /* ========================================
+   SETTINGS LIVE PREVIEW
+======================================== */
+
+.heaven-settings-preview {
+  position: sticky;
+  top: 68px;
+
+  z-index: 32;
+
+  display: grid;
+  gap: 12px;
+
+  padding: 15px;
+
+  border-radius: 18px;
+
+  color: var(--text);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(246, 252, 255, 0.97),
+      rgba(235, 248, 255, 0.97)
+    );
+
+  border:
+    1px solid
+    rgba(129, 205, 239, 0.82);
+
+  box-shadow:
+    0 12px 34px
+    rgba(61, 137, 174, 0.16);
+
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.heaven-settings-preview.is-thank-you {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 247, 251, 0.98),
+      rgba(255, 237, 246, 0.98)
+    );
+
+  border-color:
+    rgba(235, 157, 196, 0.82);
+
+  box-shadow:
+    0 12px 34px
+    rgba(191, 94, 142, 0.13);
+}
+
+
+.heaven-settings-preview-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+
+  gap: 12px;
+}
+
+.heaven-settings-preview-header > div {
+  min-width: 0;
+
+  display: grid;
+  gap: 3px;
+}
+
+.heaven-settings-preview-kicker {
+  color: var(--accent-deep);
+
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+}
+
+.heaven-settings-preview.is-thank-you
+.heaven-settings-preview-kicker {
+  color: #c45d8d;
+}
+
+.heaven-settings-preview-header strong {
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+
+.heaven-settings-preview-target {
+  flex: 0 0 auto;
+
+  max-width: 48%;
+
+  padding: 6px 9px;
+
+  border-radius: 999px;
+
+  color: var(--accent-deep);
+  background: rgba(255, 255, 255, 0.92);
+
+  border:
+    1px solid
+    rgba(129, 205, 239, 0.72);
+
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 1.35;
+
+  text-align: center;
+}
+
+.heaven-settings-preview.is-thank-you
+.heaven-settings-preview-target {
+  color: #b54c7c;
+
+  border-color:
+    rgba(235, 157, 196, 0.76);
+}
+
+
+/* PREVIEW CONTENT */
+
+.heaven-settings-preview-section {
+  display: grid;
+  gap: 5px;
+
+  padding: 10px 11px;
+
+  border-radius: 12px;
+
+  background:
+    rgba(255, 255, 255, 0.78);
+
+  border:
+    1px solid
+    rgba(191, 228, 245, 0.78);
+}
+
+.heaven-settings-preview.is-thank-you
+.heaven-settings-preview-section {
+  border-color:
+    rgba(241, 183, 211, 0.72);
+}
+
+.heaven-settings-preview-label {
+  color: var(--text-faint);
+
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.heaven-settings-preview-title {
+  min-width: 0;
+
+  font-size: 13px;
+  font-weight: 900;
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+}
+
+
+.heaven-settings-preview-body {
+  display: grid;
+  gap: 5px;
+
+  font-size: 11px;
+  line-height: 1.65;
+}
+
+.heaven-settings-preview-body p {
+  margin: 0;
+}
+
+
+/* CURRENTLY EDITED PART */
+
+.heaven-settings-preview mark {
+  display: inline;
+
+  padding: 2px 5px;
+
+  border-radius: 6px;
+
+  color: var(--accent-deep);
+
+  background:
+    rgba(168, 225, 249, 0.54);
+
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.heaven-settings-preview.is-thank-you mark {
+  color: #a94373;
+
+  background:
+    rgba(245, 183, 213, 0.5);
+}
+
+.heaven-settings-preview-body p:has(mark) {
+  position: relative;
+
+  padding-left: 13px;
+}
+
+.heaven-settings-preview-body p:has(mark)::before {
+  content: "→";
+
+  position: absolute;
+  left: 0;
+  top: 1px;
+
+  color: var(--accent-deep);
+
+  font-weight: 900;
+}
+
+.heaven-settings-preview.is-thank-you
+.heaven-settings-preview-body
+p:has(mark)::before {
+  color: #c45d8d;
+}
+
+
+.heaven-settings-preview-help {
+  margin: 0;
+
+  color: var(--text-soft);
+
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+
+/* ========================================
    SETTINGS ACTIONS
 ======================================== */
 
