@@ -1647,3 +1647,271 @@ document.addEventListener(
   'change',
   heavenSettingsPreviewHandleEvent
 );
+
+
+/* ========================================
+   THANK YOU TEMPLATE LIVE PREVIEW
+======================================== */
+
+function heavenSettingsExpandThankYouPreview(
+  template,
+  signature
+) {
+
+  const values = {
+    place:
+      'ホテルで',
+
+    course:
+      '90',
+
+    options_part:
+      '聖水希望の',
+
+    repeat:
+      'リピの',
+
+    body:
+      '今日も会いに来てくれてありがと♡\nいっぱい楽しかったよ☺️',
+
+    signature:
+      signature
+      || '❄︎こはく❄︎',
+  };
+
+
+  return String(
+    template
+    || ''
+  ).replace(
+    /\{(place|course|options_part|repeat|body|signature)\}/g,
+    (
+      match,
+      key
+    ) =>
+      values[key]
+      ?? match
+  );
+}
+
+
+function heavenSettingsRenderThankYouPreview(
+  field
+) {
+
+  const view =
+    field.closest(
+      '#view-heaven-settings'
+    );
+
+
+  if (!view) {
+    return;
+  }
+
+
+  const preview =
+    view.querySelector(
+      '[data-heaven-settings-preview]'
+    );
+
+  const modeElement =
+    view.querySelector(
+      '[data-heaven-preview-mode]'
+    );
+
+  const targetElement =
+    view.querySelector(
+      '[data-heaven-preview-target]'
+    );
+
+  const titleElement =
+    view.querySelector(
+      '[data-heaven-preview-title]'
+    );
+
+  const bodyElement =
+    view.querySelector(
+      '[data-heaven-preview-body]'
+    );
+
+  const templateInput =
+    view.querySelector(
+      '[data-thank-you-setting="body_template"]'
+    );
+
+  const signatureInput =
+    view.querySelector(
+      '[data-thank-you-setting="signature"]'
+    );
+
+  const repeatTitleInput =
+    view.querySelector(
+      '[data-title-template="thank_you_repeat"]'
+    );
+
+
+  if (
+    !preview
+    || !bodyElement
+    || !templateInput
+  ) {
+    return;
+  }
+
+
+  const template =
+    String(
+      templateInput.value
+      || ''
+    );
+
+  const signature =
+    String(
+      signatureInput
+        ?.value
+      || ''
+    );
+
+
+  const expanded =
+    heavenSettingsExpandThankYouPreview(
+      template,
+      signature
+    );
+
+
+  preview.classList.add(
+    'is-thank-you'
+  );
+
+
+  if (modeElement) {
+
+    modeElement.textContent =
+      '個別お礼日記';
+  }
+
+
+  if (targetElement) {
+
+    targetElement.textContent =
+      field.dataset
+        .thankYouSetting
+      === 'signature'
+        ? '本文 / 署名'
+        : '本文 / 全体テンプレ';
+  }
+
+
+  if (titleElement) {
+
+    titleElement.textContent =
+      String(
+        repeatTitleInput
+          ?.value
+        || 'リピートお礼日記♡♡♡'
+      );
+  }
+
+
+  bodyElement.replaceChildren();
+
+
+  expanded
+    .split(
+      /\n{2,}/
+    )
+    .filter(
+      (part) =>
+        part.trim() !== ''
+    )
+    .forEach(
+      (part) => {
+
+        const paragraph =
+          document.createElement(
+            'p'
+          );
+
+
+        paragraph.style.whiteSpace =
+          'pre-wrap';
+
+
+        const mark =
+          document.createElement(
+            'mark'
+          );
+
+
+        mark.textContent =
+          part;
+
+
+        paragraph.appendChild(
+          mark
+        );
+
+
+        bodyElement.appendChild(
+          paragraph
+        );
+      }
+    );
+}
+
+
+function heavenSettingsHandleThankYouPreview(
+  event
+) {
+
+  const field =
+    event.target;
+
+
+  if (
+    !(
+      field
+      instanceof HTMLInputElement
+    )
+    && !(
+      field
+      instanceof HTMLTextAreaElement
+    )
+  ) {
+    return;
+  }
+
+
+  if (
+    !field.matches(
+      '[data-thank-you-setting]'
+    )
+  ) {
+    return;
+  }
+
+
+  heavenSettingsRenderThankYouPreview(
+    field
+  );
+}
+
+
+document.addEventListener(
+  'focusin',
+  heavenSettingsHandleThankYouPreview
+);
+
+
+document.addEventListener(
+  'input',
+  heavenSettingsHandleThankYouPreview
+);
+
+
+document.addEventListener(
+  'change',
+  heavenSettingsHandleThankYouPreview
+);
