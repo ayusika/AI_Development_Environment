@@ -132,14 +132,22 @@ function normalizeHeavenStandaloneSettings(value) {
       ...defaults.title,
       ...(value.title || {}),
     },
+
+    thank_you: {
+      ...defaults.thank_you,
+      ...(value.thank_you || {}),
+    },
+
     phrases:
       Array.isArray(value.phrases)
         ? value.phrases
         : defaults.phrases,
+
     op_phrases:
       Array.isArray(value.op_phrases)
         ? value.op_phrases
         : [],
+
     title_templates: {
       ...defaults.title_templates,
       ...(value.title_templates || {}),
