@@ -5349,6 +5349,22 @@ function openEventModal(
       );
 
 
+    if (
+      String(
+        calendarEvent.category
+        || ''
+      ) === 'birthday'
+    ) {
+      setCalendarEventKind(
+        'birthday',
+        false
+      );
+
+      eventDialogTitle.textContent =
+        '誕生日を編集';
+    }
+
+
     restoreRepeatFieldsFromEvent(
       calendarEvent
     );
