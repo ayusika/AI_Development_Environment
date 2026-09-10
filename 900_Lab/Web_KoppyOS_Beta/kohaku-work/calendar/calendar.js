@@ -5247,6 +5247,10 @@ function openEventModal(
 
   renderColorPalette();
 
+  setCalendarEventKind(
+    'normal'
+  );
+
   setRepeatDefaultsForDate(
     dateKey
   );
