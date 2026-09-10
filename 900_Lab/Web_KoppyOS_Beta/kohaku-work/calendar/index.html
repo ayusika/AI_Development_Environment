@@ -300,6 +300,52 @@
         >
 
 
+        <!-- WRITER:CALENDAR_EVENT_KIND:START -->
+
+        <div
+          class="calendar-event-kind-selector"
+          data-event-kind-selector
+          aria-label="予定の種類"
+        >
+
+          <button
+            type="button"
+            class="calendar-event-kind-button is-selected"
+            data-event-kind="normal"
+            aria-pressed="true"
+          >
+            <span class="calendar-event-kind-icon">
+              ◷
+            </span>
+
+            <span>
+              <strong>予定</strong>
+              <small>通常の予定</small>
+            </span>
+          </button>
+
+
+          <button
+            type="button"
+            class="calendar-event-kind-button"
+            data-event-kind="birthday"
+            aria-pressed="false"
+          >
+            <span class="calendar-event-kind-icon">
+              🎂
+            </span>
+
+            <span>
+              <strong>誕生日</strong>
+              <small>毎年表示</small>
+            </span>
+          </button>
+
+        </div>
+
+        <!-- WRITER:CALENDAR_EVENT_KIND:END -->
+
+
         <label class="calendar-event-field">
           <span>だれの予定？</span>
 
