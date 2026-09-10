@@ -5037,6 +5037,25 @@ async function openScheduleCustomerPanel() {
                         )}
                       </p>
 
+                      <p>
+                        <strong>
+                          投稿した写メ日記
+                        </strong>
+                        <br>
+                        ${
+                          customerVisit.heaven_diary_body
+                            ? escapeHtml(
+                                String(
+                                  customerVisit.heaven_diary_body
+                                )
+                              ).replace(
+                                /\n/g,
+                                '<br>'
+                              )
+                            : '未登録'
+                        }
+                      </p>
+
                     </div>
 
                   </details>
