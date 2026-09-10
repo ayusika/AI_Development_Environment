@@ -5478,3 +5478,936 @@ has(
       6px;
   }
 }
+
+/* ========================================
+   RESERVATION FORM POLISH V4
+======================================== */
+
+
+/* ========================================
+   BASIC INFO
+   first-of-type ではなく hidden input直後を対象
+======================================== */
+
+#schedule-form-card
+> #schedule-edit-id
++ .schedule-form-grid {
+  position:
+    relative;
+
+  gap:
+    12px;
+
+  padding:
+    49px
+    15px
+    15px;
+
+  border:
+    1px solid
+    rgba(
+      36,
+      169,
+      226,
+      0.30
+    );
+
+  border-left:
+    4px solid
+    #29afe7;
+
+  border-radius:
+    18px
+    18px
+    8px
+    8px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #e7f7ff,
+      #f5fcff
+    );
+
+  box-shadow:
+    0
+    7px
+    20px
+    rgba(
+      40,
+      126,
+      166,
+      0.07
+    );
+}
+
+
+#schedule-form-card
+> #schedule-edit-id
++ .schedule-form-grid::before {
+  content:
+    "▦  予約情報";
+
+  position:
+    absolute;
+
+  top:
+    14px;
+
+  left:
+    15px;
+
+  color:
+    #1178ae;
+
+  font-size:
+    16px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    0.01em;
+}
+
+
+#schedule-form-card
+> #schedule-edit-id
++ .schedule-form-grid
++ .schedule-customer-change {
+  margin:
+    0
+    0
+    13px;
+
+  padding:
+    8px
+    14px
+    12px;
+
+  border:
+    1px solid
+    rgba(
+      36,
+      169,
+      226,
+      0.30
+    );
+
+  border-top:
+    0;
+
+  border-left:
+    4px solid
+    #29afe7;
+
+  border-radius:
+    0
+    0
+    18px
+    18px;
+
+  background:
+    #eefaff;
+}
+
+
+/* ========================================
+   SECTION HEADING ICON
+======================================== */
+
+#schedule-form-card
+.schedule-choice-label::before {
+  width:
+    25px;
+
+  height:
+    25px;
+
+  flex:
+    0 0
+    25px;
+
+  display:
+    inline-grid;
+
+  place-items:
+    center;
+
+  border-radius:
+    8px;
+
+  font-size:
+    13px;
+
+  line-height:
+    1;
+}
+
+
+/* ========================================
+   COURSE
+======================================== */
+
+#schedule-form-card
+.schedule-choice-section:
+has(
+  #schedule-course-master-list
+)
+.schedule-choice-label::before {
+  content:
+    "▰";
+
+  color:
+    #397cca;
+
+  background:
+    #e2edff;
+}
+
+
+#schedule-form-card
+.schedule-choice-section:
+has(
+  #schedule-course-master-list
+) {
+  background:
+    linear-gradient(
+      145deg,
+      #f4f8ff,
+      #edf2ff
+    );
+}
+
+
+/* ========================================
+   CUSTOMER
+======================================== */
+
+#schedule-form-card
+.schedule-choice-section:
+has(
+  #schedule-repeat-customer-results
+) {
+  border-color:
+    rgba(
+      30,
+      177,
+      133,
+      0.24
+    );
+
+  border-left:
+    4px solid
+    #22b58b;
+
+  background:
+    linear-gradient(
+      145deg,
+      #effdf7,
+      #e7faf2
+    );
+}
+
+
+#schedule-form-card
+.schedule-choice-section:
+has(
+  #schedule-repeat-customer-results
+)
+.schedule-choice-label::before {
+  content:
+    "●";
+
+  color:
+    #199b76;
+
+  background:
+    #d8f5e9;
+}
+
+
+/* ---------- customer search fields ---------- */
+
+#schedule-form-card
+#schedule-repeat-customer-fields
+.schedule-form-grid {
+  padding:
+    10px;
+
+  border:
+    1px solid
+    rgba(
+      32,
+      175,
+      132,
+      0.12
+    );
+
+  border-radius:
+    13px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.52
+    );
+}
+
+
+/* ---------- search results ---------- */
+
+#schedule-form-card
+.schedule-identity-search-result
+> small:nth-of-type(2)
+span {
+  display:
+    block;
+
+  margin-top:
+    3px;
+
+  padding:
+    4px
+    8px;
+
+  border-left:
+    3px solid
+    rgba(
+      31,
+      175,
+      132,
+      0.34
+    );
+
+  border-radius:
+    0
+    7px
+    7px
+    0;
+
+  color:
+    #53786d;
+
+  background:
+    #eaf8f3;
+
+  font-variant-numeric:
+    tabular-nums;
+}
+
+
+#schedule-form-card
+.schedule-identity-search-result:
+has(
+  > button.primary-button
+)
+::before {
+  background:
+    linear-gradient(
+      145deg,
+      #3dcb9e,
+      #169f76
+    );
+}
+
+
+/* ========================================
+   OP SECTION
+======================================== */
+
+#schedule-form-card
+.schedule-choice-section:
+has(
+  #schedule-option-grid
+) {
+  border-color:
+    rgba(
+      231,
+      81,
+      133,
+      0.20
+    );
+
+  border-left:
+    4px solid
+    #e95b8d;
+
+  background:
+    linear-gradient(
+      145deg,
+      #fff6fa,
+      #ffedf4
+    );
+}
+
+
+#schedule-form-card
+.schedule-choice-section:
+has(
+  #schedule-option-grid
+)
+.schedule-choice-label::before {
+  content:
+    "◆";
+
+  color:
+    #d94076;
+
+  background:
+    #ffe0eb;
+}
+
+
+/* ---------- OP buttons ---------- */
+
+#schedule-form-card
+.schedule-option-choice {
+  border:
+    1px solid
+    rgba(
+      75,
+      171,
+      215,
+      0.25
+    );
+
+  border-radius:
+    10px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.84
+    );
+
+  transition:
+    transform 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease,
+    background-color 120ms ease,
+    box-shadow 120ms ease;
+}
+
+
+#schedule-form-card
+.schedule-option-choice:hover {
+  transform:
+    translateY(
+      -1px
+    );
+
+  border-color:
+    rgba(
+      230,
+      82,
+      134,
+      0.38
+    );
+
+  background:
+    #fff8fb;
+}
+
+
+#schedule-form-card
+.schedule-option-choice:
+has(
+  input:checked
+) {
+  border-color:
+    #e85b8d;
+
+  color:
+    #bd3567;
+
+  background:
+    linear-gradient(
+      135deg,
+      #ffe5ef,
+      #ffdce9
+    );
+
+  box-shadow:
+    0
+    0
+    0
+    2px
+    rgba(
+      232,
+      91,
+      141,
+      0.10
+    ),
+    0
+    5px
+    12px
+    rgba(
+      204,
+      67,
+      116,
+      0.08
+    );
+}
+
+
+#schedule-form-card
+.schedule-option-choice:
+has(
+  input:checked
+)
+small {
+  color:
+    #c65379;
+}
+
+
+/* ========================================
+   OP DETAIL GRID
+   その他 / チップをCSS Gridだけで分離
+======================================== */
+
+#schedule-form-card
+.schedule-option-section
+> .schedule-form-grid {
+  position:
+    relative;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  grid-template-rows:
+    auto
+    auto
+    auto
+    auto;
+
+  gap:
+    8px
+    10px;
+
+  margin-top:
+    16px;
+}
+
+
+/* ---------- OTHER heading ---------- */
+
+#schedule-form-card
+.schedule-option-section
+> .schedule-form-grid::before {
+  content:
+    "▤  その他";
+
+  grid-column:
+    1 / -1;
+
+  grid-row:
+    1;
+
+  padding:
+    8px
+    10px;
+
+  border-left:
+    4px solid
+    #18aabd;
+
+  border-radius:
+    9px;
+
+  color:
+    #147d89;
+
+  background:
+    #e5f9fc;
+
+  font-size:
+    13px;
+
+  font-weight:
+    900;
+}
+
+
+/* ---------- OTHER fields ---------- */
+
+#schedule-form-card
+.schedule-option-section
+.schedule-field:
+has(
+  #schedule-custom-option
+) {
+  grid-column:
+    1;
+
+  grid-row:
+    2;
+}
+
+
+#schedule-form-card
+.schedule-option-section
+.schedule-field:
+has(
+  #schedule-custom-option-amount
+) {
+  grid-column:
+    2;
+
+  grid-row:
+    2;
+}
+
+
+#schedule-form-card
+.schedule-option-section
+.schedule-field:
+has(
+  #schedule-custom-option
+),
+#schedule-form-card
+.schedule-option-section
+.schedule-field:
+has(
+  #schedule-custom-option-amount
+) {
+  padding:
+    11px;
+
+  border:
+    1px solid
+    rgba(
+      24,
+      170,
+      189,
+      0.22
+    );
+
+  border-radius:
+    12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #edfafd,
+      #f8feff
+    );
+}
+
+
+/* ---------- TIP heading ---------- */
+
+#schedule-form-card
+.schedule-option-section
+> .schedule-form-grid::after {
+  content:
+    "●  チップ・調整分";
+
+  grid-column:
+    1 / -1;
+
+  grid-row:
+    3;
+
+  margin-top:
+    4px;
+
+  padding:
+    8px
+    10px;
+
+  border-left:
+    4px solid
+    #ef922d;
+
+  border-radius:
+    9px;
+
+  color:
+    #a45c17;
+
+  background:
+    #fff1dd;
+
+  font-size:
+    13px;
+
+  font-weight:
+    900;
+}
+
+
+/* ---------- TIP fields ---------- */
+
+#schedule-form-card
+.schedule-option-section
+.schedule-field:
+has(
+  #schedule-tip-amount
+) {
+  grid-column:
+    1;
+
+  grid-row:
+    4;
+}
+
+
+#schedule-form-card
+.schedule-option-section
+.schedule-field:
+has(
+  #schedule-adjustment-amount
+) {
+  grid-column:
+    2;
+
+  grid-row:
+    4;
+}
+
+
+#schedule-form-card
+.schedule-option-section
+.schedule-field:
+has(
+  #schedule-tip-amount
+),
+#schedule-form-card
+.schedule-option-section
+.schedule-field:
+has(
+  #schedule-adjustment-amount
+) {
+  padding:
+    11px;
+
+  border:
+    1px solid
+    rgba(
+      239,
+      146,
+      45,
+      0.22
+    );
+
+  border-radius:
+    12px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fff5e9,
+      #fffbf5
+    );
+}
+
+
+/* ========================================
+   PRICE SUMMARY
+======================================== */
+
+#schedule-form-card
+.schedule-course-price-summary {
+  min-height:
+    43px;
+
+  padding:
+    10px
+    12px;
+
+  border:
+    1px solid
+    rgba(
+      225,
+      161,
+      28,
+      0.42
+    );
+
+  border-left:
+    4px solid
+    #e5a11c;
+
+  border-radius:
+    11px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #fff9e7,
+      #fff3cb
+    );
+}
+
+
+#schedule-form-card
+.schedule-extension-master-list {
+  background:
+    linear-gradient(
+      90deg,
+      #fff9e9,
+      #fff5d9
+    );
+}
+
+
+/* ========================================
+   ACTION AREA
+======================================== */
+
+#schedule-form-card
+.schedule-form-actions {
+  border-top:
+    1px solid
+    rgba(
+      45,
+      167,
+      220,
+      0.16
+    );
+
+  box-shadow:
+    0
+    -10px
+    26px
+    rgba(
+      38,
+      96,
+      126,
+      0.08
+    );
+}
+
+
+#schedule-form-card
+#schedule-save-button {
+  letter-spacing:
+    0.01em;
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (
+  max-width:
+  680px
+) {
+
+  #schedule-form-card
+  > #schedule-edit-id
+  + .schedule-form-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+
+  #schedule-form-card
+  .schedule-option-section
+  > .schedule-form-grid {
+    grid-template-columns:
+      1fr;
+
+    grid-template-rows:
+      auto
+      auto
+      auto
+      auto
+      auto
+      auto;
+  }
+
+
+  #schedule-form-card
+  .schedule-option-section
+  > .schedule-form-grid::before {
+    grid-column:
+      1;
+
+    grid-row:
+      1;
+  }
+
+
+  #schedule-form-card
+  .schedule-option-section
+  .schedule-field:
+  has(
+    #schedule-custom-option
+  ) {
+    grid-column:
+      1;
+
+    grid-row:
+      2;
+  }
+
+
+  #schedule-form-card
+  .schedule-option-section
+  .schedule-field:
+  has(
+    #schedule-custom-option-amount
+  ) {
+    grid-column:
+      1;
+
+    grid-row:
+      3;
+  }
+
+
+  #schedule-form-card
+  .schedule-option-section
+  > .schedule-form-grid::after {
+    grid-column:
+      1;
+
+    grid-row:
+      4;
+  }
+
+
+  #schedule-form-card
+  .schedule-option-section
+  .schedule-field:
+  has(
+    #schedule-tip-amount
+  ) {
+    grid-column:
+      1;
+
+    grid-row:
+      5;
+  }
+
+
+  #schedule-form-card
+  .schedule-option-section
+  .schedule-field:
+  has(
+    #schedule-adjustment-amount
+  ) {
+    grid-column:
+      1;
+
+    grid-row:
+      6;
+  }
+}
