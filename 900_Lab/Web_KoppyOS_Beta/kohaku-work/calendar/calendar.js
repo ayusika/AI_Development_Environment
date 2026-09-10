@@ -5375,6 +5375,11 @@ function openEventModal(
       '[name="memo"]'
     );
 
+  const birthYearInput =
+    eventForm.querySelector(
+      '[name="birth_year"]'
+    );
+
 
   if (isEdit) {
 
@@ -5397,6 +5402,16 @@ function openEventModal(
         calendarEvent.memo
         || ''
       );
+
+
+    if (birthYearInput) {
+      birthYearInput.value =
+        calendarEvent.birth_year
+          ? String(
+              calendarEvent.birth_year
+            )
+          : '';
+    }
 
 
     if (
