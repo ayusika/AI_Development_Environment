@@ -3831,6 +3831,14 @@ eventForm.addEventListener(
           || ''
         ),
 
+      birth_year:
+        String(
+          formData.get(
+            'birth_year'
+          )
+          || ''
+        ),
+
       memo:
         String(
           formData.get(
