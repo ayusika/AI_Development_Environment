@@ -854,7 +854,6 @@ body:has(#view-schedule.is-active) .bottom-nav {
   font-weight: 800;
 
   text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 
@@ -871,11 +870,18 @@ body:has(#view-schedule.is-active) .bottom-nav {
 
 
 .schedule-event-status {
-  padding: 2px 5px;
+  flex: 0 0 auto;
+
+  padding: 1px 3px;
 
   border-radius: 999px;
 
   background: rgba(255, 255, 255, 0.22);
+
+  white-space: nowrap;
+
+  font-size: 8px;
+  line-height: 1.2;
 }
 
 
