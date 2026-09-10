@@ -819,7 +819,7 @@ if (heavenPlaceSelector) {
 }
 
 
-function startHeavenDiary(
+async function startHeavenDiary(
   visit
 ) {
 
@@ -833,6 +833,99 @@ function startHeavenDiary(
 
   heavenDiaryPlaceTouched =
     false;
+
+
+  const startedAt =
+    String(
+      visit.started_at
+      || ''
+    );
+
+  const settingsDate =
+    startedAt.slice(
+      0,
+      10
+    )
+    || new Date()
+      .toISOString()
+      .slice(
+        0,
+        10
+      );
+
+
+  try {
+
+    await window
+      .KohakuHeavenSettings
+      ?.load(
+        settingsDate
+      );
+
+  } catch (error) {
+
+    console.error(
+      'Failed to load Heaven settings for reservation diary:',
+      error
+    );
+  }
+
+
+  if (
+    !activeHeavenDiaryVisit
+    || String(
+      activeHeavenDiaryVisit.id
+    ) !== String(
+      visit.id
+    )
+  ) {
+    return;
+  }
+
+
+  const titleElement =
+    document.getElementById(
+      'heaven-diary-title'
+    );
+
+
+  const isRepeat =
+    [
+      'repeat',
+      'other_store_repeat',
+      'repeat_unknown_id',
+    ].includes(
+      visit.customer_status
+    );
+
+
+  const titleTemplates =
+    window
+      .KohakuHeavenSettings
+      ?.current
+      ?.title_templates
+    || {};
+
+
+  const defaultTitle =
+    isRepeat
+      ? (
+        titleTemplates
+          .thank_you_repeat
+        || 'リピートお礼日記♡♡♡'
+      )
+      : (
+        titleTemplates
+          .thank_you_new
+        || 'お礼日記♡'
+      );
+
+
+  if (titleElement) {
+
+    titleElement.value =
+      defaultTitle;
+  }
 
 
   renderHeavenDiaryVisit(
