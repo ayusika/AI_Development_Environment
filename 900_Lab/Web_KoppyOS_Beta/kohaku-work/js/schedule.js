@@ -2649,22 +2649,67 @@ function renderScheduleEvent(
   };
 
 
+  const primaryCustomerName =
+    customerNames.find(
+      (nameRecord) =>
+        nameRecord.name
+        && Number(
+          nameRecord.is_primary
+        ) === 1
+    )
+    || customerNames.find(
+      (nameRecord) =>
+        nameRecord.name
+        && nameRecord.name_type
+          === 'nickname'
+    )
+    || customerNames.find(
+      (nameRecord) =>
+        nameRecord.name
+    )
+    || null;
+
+
+  const okiniTalkCustomerName =
+    customerNames.find(
+      (nameRecord) =>
+        nameRecord.name
+        && nameRecord.name_type
+          === 'okini_talk'
+    )
+    || null;
+
+
   const customerNameParts =
-    customerNames
+    [
+      primaryCustomerName,
+      okiniTalkCustomerName,
+    ]
       .filter(
-        (nameRecord) =>
-          nameRecord.name
-          && Object.prototype.hasOwnProperty.call(
-            namePrefixes,
-            nameRecord.name_type
-          )
+        (
+          nameRecord,
+          index,
+          records
+        ) =>
+          nameRecord
+          && nameRecord.name
+          && records.findIndex(
+            (record) =>
+              record
+              && String(
+                record.name
+              ) === String(
+                nameRecord.name
+              )
+          ) === index
       )
       .map((nameRecord) => {
 
         const prefix =
           namePrefixes[
             nameRecord.name_type
-          ];
+          ]
+          || '';
 
         return `${prefix}${String(
           nameRecord.name
