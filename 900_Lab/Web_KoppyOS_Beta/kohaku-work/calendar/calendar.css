@@ -4895,3 +4895,28 @@ button[data-calendar-today] {
       none;
   }
 }
+
+/* ----- Birthday event ----- */
+
+.calendar-event.is-birthday {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 238, 246, 0.96),
+      rgba(243, 239, 255, 0.96)
+    );
+
+  border-color:
+    rgba(202, 164, 211, 0.58);
+
+  box-shadow:
+    0 2px 8px
+    rgba(174, 132, 190, 0.14);
+}
+
+
+.calendar-event.is-birthday
+.calendar-event-title {
+  font-weight:
+    800;
+}
