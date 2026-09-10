@@ -66,6 +66,12 @@ const heavenStandaloneDefaultSettings = {
     next_sequence_3: '3連続ありがと♡最速{time}〜！',
     next_last: '{customer}♡{time}〜ラスト1枠！',
     next_consultation: '次回{time}〜要相談♡',
+
+    thank_you_new:
+      'お礼日記♡',
+
+    thank_you_repeat:
+      'リピートお礼日記♡♡♡',
   },
 };
 
