@@ -54,6 +54,15 @@ const heavenStandaloneDefaultSettings = {
     { id: 'common_close_3', category: 'common_close', text: 'いっぱいえちえちしちゃおー！', enabled: true },
   ],
   op_phrases: [],
+
+  thank_you: {
+    body_template:
+      'さっき{place}{course}分{options_part}{repeat}お兄さん♡\n\n\n{body}\n\n\n{signature}',
+
+    signature:
+      '❄︎こはく❄︎',
+  },
+
   title_templates: {
     attendance_empty: '出勤準備中♡',
     attendance_available: '出勤準備中♡最速{time}〜！',
