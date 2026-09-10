@@ -815,6 +815,10 @@ p:has(mark)::before {
 
 @media (max-width: 520px) {
 
+  .heaven-settings-preview {
+    position: static;
+  }
+
   .heaven-settings-scope {
     padding: 13px;
   }
