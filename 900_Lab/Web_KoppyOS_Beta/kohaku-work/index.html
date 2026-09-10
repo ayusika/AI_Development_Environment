@@ -1425,6 +1425,10 @@
 
             <div class="heaven-settings-block-body">
 
+              <h3>
+                タイトル
+              </h3>
+
               <label class="field-label">
                 新規のお客様のデフォルトタイトル
                 <input
@@ -1439,6 +1443,75 @@
                   class="text-input"
                   data-title-template="thank_you_repeat"
                 >
+              </label>
+
+
+              <h3>
+                本文テンプレ
+              </h3>
+
+              <p class="heaven-settings-help">
+                下の変数を使って、
+                個別お礼日記の並び順や定型文を自由に変更できます。
+                改行もこの入力欄の見た目どおり反映されます。
+              </p>
+
+              <div class="heaven-thank-you-variable-guide">
+
+                <div>
+                  <code>{place}</code>
+                  <span>ホテルで / Rで / 自宅で</span>
+                </div>
+
+                <div>
+                  <code>{course}</code>
+                  <span>60 / 90 / 120 などのコース分数</span>
+                </div>
+
+                <div>
+                  <code>{options_part}</code>
+                  <span>OPがある時だけ「聖水希望の」など</span>
+                </div>
+
+                <div>
+                  <code>{repeat}</code>
+                  <span>リピ系なら「リピの」、新規なら空欄</span>
+                </div>
+
+                <div>
+                  <code>{body}</code>
+                  <span>Koppyが生成したお礼本文</span>
+                </div>
+
+                <div>
+                  <code>{signature}</code>
+                  <span>下で設定する署名</span>
+                </div>
+
+              </div>
+
+
+              <label class="field-label">
+                個別お礼日記の署名
+
+                <input
+                  class="text-input"
+                  type="text"
+                  data-thank-you-setting="signature"
+                  placeholder="❄︎こはく❄︎"
+                >
+              </label>
+
+
+              <label class="field-label">
+                本文テンプレ
+
+                <textarea
+                  class="text-input heaven-thank-you-template-input"
+                  rows="9"
+                  data-thank-you-setting="body_template"
+                  spellcheck="false"
+                ></textarea>
               </label>
 
             </div>
