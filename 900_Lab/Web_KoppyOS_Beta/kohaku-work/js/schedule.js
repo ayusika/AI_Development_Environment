@@ -2797,6 +2797,19 @@ function renderScheduleEvent(
           ${escapeHtml(time)}
         </span>
 
+        <span class="schedule-event-status">
+          ${
+            visit.pricing_category
+              === 'foreign'
+              ? `外${Number(
+                  visit.course_minutes
+                )}分`
+              : `${Number(
+                  visit.course_minutes
+                )}分`
+          }
+        </span>
+
         <span class="schedule-event-kind">
           ${escapeHtml(status)}
         </span>
@@ -2813,23 +2826,6 @@ function renderScheduleEvent(
           `
           : ''
       }
-
-      <span class="schedule-event-meta">
-
-        <span class="schedule-event-status">
-          ${
-            visit.pricing_category
-              === 'foreign'
-              ? `外${Number(
-                  visit.course_minutes
-                )}分`
-              : `${Number(
-                  visit.course_minutes
-                )}分`
-          }
-        </span>
-
-      </span>
 
       ${optionHtml}
 
