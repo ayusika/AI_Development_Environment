@@ -574,20 +574,55 @@ function appendDaySummarySection(
     .forEach(
       (calendarEvent) => {
 
-        appendDaySummaryItem(
-          section,
+        const isBirthday =
           String(
             calendarEvent.category
             || ''
-          ) === 'birthday'
-            ? `🎂 ${String(
-                calendarEvent.title
-                || '予定'
-              )}`
-            : String(
-                calendarEvent.title
-                || '予定'
-              ),
+          ) === 'birthday';
+
+        const birthYear =
+          Number(
+            calendarEvent.birth_year
+            || 0
+          );
+
+        const displayYear =
+          Number(
+            String(
+              dateKey
+              || ''
+            ).slice(
+              0,
+              4
+            )
+          );
+
+        const birthdayAge =
+          isBirthday
+          && birthYear > 0
+          && Number.isFinite(
+            displayYear
+          )
+          && displayYear >= birthYear
+            ? displayYear - birthYear
+            : null;
+
+        const calendarEventTitle =
+          String(
+            calendarEvent.title
+            || '予定'
+          );
+
+
+        appendDaySummaryItem(
+          section,
+          isBirthday
+            ? (
+                birthdayAge !== null
+                  ? `🎂 ${calendarEventTitle} ${birthdayAge}歳`
+                  : `🎂 ${calendarEventTitle}`
+              )
+            : calendarEventTitle,
           formatDaySummaryEventMeta(
             calendarEvent
           ),
