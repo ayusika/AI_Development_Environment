@@ -6411,3 +6411,124 @@ has(
       6;
   }
 }
+
+/* ========================================
+   SCHEDULE EVENT NAME COLORS / PREVIEW
+======================================== */
+
+.schedule-event-customer-name.is-line {
+  color: #cf4358 !important;
+}
+
+.schedule-event-customer-name.is-okini-talk {
+  color: #287eb8 !important;
+}
+
+
+/* PC / mouse preview */
+
+@media (hover: hover) and (pointer: fine) {
+
+  .schedule-event:hover,
+  .schedule-event:focus-visible {
+    z-index: 70;
+
+    height: auto !important;
+    min-height:
+      var(
+        --schedule-event-height,
+        28px
+      );
+
+    overflow: visible;
+
+    filter: brightness(1.03);
+
+    box-shadow:
+      0 12px 28px
+      rgba(50, 104, 132, 0.28);
+  }
+
+
+  .schedule-event:hover
+  .schedule-event-main,
+  .schedule-event:focus-visible
+  .schedule-event-main {
+    display: block;
+
+    overflow: visible;
+
+    -webkit-line-clamp: unset;
+
+    white-space: normal;
+
+    text-overflow: clip;
+  }
+
+
+  .schedule-event:hover
+  .schedule-event-options,
+  .schedule-event:focus-visible
+  .schedule-event-options {
+    overflow: visible !important;
+
+    max-height: none !important;
+
+    white-space: normal !important;
+
+    text-overflow: clip !important;
+
+    -webkit-line-clamp: unset !important;
+  }
+}
+
+
+/* iPhone / touch preview */
+
+@media (hover: none), (pointer: coarse) {
+
+  .schedule-event:active {
+    z-index: 70;
+
+    height: auto !important;
+    min-height:
+      var(
+        --schedule-event-height,
+        28px
+      );
+
+    overflow: visible;
+
+    box-shadow:
+      0 12px 28px
+      rgba(50, 104, 132, 0.28);
+  }
+
+
+  .schedule-event:active
+  .schedule-event-main {
+    display: block;
+
+    overflow: visible;
+
+    -webkit-line-clamp: unset;
+
+    white-space: normal;
+
+    text-overflow: clip;
+  }
+
+
+  .schedule-event:active
+  .schedule-event-options {
+    overflow: visible !important;
+
+    max-height: none !important;
+
+    white-space: normal !important;
+
+    text-overflow: clip !important;
+
+    -webkit-line-clamp: unset !important;
+  }
+}
