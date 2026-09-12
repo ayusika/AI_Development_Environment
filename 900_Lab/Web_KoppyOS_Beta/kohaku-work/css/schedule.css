@@ -6532,3 +6532,102 @@ has(
     -webkit-line-clamp: unset !important;
   }
 }
+
+/* ========================================
+   CUSTOMER VISIT SUMMARY INFO
+======================================== */
+
+.schedule-customer-visit-summary {
+  align-items: start;
+}
+
+
+.schedule-customer-visit-date {
+  min-width: 0;
+
+  word-break: break-word;
+}
+
+
+.schedule-customer-visit-summary-info {
+  display: grid;
+  justify-items: end;
+  gap: 3px;
+
+  min-width: 0;
+
+  text-align: right;
+}
+
+
+.schedule-customer-visit-summary-info
+> strong {
+  color: var(--text);
+
+  font-size: 12px;
+  font-weight: 900;
+}
+
+
+.schedule-customer-visit-option {
+  max-width: 100%;
+
+  color: var(--text-soft);
+
+  font-size: 10px;
+  font-weight: 800;
+
+  line-height: 1.35;
+
+  white-space: normal;
+  word-break: break-word;
+}
+
+
+.schedule-customer-visit-open-label {
+  color: var(--accent-deep);
+
+  font-size: 10px;
+  font-weight: 900;
+
+  white-space: nowrap;
+}
+
+
+.schedule-customer-visit-open-label::before {
+  content: "📓 ";
+}
+
+
+.schedule-customer-visit-detail[open]
+.schedule-customer-visit-open-label {
+  display: none;
+}
+
+
+@media (max-width: 640px) {
+
+  .schedule-customer-visit-summary {
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(110px, auto)
+      16px;
+  }
+
+
+  .schedule-customer-visit-date {
+    font-size: 11px;
+  }
+
+
+  .schedule-customer-visit-summary-info
+  > strong {
+    font-size: 11px;
+  }
+
+
+  .schedule-customer-visit-option,
+  .schedule-customer-visit-open-label {
+    font-size: 9px;
+  }
+}
