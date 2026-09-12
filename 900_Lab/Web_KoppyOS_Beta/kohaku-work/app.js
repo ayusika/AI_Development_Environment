@@ -537,7 +537,119 @@ function initializeApp() {
 
   updateTodayDateLabels();
 
-  showView('home');
+
+  let refreshViewName =
+    null;
+
+
+  try {
+
+    refreshViewName =
+      sessionStorage.getItem(
+        'kohakuWorkRefreshView'
+      );
+
+
+    sessionStorage.removeItem(
+      'kohakuWorkRefreshView'
+    );
+
+  } catch (error) {
+
+    console.error(
+      'Failed to restore refresh view:',
+      error
+    );
+  }
+
+
+  const safeRefreshViewMap = {
+    home: 'home',
+    diary: 'diary',
+    nukinaviCreate:
+      'nukinaviCreate',
+    heavenDiary:
+      'heavenDiary',
+    heavenSettings:
+      'heavenDiary',
+    heavenCreate:
+      'schedule',
+    diaryEdit:
+      'nukinaviCreate',
+    postPrep:
+      'nukinaviCreate',
+    schedule:
+      'schedule',
+    shift:
+      'shift',
+    customers:
+      'customers',
+    customerDetail:
+      'customers',
+    sales:
+      'sales',
+    database:
+      'database',
+    placeholder:
+      'home',
+  };
+
+
+  const targetView =
+    safeRefreshViewMap[
+      refreshViewName
+    ]
+    || 'home';
+
+
+  showView(
+    targetView
+  );
+
+
+  if (
+    targetView === 'schedule'
+    && typeof loadSchedule
+      === 'function'
+  ) {
+    void loadSchedule();
+  }
+
+
+  if (
+    targetView === 'shift'
+    && typeof loadShift
+      === 'function'
+  ) {
+    void loadShift();
+  }
+
+
+  if (
+    targetView === 'customers'
+    && typeof loadCustomers
+      === 'function'
+  ) {
+    void loadCustomers();
+  }
+
+
+  if (
+    targetView === 'sales'
+    && typeof loadSales
+      === 'function'
+  ) {
+    void loadSales();
+  }
+
+
+  if (
+    targetView === 'database'
+    && typeof loadDatabaseViewer
+      === 'function'
+  ) {
+    void loadDatabaseViewer();
+  }
 }
 
 
