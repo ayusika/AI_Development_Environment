@@ -2931,6 +2931,7 @@ function renderScheduleEvent(
       style="
         top:${top}px;
         height:${height}px;
+        --schedule-event-height:${height}px;
       "
     >
 
