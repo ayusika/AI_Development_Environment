@@ -166,56 +166,14 @@ if ($sessionName === '') {
 $sessionLifetimeSeconds =
     60 * 60 * 24 * 30;
 
-$sessionSavePath =
-    '/home/users/2/her.jp-mikipiano/.koppy-private/sessions';
-
-if (!is_dir($sessionSavePath)) {
-    if (
-        !mkdir(
-            $sessionSavePath,
-            0700,
-            true
-        )
-        && !is_dir($sessionSavePath)
-    ) {
-        http_response_code(500);
-
-        header(
-            'Content-Type: application/json; charset=utf-8'
-        );
-
-        echo json_encode([
-            'success' => false,
-            'error' =>
-                'Authentication Session storage could not be prepared.',
-        ]);
-
-        exit;
-    }
-}
-
+// Use the PHP default storage, shared with api/v1/bootstrap.php.
 session_name(
     $sessionName
 );
 
 ini_set(
-    'session.save_path',
-    $sessionSavePath
-);
-
-ini_set(
     'session.gc_maxlifetime',
     (string) $sessionLifetimeSeconds
-);
-
-ini_set(
-    'session.gc_probability',
-    '1'
-);
-
-ini_set(
-    'session.gc_divisor',
-    '100'
 );
 
 session_set_cookie_params([

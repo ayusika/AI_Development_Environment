@@ -387,6 +387,10 @@ async function refreshKoppyAuthenticationActivity() {
   koppyAuthActivityRefreshPending =
     true;
 
+  // Throttle attempts too, including failed or unauthenticated responses.
+  koppyAuthLastActivityRefreshAt =
+    now;
+
 
   try {
 
