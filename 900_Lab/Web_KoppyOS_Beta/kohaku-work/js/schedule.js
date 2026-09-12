@@ -2964,7 +2964,38 @@ function renderScheduleEvent(
         || visit.customer_code
           ? `
             <span class="schedule-event-main">
-              ${escapeHtml(customer)}
+              ${
+                customerNameParts.length
+                  ? customerNameParts
+                      .map((namePart) => {
+
+                        const nameClass =
+                          namePart.startsWith('L:')
+                            ? 'is-line'
+                            : (
+                                namePart.startsWith('オ:')
+                                  ? 'is-okini-talk'
+                                  : ''
+                              );
+
+
+                        return `
+                          <span
+                            class="schedule-event-customer-name ${nameClass}"
+                          >
+                            ${escapeHtml(
+                              namePart
+                            )}
+                          </span>
+                        `;
+                      })
+                      .join(
+                        '<span class="schedule-event-customer-separator"> / </span>'
+                      )
+                  : escapeHtml(
+                      customer
+                    )
+              }
             </span>
           `
           : ''
