@@ -49,6 +49,38 @@ async function refreshLatestVersion(
     Date.now().toString();
 
 
+  const refreshViewName =
+    Object.entries(
+      views
+    )
+      .find(
+        ([, view]) =>
+          view
+          ?.classList
+          .contains(
+            'is-active'
+          )
+      )
+      ?.[0]
+    || 'home';
+
+
+  try {
+
+    sessionStorage.setItem(
+      'kohakuWorkRefreshView',
+      refreshViewName
+    );
+
+  } catch (error) {
+
+    console.error(
+      'Failed to save refresh view:',
+      error
+    );
+  }
+
+
   if (button) {
 
     button.disabled =
