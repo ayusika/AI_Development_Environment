@@ -6598,6 +6598,240 @@ async function saveScheduleCustomerNames(
 }
 
 
+async function saveScheduleCustomerAll(
+  button
+) {
+
+  const customerId =
+    Number(
+      button?.dataset?.customerId
+      || 0
+    );
+
+
+  if (
+    !customerId
+    || !scheduleLinkedCustomerPanel
+  ) {
+    return;
+  }
+
+
+  const originalText =
+    button.textContent;
+
+
+  const patchCustomer =
+    async (
+      payload,
+      fallbackMessage
+    ) => {
+
+      const response =
+        await fetch(
+          customersApiUrl,
+          {
+            method:
+              'PATCH',
+
+            headers: {
+              'Content-Type':
+                'application/json',
+            },
+
+            body:
+              JSON.stringify(
+                payload
+              ),
+          }
+        );
+
+
+      const data =
+        await response.json();
+
+
+      if (
+        !response.ok
+        || !data.success
+      ) {
+        throw new Error(
+          data.error
+          || fallbackMessage
+        );
+      }
+
+
+      return data;
+    };
+
+
+  button.disabled =
+    true;
+
+  button.textContent =
+    '全部保存中...';
+
+
+  try {
+
+    const nameInputs =
+      Array.from(
+        scheduleLinkedCustomerPanel
+          .querySelectorAll(
+            '[data-customer-name-input]'
+          )
+      );
+
+
+    for (
+      const input
+      of nameInputs
+    ) {
+
+      const nameType =
+        input.dataset
+          .customerNameInput;
+
+      const name =
+        input.value.trim();
+
+
+      await patchCustomer(
+        {
+          id:
+            customerId,
+
+          name_type:
+            nameType,
+
+          name:
+            name,
+        },
+        `${nameType} を保存できませんでした。`
+      );
+    }
+
+
+    const sourceSelect =
+      document.getElementById(
+        'schedule-customer-acquisition-source'
+      );
+
+    const detailInput =
+      document.getElementById(
+        'schedule-customer-acquisition-detail'
+      );
+
+
+    if (sourceSelect) {
+
+      await patchCustomer(
+        {
+          id:
+            customerId,
+
+          acquisition_source_type:
+            sourceSelect.value,
+
+          acquisition_source_detail:
+            detailInput
+              ? detailInput.value.trim()
+              : '',
+        },
+        '初回流入元を保存できませんでした。'
+      );
+    }
+
+
+    const generalNotesTextarea =
+      document.getElementById(
+        'schedule-customer-general-notes'
+      );
+
+
+    if (generalNotesTextarea) {
+
+      await patchCustomer(
+        {
+          id:
+            customerId,
+
+          general_notes:
+            generalNotesTextarea
+              .value
+              .trim(),
+        },
+        '顧客メモを保存できませんでした。'
+      );
+    }
+
+
+    const featureInputs =
+      Array.from(
+        scheduleLinkedCustomerPanel
+          .querySelectorAll(
+            '[data-customer-feature-input]'
+          )
+      );
+
+
+    for (
+      const input
+      of featureInputs
+    ) {
+
+      const featureType =
+        input.dataset
+          .customerFeatureInput;
+
+      const featureValue =
+        input.value.trim();
+
+
+      await patchCustomer(
+        {
+          id:
+            customerId,
+
+          feature_type:
+            featureType,
+
+          feature_value:
+            featureValue,
+
+          feature_note:
+            '',
+        },
+        `${featureType} を保存できませんでした。`
+      );
+    }
+
+
+    window.alert(
+      '顧客情報を全部保存しました。'
+    );
+
+
+  } catch (error) {
+
+    window.alert(
+      error.message
+      || '顧客情報を保存できませんでした。'
+    );
+
+
+  } finally {
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      originalText;
+  }
+}
+
+
 async function saveScheduleCustomerAcquisitionSource(
   button
 ) {
