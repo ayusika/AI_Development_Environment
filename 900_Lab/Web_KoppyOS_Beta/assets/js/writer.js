@@ -225,11 +225,175 @@ function clearProposalError() {
 }
 
 
+function localizeWriterErrorMessage(
+  message
+) {
+  const originalMessage =
+    String(
+      message
+      ?? ''
+    ).trim();
+
+
+  if (originalMessage === '') {
+    return '処理中にエラーが発生したよ。もう一度試してね。';
+  }
+
+
+  if (
+    /[\u3040-\u30ff\u3400-\u9fff]/u
+      .test(
+        originalMessage
+      )
+  ) {
+    return originalMessage;
+  }
+
+
+  const normalizedMessage =
+    originalMessage.toLowerCase();
+
+
+  if (
+    normalizedMessage.includes(
+      'authentication'
+    )
+    || normalizedMessage.includes(
+      'unauthorized'
+    )
+  ) {
+    return '認証Sessionを確認できなかったよ。GitHubでもう一度ログインしてね。';
+  }
+
+
+  if (
+    normalizedMessage.includes(
+      'forbidden'
+    )
+    || normalizedMessage.includes(
+      'permission'
+    )
+    || normalizedMessage.includes(
+      'not allowed'
+    )
+  ) {
+    return 'この操作は許可されていないよ。Writerの書き込み可能領域と権限を確認してね。';
+  }
+
+
+  if (
+    normalizedMessage.includes(
+      'exact match'
+    )
+    || normalizedMessage.includes(
+      'matched multiple'
+    )
+    || normalizedMessage.includes(
+      'multiple locations'
+    )
+  ) {
+    return '部分置換の対象を1か所に特定できなかったよ。「探す文字列」がGitHub正本に完全一致で1か所だけあるか確認してね。';
+  }
+
+
+  if (
+    normalizedMessage.includes(
+      'not found'
+    )
+  ) {
+    return '対象が見つからなかったよ。ファイルパスやGitHub正本の内容を確認してね。';
+  }
+
+
+  if (
+    normalizedMessage.includes(
+      'already exists'
+    )
+  ) {
+    return '同じ名前の対象がすでに存在するため、処理を停止したよ。';
+  }
+
+
+  if (
+    normalizedMessage.includes(
+      'already approved'
+    )
+  ) {
+    return 'この変更案はすでに承認済みで、再利用できないよ。新しい変更案を作ってね。';
+  }
+
+
+  if (
+    normalizedMessage.includes(
+      'network'
+    )
+    || normalizedMessage.includes(
+      'fetch'
+    )
+  ) {
+    return '通信に失敗したよ。ネットワーク状態を確認して、もう一度試してね。';
+  }
+
+
+  if (
+    normalizedMessage.includes(
+      'timeout'
+    )
+    || normalizedMessage.includes(
+      'timed out'
+    )
+  ) {
+    return '処理が時間切れになったよ。少し待ってから、もう一度試してね。';
+  }
+
+
+  if (
+    normalizedMessage.includes(
+      'json'
+    )
+  ) {
+    return 'サーバーからの応答を正しく読み取れなかったよ。';
+  }
+
+
+  if (
+    normalizedMessage.includes(
+      'http'
+    )
+  ) {
+    return 'サーバー処理でエラーが発生したよ。詳しい内容はブラウザのコンソールを確認してね。';
+  }
+
+
+  return '処理中にエラーが発生したよ。詳しい内容はブラウザのコンソールを確認してね。';
+}
+
+
 function showProposalError(
   message
 ) {
+  const userMessage =
+    localizeWriterErrorMessage(
+      message
+    );
+
+
+  if (
+    userMessage
+    !== String(
+      message
+      ?? ''
+    ).trim()
+  ) {
+    console.error(
+      'Koppy Writer error:',
+      message
+    );
+  }
+
+
   proposalError.textContent =
-    message;
+    userMessage;
 
   setProposalStatus(
     'error',
