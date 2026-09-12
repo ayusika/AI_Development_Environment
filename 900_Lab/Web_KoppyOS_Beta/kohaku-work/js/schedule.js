@@ -321,8 +321,100 @@ function initializeScheduleResize() {
 
   if (!shell || !handle) return;
 
+
+  const storageKey =
+    'kohakuWorkScheduleCalendarHeight';
+
+  const minHeight =
+    360;
+
+
+  const getMaxHeight =
+    () =>
+      Math.max(
+        420,
+        window.innerHeight - 120
+      );
+
+
+  const clampHeight =
+    (height) =>
+      Math.min(
+        getMaxHeight(),
+        Math.max(
+          minHeight,
+          Math.round(
+            Number(height)
+            || minHeight
+          )
+        )
+      );
+
+
+  const saveHeight =
+    (height) => {
+
+      const nextHeight =
+        clampHeight(
+          height
+        );
+
+
+      try {
+
+        localStorage.setItem(
+          storageKey,
+          String(
+            nextHeight
+          )
+        );
+
+      } catch (error) {
+
+        console.error(
+          'Failed to save schedule calendar height:',
+          error
+        );
+      }
+    };
+
+
+  try {
+
+    const savedHeight =
+      Number(
+        localStorage.getItem(
+          storageKey
+        )
+        || 0
+      );
+
+
+    if (
+      Number.isFinite(
+        savedHeight
+      )
+      && savedHeight >= minHeight
+    ) {
+
+      shell.style.height =
+        `${clampHeight(
+          savedHeight
+        )}px`;
+    }
+
+  } catch (error) {
+
+    console.error(
+      'Failed to restore schedule calendar height:',
+      error
+    );
+  }
+
+
   let startY = 0;
   let startHeight = 0;
+
 
   const stopResize =
     (event) => {
@@ -341,6 +433,12 @@ function initializeScheduleResize() {
           event.pointerId
         );
       }
+
+
+      saveHeight(
+        shell.getBoundingClientRect()
+          .height
+      );
     };
 
 
@@ -383,19 +481,9 @@ function initializeScheduleResize() {
       const deltaY =
         event.clientY - startY;
 
-      const maxHeight =
-        Math.max(
-          420,
-          window.innerHeight - 120
-        );
-
       const nextHeight =
-        Math.min(
-          maxHeight,
-          Math.max(
-            360,
-            startHeight + deltaY
-          )
+        clampHeight(
+          startHeight + deltaY
         );
 
       shell.style.height =
@@ -414,6 +502,50 @@ function initializeScheduleResize() {
     'pointercancel',
     stopResize
   );
+
+
+  if (
+    typeof ResizeObserver
+    !== 'undefined'
+  ) {
+
+    const resizeObserver =
+      new ResizeObserver(
+        (entries) => {
+
+          const entry =
+            entries[0];
+
+          if (!entry) {
+            return;
+          }
+
+
+          const height =
+            entry.contentRect.height;
+
+
+          if (
+            height < minHeight
+            || !Number.isFinite(
+              height
+            )
+          ) {
+            return;
+          }
+
+
+          saveHeight(
+            height
+          );
+        }
+      );
+
+
+    resizeObserver.observe(
+      shell
+    );
+  }
 }
 
 
