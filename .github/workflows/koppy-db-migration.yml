@@ -20,6 +20,7 @@ on:
         required: true
         type: choice
         options:
+          - migrate-home.php
           - migrate-heaven-diaries.php
           - migrate-heaven-diary-drafts.php
           - migrate-heaven-diary-settings.php
