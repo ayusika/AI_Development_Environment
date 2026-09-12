@@ -1800,6 +1800,21 @@ document.addEventListener(
     }
 
 
+    const saveCustomerAllButton =
+      event.target.closest(
+        '[data-action="save-schedule-customer-all"]'
+      );
+
+    if (saveCustomerAllButton) {
+
+      saveScheduleCustomerAll(
+        saveCustomerAllButton
+      );
+
+      return;
+    }
+
+
     const saveCustomerNamesButton =
       event.target.closest(
         '[data-action="save-schedule-customer-names"]'
