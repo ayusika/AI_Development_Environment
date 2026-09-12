@@ -5276,9 +5276,16 @@ async function openScheduleCustomerPanel() {
                     class="schedule-customer-visit-detail"
                   >
 
-                    <summary class="schedule-detail-row">
+                    <summary
+                      class="
+                        schedule-detail-row
+                        schedule-customer-visit-summary
+                      "
+                    >
 
-                      <span>
+                      <span
+                        class="schedule-customer-visit-date"
+                      >
                         ${escapeHtml(
                           String(
                             customerVisit.started_at
@@ -5287,16 +5294,40 @@ async function openScheduleCustomerPanel() {
                         )}
                       </span>
 
-                      <strong>
-                        ${escapeHtml(
-                          String(
-                            customerVisit.course_minutes
-                            || ''
-                          )
-                        )}${customerVisit.course_minutes
-                          ? '分'
-                          : ''}
-                      </strong>
+                      <span
+                        class="schedule-customer-visit-summary-info"
+                      >
+
+                        <strong>
+                          ${escapeHtml(
+                            String(
+                              customerVisit.course_minutes
+                              || ''
+                            )
+                          )}${customerVisit.course_minutes
+                            ? '分'
+                            : ''}
+                        </strong>
+
+                        <small
+                          class="schedule-customer-visit-option"
+                        >
+                          OP
+                          ${escapeHtml(
+                            String(
+                              customerVisit.option_text
+                              || 'なし'
+                            )
+                          )}
+                        </small>
+
+                        <small
+                          class="schedule-customer-visit-open-label"
+                        >
+                          日記を開く
+                        </small>
+
+                      </span>
 
                     </summary>
 
