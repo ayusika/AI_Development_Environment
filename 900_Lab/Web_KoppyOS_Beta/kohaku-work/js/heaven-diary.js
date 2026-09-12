@@ -1525,7 +1525,7 @@ async function saveHeavenDiary() {
 
   const bodyElement =
     document.getElementById(
-      'heaven-diary-saved-body'
+      'heaven-diary-body'
     );
 
 
