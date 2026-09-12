@@ -1064,46 +1064,9 @@ function renderHeavenDiaryVisit(
   );
 
 
-  loadSavedHeavenDiary(
+  void loadSavedHeavenDiary(
     visit
-  )
-    .then((savedDiaryExists) => {
-
-      if (
-        !activeHeavenDiaryVisit
-        || String(
-          activeHeavenDiaryVisit.id
-        ) !== String(
-          visit.id
-        )
-      ) {
-        return;
-      }
-
-
-      if (savedDiaryExists) {
-
-        clearHeavenDiaryLocalDraft(
-          visit.id
-        );
-
-        return;
-      }
-
-
-      const localDraftRestored =
-        restoreHeavenDiaryLocalDraft(
-          visit
-        );
-
-
-      if (!localDraftRestored) {
-
-        loadHeavenDiaryCloudDraft(
-          visit
-        );
-      }
-    });
+  );
 }
 
 
