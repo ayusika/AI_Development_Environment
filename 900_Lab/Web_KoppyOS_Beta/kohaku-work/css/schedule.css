@@ -6609,14 +6609,24 @@ has(
 
   .schedule-customer-visit-summary {
     grid-template-columns:
+      minmax(112px, max-content)
       minmax(0, 1fr)
-      minmax(110px, auto)
       16px;
   }
 
 
   .schedule-customer-visit-date {
+    min-width: 0;
+
     font-size: 11px;
+
+    white-space: nowrap;
+    word-break: normal;
+  }
+
+
+  .schedule-customer-visit-summary-info {
+    min-width: 0;
   }
 
 
