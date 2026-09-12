@@ -1633,3 +1633,47 @@ p:has(mark)::before {
   color: var(--text-soft);
   font-size: 11px;
 }
+
+/* ========================================
+   HEAVEN DIARY BODY RESIZE
+======================================== */
+
+.heaven-diary-resize-handle {
+  min-height: 38px;
+
+  display: grid;
+  place-items: center;
+
+  margin-top: 4px;
+
+  cursor: ns-resize;
+  touch-action: none;
+
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.heaven-diary-resize-handle span {
+  width: 58px;
+  height: 5px;
+
+  display: block;
+
+  border-radius: 999px;
+
+  background: var(--line);
+
+  transition:
+    width 120ms ease,
+    background 120ms ease,
+    transform 120ms ease;
+}
+
+.heaven-diary-resize-handle:hover span,
+.heaven-diary-resize-handle.is-dragging span {
+  width: 72px;
+
+  background: var(--accent);
+
+  transform: scaleY(1.15);
+}
