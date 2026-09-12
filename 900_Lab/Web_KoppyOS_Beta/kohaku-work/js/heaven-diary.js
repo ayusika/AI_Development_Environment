@@ -2282,3 +2282,268 @@ if (
     }
   );
 }
+
+/* ========================================
+   HEAVEN DIARY BODY HEIGHT
+======================================== */
+
+const heavenDiaryBodyHeightStorageKey =
+  'kohakuWorkHeavenDiaryBodyHeight';
+
+
+function initializeHeavenDiaryBodyResize() {
+
+  const bodyElement =
+    document.getElementById(
+      'heaven-diary-body'
+    );
+
+  const resizeHandle =
+    document.querySelector(
+      '[data-heaven-diary-resize-handle]'
+    );
+
+
+  if (!bodyElement) {
+    return;
+  }
+
+
+  const minHeight =
+    180;
+
+  const maxHeight =
+    1200;
+
+
+  const clampHeight =
+    (height) =>
+      Math.min(
+        maxHeight,
+        Math.max(
+          minHeight,
+          Math.round(
+            Number(height)
+            || minHeight
+          )
+        )
+      );
+
+
+  const saveHeight =
+    (height) => {
+
+      const nextHeight =
+        clampHeight(
+          height
+        );
+
+
+      try {
+
+        localStorage.setItem(
+          heavenDiaryBodyHeightStorageKey,
+          String(
+            nextHeight
+          )
+        );
+
+      } catch (error) {
+
+        console.error(
+          'Failed to save Heaven diary body height:',
+          error
+        );
+      }
+    };
+
+
+  try {
+
+    const savedHeight =
+      Number(
+        localStorage.getItem(
+          heavenDiaryBodyHeightStorageKey
+        )
+        || 0
+      );
+
+
+    if (
+      Number.isFinite(
+        savedHeight
+      )
+      && savedHeight >= minHeight
+    ) {
+
+      bodyElement.style.height =
+        `${clampHeight(
+          savedHeight
+        )}px`;
+    }
+
+  } catch (error) {
+
+    console.error(
+      'Failed to restore Heaven diary body height:',
+      error
+    );
+  }
+
+
+  if (resizeHandle) {
+
+    let startY =
+      0;
+
+    let startHeight =
+      0;
+
+
+    const stopResize =
+      (event) => {
+
+        resizeHandle.classList.remove(
+          'is-dragging'
+        );
+
+
+        if (
+          event.pointerId !== undefined
+          && resizeHandle.hasPointerCapture(
+            event.pointerId
+          )
+        ) {
+
+          resizeHandle.releasePointerCapture(
+            event.pointerId
+          );
+        }
+
+
+        saveHeight(
+          bodyElement.getBoundingClientRect()
+            .height
+        );
+      };
+
+
+    resizeHandle.addEventListener(
+      'pointerdown',
+      (event) => {
+
+        event.preventDefault();
+
+
+        startY =
+          event.clientY;
+
+        startHeight =
+          bodyElement
+            .getBoundingClientRect()
+            .height;
+
+
+        resizeHandle.classList.add(
+          'is-dragging'
+        );
+
+
+        resizeHandle.setPointerCapture(
+          event.pointerId
+        );
+      }
+    );
+
+
+    resizeHandle.addEventListener(
+      'pointermove',
+      (event) => {
+
+        if (
+          !resizeHandle.classList.contains(
+            'is-dragging'
+          )
+        ) {
+          return;
+        }
+
+
+        event.preventDefault();
+
+
+        const nextHeight =
+          clampHeight(
+            startHeight
+            + (
+              event.clientY
+              - startY
+            )
+          );
+
+
+        bodyElement.style.height =
+          `${nextHeight}px`;
+      }
+    );
+
+
+    resizeHandle.addEventListener(
+      'pointerup',
+      stopResize
+    );
+
+
+    resizeHandle.addEventListener(
+      'pointercancel',
+      stopResize
+    );
+  }
+
+
+  if (
+    typeof ResizeObserver
+    !== 'undefined'
+  ) {
+
+    const resizeObserver =
+      new ResizeObserver(
+        (entries) => {
+
+          const entry =
+            entries[0];
+
+          if (!entry) {
+            return;
+          }
+
+
+          const height =
+            entry.contentRect.height;
+
+
+          if (
+            height < minHeight
+            || !Number.isFinite(
+              height
+            )
+          ) {
+            return;
+          }
+
+
+          saveHeight(
+            height
+          );
+        }
+      );
+
+
+    resizeObserver.observe(
+      bodyElement
+    );
+  }
+}
+
+
+initializeHeavenDiaryBodyResize();
