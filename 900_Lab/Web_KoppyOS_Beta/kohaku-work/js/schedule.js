@@ -6201,6 +6201,86 @@ async function openScheduleCustomerPanel() {
       }
 
 
+      const individualSaveActions = [
+        'save-schedule-customer-names',
+        'save-schedule-customer-acquisition-source',
+        'save-schedule-customer-general-notes',
+        'save-schedule-customer-identity-features',
+      ];
+
+
+      individualSaveActions.forEach(
+        (actionName) => {
+
+          scheduleLinkedCustomerPanel
+            .querySelectorAll(
+              `[data-action="${actionName}"]`
+            )
+            .forEach(
+              (button) => {
+
+                const actions =
+                  button.closest(
+                    '.schedule-customer-actions'
+                  );
+
+
+                button.remove();
+
+
+                if (
+                  actions
+                  && !actions.children.length
+                ) {
+                  actions.remove();
+                }
+              }
+            );
+        }
+      );
+
+
+      const saveAllActions =
+        document.createElement(
+          'div'
+        );
+
+      saveAllActions.className =
+        'schedule-customer-actions';
+
+
+      const saveAllButton =
+        document.createElement(
+          'button'
+        );
+
+      saveAllButton.className =
+        'primary-button';
+
+      saveAllButton.type =
+        'button';
+
+      saveAllButton.dataset.action =
+        'save-schedule-customer-all';
+
+      saveAllButton.dataset.customerId =
+        String(
+          customerId
+        );
+
+      saveAllButton.textContent =
+        '顧客情報を全部保存';
+
+
+      saveAllActions.append(
+        saveAllButton
+      );
+
+      scheduleLinkedCustomerPanel.append(
+        saveAllActions
+      );
+
+
     } catch (error) {
 
       scheduleLinkedCustomerPanel.innerHTML = `
