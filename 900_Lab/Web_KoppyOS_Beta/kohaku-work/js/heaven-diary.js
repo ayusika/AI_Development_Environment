@@ -1132,10 +1132,6 @@ async function loadSavedHeavenDiary(
   }
 
 
-  bodyElement.value =
-    '';
-
-
   if (statusElement) {
 
     statusElement.hidden =
