@@ -989,3 +989,302 @@ body {
     transition: none !important;
   }
 }
+
+
+/* ======================================================
+   KOPPY WORLD ICE ENTRANCE HOTFIX V2
+====================================================== */
+
+.home-hero {
+  display: block;
+  min-height: 360px;
+  padding: clamp(28px, 4vw, 48px);
+  padding-right: min(30vw, 310px);
+  border-radius: 40px;
+  background:
+    radial-gradient(circle at 14% 16%, rgba(255,255,255,.95), transparent 24%),
+    radial-gradient(circle at 83% 18%, rgba(208,237,255,.46), transparent 26%),
+    linear-gradient(135deg, rgba(255,255,255,.86), rgba(236,248,255,.72) 55%, rgba(246,252,255,.86));
+  box-shadow:
+    0 24px 70px rgba(67, 138, 175, .12),
+    inset 0 1px 0 rgba(255,255,255,.94);
+}
+
+.home-hero::after {
+  right: -80px;
+  top: -60px;
+  width: 260px;
+  height: 260px;
+  box-shadow:
+    0 0 0 28px rgba(255,255,255,.14),
+    0 0 0 56px rgba(120,210,250,.07);
+}
+
+.home-hero-copy {
+  max-width: 620px;
+  padding: 6px 0;
+}
+
+.home-kicker {
+  margin-bottom: 12px;
+}
+
+.home-brand-mark {
+  margin-bottom: 8px;
+}
+
+.home-hero h1 {
+  margin-bottom: 14px;
+  font-size: clamp(46px, 6vw, 82px);
+  line-height: .98;
+  letter-spacing: -.04em;
+}
+
+.home-hero .subtitle {
+  max-width: 520px;
+  font-size: 16px;
+  line-height: 1.9;
+}
+
+.home-handwriting {
+  margin-top: 18px;
+}
+
+.home-hero-note {
+  margin-top: 22px;
+}
+
+.home-koppy-zone {
+  position: absolute;
+  right: 28px;
+  bottom: 12px;
+  z-index: 3;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  width: 190px;
+  min-width: 0;
+}
+
+.koppy-companion {
+  width: 190px;
+  opacity: .95;
+}
+
+.koppy-companion::before {
+  width: 160px;
+  background:
+    radial-gradient(circle, rgba(255,255,255,.95), rgba(177,227,250,.22) 58%, transparent 72%);
+}
+
+.koppy-portrait {
+  filter:
+    drop-shadow(0 14px 20px rgba(54,130,173,.14));
+}
+
+.koppy-speech,
+.koppy-tap-note {
+  display: none !important;
+}
+
+.home-primary-grid {
+  grid-template-columns: 1.18fr .92fr;
+  grid-template-areas:
+    "work home"
+    "work brain"
+    "chat brain";
+  gap: 18px;
+}
+
+.world-card-work {
+  grid-area: work;
+  min-height: 365px;
+}
+
+.world-card-home {
+  grid-area: home;
+  min-height: 175px;
+}
+
+.world-card-brain {
+  grid-area: brain;
+  min-height: 260px;
+}
+
+.world-card-chat {
+  grid-area: chat;
+  min-height: 172px;
+}
+
+.world-card {
+  padding: 28px 28px 24px;
+  border-radius: 28px;
+  box-shadow:
+    0 16px 38px rgba(61,137,177,.08),
+    inset 0 1px 0 rgba(255,255,255,.92);
+}
+
+.world-card:hover {
+  box-shadow:
+    0 20px 46px rgba(52,131,174,.13),
+    inset 0 1px 0 rgba(255,255,255,.94);
+}
+
+.world-card-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  font-size: 27px;
+}
+
+.calendar-icon span {
+  font-size: 22px;
+}
+
+.house-icon {
+  font-size: 42px;
+}
+
+.brain-icon {
+  font-size: 44px;
+}
+
+.chat-icon {
+  font-size: 25px;
+}
+
+.world-card h2 {
+  margin-bottom: 8px;
+  font-size: clamp(28px, 2.8vw, 38px);
+  line-height: 1.08;
+}
+
+.world-card-copy > p:not(.world-card-kicker) {
+  font-size: 15px;
+}
+
+.world-card-tags {
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.world-card-open {
+  left: 28px;
+  bottom: 24px;
+  min-width: 128px;
+}
+
+.world-card-note {
+  top: 22px;
+  right: 24px;
+  bottom: auto;
+  opacity: .48;
+}
+
+.world-card-work .world-card-note {
+  top: auto;
+  bottom: 24px;
+  right: 26px;
+}
+
+.home-tools-heading {
+  margin: 22px 0 12px;
+}
+
+.home-tools-grid {
+  gap: 12px;
+}
+
+.home-tool-card {
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.72);
+}
+
+.home-closing-note {
+  justify-content: flex-start;
+  margin: 26px 2px 0;
+  text-align: left;
+}
+
+.home-footer {
+  margin-top: 18px;
+}
+
+@media (max-width: 960px) {
+  .home-hero {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    min-height: 0;
+    padding-right: 24px;
+    text-align: center;
+  }
+
+  .home-koppy-zone {
+    position: relative;
+    right: auto;
+    bottom: auto;
+    order: 2;
+    width: 150px;
+    margin: 0 auto 4px;
+    justify-content: center;
+  }
+
+  .home-hero-copy {
+    order: 1;
+    max-width: none;
+  }
+
+  .home-hero .subtitle {
+    max-width: none;
+  }
+
+  .home-hero-note,
+  .home-closing-note {
+    justify-content: center;
+    text-align: center;
+  }
+
+  .home-primary-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "work"
+      "home"
+      "brain"
+      "chat";
+  }
+
+  .world-card-work,
+  .world-card-home,
+  .world-card-brain,
+  .world-card-chat {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .home-hero {
+    border-radius: 28px;
+    padding: 22px 16px 26px;
+  }
+
+  .koppy-companion {
+    width: 132px;
+  }
+
+  .world-card {
+    padding: 24px 20px 22px;
+  }
+
+  .world-card-note {
+    top: auto;
+    bottom: 22px;
+    right: 20px;
+  }
+
+  .world-card-work .world-card-note {
+    bottom: 22px;
+    right: 20px;
+  }
+}
