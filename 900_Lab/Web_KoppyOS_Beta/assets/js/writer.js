@@ -1181,6 +1181,62 @@ document
 
 document
   .querySelectorAll(
+    '.proposal-field-head'
+  )
+  .forEach(
+    fieldHead => {
+
+      const label =
+        fieldHead.querySelector(
+          'label'
+        );
+
+      const existingPasteButton =
+        fieldHead.querySelector(
+          '[data-paste-target]'
+        );
+
+
+      if (
+        !label
+        || !existingPasteButton
+      ) {
+        return;
+      }
+
+
+      const leftTools =
+        document.createElement(
+          'div'
+        );
+
+      leftTools.className =
+        'proposal-field-tools';
+
+
+      const leftPasteButton =
+        existingPasteButton.cloneNode(
+          true
+        );
+
+      leftPasteButton.title =
+        'クリップボードから貼り付け';
+
+
+      leftTools.append(
+        leftPasteButton,
+        label
+      );
+
+      fieldHead.prepend(
+        leftTools
+      );
+    }
+  );
+
+
+document
+  .querySelectorAll(
     '[data-paste-target]'
   )
   .forEach(
