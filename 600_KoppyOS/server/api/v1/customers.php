@@ -279,6 +279,25 @@ try {
 
                     (
                         SELECT
+                            GROUP_CONCAT(
+                                COALESCE(
+                                    o.name,
+                                    vo.custom_name
+                                ),
+                                '・'
+                            )
+
+                        FROM visit_options vo
+
+                        LEFT JOIN options o
+                            ON o.id = vo.option_id
+
+                        WHERE
+                            vo.visit_id = visits.id
+                    ) AS option_text,
+
+                    (
+                        SELECT
                             hd.body
 
                         FROM heaven_diaries hd
