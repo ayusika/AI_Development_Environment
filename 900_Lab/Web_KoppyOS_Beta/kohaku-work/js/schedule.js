@@ -5274,7 +5274,6 @@ async function openScheduleCustomerPanel() {
                 ) => `
                   <details
                     class="schedule-customer-visit-detail"
-                    ${visitIndex === 0 ? 'open' : ''}
                   >
 
                     <summary class="schedule-detail-row">
