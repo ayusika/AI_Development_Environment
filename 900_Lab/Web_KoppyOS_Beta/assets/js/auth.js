@@ -356,6 +356,157 @@ if (worldRefreshButton) {
 }
 
 
+const KOPPY_AUTH_ACTIVITY_REFRESH_INTERVAL_MS =
+  5 * 60 * 1000;
+
+let koppyAuthLastActivityRefreshAt =
+  Date.now();
+
+let koppyAuthActivityRefreshPending =
+  false;
+
+
+async function refreshKoppyAuthenticationActivity() {
+
+  const now =
+    Date.now();
+
+
+  if (
+    koppyAuthActivityRefreshPending
+    || (
+      now
+      - koppyAuthLastActivityRefreshAt
+    )
+    < KOPPY_AUTH_ACTIVITY_REFRESH_INTERVAL_MS
+  ) {
+    return;
+  }
+
+
+  koppyAuthActivityRefreshPending =
+    true;
+
+
+  try {
+
+    const response =
+      await fetch(
+        KOPPY_AUTH_SESSION_URL,
+        {
+          method:
+            'GET',
+
+          credentials:
+            'include',
+
+          cache:
+            'no-store',
+
+          headers: {
+            Accept:
+              'application/json',
+          },
+        }
+      );
+
+
+    if (!response.ok) {
+
+      if (response.status === 401) {
+        handleKoppyAuthenticationError(
+          response
+        );
+      }
+
+      return;
+    }
+
+
+    const result =
+      await response.json();
+
+
+    const authenticated =
+      result?.success === true
+      && result?.data?.authenticated === true;
+
+
+    if (!authenticated) {
+      showAuthenticationRequired(
+        '認証Sessionが切れたよ。GitHubでもう一度ログインしてね。'
+      );
+
+      return;
+    }
+
+
+    koppyAuthLastActivityRefreshAt =
+      Date.now();
+
+  } catch (error) {
+
+    console.error(
+      'Authentication activity refresh failed:',
+      error
+    );
+
+  } finally {
+
+    koppyAuthActivityRefreshPending =
+      false;
+  }
+}
+
+
+function handleKoppyAuthenticationActivity() {
+
+  if (
+    document.visibilityState
+    === 'hidden'
+  ) {
+    return;
+  }
+
+
+  refreshKoppyAuthenticationActivity();
+}
+
+
+[
+  'pointerdown',
+  'keydown',
+  'touchstart',
+  'scroll',
+].forEach(
+  (eventName) => {
+
+    window.addEventListener(
+      eventName,
+      handleKoppyAuthenticationActivity,
+      {
+        passive:
+          true,
+      }
+    );
+  }
+);
+
+
+document.addEventListener(
+  'visibilitychange',
+  () => {
+
+    if (
+      document.visibilityState
+      === 'visible'
+    ) {
+      refreshKoppyAuthenticationActivity();
+    }
+  }
+);
+
+
 window.KoppyAuth = {
   check:
     checkKoppyAuthentication,
@@ -365,6 +516,9 @@ window.KoppyAuth = {
 
   handleResponse:
     handleKoppyAuthenticationError,
+
+  refreshActivity:
+    refreshKoppyAuthenticationActivity,
 };
 
 
