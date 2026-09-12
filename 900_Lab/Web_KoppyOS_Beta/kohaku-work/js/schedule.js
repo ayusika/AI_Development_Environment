@@ -2680,10 +2680,21 @@ function renderScheduleEvent(
     || null;
 
 
+  const lineCustomerName =
+    customerNames.find(
+      (nameRecord) =>
+        nameRecord.name
+        && nameRecord.name_type
+          === 'line'
+    )
+    || null;
+
+
   const customerNameParts =
     [
       primaryCustomerName,
       okiniTalkCustomerName,
+      lineCustomerName,
     ]
       .filter(
         (
