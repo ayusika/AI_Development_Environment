@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /send-contact.php
+
+Sitemap: https://miki-piano.com/sitemap.xml
