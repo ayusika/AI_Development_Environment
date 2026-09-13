@@ -2649,3 +2649,174 @@ body {
     transition: none !important;
   }
 }
+
+/* ======================================================
+   KOPPY WORLD ENTRANCE V3 POLISH
+   Intentional layout / contrast / ice cyber hover
+====================================================== */
+
+.kw-node {
+  border-color: rgba(92, 177, 220, .38);
+
+  background:
+    linear-gradient(
+      150deg,
+      rgba(255, 255, 255, .86),
+      rgba(229, 245, 255, .67)
+    );
+
+  box-shadow:
+    0 16px 34px rgba(46, 120, 160, .09),
+    inset 0 1px 0 rgba(255, 255, 255, .98),
+    inset 0 0 38px rgba(107, 199, 240, .045);
+}
+
+.kw-node-name {
+  color: #367fa6;
+}
+
+.kw-node h2 {
+  color: #183f59;
+}
+
+.kw-node-description {
+  color: #617f91;
+}
+
+.kw-access {
+  color: #247da9;
+}
+
+.kw-node::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  z-index: 1;
+  border-radius: 22px;
+  pointer-events: none;
+
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, .9),
+    inset -1px -1px 0 rgba(105, 192, 235, .08);
+}
+
+.kw-node::after {
+  opacity: .8;
+}
+
+.kw-node-work:hover {
+  border-color: rgba(80, 193, 236, .68);
+
+  box-shadow:
+    0 22px 48px rgba(52, 155, 201, .15),
+    0 0 24px rgba(89, 205, 246, .08),
+    inset 0 1px 0 rgba(255, 255, 255, .98);
+}
+
+.kw-node-home:hover {
+  border-color: rgba(105, 197, 225, .62);
+
+  box-shadow:
+    0 22px 48px rgba(66, 145, 180, .13),
+    0 0 22px rgba(132, 222, 239, .08),
+    inset 0 1px 0 rgba(255, 255, 255, .98);
+}
+
+.kw-node-memory:hover {
+  border-color: rgba(151, 153, 232, .5);
+
+  background:
+    linear-gradient(
+      150deg,
+      rgba(255, 255, 255, .92),
+      rgba(237, 239, 255, .7)
+    );
+
+  box-shadow:
+    0 22px 48px rgba(102, 112, 188, .12),
+    0 0 28px rgba(153, 145, 235, .09),
+    inset 0 1px 0 rgba(255, 255, 255, .98);
+}
+
+.kw-node-koppy:hover {
+  border-color: rgba(225, 142, 190, .42);
+
+  background:
+    linear-gradient(
+      150deg,
+      rgba(255, 255, 255, .92),
+      rgba(255, 241, 249, .68)
+    );
+
+  box-shadow:
+    0 22px 48px rgba(191, 101, 151, .09),
+    0 0 26px rgba(238, 157, 202, .08),
+    inset 0 1px 0 rgba(255, 255, 255, .98);
+}
+
+.kw-node-dev:hover {
+  border-color: rgba(103, 180, 225, .6);
+
+  box-shadow:
+    0 22px 48px rgba(51, 126, 171, .13),
+    0 0 24px rgba(92, 184, 232, .08),
+    inset 0 1px 0 rgba(255, 255, 255, .98);
+}
+
+.kw-node-icon {
+  border-color: rgba(85, 177, 222, .3);
+  color: #2689bb;
+  background: rgba(255, 255, 255, .68);
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .98),
+    0 8px 18px rgba(52, 133, 175, .05);
+}
+
+.kw-node-ghost {
+  opacity: .065;
+}
+
+.kw-node:hover .kw-node-ghost {
+  opacity: .14;
+}
+
+/* 画面幅がこのくらいの時は、上3 + 下2で意図的に埋める */
+@media (min-width: 761px) and (max-width: 1050px) {
+  .kw-node-field {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .kw-node-work,
+  .kw-node-home,
+  .kw-node-memory {
+    grid-column: span 2;
+  }
+
+  .kw-node-koppy,
+  .kw-node-dev {
+    grid-column: span 3;
+    min-height: 210px;
+  }
+
+  .kw-node-koppy {
+    padding-left: clamp(22px, 3vw, 34px);
+    padding-right: clamp(22px, 3vw, 34px);
+  }
+
+  .kw-node-dev {
+    padding: 0;
+  }
+
+  .kw-node-dev .kw-dev-main {
+    padding-left: clamp(22px, 3vw, 34px);
+    padding-right: clamp(22px, 3vw, 34px);
+  }
+}
+
+@media (max-width: 760px) {
+  .kw-node {
+    grid-column: auto;
+  }
+}
