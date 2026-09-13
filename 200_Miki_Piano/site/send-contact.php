@@ -209,7 +209,7 @@ $replyBody = $name . "様\n\n"
     . "────────────\n"
     . "お名前：" . $name . "様\n"
     . "ご希望：" . $purpose . "\n"
-    . "ご質問・ご相談：" . $quotedMessage . "\n"
+    . "ご質問・ご相談：\n" . $quotedMessage . "\n"
     . "送信日時：" . $date . "\n"
     . "────────────\n";
 $reply = h('mailto:' . $email
