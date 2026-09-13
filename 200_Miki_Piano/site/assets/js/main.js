@@ -88,11 +88,14 @@ if (trialForm && formStatus && contactSubmit) {
         }
       });
 
+      const result = await response.json().catch(() => ({}));
+
       if (!response.ok) {
-        throw new Error("送信に失敗しました");
+        throw new Error(result.message || "送信に失敗しました");
       }
 
       formStatus.textContent =
+        result.message ||
         "送信が完了しました。内容を確認後、メールでご連絡いたします。";
 
       formStatus.classList.add("is-success");
@@ -101,7 +104,7 @@ if (trialForm && formStatus && contactSubmit) {
     } catch (error) {
       console.error("フォーム送信エラー:", error);
 
-      formStatus.textContent =
+      formStatus.textContent = error.message ||
         "送信できませんでした。時間をおいて、もう一度お試しください。";
 
       formStatus.classList.add("is-error");

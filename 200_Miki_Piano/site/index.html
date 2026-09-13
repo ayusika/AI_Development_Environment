@@ -622,27 +622,23 @@
       <form
         id="trial-form"
         class="contact-form"
-        action="https://formsubmit.co/ajax/mikikdr221@yahoo.co.jp"
+        action="./send-contact.php"
         method="POST"
       >
 
-        <input
-          type="hidden"
-          name="_subject"
-          value="【美輝 Miki Piano】無料体験レッスンのお申し込み"
+        <div
+          aria-hidden="true"
+          style="position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden;"
         >
-
-        <input
-          type="hidden"
-          name="_template"
-          value="table"
-        >
-
-        <input
-          type="hidden"
-          name="_captcha"
-          value="false"
-        >
+          <label for="contact-website">ウェブサイト</label>
+          <input
+            id="contact-website"
+            name="website"
+            type="text"
+            tabindex="-1"
+            autocomplete="off"
+          >
+        </div>
 
         <div class="form-field">
           <label for="contact-name">
