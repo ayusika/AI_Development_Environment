@@ -203,7 +203,7 @@ $safeMessage = $message === '' ? '記入なし' : nl2br(h($message), false);
 $quotedMessage = $message === '' ? '記入なし' : $message;
 $replyBody = $name . "様\n\n"
     . "お問い合わせありがとうございます。\n\n"
-    . "こちらへ返信内容をご記入ください。\n\n\n"
+    . "\n\n"
     . "────────────\n"
     . "お問い合わせ内容\n"
     . "────────────\n"
@@ -244,7 +244,7 @@ $admin = $open . $top . '<div style="padding:30px 24px;">
 <div style="margin:20px 0;padding:18px;border-radius:12px;background:#fff9ea;text-align:center;">
 <div style="margin-bottom:12px;color:#74643d;">返信先：' . $safeEmail . '</div>
 <a href="' . $reply . '" style="display:inline-block;padding:12px 24px;border-radius:999px;background:#6f927f;color:#fff;text-decoration:none;font-weight:bold;">この方へ返信する</a>
-<div style="margin-top:10px;color:#8a7a55;font-size:11px;">アドレスは長押ししてコピーできます</div></div>'
+</div>'
     . $table
     . '<p style="color:#718078;font-size:12px;line-height:1.8;">このメールにそのまま返信しても、お問い合わせくださった方へ返信できます。</p></div>'
     . $close;
