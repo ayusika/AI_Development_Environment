@@ -3294,3 +3294,245 @@ a {
 /* ========================================
    料金調整中のお知らせ
 ======================================== */
+
+
+/* MIKI_EDITORIAL_LESSON_EXPERIMENT:START */
+/*
+  AI的な「均等カード3枚」から、
+  読み進める誌面型レイアウトへの実験。
+*/
+
+/* 写真も「浮いたカード」ではなく誌面の写真として扱う */
+.lesson-scene {
+  max-width: 920px;
+  text-align: left;
+}
+
+.lesson-scene img {
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+/* 3カラムカードを縦の情報リストへ */
+.lesson-list {
+  display: block;
+  max-width: 920px;
+  margin: 58px auto 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.lesson-card {
+  display: grid;
+  grid-template-columns: 58px minmax(290px, 340px) minmax(0, 1fr);
+  align-items: start;
+  gap: 0 28px;
+
+  min-height: 0;
+  margin: 0;
+  padding: 34px 0 36px;
+
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+
+  background: transparent;
+  box-shadow: none;
+
+  transition: none;
+}
+
+.lesson-card:hover {
+  transform: none;
+  box-shadow: none;
+}
+
+.lesson-number {
+  margin: 5px 0 0;
+  color: var(--color-main);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+}
+
+.lesson-card h3 {
+  margin: 0;
+  font-size: clamp(19px, 2vw, 23px);
+  line-height: 1.7;
+}
+
+.lesson-card > p:last-child {
+  margin: 0;
+  color: var(--color-text-soft);
+  font-size: 15px;
+  line-height: 2;
+}
+
+/* Lesson Menuも「大きなカード＋小カード群」をやめる */
+.lesson-menu-label,
+.lesson-menu h3,
+.lesson-menu-note {
+  text-align: left;
+}
+
+.lesson-menu-label {
+  margin-bottom: 12px;
+}
+
+.lesson-menu h3 {
+  margin-bottom: 0;
+}
+
+.lesson-menu-note {
+  max-width: 760px;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.lesson-menu {
+  max-width: 920px;
+  margin: 54px auto 0;
+  padding: 42px 0 0;
+
+  border: 0;
+  border-top: 1px solid var(--color-border);
+  border-radius: 0;
+
+  background: transparent;
+  box-shadow: none;
+}
+
+.lesson-menu-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 42px;
+  margin-top: 30px;
+}
+
+.lesson-menu-list li {
+  justify-content: flex-start;
+
+  min-height: 54px;
+  padding: 13px 0;
+
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+
+  text-align: left;
+  background: transparent;
+  box-shadow: none;
+}
+
+.lesson-menu-list li::before {
+  width: 6px;
+  height: 6px;
+  margin-right: 13px;
+  border-radius: 50%;
+  background: var(--color-main);
+  content: "";
+  flex: 0 0 auto;
+}
+
+@media (max-width: 768px) {
+  .lesson-scene {
+    margin-bottom: 44px;
+  }
+
+  .lesson-list {
+    margin-top: 48px;
+  }
+
+  .lesson-card {
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 10px 14px;
+    padding: 28px 0 32px;
+  }
+
+  .lesson-number {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+  }
+
+  .lesson-card h3 {
+    grid-column: 2;
+    margin: 0;
+  }
+
+  .lesson-card > p:last-child {
+    grid-column: 2;
+    font-size: 14px;
+  }
+
+  .lesson-menu {
+    margin-top: 58px;
+    padding: 38px 0 0;
+  }
+
+  .lesson-menu-list {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  .lesson-menu-list li:last-child {
+    grid-column: auto;
+  }
+}
+/* MIKI_EDITORIAL_LESSON_EXPERIMENT:END */
+
+
+/* MIKI_EDITORIAL_RECOMMEND_EXPERIMENT:START */
+/*
+  「こんな方におすすめ」のカード感をなくし、
+  チェック付きの編集リストとして見せる。
+*/
+
+.recommend-list {
+  width: min(100%, 920px);
+  margin: 56px auto 0;
+
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 42px;
+}
+
+.recommend-list li {
+  position: relative;
+
+  min-height: 0;
+  padding: 18px 8px 18px 36px;
+
+  border: 0;
+  border-bottom: 1px solid var(--color-border);
+  border-radius: 0;
+
+  background: transparent;
+  box-shadow: none;
+
+  color: var(--color-text);
+  line-height: 1.75;
+}
+
+.recommend-list li::before {
+  left: 4px;
+}
+
+/* 奇数個の最後の項目も自然に見せる */
+.recommend-list li:last-child {
+  border-bottom: 1px solid var(--color-border);
+}
+
+@media (max-width: 720px) {
+  .recommend-list {
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: 40px;
+  }
+
+  .recommend-list li {
+    padding: 16px 6px 16px 34px;
+  }
+
+  .recommend-list li::before {
+    left: 2px;
+  }
+}
+/* MIKI_EDITORIAL_RECOMMEND_EXPERIMENT:END */
