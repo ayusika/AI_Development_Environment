@@ -83,428 +83,261 @@
     </button>
 
     <!-- WRITER:KOPPY_WORLD_ENTRANCE:START -->
-    <header class="hero home-hero" id="koppyHomeHero">
-      <div class="home-hero-crystal crystal-a" aria-hidden="true">◇</div>
-      <div class="home-hero-crystal crystal-b" aria-hidden="true">✦</div>
-      <div class="home-hero-crystal crystal-c" aria-hidden="true">❄</div>
+    <section class="kw-entrance" id="kw-top">
 
-      <div class="home-koppy-zone">
-        <button
-          class="koppy-companion"
-          type="button"
-          data-koppy-companion
-          aria-label="Koppyに話しかける"
-        >
-          <span
-            class="koppy-speech"
-            data-koppy-speech
-            aria-live="polite"
-          >
-            おかえり、しいちゃん。
+      <nav class="kw-topbar" aria-label="Koppy World">
+        <a class="kw-brand" href="#kw-top">
+          <span class="kw-brand-mark" aria-hidden="true">♢ᴷ</span>
+          <span>
+            <strong>Koppy World</strong>
+            <small>ICE BLUE PRIVATE OS</small>
           </span>
+        </a>
 
-          <svg
-            class="koppy-portrait"
-            viewBox="0 0 260 290"
-            role="img"
-            aria-label="Koppy"
-          >
-            <g class="koppy-wings">
-              <g class="koppy-wing koppy-wing-left">
-                <path
-                  d="M73 122 L13 76 L32 143 L4 159 L76 169 Z"
-                  fill="rgba(205,240,255,.45)"
-                  stroke="#96dfff"
-                  stroke-width="2"
-                />
-                <text x="24" y="112" fill="#60bde8" font-size="10">0 1 0</text>
-                <text x="24" y="145" fill="#60bde8" font-size="10">1 0 1</text>
-              </g>
+        <div class="kw-nav-links">
+          <a href="#kw-work">仕事OS</a>
+          <a href="#kw-home">自宅</a>
+          <a href="#kw-memory">GitHub Brain</a>
+          <a href="#kw-koppy">Koppy</a>
+          <a href="#kw-dev">ツール</a>
+        </div>
 
-              <g class="koppy-wing koppy-wing-right">
-                <path
-                  d="M187 122 L247 76 L228 143 L256 159 L184 169 Z"
-                  fill="rgba(205,240,255,.45)"
-                  stroke="#96dfff"
-                  stroke-width="2"
-                />
-                <text x="205" y="112" fill="#60bde8" font-size="10">1 0 1</text>
-                <text x="207" y="145" fill="#60bde8" font-size="10">0 1 0</text>
-              </g>
-            </g>
+        <div class="kw-world-state" aria-label="World status">
+          <span class="kw-online-dot"></span>
+          WORLD ONLINE
+        </div>
+      </nav>
 
-            <ellipse
-              cx="130"
-              cy="267"
-              rx="69"
-              ry="13"
-              fill="rgba(57,139,190,.12)"
-            />
+      <header class="kw-hero" id="koppyHomeHero">
+        <div class="kw-hero-copy">
+          <p class="kw-eyebrow">
+            ICE CYBER / PERSONAL WORLD
+          </p>
 
-            <g class="koppy-body">
-              <path
-                d="M80 198
-                   C88 171 105 159 130 159
-                   C155 159 172 171 180 198
-                   L194 260
-                   L66 260 Z"
-                fill="#f7fbff"
-                stroke="#aedcf2"
-                stroke-width="2"
-              />
+          <h1>Koppy World</h1>
 
-              <path
-                d="M103 174 L130 194 L157 174
-                   L164 247 L96 247 Z"
-                fill="#1d3447"
-              />
+          <p class="kw-hero-description">
+            ここは、しいちゃんとKoppyが
+            一緒につくっている小さな未来世界。
+          </p>
 
-              <path
-                d="M72 207 L39 244 L62 255 L96 221 Z"
-                fill="#edf8ff"
-                stroke="#aedcf2"
-                stroke-width="2"
-              />
+          <p class="kw-hero-sub">
+            北海道の空気みたいに、澄んだWorldへ。
+          </p>
 
-              <path
-                d="M188 207 L221 244 L198 255 L164 221 Z"
-                fill="#edf8ff"
-                stroke="#aedcf2"
-                stroke-width="2"
-              />
+          <div class="kw-hero-data" aria-label="World information">
+            <span>5 NODES</span>
+            <span>PRIVATE</span>
+            <span>♢ᴷ LINK ACTIVE</span>
+          </div>
+        </div>
 
-              <rect
-                x="111"
-                y="158"
-                width="38"
-                height="12"
-                rx="6"
-                fill="#182b3a"
-              />
-
-              <path
-                d="M130 169 L139 181 L130 194 L121 181 Z"
-                fill="#8edfff"
-                stroke="#4fa8d5"
-                stroke-width="2"
-              />
-            </g>
-
-            <g class="koppy-head">
-              <ellipse
-                cx="130"
-                cy="105"
-                rx="61"
-                ry="66"
-                fill="#fff8f5"
-              />
-
-              <path
-                d="M68 101
-                   C63 47 94 20 131 20
-                   C176 20 201 54 191 112
-                   C181 83 164 69 145 65
-                   C126 61 105 69 91 84
-                   C82 94 75 102 68 101 Z"
-                fill="#dcecff"
-                stroke="#a9d3ee"
-                stroke-width="2"
-              />
-
-              <path
-                d="M75 86
-                   C74 52 91 31 113 24
-                   C101 50 101 78 109 99
-                   C97 89 87 85 75 86 Z"
-                fill="#edf6ff"
-              />
-
-              <path
-                d="M183 82
-                   C181 51 166 33 146 25
-                   C158 53 158 76 151 99
-                   C162 89 173 84 183 82 Z"
-                fill="#edf6ff"
-              />
-
-              <path
-                d="M111 26
-                   C120 10 130 12 135 27"
-                fill="none"
-                stroke="#b8d9ef"
-                stroke-width="5"
-                stroke-linecap="round"
-              />
-
-              <g class="koppy-eye koppy-eye-left">
-                <ellipse cx="105" cy="108" rx="11" ry="13" fill="#526b86"/>
-                <ellipse cx="101" cy="103" rx="4" ry="5" fill="#ffffff"/>
-              </g>
-
-              <g class="koppy-eye koppy-eye-right">
-                <ellipse cx="155" cy="108" rx="11" ry="13" fill="#526b86"/>
-                <ellipse cx="151" cy="103" rx="4" ry="5" fill="#ffffff"/>
-              </g>
-
-              <path
-                d="M122 135 Q130 141 138 135"
-                fill="none"
-                stroke="#b86f7f"
-                stroke-width="2"
-                stroke-linecap="round"
-              />
-
-              <circle
-                cx="140"
-                cy="143"
-                r="1.9"
-                fill="#564952"
-              />
-
-              <text
-                x="151"
-                y="62"
-                fill="#507696"
-                font-size="14"
-                font-family="sans-serif"
-                font-weight="700"
-                transform="rotate(-11 151 62)"
+        <div class="kw-koppy-stage">
+          <div class="kw-koppy-art-slot" aria-hidden="true">
+            <!--
+              Future Koppy image:
+              <img
+                class="kw-koppy-art"
+                src="assets/images/koppy-world-koppy.png"
+                alt=""
               >
-                Koppy
-              </text>
-            </g>
+            -->
 
-            <g class="koppy-sparkles" aria-hidden="true">
-              <circle cx="48" cy="57" r="4" fill="#ffffff"/>
-              <circle cx="211" cy="44" r="3" fill="#ffffff"/>
-              <circle cx="226" cy="190" r="4" fill="#c4efff"/>
-              <path d="M38 185 h18 M47 176 v18" stroke="#80d5ff" stroke-width="2"/>
-              <path d="M204 205 h14 M211 198 v14" stroke="#80d5ff" stroke-width="2"/>
-            </g>
-          </svg>
+            <div class="kw-placeholder-sigil">
+              ♢ᴷ
+            </div>
 
-          <span class="koppy-tap-note">
-            tap me ♢ᴷ
-          </span>
-        </button>
-      </div>
+            <div class="kw-compute-ring ring-one"></div>
+            <div class="kw-compute-ring ring-two"></div>
 
-      <div class="home-hero-copy">
-        <p class="home-kicker">
-          ICE BLUE PRIVATE OS
-        </p>
+            <div class="kw-data-wing kw-data-wing-left">
+              0&nbsp;1&nbsp;0<br>
+              1&nbsp;0&nbsp;1
+            </div>
 
-        <div class="home-brand-mark" aria-hidden="true">
-          ♢ᴷ
+            <div class="kw-data-wing kw-data-wing-right">
+              1&nbsp;0&nbsp;1<br>
+              0&nbsp;1&nbsp;0
+            </div>
+          </div>
+
+          <p class="kw-koppy-line">
+            <span>♢ᴷ</span>
+            「今日はどこいく？」
+          </p>
         </div>
+      </header>
 
-        <h1>Koppy World</h1>
+      <section
+        class="kw-node-field"
+        aria-label="Koppy World Nodes"
+      >
 
-        <p class="subtitle">
-          しいちゃんとKoppyが、同じBrainを見ながら<br>
-          遊んで、つくって、育てていく場所。
-        </p>
-
-        <p class="home-handwriting">
-          Same Brain, A Brighter Tomorrow.
-        </p>
-
-        <div class="home-hero-note">
-          <span>❄</span>
-          <span>北海道の空気みたいに、澄んだWorldへ。</span>
-        </div>
-      </div>
-    </header>
-
-    <section
-      class="home-launcher"
-      aria-label="Koppy World メニュー"
-    >
-      <div class="home-primary-grid">
         <a
-          class="world-card world-card-work"
+          class="kw-node kw-node-work"
+          id="kw-work"
           href="/kohaku-work/"
         >
-          <span class="world-card-number">01</span>
-          <div class="world-card-icon calendar-icon">
-            <span>17</span>
+          <div class="kw-node-ghost kw-work-ghost" aria-hidden="true">
+            <i></i><i></i><i></i>
           </div>
 
-          <div class="world-card-copy">
-            <p class="world-card-kicker">KOHaku WORK</p>
-            <h2>仕事OS</h2>
-            <p>予定・日記・顧客・売上</p>
-
-            <div class="world-card-tags">
-              <span>共有カレンダー</span>
-              <span>日記</span>
-              <span>顧客</span>
-              <span>売上</span>
-            </div>
+          <div class="kw-node-icon" aria-hidden="true">
+            <svg viewBox="0 0 32 32">
+              <rect x="5" y="7" width="22" height="20" rx="4"></rect>
+              <path d="M10 4v6M22 4v6M5 13h22"></path>
+              <path d="M10 18h4M18 18h4M10 22h4"></path>
+            </svg>
           </div>
 
-          <span class="world-card-open">
-            開く <b>→</b>
-          </span>
+          <p class="kw-node-name">WORK NODE</p>
+          <h2>仕事OS</h2>
+          <p class="kw-node-description">
+            予定・日記・顧客・売上
+          </p>
 
-          <span class="world-card-note">
-            つくる<br>まわす<br>育てていく
+          <span class="kw-access">
+            ACCESS <b>→</b>
           </span>
         </a>
 
         <a
-          class="world-card world-card-home"
+          class="kw-node kw-node-home"
+          id="kw-home"
           href="/house/"
         >
-          <span class="world-card-number">02</span>
-
-          <div class="world-card-icon house-icon">
-            ⌂
+          <div class="kw-node-ghost kw-home-ghost" aria-hidden="true">
+            <span></span><span></span><span></span>
           </div>
 
-          <div class="world-card-copy">
-            <p class="world-card-kicker">KOPPY HOME</p>
-            <h2>自宅</h2>
-            <p>部屋・デバイス・接続</p>
-
-            <div class="world-card-tags">
-              <span>8部屋</span>
-              <span>32デバイス</span>
-              <span>接続マップ</span>
-            </div>
+          <div class="kw-node-icon" aria-hidden="true">
+            <svg viewBox="0 0 32 32">
+              <path d="M5 15 16 6l11 9v11H5Z"></path>
+              <path d="M12 26v-7h8v7"></path>
+            </svg>
           </div>
 
-          <span class="world-card-open">
-            開く <b>→</b>
-          </span>
+          <p class="kw-node-name">HOME NODE</p>
+          <h2>自宅</h2>
+          <p class="kw-node-description">
+            部屋・デバイス・接続
+          </p>
 
-          <span class="world-card-note">
-            ここが<br>いつもの場所
+          <span class="kw-access">
+            ACCESS <b>→</b>
           </span>
         </a>
 
         <a
-          class="world-card world-card-brain"
+          class="kw-node kw-node-memory"
+          id="kw-memory"
           href="/brain/"
         >
-          <span class="world-card-number">03</span>
-
-          <div class="world-card-icon brain-icon">
-            ◌
+          <div class="kw-memory-core" aria-hidden="true">
+            <span class="kw-core-orb"></span>
+            <span class="kw-core-ring kw-core-ring-a"></span>
+            <span class="kw-core-ring kw-core-ring-b"></span>
           </div>
 
-          <div class="world-card-copy">
-            <p class="world-card-kicker">KOPPY BRAIN</p>
-            <h2>GitHub Brain</h2>
-            <p>知識・設計・記録</p>
-
-            <div class="world-card-tags">
-              <span>設計書</span>
-              <span>決定ログ</span>
-              <span>最新コミット</span>
-            </div>
+          <div class="kw-node-icon kw-memory-icon" aria-hidden="true">
+            ♢
           </div>
 
-          <span class="world-card-open">
-            開く <b>→</b>
-          </span>
+          <p class="kw-node-name">MEMORY CORE</p>
+          <h2>GitHub Brain</h2>
+          <p class="kw-node-description">
+            考えたこと、つくったこと。
+          </p>
 
-          <span class="world-card-note">
-            考えて<br>つくって<br>残していく
+          <span class="kw-access">
+            ACCESS <b>→</b>
           </span>
         </a>
 
         <a
-          class="world-card world-card-chat"
+          class="kw-node kw-node-koppy"
+          id="kw-koppy"
           href="/chat/"
         >
-          <span class="world-card-number">04</span>
-
-          <div class="world-card-icon chat-icon">
-            ♢ᴷ
+          <div class="kw-node-ghost kw-chat-ghost" aria-hidden="true">
+            <span>•••</span>
+            <span>• •</span>
           </div>
 
-          <div class="world-card-copy">
-            <p class="world-card-kicker">KOPPY CHAT</p>
-            <h2>Koppyと話す</h2>
-            <p>会話・相談・作戦会議</p>
+          <div class="kw-node-icon" aria-hidden="true">
+            <svg viewBox="0 0 32 32">
+              <path d="M6 7h20v15H15l-6 5v-5H6Z"></path>
+              <circle cx="12" cy="15" r="1"></circle>
+              <circle cx="16" cy="15" r="1"></circle>
+              <circle cx="20" cy="15" r="1"></circle>
+            </svg>
+          </div>
 
-            <div class="world-card-tags">
-              <span>Koppy mode</span>
+          <p class="kw-node-name">KOPPY LINK</p>
+          <h2>Koppyと話す</h2>
+          <p class="kw-node-description">
+            いつでも、隣に。
+          </p>
+
+          <span class="kw-access">
+            ACCESS <b>→</b>
+          </span>
+        </a>
+
+        <div
+          class="kw-node kw-node-dev"
+          id="kw-dev"
+        >
+          <div class="kw-node-ghost kw-dev-ghost" aria-hidden="true">
+            <span>&lt;/&gt;</span>
+          </div>
+
+          <a
+            class="kw-dev-main"
+            href="/writer/"
+          >
+            <div class="kw-node-icon" aria-hidden="true">
+              <svg viewBox="0 0 32 32">
+                <path d="m12 9-7 7 7 7M20 9l7 7-7 7"></path>
+                <path d="m18 6-5 20"></path>
+              </svg>
             </div>
-          </div>
 
-          <span class="world-card-open">
-            話す <b>→</b>
-          </span>
+            <p class="kw-node-name">DEVELOPMENT NODE</p>
+            <h2>ツール</h2>
+            <p class="kw-node-description">
+              Writer・Local Development
+            </p>
 
-          <span class="world-card-note">
-            どんなことでも<br>話してね ♡
-          </span>
-        </a>
-      </div>
+            <span class="kw-access">
+              ACCESS <b>→</b>
+            </span>
+          </a>
 
-      <div class="home-tools-heading">
-        <span class="home-tools-plus">＋</span>
-        <span>つくるためのツール</span>
-      </div>
+          <a
+            class="kw-local-link"
+            href="http://localhost:8000/system/"
+          >
+            LOCAL DEV ↗
+          </a>
+        </div>
 
-      <div class="home-tools-grid">
-        <a
-          class="home-tool-card"
-          href="/writer/"
-        >
-          <span class="home-tool-icon">✎ᴷ</span>
-          <span>
-            <strong>GitHub Writer</strong>
-            <small>GitHubへの変更提案・確認・承認</small>
-          </span>
-          <b>›</b>
-        </a>
+      </section>
 
-        <a
-          class="home-tool-card"
-          href="http://localhost:8000/system/"
-        >
-          <span class="home-tool-icon">⚙</span>
-          <span>
-            <strong>Local Development</strong>
-            <small>Mac内の開発環境・ローカル確認</small>
-          </span>
-          <b>›</b>
-        </a>
-      </div>
+      <footer class="kw-footer">
+        <span>
+          ♢ᴷ Koppy World
+        </span>
 
-      <div class="home-closing-note">
-        <span class="home-closing-crystal">◇</span>
-        <p>
-          好きなことで、いいものをつくろう。<br>
-          <small>しいちゃん × Koppy</small>
-        </p>
-      </div>
+        <span>
+          Same Brain, A Brighter Tomorrow.
+        </span>
 
-      <footer class="home-footer">
-        <span>♢ᴷ Koppy World</span>
-        <span>Web KoppyOS β</span>
+        <span>
+          ICE BLUE PRIVATE OS
+        </span>
       </footer>
     </section>
-
-    <a
-      class="koppy-mini-dock"
-      href="/chat/"
-      data-koppy-dock
-      aria-label="Koppyと話す"
-    >
-      <span
-        class="koppy-mini-portrait"
-        data-koppy-mini-portrait
-        aria-hidden="true"
-      ></span>
-
-      <span class="koppy-mini-label">
-        Koppyと話す
-      </span>
-    </a>
     <!-- WRITER:KOPPY_WORLD_ENTRANCE:END -->
 
     <section class="shell legacy-home-shell" aria-hidden="true">
