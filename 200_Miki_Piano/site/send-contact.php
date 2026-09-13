@@ -23,6 +23,99 @@ function length_of(string $value): int {
 function mime_text(string $value): string {
     return '=?UTF-8?B?' . base64_encode($value) . '?=';
 }
+function smtp_response($socket): array {
+    $lines = [];
+    $code = 0;
+    while (($line = fgets($socket, 515)) !== false) {
+        $lines[] = rtrim($line);
+        $code = (int) substr($line, 0, 3);
+        if (strlen($line) < 4 || $line[3] === ' ') {
+            break;
+        }
+    }
+    return [$code, implode(" | ", $lines)];
+}
+function smtp_expect($socket, ?string $command, array $expected): void {
+    if ($command !== null && fwrite($socket, $command . "\r\n") === false) {
+        throw new RuntimeException('SMTP write failed.');
+    }
+    [$code, $detail] = smtp_response($socket);
+    if (!in_array($code, $expected, true)) {
+        throw new RuntimeException('SMTP error: ' . $detail);
+    }
+}
+function smtp_send(
+    array $config,
+    string $to,
+    string $replyTo,
+    string $subject,
+    string $html
+): void {
+    $host = (string) $config['smtp_host'];
+    $port = (int) $config['smtp_port'];
+    $username = (string) $config['smtp_username'];
+    $password = (string) $config['smtp_password'];
+    $from = (string) $config['from_email'];
+    $fromName = (string) ($config['from_name'] ?? '美輝 Miki Piano');
+
+    $context = stream_context_create([
+        'ssl' => [
+            'verify_peer' => true,
+            'verify_peer_name' => true,
+            'peer_name' => $host,
+        ],
+    ]);
+    $socket = @stream_socket_client(
+        'ssl://' . $host . ':' . $port,
+        $errorNumber,
+        $errorMessage,
+        15,
+        STREAM_CLIENT_CONNECT,
+        $context
+    );
+    if ($socket === false) {
+        throw new RuntimeException(
+            'SMTP connection failed: ' . $errorNumber . ' ' . $errorMessage
+        );
+    }
+
+    try {
+        stream_set_timeout($socket, 15);
+        smtp_expect($socket, null, [220]);
+        smtp_expect($socket, 'EHLO miki-piano.com', [250]);
+        smtp_expect($socket, 'AUTH LOGIN', [334]);
+        smtp_expect($socket, base64_encode($username), [334]);
+        smtp_expect($socket, base64_encode($password), [235]);
+        smtp_expect($socket, 'MAIL FROM:<' . $from . '>', [250]);
+        smtp_expect($socket, 'RCPT TO:<' . $to . '>', [250, 251]);
+        smtp_expect($socket, 'DATA', [354]);
+
+        $headers = [
+            'Date: ' . date(DATE_RFC2822),
+            'Message-ID: <' . bin2hex(random_bytes(16)) . '@miki-piano.com>',
+            'From: ' . mime_text($fromName) . ' <' . $from . '>',
+            'To: <' . $to . '>',
+            'Reply-To: <' . $replyTo . '>',
+            'Subject: ' . mime_text($subject),
+            'MIME-Version: 1.0',
+            'Content-Type: text/html; charset=UTF-8',
+            'Content-Transfer-Encoding: base64',
+        ];
+        $body = chunk_split(base64_encode($html), 76, "\r\n");
+        $data = implode("\r\n", $headers) . "\r\n\r\n" . $body;
+        $data = preg_replace('/(?m)^\./', '..', $data);
+        if (!is_string($data) || fwrite($socket, $data . "\r\n.\r\n") === false) {
+            throw new RuntimeException('SMTP message write failed.');
+        }
+        [$code, $detail] = smtp_response($socket);
+        if ($code !== 250) {
+            throw new RuntimeException('SMTP delivery failed: ' . $detail);
+        }
+        smtp_expect($socket, 'QUIT', [221]);
+    } finally {
+        fclose($socket);
+    }
+}
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     finish(405, false, '送信方法が正しくありません。');
@@ -45,7 +138,11 @@ if (!is_file($configFile)) {
 $config = require $configFile;
 if (!is_array($config)
     || !filter_var($config['recipient'] ?? '', FILTER_VALIDATE_EMAIL)
-    || !filter_var($config['from_email'] ?? '', FILTER_VALIDATE_EMAIL)) {
+    || !filter_var($config['from_email'] ?? '', FILTER_VALIDATE_EMAIL)
+    || empty($config['smtp_host'])
+    || empty($config['smtp_port'])
+    || empty($config['smtp_username'])
+    || empty($config['smtp_password'])) {
     error_log('Miki Piano contact config invalid.');
     finish(503, false, '現在メールを送信できません。時間をおいて、もう一度お試しください。');
 }
@@ -82,8 +179,6 @@ if ($name === '' || length_of($name) > 100
 @file_put_contents($rateFile, (string) time(), LOCK_EX);
 
 $to = (string) $config['recipient'];
-$from = (string) $config['from_email'];
-$fromName = (string) ($config['from_name'] ?? '美輝 Miki Piano');
 $date = (new DateTimeImmutable('now', new DateTimeZone('Asia/Tokyo')))
     ->format('Y年n月j日 H:i');
 
@@ -91,8 +186,23 @@ $safeName = h($name);
 $safeEmail = h($email);
 $safePurpose = h($purpose);
 $safeMessage = $message === '' ? '記入なし' : nl2br(h($message), false);
-$reply = h('mailto:' . $email . '?subject='
-    . rawurlencode('【美輝 Miki Piano】お問い合わせありがとうございます'));
+$quotedMessage = $message === '' ? '記入なし' : $message;
+$replyBody = $name . "様\n\n"
+    . "お問い合わせありがとうございます。\n\n"
+    . "こちらへ返信内容をご記入ください。\n\n\n"
+    . "────────────\n"
+    . "お問い合わせ内容\n"
+    . "────────────\n"
+    . "お名前：" . $name . "様\n"
+    . "ご希望：" . $purpose . "\n"
+    . "ご質問・ご相談：" . $quotedMessage . "\n"
+    . "送信日時：" . $date . "\n"
+    . "────────────\n";
+$reply = h('mailto:' . $email
+    . '?subject='
+    . rawurlencode('【美輝 Miki Piano】お問い合わせありがとうございます')
+    . '&body='
+    . rawurlencode($replyBody));
 
 $rows = '
 <tr><th style="padding:12px;background:#f5f9f6;text-align:left;">お名前</th><td style="padding:12px;">'
@@ -134,27 +244,29 @@ $customer = $open . $top . '<div style="padding:30px 24px;color:#536259;line-hei
     . '<p style="color:#718078;font-size:12px;">このメールはお問い合わせフォームから自動送信されています。お心当たりがない場合は破棄してください。</p></div>'
     . $close;
 
-$baseHeaders = [
-    'MIME-Version: 1.0',
-    'Content-Type: text/html; charset=UTF-8',
-    'Content-Transfer-Encoding: 8bit',
-    'From: ' . mime_text($fromName) . ' <' . $from . '>'
-];
-$adminHeaders = array_merge($baseHeaders, ['Reply-To: ' . $email]);
-$customerHeaders = array_merge($baseHeaders, ['Reply-To: ' . $to]);
-
-$adminSent = mail($to,
-    mime_text('【美輝 Miki Piano】新しいお問い合わせが届きました'),
-    $admin, implode("\r\n", $adminHeaders));
-if (!$adminSent) {
-    error_log('Miki Piano admin mail failed.');
+try {
+    smtp_send(
+        $config,
+        $to,
+        $email,
+        '【美輝 Miki Piano】新しいお問い合わせが届きました',
+        $admin
+    );
+} catch (Throwable $error) {
+    error_log('Miki Piano admin SMTP failed: ' . $error->getMessage());
     finish(500, false, '送信できませんでした。時間をおいて、もう一度お試しください。');
 }
 
-if (!mail($email,
-    mime_text('【美輝 Miki Piano】お問い合わせありがとうございます'),
-    $customer, implode("\r\n", $customerHeaders))) {
-    error_log('Miki Piano customer auto response failed.');
+try {
+    smtp_send(
+        $config,
+        $email,
+        $to,
+        '【美輝 Miki Piano】お問い合わせありがとうございます',
+        $customer
+    );
+} catch (Throwable $error) {
+    error_log('Miki Piano customer SMTP failed: ' . $error->getMessage());
 }
 
 finish(200, true, '送信が完了しました。内容を確認後、メールでご連絡いたします。');
