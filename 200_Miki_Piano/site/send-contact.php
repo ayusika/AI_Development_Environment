@@ -49,7 +49,8 @@ function smtp_send(
     string $to,
     string $replyTo,
     string $subject,
-    string $html
+    string $html,
+    array $blindCopies = []
 ): void {
     $host = (string) $config['smtp_host'];
     $port = (int) $config['smtp_port'];
@@ -88,6 +89,19 @@ function smtp_send(
         smtp_expect($socket, base64_encode($password), [235]);
         smtp_expect($socket, 'MAIL FROM:<' . $from . '>', [250]);
         smtp_expect($socket, 'RCPT TO:<' . $to . '>', [250, 251]);
+        foreach ($blindCopies as $blindCopy) {
+            if (
+                !is_string($blindCopy)
+                || !filter_var($blindCopy, FILTER_VALIDATE_EMAIL)
+            ) {
+                throw new RuntimeException('Invalid BCC address.');
+            }
+            smtp_expect(
+                $socket,
+                'RCPT TO:<' . $blindCopy . '>',
+                [250, 251]
+            );
+        }
         smtp_expect($socket, 'DATA', [354]);
 
         $headers = [
@@ -250,7 +264,10 @@ try {
         $to,
         $email,
         '【美輝 Miki Piano】新しいお問い合わせが届きました',
-        $admin
+        $admin,
+        isset($config['admin_bcc']) && is_array($config['admin_bcc'])
+            ? $config['admin_bcc']
+            : []
     );
 } catch (Throwable $error) {
     error_log('Miki Piano admin SMTP failed: ' . $error->getMessage());
