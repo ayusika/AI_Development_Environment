@@ -42,7 +42,10 @@
     aurora: "#81ffd0"
   };
 
-  const shell = () =>
+  const atmosphereHost = () =>
+    document.querySelector(
+      "[data-wf-atmosphere-host]"
+    ) ||
     document.querySelector(
       "[data-wf-shell]"
     );
@@ -94,7 +97,7 @@
 
   const responsiveFactor = () => {
     const width =
-      shell()
+      atmosphereHost()
         ?.clientWidth ||
       window.innerWidth;
 
@@ -111,7 +114,7 @@
 
   const getMode = () => {
     const target =
-      shell();
+      atmosphereHost();
 
     if (!target) {
       return "normal";
@@ -150,7 +153,7 @@
 
   const syncTheme = () => {
     const target =
-      shell();
+      atmosphereHost();
 
     if (!target) {
       return;
@@ -169,7 +172,7 @@
 
   const getLayer = () => {
     const target =
-      shell();
+      atmosphereHost();
 
     if (!target) {
       return null;
@@ -205,7 +208,7 @@
 
   const rebuild = () => {
     const target =
-      shell();
+      atmosphereHost();
 
     const layer =
       getLayer();
@@ -474,7 +477,7 @@
     } = {}
   ) => {
     const target =
-      shell();
+      atmosphereHost();
 
     if (!target) {
       return;
@@ -653,7 +656,7 @@
 
   const init = () => {
     const target =
-      shell();
+      atmosphereHost();
 
     if (!target) {
       return;

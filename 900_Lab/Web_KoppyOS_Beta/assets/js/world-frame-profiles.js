@@ -118,6 +118,12 @@
       ".wf-shell-surface"
     );
 
+  const getAtmosphereHost = () =>
+    document.querySelector(
+      "[data-wf-atmosphere-host]"
+    ) ||
+    getShell();
+
   const updateShellControls = (
     opacity,
     blur,
@@ -195,7 +201,18 @@
     const shell =
       getShell();
 
-    if (!app || !shell) {
+    const atmosphereHost =
+      getAtmosphereHost();
+
+    /*
+       Profile/theme configuration belongs to #wfApp.
+
+       A glass shell is optional so App Mode can use the
+       World Frame theme without surrendering application
+       layout ownership.
+    */
+
+    if (!app) {
       return;
     }
 
@@ -235,18 +252,20 @@
       profile.atmosphere ||
       "normal";
 
-    shell.dataset.wfAtmosphere =
-      atmosphere;
+    if (atmosphereHost) {
+      atmosphereHost.dataset.wfAtmosphere =
+        atmosphere;
 
-    window
-      .KoppyWorldAtmosphere
-      ?.setMode
-      ?.(
-        atmosphere,
-        {
-          silent: true
-        }
-      );
+      window
+        .KoppyWorldAtmosphere
+        ?.setMode
+        ?.(
+          atmosphere,
+          {
+            silent: true
+          }
+        );
+    }
 
     if (
       window
@@ -284,55 +303,62 @@
           : "off";
     }
 
-    MODES.forEach(mode => {
-      shell.classList.remove(
-        "wf-shell-mode-" + mode
-      );
-    });
+    /*
+       Shell styling is applied only when the page explicitly
+       has a World Frame shell.
+    */
 
-    shell.classList.add(
-      "wf-shell-mode-" +
-      profile.shellMode
-    );
+    if (shell) {
+      MODES.forEach(mode => {
+        shell.classList.remove(
+          "wf-shell-mode-" + mode
+        );
+      });
 
-    const opacity =
-      clamp(
-        profile.opacity,
-        0,
-        0.55
-      );
-
-    const blur =
-      clamp(
-        profile.blur,
-        0,
-        40
+      shell.classList.add(
+        "wf-shell-mode-" +
+        profile.shellMode
       );
 
-    shell.style.setProperty(
-      "--wf-shell-opacity",
-      String(opacity)
-    );
+      const opacity =
+        clamp(
+          profile.opacity,
+          0,
+          0.55
+        );
 
-    shell.style.setProperty(
-      "--wf-shell-blur",
-      blur + "px"
-    );
+      const blur =
+        clamp(
+          profile.blur,
+          0,
+          40
+        );
 
-    shell.dataset.wfShellMode =
-      profile.shellMode;
+      shell.style.setProperty(
+        "--wf-shell-opacity",
+        String(opacity)
+      );
 
-    shell.dataset.wfShellOpacity =
-      String(opacity);
+      shell.style.setProperty(
+        "--wf-shell-blur",
+        blur + "px"
+      );
 
-    shell.dataset.wfShellBlur =
-      String(blur);
+      shell.dataset.wfShellMode =
+        profile.shellMode;
 
-    updateShellControls(
-      opacity,
-      blur,
-      profile.shellMode
-    );
+      shell.dataset.wfShellOpacity =
+        String(opacity);
+
+      shell.dataset.wfShellBlur =
+        String(blur);
+
+      updateShellControls(
+        opacity,
+        blur,
+        profile.shellMode
+      );
+    }
 
     document
       .querySelectorAll(

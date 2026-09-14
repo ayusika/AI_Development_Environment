@@ -2363,3 +2363,146 @@ body.wf-focus-active .wf-focus-exit{
 }
 
 /* ==== WORLD FRAME COLOR PACK V1 END ==== */
+
+/* ==== WORLD FRAME LAYOUT CONTRACT V1 START ==== */
+
+/*
+   World Frame has three independent layout modes.
+
+   stage
+   -----
+   Fixed visual world / Lab preview.
+   This is the historical World Frame behavior and remains
+   the default when data-wf-layout is omitted.
+
+   document
+   --------
+   Normal browser document flow.
+   The page grows vertically with its content.
+
+   app
+   ---
+   World Frame provides ambient visuals and theme tokens,
+   while the application keeps ownership of scrolling,
+   sticky/fixed UI, drawers, modals and safe areas.
+*/
+
+/* ---------------------------------------------------------
+   SHARED STATE
+--------------------------------------------------------- */
+
+.world-frame-body [hidden]{
+  display:
+    none !important;
+}
+
+/* ---------------------------------------------------------
+   DOCUMENT MODE
+--------------------------------------------------------- */
+
+.world-frame-body[data-wf-layout="document"]
+.wf-app,
+.world-frame-body[data-wf-layout="document"]
+.wf-stage{
+  min-height:
+    100svh;
+}
+
+/*
+   The shell layer becomes real document content.
+   Outer visual layers stay absolute inside .wf-stage.
+*/
+
+.world-frame-body[data-wf-layout="document"]
+.wf-layer--shell{
+  position:
+    relative;
+
+  inset:
+    auto;
+}
+
+/* ---------------------------------------------------------
+   APP MODE
+--------------------------------------------------------- */
+
+/*
+   App Mode intentionally does NOT become a layout shell.
+
+   Existing application code owns:
+   - document scrolling
+   - sticky / fixed UI
+   - drawers / sheets / dialogs
+   - safe-area handling
+   - app-specific z-index systems
+*/
+
+.world-frame-body[data-wf-layout="app"]
+.wf-app{
+  min-height:
+    100svh;
+
+  overflow:
+    visible;
+
+  border-radius:
+    0;
+
+  background:
+    transparent;
+
+  box-shadow:
+    none;
+}
+
+/*
+   Optional ambient stage.
+
+   Example:
+     <div class="wf-stage" data-wf-ambient>...</div>
+
+   It stays behind the actual application and never
+   participates in the app's layout.
+*/
+
+.world-frame-body[data-wf-layout="app"]
+[data-wf-ambient]{
+  position:
+    fixed;
+
+  inset:
+    0;
+
+  z-index:
+    0;
+
+  min-height:
+    100svh;
+
+  overflow:
+    hidden;
+
+  pointer-events:
+    none;
+}
+
+/*
+   Existing application root.
+
+   Example:
+     <div class="app-shell" data-wf-content>...</div>
+*/
+
+.world-frame-body[data-wf-layout="app"]
+[data-wf-content]{
+  position:
+    relative;
+
+  z-index:
+    1;
+
+  min-height:
+    100svh;
+}
+
+/* ==== WORLD FRAME LAYOUT CONTRACT V1 END ==== */

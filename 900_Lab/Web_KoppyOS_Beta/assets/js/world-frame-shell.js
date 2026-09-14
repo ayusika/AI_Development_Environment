@@ -66,8 +66,34 @@
     }
 
     function pickShellTarget(){
+        /*
+           Production pages must explicitly opt into a
+           World Frame shell.
+
+           This prevents a large application from being
+           auto-detected and unexpectedly DOM-wrapped.
+        */
+
+        const explicit =
+            $('[data-wf-shell]');
+
+        if (explicit){
+            return explicit;
+        }
+
+        /*
+           Automatic shell discovery remains a Lab-only
+           convenience.
+        */
+
+        if (
+            document.body.dataset.worldFrameLab
+            !== 'true'
+        ){
+            return null;
+        }
+
         const preferred = [
-            '[data-wf-shell]',
             '.wfl-focus-stage',
             '.wf-focus-stage',
             '.wfl-preview-stage',
@@ -87,16 +113,22 @@
             if (hit) return hit;
         }
 
-        const candidates = $all('main div, main section, body > div, .container, .panel, .frame');
+        const candidates = $all(
+            'main div, main section, body > div, .container, .panel, .frame'
+        );
+
         let best = null;
         let bestScore = -1;
+
         for (const el of candidates){
             const s = score(el);
+
             if (s > bestScore){
                 bestScore = s;
                 best = el;
             }
         }
+
         return best;
     }
 
