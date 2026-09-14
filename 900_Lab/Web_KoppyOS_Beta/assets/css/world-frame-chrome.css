@@ -1,0 +1,514 @@
+/* =========================================================
+   KOPPY WORLD / SHARED CHROME v1
+
+   Shared top navigation shell.
+
+   World Frame Layers:
+   1   Outer background
+   2   Glass shell
+   2.5 Shell atmosphere
+   3   Page content
+   UI  Shared World Chrome
+========================================================= */
+
+:root{
+  --wf-chrome-height:
+    auto;
+
+  --wf-chrome-gap:
+    24px;
+
+  --wf-chrome-padding-y:
+    20px;
+
+  --wf-chrome-padding-x:
+    30px;
+
+  --wf-chrome-border:
+    rgba(
+      173,
+      223,
+      255,
+      .12
+    );
+
+  --wf-chrome-bg-top:
+    rgba(
+      244,
+      250,
+      255,
+      .08
+    );
+
+  --wf-chrome-bg-bottom:
+    rgba(
+      244,
+      250,
+      255,
+      .03
+    );
+
+  --wf-chrome-blur:
+    18px;
+
+  --wf-chrome-mark-size:
+    44px;
+
+  --wf-chrome-mark-radius:
+    16px;
+
+  --wf-chrome-nav-size:
+    14px;
+
+  --wf-chrome-brand-size:
+    22px;
+}
+
+/* ---------------------------------------------------------
+   TOP BAR
+--------------------------------------------------------- */
+
+.wf-chrome{
+  position:
+    relative;
+
+  z-index:
+    4;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    auto
+    minmax(0, 1fr)
+    auto;
+
+  align-items:
+    center;
+
+  gap:
+    var(--wf-chrome-gap);
+
+  min-height:
+    var(--wf-chrome-height);
+
+  padding:
+    var(--wf-chrome-padding-y)
+    var(--wf-chrome-padding-x);
+
+  border-bottom:
+    1px solid
+    var(--wf-chrome-border);
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--wf-chrome-bg-top),
+      var(--wf-chrome-bg-bottom)
+    );
+
+  backdrop-filter:
+    blur(
+      var(--wf-chrome-blur)
+    );
+
+  -webkit-backdrop-filter:
+    blur(
+      var(--wf-chrome-blur)
+    );
+}
+
+/* ---------------------------------------------------------
+   BRAND
+--------------------------------------------------------- */
+
+.wf-chrome-brand{
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    14px;
+
+  min-width:
+    0;
+
+  color:
+    inherit;
+
+  text-decoration:
+    none;
+}
+
+.wf-chrome-mark{
+  flex:
+    0 0 auto;
+
+  width:
+    var(--wf-chrome-mark-size);
+
+  height:
+    var(--wf-chrome-mark-size);
+
+  display:
+    grid;
+
+  place-items:
+    center;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 46%,
+      transparent
+    );
+
+  border-radius:
+    var(--wf-chrome-mark-radius);
+
+  background:
+    radial-gradient(
+      circle at 35% 35%,
+      color-mix(
+        in srgb,
+        var(--wf-accent) 48%,
+        transparent
+      ),
+      transparent 58%
+    ),
+    rgba(
+      255,
+      255,
+      255,
+      .08
+    );
+
+  box-shadow:
+    inset 0 0 24px
+      color-mix(
+        in srgb,
+        var(--wf-accent) 13%,
+        transparent
+      ),
+    0 0 24px
+      color-mix(
+        in srgb,
+        var(--wf-accent) 15%,
+        transparent
+      );
+
+  color:
+    #dff7ff;
+
+  font-family:
+    var(--wf-font-mono);
+
+  font-weight:
+    800;
+
+  letter-spacing:
+    .08em;
+}
+
+.wf-chrome-brand-copy{
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  gap:
+    4px;
+
+  min-width:
+    0;
+}
+
+.wf-chrome-brand-copy strong{
+  font-family:
+    var(--wf-font-ui);
+
+  font-size:
+    var(--wf-chrome-brand-size);
+
+  font-weight:
+    800;
+
+  line-height:
+    1;
+
+  letter-spacing:
+    .01em;
+}
+
+.wf-chrome-brand-copy small{
+  color:
+    var(
+      --wf-text-soft,
+      #b5cfe6
+    );
+
+  font-family:
+    var(--wf-font-mono);
+
+  font-size:
+    11px;
+
+  font-weight:
+    700;
+
+  line-height:
+    1.2;
+
+  letter-spacing:
+    .22em;
+}
+
+/* ---------------------------------------------------------
+   NAVIGATION
+--------------------------------------------------------- */
+
+.wf-chrome-nav{
+  display:
+    flex;
+
+  justify-content:
+    center;
+
+  align-items:
+    center;
+
+  flex-wrap:
+    wrap;
+
+  gap:
+    12px;
+}
+
+.wf-chrome-nav a{
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  padding:
+    10px
+    16px;
+
+  border-radius:
+    var(
+      --wf-radius-pill,
+      999px
+    );
+
+  color:
+    var(
+      --wf-text-soft,
+      #b5cfe6
+    );
+
+  font-family:
+    var(--wf-font-ui);
+
+  font-size:
+    var(--wf-chrome-nav-size);
+
+  font-weight:
+    700;
+
+  line-height:
+    1;
+
+  text-decoration:
+    none;
+
+  transition:
+    color
+    var(--wf-motion-fast, 160ms)
+    ease,
+    background
+    var(--wf-motion-fast, 160ms)
+    ease,
+    transform
+    var(--wf-motion-fast, 160ms)
+    ease;
+}
+
+.wf-chrome-nav a:hover{
+  color:
+    var(
+      --wf-text,
+      #edf8ff
+    );
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      .08
+    );
+
+  transform:
+    translateY(-1px);
+}
+
+.wf-chrome-nav a:focus-visible{
+  outline:
+    2px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 70%,
+      white
+    );
+
+  outline-offset:
+    2px;
+}
+
+/* ---------------------------------------------------------
+   ONLINE STATUS
+--------------------------------------------------------- */
+
+.wf-chrome-status{
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  gap:
+    10px;
+
+  padding:
+    10px
+    16px;
+
+  border:
+    1px solid
+    rgba(
+      196,
+      255,
+      214,
+      .18
+    );
+
+  border-radius:
+    var(
+      --wf-radius-pill,
+      999px
+    );
+
+  background:
+    rgba(
+      244,
+      255,
+      250,
+      .06
+    );
+
+  color:
+    #d7f7e6;
+
+  font-family:
+    var(--wf-font-ui);
+
+  font-size:
+    14px;
+
+  font-weight:
+    700;
+
+  white-space:
+    nowrap;
+}
+
+.wf-chrome-status-dot{
+  flex:
+    0 0 auto;
+
+  width:
+    10px;
+
+  height:
+    10px;
+
+  border-radius:
+    50%;
+
+  background:
+    #69ff8d;
+
+  box-shadow:
+    0 0 18px
+    #69ff8d;
+}
+
+/* ---------------------------------------------------------
+   RESPONSIVE
+--------------------------------------------------------- */
+
+@media (max-width: 900px){
+  .wf-chrome{
+    grid-template-columns:
+      1fr
+      auto;
+
+    gap:
+      14px;
+
+    padding:
+      16px
+      20px;
+  }
+
+  .wf-chrome-nav{
+    grid-column:
+      1 / -1;
+
+    grid-row:
+      2;
+
+    justify-content:
+      flex-start;
+  }
+}
+
+@media (max-width: 620px){
+  .wf-chrome{
+    grid-template-columns:
+      1fr;
+  }
+
+  .wf-chrome-status{
+    justify-self:
+      flex-start;
+  }
+
+  .wf-chrome-nav{
+    grid-column:
+      auto;
+
+    grid-row:
+      auto;
+  }
+
+  .wf-chrome-nav a{
+    padding:
+      9px
+      12px;
+
+    font-size:
+      13px;
+  }
+}

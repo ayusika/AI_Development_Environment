@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="./assets/css/world-frame-shell.css">
   <link rel="stylesheet" href="./assets/css/world-frame-atmosphere.css">
   <link rel="stylesheet" href="./assets/css/world-frame-components.css">
+  <link rel="stylesheet" href="./assets/css/world-frame-chrome.css">
 
   <!-- Home-specific layout -->
   <link rel="stylesheet" href="./assets/css/home.css">
@@ -73,16 +74,16 @@
     data-wf-shell-blur="16"
     data-wf-atmosphere="normal"
   >
-    <header class="kw-topbar">
-      <a class="kw-brand" href="./" aria-label="Koppy World ホーム">
-        <span class="kw-brand-mark">◇K</span>
-        <span class="kw-brand-copy">
+    <header class="kw-topbar wf-chrome" data-wf-chrome>
+      <a class="kw-brand wf-chrome-brand" href="./" aria-label="Koppy World ホーム">
+        <span class="kw-brand-mark wf-chrome-mark">◇K</span>
+        <span class="kw-brand-copy wf-chrome-brand-copy">
           <strong>Koppy World</strong>
           <small>ICE BLUE PRIVATE OS</small>
         </span>
       </a>
 
-      <nav class="kw-nav" aria-label="主要ナビゲーション">
+      <nav class="kw-nav wf-chrome-nav" aria-label="主要ナビゲーション">
         <a href="#work">仕事OS</a>
         <a href="#home">自宅</a>
         <a href="#brain">GitHub Brain</a>
@@ -90,8 +91,8 @@
         <a href="#tools">ツール</a>
       </nav>
 
-      <div class="kw-status" aria-label="World Online">
-        <span class="kw-status-dot"></span>
+      <div class="kw-status wf-chrome-status" aria-label="World Online">
+        <span class="kw-status-dot wf-chrome-status-dot"></span>
         World Online
       </div>
     </header>
