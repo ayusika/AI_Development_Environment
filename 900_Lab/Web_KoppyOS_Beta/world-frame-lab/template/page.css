@@ -206,23 +206,6 @@
     22px;
 }
 
-.wft-card h3 {
-  margin:
-    18px
-    0
-    0;
-}
-
-.wft-card p:not(.wf-system-label) {
-  margin:
-    12px
-    0
-    0;
-
-  color:
-    var(--wf-text-soft);
-}
-
 .wft-footer {
   margin-top:
     auto;
