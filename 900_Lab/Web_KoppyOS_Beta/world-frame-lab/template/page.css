@@ -117,23 +117,20 @@
     var(--wf-text);
 }
 
-.wft-hero-copy > p:not(.wf-system-label) {
-  max-width:
+.wft-hero-copy {
+  --wf-hero-copy-max:
     48rem;
 
-  margin:
-    22px
-    0
-    0;
-
-  font-size:
+  --wf-hero-copy-size:
     var(--wf-shell-p-size);
 
-  line-height:
+  --wf-hero-copy-line:
     var(--wf-shell-body-line);
+}
 
-  color:
-    var(--wf-text-soft);
+.wft-hero-copy .wf-hero-copy {
+  margin-top:
+    22px;
 }
 
 .wft-actions {
@@ -160,19 +157,17 @@
 .wft-section-head {
   margin-bottom:
     18px;
+
+  --wf-section-title-size:
+    var(--wf-shell-h2-size);
 }
 
-.wft-section-head h2 {
-  margin:
-    9px
-    0
-    0;
+.wft-section-head .wf-section-title {
+  margin-top:
+    9px;
 
   font-family:
     var(--wf-font-display);
-
-  font-size:
-    var(--wf-shell-h2-size);
 
   line-height:
     1.1;
