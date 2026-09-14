@@ -795,6 +795,11 @@
 
   --wf-tagline-spacing:
     .03em;
+
+  --wf-tagline-font:
+    Georgia,
+    "Times New Roman",
+    serif;
 }
 
 /* ---------------------------------------------------------
@@ -867,11 +872,7 @@
     );
 
   font-family:
-    var(
-      --wf-font-display,
-      Georgia,
-      serif
-    );
+    var(--wf-tagline-font);
 
   font-style:
     italic;
