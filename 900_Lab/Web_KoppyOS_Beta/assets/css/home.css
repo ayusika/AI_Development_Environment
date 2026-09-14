@@ -762,3 +762,262 @@ a{
     transition:none !important;
   }
 }
+
+/* === KOPPY WORLD V5 REFINEMENT === */
+
+/* ------------------------------
+   Ice particles / frost layer
+------------------------------ */
+.kw-entrance{
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+}
+
+.kw-entrance::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:.48;
+  background:
+    radial-gradient(circle at 8% 18%, rgba(255,255,255,.30) 0 1.2px, transparent 1.6px),
+    radial-gradient(circle at 24% 72%, rgba(149,223,255,.22) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 52% 24%, rgba(255,255,255,.22) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 77% 41%, rgba(132,210,255,.22) 0 1px, transparent 1.4px),
+    radial-gradient(circle at 90% 79%, rgba(255,255,255,.24) 0 1.1px, transparent 1.5px);
+  background-size:
+    180px 180px,
+    220px 220px,
+    240px 240px,
+    260px 260px,
+    220px 220px;
+  mix-blend-mode:screen;
+}
+
+.kw-entrance::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0) 26%),
+    linear-gradient(90deg, rgba(150,220,255,.05), rgba(255,255,255,0) 30%, rgba(147,208,255,.04) 68%, rgba(255,255,255,0));
+  opacity:.9;
+}
+
+/* ------------------------------
+   Directory spacing
+------------------------------ */
+.kw-directory-heading{
+  margin:
+    clamp(22px, 3vw, 36px)
+    0
+    clamp(18px, 2.2vw, 26px);
+  align-items:end;
+  gap:12px;
+}
+
+.kw-directory-heading h2{
+  letter-spacing:.01em;
+}
+
+/* ------------------------------
+   Node layout rebalance
+------------------------------ */
+.kw-node-field{
+  display:grid;
+  grid-template-columns:repeat(12, minmax(0, 1fr));
+  gap:18px;
+  align-items:stretch;
+}
+
+.kw-node-field > .kw-node{
+  grid-column:auto;
+  min-height:250px;
+}
+
+.kw-node-field > .kw-node:nth-child(1){
+  grid-column:1 / span 4;
+}
+
+.kw-node-field > .kw-node:nth-child(2){
+  grid-column:5 / span 4;
+}
+
+.kw-node-field > .kw-node:nth-child(3){
+  grid-column:9 / span 4;
+}
+
+.kw-node-field > .kw-node:nth-child(4){
+  grid-column:1 / span 5;
+  min-height:220px;
+}
+
+.kw-node-field > .kw-node:nth-child(5){
+  grid-column:6 / span 7;
+  min-height:220px;
+}
+
+/* ------------------------------
+   Card visual refinement
+------------------------------ */
+.kw-node{
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(136, 205, 255, .28) !important;
+  border-left:1px solid rgba(136, 205, 255, .28) !important;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05)),
+    linear-gradient(135deg, rgba(123,170,255,.08), rgba(126,235,255,.04) 58%, rgba(255,255,255,.03));
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.16),
+    0 18px 36px rgba(3, 13, 33, .18),
+    0 0 0 1px rgba(170, 230, 255, .04);
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+  transition:
+    transform .22s ease,
+    box-shadow .22s ease,
+    border-color .22s ease,
+    background .22s ease;
+}
+
+.kw-node::before{
+  display:none !important;
+}
+
+.kw-node::after{
+  content:"";
+  position:absolute;
+  inset:auto -8% -26% 34%;
+  height:140px;
+  pointer-events:none;
+  background:radial-gradient(
+    ellipse at center,
+    rgba(132, 210, 255, .16) 0%,
+    rgba(132, 210, 255, .08) 32%,
+    rgba(132, 210, 255, 0) 72%
+  );
+  opacity:.9;
+}
+
+.kw-node:hover{
+  transform:translateY(-4px);
+  border-color:rgba(167, 227, 255, .48) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.20),
+    0 24px 44px rgba(4, 15, 40, .22),
+    0 0 0 1px rgba(191, 238, 255, .08),
+    0 0 26px rgba(113, 205, 255, .12);
+}
+
+.kw-node h3{
+  letter-spacing:.01em;
+}
+
+.kw-node p{
+  line-height:1.7;
+}
+
+.kw-node a{
+  position:relative;
+  z-index:2;
+}
+
+/* small frost highlight */
+.kw-node .kw-node-action a,
+.kw-node .kw-sub-link{
+  background:rgba(94, 163, 221, .14);
+  border:1px solid rgba(163, 224, 255, .22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.12);
+}
+
+.kw-node .kw-node-action a:hover,
+.kw-node .kw-sub-link:hover{
+  background:rgba(101, 178, 244, .20);
+  border-color:rgba(183, 234, 255, .34);
+}
+
+/* ------------------------------
+   Slight personality by node
+------------------------------ */
+.kw-node-field > .kw-node:nth-child(1){
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05)),
+    linear-gradient(135deg, rgba(91,181,255,.10), rgba(255,255,255,.03) 65%);
+}
+
+.kw-node-field > .kw-node:nth-child(2){
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05)),
+    linear-gradient(135deg, rgba(100,220,255,.08), rgba(255,255,255,.03) 65%);
+}
+
+.kw-node-field > .kw-node:nth-child(3){
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05)),
+    linear-gradient(135deg, rgba(149,150,255,.10), rgba(255,255,255,.03) 65%);
+}
+
+.kw-node-field > .kw-node:nth-child(4){
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05)),
+    linear-gradient(135deg, rgba(255,145,210,.10), rgba(255,255,255,.03) 65%);
+}
+
+.kw-node-field > .kw-node:nth-child(5){
+  background:
+    linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05)),
+    linear-gradient(135deg, rgba(110,198,255,.09), rgba(255,255,255,.03) 65%);
+}
+
+/* ------------------------------
+   Responsive
+------------------------------ */
+@media (max-width: 1180px){
+  .kw-node-field{
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+  }
+
+  .kw-node-field > .kw-node:nth-child(1),
+  .kw-node-field > .kw-node:nth-child(2),
+  .kw-node-field > .kw-node:nth-child(3),
+  .kw-node-field > .kw-node:nth-child(4),
+  .kw-node-field > .kw-node:nth-child(5){
+    grid-column:auto;
+    min-height:220px;
+  }
+
+  .kw-node-field > .kw-node:nth-child(5){
+    grid-column:1 / -1;
+  }
+}
+
+@media (max-width: 700px){
+  .kw-node-field{
+    grid-template-columns:1fr;
+  }
+
+  .kw-node-field > .kw-node:nth-child(5){
+    grid-column:auto;
+  }
+
+  .kw-node{
+    min-height:200px !important;
+  }
+
+  .kw-directory-heading{
+    gap:8px;
+  }
+}
+
+/* ------------------------------
+   Reduced motion
+------------------------------ */
+@media (prefers-reduced-motion: reduce){
+  .kw-node,
+  .kw-node::after{
+    transition:none !important;
+  }
+}
