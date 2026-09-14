@@ -2,6 +2,11 @@
   const app = document.getElementById('wfApp');
   if (!app) return;
 
+  app.dataset.wfSeed ||= '4812';
+  app.dataset.wfDensity ||= '1';
+  app.dataset.wfQuality ||= 'balanced';
+  app.dataset.wfReadableZone ||= 'on';
+
   const streamsLayer = app.querySelector('[data-layer="streams"]');
   const logsLayer = app.querySelector('[data-layer="logs"]');
   const crystalsLayer = app.querySelector('[data-layer="crystals"]');
@@ -37,12 +42,192 @@
 
   const streamAngles = [0, 0, 0, 8, -8, 16, -16, 26, -26, 36, -36, 52, -52, 90, -90, 118, -118, 146, -146];
 
-  const rand = (min, max) => Math.random() * (max - min) + min;
-  const randInt = (min, max) => Math.floor(rand(min, max + 1));
-  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  const clamp = (value, min, max) =>
+    Math.max(
+      min,
+      Math.min(
+        max,
+        Number(value)
+      )
+    );
+
+  const hashString = (value) => {
+    let hash = 2166136261;
+
+    for (
+      let index = 0;
+      index < value.length;
+      index += 1
+    ) {
+      hash ^= value.charCodeAt(index);
+
+      hash = Math.imul(
+        hash,
+        16777619
+      );
+    }
+
+    return hash >>> 0;
+  };
+
+  const normalizeSeed = (value) => {
+    const parsed =
+      Number.parseInt(
+        String(value),
+        10
+      );
+
+    if (
+      Number.isFinite(parsed) &&
+      parsed !== 0
+    ) {
+      return (
+        Math.abs(parsed) >>>
+        0
+      );
+    }
+
+    return (
+      hashString(
+        String(value)
+      ) ||
+      1
+    );
+  };
+
+  const mulberry32 = (seed) => {
+    let value =
+      seed >>> 0;
+
+    return () => {
+      value +=
+        0x6D2B79F5;
+
+      let result =
+        value;
+
+      result =
+        Math.imul(
+          result ^
+          result >>> 15,
+          result | 1
+        );
+
+      result ^=
+        result +
+        Math.imul(
+          result ^
+          result >>> 7,
+          result | 61
+        );
+
+      return (
+        (
+          result ^
+          result >>> 14
+        ) >>> 0
+      ) / 4294967296;
+    };
+  };
+
+  const currentSeed = () =>
+    normalizeSeed(
+      app.dataset.wfSeed ||
+      '4812'
+    );
+
+  const createRandom = (
+    namespace = 'core'
+  ) =>
+    mulberry32(
+      (
+        currentSeed() ^
+        hashString(namespace)
+      ) >>> 0
+    );
+
+  let random =
+    createRandom();
+
+  const resetRandom = (
+    namespace = 'core'
+  ) => {
+    random =
+      createRandom(namespace);
+  };
+
+  const rand = (min, max) =>
+    random() *
+    (max - min) +
+    min;
+
+  const randInt = (min, max) =>
+    Math.floor(
+      rand(
+        min,
+        max + 1
+      )
+    );
+
+  const pick = (arr) =>
+    arr[
+      Math.floor(
+        random() *
+        arr.length
+      )
+    ];
+
+  const getDensity = () =>
+    clamp(
+      app.dataset.wfDensity ||
+      1,
+      .45,
+      1.45
+    );
+
+  const getQualityFactor = () => {
+    const quality =
+      app.dataset.wfQuality ||
+      'balanced';
+
+    if (quality === 'high') {
+      return 1;
+    }
+
+    if (quality === 'light') {
+      return .56;
+    }
+
+    return .82;
+  };
+
+  const getResponsiveFactor = () => {
+    const width =
+      app.clientWidth ||
+      window.innerWidth;
+
+    if (width <= 680) {
+      return .56;
+    }
+
+    if (width <= 980) {
+      return .72;
+    }
+
+    if (width <= 1280) {
+      return .88;
+    }
+
+    return 1;
+  };
+
+  const getRenderFactor = () =>
+    getDensity() *
+    getQualityFactor() *
+    getResponsiveFactor();
 
   function binaryString(len) {
-    return Array.from({ length: len }, () => (Math.random() > 0.5 ? '1' : '0')).join('');
+    return Array.from({ length: len }, () => (random() > 0.5 ? '1' : '0')).join('');
   }
 
   function buildStars(count) {
@@ -52,7 +237,7 @@
 
     for (let i = 0; i < count; i += 1) {
       const el = document.createElement('i');
-      el.className = 'wf-star' + (Math.random() > 0.86 ? ' is-large' : '');
+      el.className = 'wf-star' + (random() > 0.86 ? ' is-large' : '');
       el.style.left = `${rand(0, width)}px`;
       el.style.top = `${rand(0, height)}px`;
       el.style.setProperty('--duration', `${rand(4.5, 10.5)}s`);
@@ -69,7 +254,7 @@
     for (let i = 0; i < count; i += 1) {
       const el = document.createElement('div');
 
-      const depthRoll = Math.random();
+      const depthRoll = random();
 
       if (depthRoll > 0.91) {
         el.className = 'wf-stream is-foreground';
@@ -119,7 +304,7 @@
       const el = document.createElement('div');
 
       el.className =
-        Math.random() > 0.54
+        random() > 0.54
           ? 'wf-log is-hudline'
           : 'wf-log';
 
@@ -179,7 +364,7 @@
 
     for (let i = 0; i < count; i += 1) {
       let el;
-      const typeRoll = Math.random();
+      const typeRoll = random();
 
       if (typeRoll < 0.46) {
         el = createDustCrystal();
@@ -193,7 +378,7 @@
 
       if (
         !el.classList.contains('wf-crystal--dust') &&
-        Math.random() > 0.88
+        random() > 0.88
       ) {
         el.classList.add(
           'is-near-crystal'
@@ -212,12 +397,58 @@
   }
 
   function rebuildScene() {
-    const mode = app.dataset.motion || 'rich';
-    const config = motionMap[mode] || motionMap.rich;
-    buildStars(config.stars);
-    buildStreams(config.streams);
-    buildLogs(config.logs);
-    buildCrystals(config.crystals);
+    const mode =
+      app.dataset.motion ||
+      'rich';
+
+    const config =
+      motionMap[mode] ||
+      motionMap.rich;
+
+    const factor =
+      getRenderFactor();
+
+    resetRandom('core');
+
+    const scaled = (
+      value,
+      minimum
+    ) =>
+      Math.max(
+        minimum,
+        Math.round(
+          value *
+          factor
+        )
+      );
+
+    buildStars(
+      scaled(
+        config.stars,
+        24
+      )
+    );
+
+    buildStreams(
+      scaled(
+        config.streams,
+        12
+      )
+    );
+
+    buildLogs(
+      scaled(
+        config.logs,
+        4
+      )
+    );
+
+    buildCrystals(
+      scaled(
+        config.crystals,
+        10
+      )
+    );
   }
 
   function setActive(buttons, key, value) {
@@ -245,7 +476,7 @@
       );
 
       window.setTimeout(
-        rebuildScene,
+        rebuildAll,
         100
       );
     };
@@ -345,7 +576,7 @@
     let timer = null;
     window.addEventListener('resize', () => {
       clearTimeout(timer);
-      timer = setTimeout(rebuildScene, 120);
+      timer = setTimeout(rebuildAll, 120);
     });
   }
 
@@ -365,6 +596,130 @@
       visual.appendChild(note);
     });
   }
+
+  const rebuildAll = () => {
+    rebuildScene();
+
+    window
+      .KoppyWorldPolish
+      ?.rebuild
+      ?.();
+  };
+
+  const configure = (
+    options = {}
+  ) => {
+    if (
+      options.seed !==
+      undefined
+    ) {
+      app.dataset.wfSeed =
+        String(
+          normalizeSeed(
+            options.seed
+          )
+        );
+    }
+
+    if (
+      options.density !==
+      undefined
+    ) {
+      app.dataset.wfDensity =
+        String(
+          clamp(
+            options.density,
+            .45,
+            1.45
+          )
+        );
+    }
+
+    if (
+      options.quality !==
+      undefined
+    ) {
+      const allowed =
+        [
+          'high',
+          'balanced',
+          'light'
+        ];
+
+      app.dataset.wfQuality =
+        allowed.includes(
+          options.quality
+        )
+          ? options.quality
+          : 'balanced';
+    }
+
+    if (
+      options.readable !==
+      undefined
+    ) {
+      app.dataset.wfReadableZone =
+        options.readable
+          ? 'on'
+          : 'off';
+    }
+
+    rebuildAll();
+  };
+
+  window.KoppyWorldFrame = {
+    rebuild:
+      rebuildAll,
+
+    configure,
+
+    setSeed:
+      (value) =>
+        configure({
+          seed: value
+        }),
+
+    setDensity:
+      (value) =>
+        configure({
+          density: value
+        }),
+
+    setQuality:
+      (value) =>
+        configure({
+          quality: value
+        }),
+
+    setReadable:
+      (value) => {
+        app.dataset.wfReadableZone =
+          value
+            ? 'on'
+            : 'off';
+      },
+
+    createRandom,
+
+    getRenderFactor,
+
+    getState:
+      () => ({
+        seed:
+          currentSeed(),
+
+        density:
+          getDensity(),
+
+        quality:
+          app.dataset.wfQuality ||
+          'balanced',
+
+        readable:
+          app.dataset.wfReadableZone !==
+          'off'
+      })
+  };
 
   setupControls();
   setupLabFocus();

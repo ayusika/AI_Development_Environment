@@ -1,0 +1,400 @@
+/* =========================================================
+   KOPPY WORLD DESIGN TOKENS v1
+
+   Layer hierarchy:
+   1. Background / system information
+   2. Glass shell
+   3. Inner panels
+   4. Page-specific override
+
+   Any page can override these variables on its own
+   [data-wf-page] root without editing shared files.
+========================================================= */
+
+@property --wf-bg-0 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #031126;
+}
+
+@property --wf-bg-1 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #071d3c;
+}
+
+@property --wf-bg-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #0b2f63;
+}
+
+@property --wf-accent {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #7fd0ff;
+}
+
+@property --wf-accent-2 {
+  syntax: "<color>";
+  inherits: true;
+  initial-value: #7fb3ff;
+}
+
+:root {
+  /* -----------------------------------------------------
+     Font families
+  ----------------------------------------------------- */
+
+  --wf-font-display:
+    "Avenir Next",
+    "Helvetica Neue",
+    "Hiragino Sans",
+    "Yu Gothic",
+    sans-serif;
+
+  --wf-font-ui:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Hiragino Sans",
+    "Yu Gothic",
+    "Noto Sans JP",
+    sans-serif;
+
+  --wf-font-mono:
+    "SFMono-Regular",
+    "SF Mono",
+    Menlo,
+    Consolas,
+    monospace;
+
+  --wf-font-background:
+    var(--wf-font-mono);
+
+  /* Legacy aliases used by the current Lab. */
+
+  --wf-display-font:
+    var(--wf-font-display);
+
+  --wf-ui-font:
+    var(--wf-font-ui);
+
+  --wf-mono-font:
+    var(--wf-font-mono);
+
+  /* -----------------------------------------------------
+     Shell typography
+  ----------------------------------------------------- */
+
+  --wf-shell-h1-size:
+    clamp(3.2rem, 7vw, 6.75rem);
+
+  --wf-shell-h2-size:
+    clamp(1.65rem, 2.5vw, 2.35rem);
+
+  --wf-shell-h3-size:
+    clamp(1.15rem, 1.7vw, 1.45rem);
+
+  --wf-shell-p-size:
+    .95rem;
+
+  --wf-shell-small-size:
+    .75rem;
+
+  --wf-shell-heading-weight:
+    800;
+
+  --wf-shell-body-weight:
+    500;
+
+  --wf-shell-heading-line:
+    1.08;
+
+  --wf-shell-body-line:
+    1.85;
+
+  --wf-shell-heading-tracking:
+    -.035em;
+
+  --wf-shell-body-tracking:
+    .01em;
+
+  /* -----------------------------------------------------
+     Inner panel typography
+  ----------------------------------------------------- */
+
+  --wf-panel-h2-size:
+    clamp(1.35rem, 2vw, 1.75rem);
+
+  --wf-panel-h3-size:
+    clamp(1.15rem, 1.6vw, 1.45rem);
+
+  --wf-panel-p-size:
+    .875rem;
+
+  --wf-panel-label-size:
+    .67rem;
+
+  --wf-panel-heading-weight:
+    800;
+
+  --wf-panel-body-weight:
+    500;
+
+  --wf-panel-heading-line:
+    1.15;
+
+  --wf-panel-body-line:
+    1.72;
+
+  /* -----------------------------------------------------
+     Background typography
+  ----------------------------------------------------- */
+
+  --wf-background-log-size:
+    .625rem;
+
+  --wf-background-letter-spacing:
+    .16em;
+
+  /* -----------------------------------------------------
+     Spacing
+  ----------------------------------------------------- */
+
+  --wf-space-1: 4px;
+  --wf-space-2: 8px;
+  --wf-space-3: 12px;
+  --wf-space-4: 16px;
+  --wf-space-5: 20px;
+  --wf-space-6: 28px;
+  --wf-space-7: 36px;
+  --wf-space-8: 48px;
+  --wf-space-9: 64px;
+
+  /* -----------------------------------------------------
+     Radius
+  ----------------------------------------------------- */
+
+  --wf-radius-xs: 8px;
+  --wf-radius-sm: 14px;
+  --wf-radius-md: 20px;
+  --wf-radius-lg: 26px;
+  --wf-radius-xl: 34px;
+  --wf-radius-pill: 999px;
+
+  /* -----------------------------------------------------
+     Shadows
+  ----------------------------------------------------- */
+
+  --wf-shadow-soft:
+    0 12px 28px
+    rgba(0, 12, 38, .18);
+
+  --wf-shadow-panel:
+    0 18px 38px
+    rgba(0, 10, 32, .22);
+
+  --wf-shadow-shell:
+    0 28px 90px
+    rgba(0, 8, 28, .38);
+
+  /* -----------------------------------------------------
+     Motion
+  ----------------------------------------------------- */
+
+  --wf-motion-fast: 160ms;
+  --wf-motion-normal: 320ms;
+  --wf-motion-theme: 650ms;
+
+  --wf-ease-standard:
+    cubic-bezier(.2, .8, .2, 1);
+}
+
+/* =========================================================
+   PAGE OVERRIDE ROOT
+
+   Example in a page-specific CSS:
+
+   [data-wf-page="work"] {
+     --wf-shell-h1-size: 52px;
+     --wf-font-display: "Some Font", sans-serif;
+   }
+
+   No shared file edit required.
+========================================================= */
+
+[data-wf-page] {
+  --wf-page-font-display:
+    var(--wf-font-display);
+
+  --wf-page-font-ui:
+    var(--wf-font-ui);
+
+  --wf-page-font-mono:
+    var(--wf-font-mono);
+}
+
+/* =========================================================
+   LAYER 1 / BACKGROUND
+========================================================= */
+
+.wf-stream,
+.wf-log,
+.wf-polish-line,
+.wf-polish-log {
+  font-family:
+    var(
+      --wf-page-font-mono,
+      var(--wf-font-background)
+    );
+}
+
+/* =========================================================
+   LAYER 2 / GLASS SHELL
+
+   Generic h/p defaults apply only when a page has not
+   already given the element a component-specific class.
+========================================================= */
+
+[data-wf-shell] {
+  font-family:
+    var(
+      --wf-page-font-ui,
+      var(--wf-font-ui)
+    );
+}
+
+[data-wf-shell] h1:not([class]) {
+  margin: 0;
+
+  font-family:
+    var(
+      --wf-page-font-display,
+      var(--wf-font-display)
+    );
+
+  font-size:
+    var(--wf-shell-h1-size);
+
+  font-weight:
+    var(--wf-shell-heading-weight);
+
+  line-height:
+    var(--wf-shell-heading-line);
+
+  letter-spacing:
+    var(--wf-shell-heading-tracking);
+}
+
+[data-wf-shell] h2:not([class]) {
+  margin: 0;
+
+  font-family:
+    var(
+      --wf-page-font-display,
+      var(--wf-font-display)
+    );
+
+  font-size:
+    var(--wf-shell-h2-size);
+
+  font-weight:
+    var(--wf-shell-heading-weight);
+
+  line-height:
+    var(--wf-shell-heading-line);
+
+  letter-spacing:
+    var(--wf-shell-heading-tracking);
+}
+
+[data-wf-shell] h3:not([class]) {
+  margin: 0;
+
+  font-size:
+    var(--wf-shell-h3-size);
+
+  font-weight:
+    var(--wf-shell-heading-weight);
+
+  line-height:
+    var(--wf-shell-heading-line);
+}
+
+[data-wf-shell] p:not([class]) {
+  font-size:
+    var(--wf-shell-p-size);
+
+  font-weight:
+    var(--wf-shell-body-weight);
+
+  line-height:
+    var(--wf-shell-body-line);
+
+  letter-spacing:
+    var(--wf-shell-body-tracking);
+}
+
+/* =========================================================
+   LAYER 3 / INNER PANEL
+========================================================= */
+
+[data-wf-panel] {
+  font-family:
+    var(
+      --wf-page-font-ui,
+      var(--wf-font-ui)
+    );
+}
+
+[data-wf-panel] h2:not([class]),
+[data-wf-panel] h3:not([class]) {
+  margin: 0;
+
+  font-weight:
+    var(--wf-panel-heading-weight);
+
+  line-height:
+    var(--wf-panel-heading-line);
+
+  letter-spacing:
+    -.025em;
+}
+
+[data-wf-panel] h2:not([class]) {
+  font-size:
+    var(--wf-panel-h2-size);
+}
+
+[data-wf-panel] h3:not([class]) {
+  font-size:
+    var(--wf-panel-h3-size);
+}
+
+[data-wf-panel] p:not([class]) {
+  font-size:
+    var(--wf-panel-p-size);
+
+  font-weight:
+    var(--wf-panel-body-weight);
+
+  line-height:
+    var(--wf-panel-body-line);
+}
+
+[data-wf-label] {
+  font-family:
+    var(
+      --wf-page-font-mono,
+      var(--wf-font-mono)
+    );
+
+  font-size:
+    var(--wf-panel-label-size);
+
+  font-weight: 700;
+
+  letter-spacing: .18em;
+
+  text-transform: uppercase;
+}

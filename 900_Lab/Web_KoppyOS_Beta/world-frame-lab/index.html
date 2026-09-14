@@ -4,9 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>World Frame Lab | Koppy World</title>
+  <link rel="stylesheet" href="../assets/css/world-frame-tokens.css">
   <link rel="stylesheet" href="../assets/css/world-frame.css">
     <link rel="stylesheet" href="../assets/css/world-frame-polish.css">
     <link rel="stylesheet" href="../assets/css/world-frame-shell.css">
+    <link rel="stylesheet" href="../assets/css/world-frame-lab-engine.css">
 </head>
 <body
   class="world-frame-body"
@@ -96,6 +98,11 @@
             data-mode="sample"
             data-motion="rich"
             data-theme="ice"
+            data-wf-page="world"
+            data-wf-seed="4812"
+            data-wf-density="1"
+            data-wf-quality="balanced"
+            data-wf-readable-zone="on"
           >
             <div class="wf-stage">
               <div class="wf-layer wf-layer--outer" aria-hidden="true">
@@ -183,7 +190,7 @@
                       </div>
 
                       <div class="wf-card-row">
-                        <article class="wf-node wf-node--work">
+                        <article data-wf-panel class="wf-node wf-node--work">
                           <div class="wf-node__eyebrow">
                             <span class="wf-node__icon">📅</span>
                             <span>Option A</span>
@@ -193,7 +200,7 @@
                           <a class="wf-node__btn" href="#"><span>ホームを確認</span><span>→</span></a>
                         </article>
 
-                        <article class="wf-node wf-node--home">
+                        <article data-wf-panel class="wf-node wf-node--home">
                           <div class="wf-node__eyebrow">
                             <span class="wf-node__icon">🏠</span>
                             <span>Option B</span>
@@ -203,7 +210,7 @@
                           <a class="wf-node__btn" href="#"><span>構成を確認</span><span>→</span></a>
                         </article>
 
-                        <article class="wf-node wf-node--memory">
+                        <article data-wf-panel class="wf-node wf-node--memory">
                           <div class="wf-node__eyebrow">
                             <span class="wf-node__icon">◇</span>
                             <span>Depth Layer</span>
@@ -213,7 +220,7 @@
                           <a class="wf-node__btn" href="#"><span>Depthを見る</span><span>→</span></a>
                         </article>
 
-                        <article class="wf-node wf-node--koppy">
+                        <article data-wf-panel class="wf-node wf-node--koppy">
                           <div class="wf-node__eyebrow">
                             <span class="wf-node__icon">💬</span>
                             <span>Motion</span>
@@ -225,7 +232,7 @@
                       </div>
 
                       <div class="wf-tool-row">
-                        <article class="wf-node wf-node--tools">
+                        <article data-wf-panel class="wf-node wf-node--tools">
                           <div>
                             <div class="wf-node__eyebrow">
                               <span class="wf-node__icon">&lt;/&gt;</span>
@@ -270,5 +277,6 @@
     <script src="../assets/js/world-frame-polish.js"></script>
     <script src="../assets/js/world-frame-shell.js"></script>
     <script src="../assets/js/world-frame-profiles.js"></script>
+    <script src="../assets/js/world-frame-lab-engine.js"></script>
 </body>
 </html>

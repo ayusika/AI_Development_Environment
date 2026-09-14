@@ -2168,3 +2168,82 @@ body.wf-focus-active .wf-focus-exit{
 }
 
 /* ==== WORLD FRAME ELECTRIC THEME END ==== */
+
+/* ==== WORLD FRAME ENGINE V1 START ==== */
+
+/* Smooth registered theme variables. */
+
+.wf-app {
+  --wf-readable-alpha: .18;
+
+  transition:
+    --wf-bg-0 var(--wf-motion-theme, 650ms) ease,
+    --wf-bg-1 var(--wf-motion-theme, 650ms) ease,
+    --wf-bg-2 var(--wf-motion-theme, 650ms) ease,
+    --wf-accent var(--wf-motion-theme, 650ms) ease,
+    --wf-accent-2 var(--wf-motion-theme, 650ms) ease;
+}
+
+/*
+   READABLE ZONE
+
+   Instead of covering the background with an opaque box,
+   reduce information density near the center.
+*/
+
+.wf-app[data-wf-readable-zone="on"] .wf-streams,
+.wf-app[data-wf-readable-zone="on"] .wf-logs,
+.wf-app[data-wf-readable-zone="on"] .wf-crystals,
+.wf-app[data-wf-readable-zone="on"] .wf-polish-layer {
+  -webkit-mask-image:
+    radial-gradient(
+      ellipse 58% 54% at 50% 48%,
+      rgba(0, 0, 0, var(--wf-readable-alpha)) 0%,
+      rgba(0, 0, 0, .38) 38%,
+      rgba(0, 0, 0, .82) 63%,
+      #000 82%
+    );
+
+  mask-image:
+    radial-gradient(
+      ellipse 58% 54% at 50% 48%,
+      rgba(0, 0, 0, var(--wf-readable-alpha)) 0%,
+      rgba(0, 0, 0, .38) 38%,
+      rgba(0, 0, 0, .82) 63%,
+      #000 82%
+    );
+}
+
+.wf-app[data-wf-readable-zone="off"] .wf-streams,
+.wf-app[data-wf-readable-zone="off"] .wf-logs,
+.wf-app[data-wf-readable-zone="off"] .wf-crystals,
+.wf-app[data-wf-readable-zone="off"] .wf-polish-layer {
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+/* Quality mode also affects expensive near effects. */
+
+.wf-app[data-wf-quality="light"] .wf-stream.is-foreground,
+.wf-app[data-wf-quality="light"] .wf-crystal.is-near-crystal,
+.wf-app[data-wf-quality="light"] .wf-crystal--flare.is-near-crystal {
+  display: none;
+}
+
+.wf-app[data-wf-quality="light"] .wf-layer--outer::before,
+.wf-app[data-wf-quality="light"] .wf-layer--outer::after {
+  filter: blur(18px);
+}
+
+@media (max-width: 760px) {
+  .wf-stream.is-foreground,
+  .wf-crystal.is-near-crystal {
+    display: none;
+  }
+
+  .wf-app {
+    --wf-readable-alpha: .10;
+  }
+}
+
+/* ==== WORLD FRAME ENGINE V1 END ==== */

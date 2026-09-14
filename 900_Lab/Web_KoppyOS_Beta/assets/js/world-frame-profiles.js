@@ -8,7 +8,11 @@
       motion: "rich",
       shellMode: "frost",
       opacity: 0.20,
-      blur: 16
+      blur: 16,
+      seed: 4812,
+      density: 1.00,
+      quality: "balanced",
+      readable: true
     },
 
     work: {
@@ -17,7 +21,11 @@
       motion: "normal",
       shellMode: "dense",
       opacity: 0.28,
-      blur: 22
+      blur: 22,
+      seed: 7301,
+      density: 0.78,
+      quality: "balanced",
+      readable: true
     },
 
     home: {
@@ -26,7 +34,11 @@
       motion: "calm",
       shellMode: "clear",
       opacity: 0.14,
-      blur: 10
+      blur: 10,
+      seed: 2190,
+      density: 1.08,
+      quality: "high",
+      readable: false
     },
 
     brain: {
@@ -35,7 +47,11 @@
       motion: "normal",
       shellMode: "frost",
       opacity: 0.22,
-      blur: 18
+      blur: 18,
+      seed: 8821,
+      density: 0.90,
+      quality: "balanced",
+      readable: true
     },
 
     koppy: {
@@ -44,7 +60,11 @@
       motion: "calm",
       shellMode: "clear",
       opacity: 0.16,
-      blur: 12
+      blur: 12,
+      seed: 5427,
+      density: 1.02,
+      quality: "high",
+      readable: false
     },
 
     tools: {
@@ -53,7 +73,11 @@
       motion: "rich",
       shellMode: "frost",
       opacity: 0.24,
-      blur: 16
+      blur: 16,
+      seed: 3141,
+      density: 0.86,
+      quality: "balanced",
+      readable: true
     }
   };
 
@@ -196,6 +220,45 @@
     } else {
       app.dataset.motion =
         profile.motion;
+    }
+
+    app.dataset.wfPage =
+      name;
+
+    if (
+      window
+        .KoppyWorldFrame
+        ?.configure
+    ) {
+      window
+        .KoppyWorldFrame
+        .configure({
+          seed:
+            profile.seed,
+
+          density:
+            profile.density,
+
+          quality:
+            profile.quality,
+
+          readable:
+            profile.readable
+        });
+    } else {
+      app.dataset.wfSeed =
+        String(profile.seed);
+
+      app.dataset.wfDensity =
+        String(profile.density);
+
+      app.dataset.wfQuality =
+        profile.quality;
+
+      app.dataset.wfReadableZone =
+        profile.readable
+          ? "on"
+          : "off";
     }
 
     MODES.forEach(mode => {

@@ -29,19 +29,38 @@
         return el;
     }
 
+    let random = () => 0.5;
+
+    function resetRandom(){
+        const factory =
+            window
+                .KoppyWorldFrame
+                ?.createRandom;
+
+        random =
+            factory
+                ? factory('polish')
+                : Math.random;
+    }
+
     function rand(min, max){
-        return Math.random() * (max - min) + min;
+        return random() * (max - min) + min;
     }
 
     function choice(arr){
-        return arr[Math.floor(Math.random() * arr.length)];
+        return arr[
+            Math.floor(
+                random() *
+                arr.length
+            )
+        ];
     }
 
     function binaryString(minRepeat = 14, maxRepeat = 42){
         const count = Math.floor(rand(minRepeat, maxRepeat));
         let out = [];
         for (let i = 0; i < count; i++){
-            out.push(Math.random() > 0.5 ? '1' : '0');
+            out.push(random() > 0.5 ? '1' : '0');
         }
         return out.join(' ');
     }
@@ -70,7 +89,35 @@
     }
 
     function build(){
-        if (document.querySelector('.wf-polish-layer')) return;
+        document
+            .querySelectorAll(
+                '.wf-polish-layer'
+            )
+            .forEach(
+                layer =>
+                    layer.remove()
+            );
+
+        resetRandom();
+
+        const factor =
+            window
+                .KoppyWorldFrame
+                ?.getRenderFactor
+                ?.() ||
+            1;
+
+        const scaled = (
+            value,
+            minimum = 1
+        ) =>
+            Math.max(
+                minimum,
+                Math.round(
+                    value *
+                    factor
+                )
+            );
 
         const host = pickHost();
         if (!host) return;
@@ -92,7 +139,7 @@
         const hostRect = () => host.getBoundingClientRect();
 
         // FAR binary / cleaner structure
-        for (let i = 0; i < 22; i++){
+        for (let i = 0; i < scaled(22, 6); i++){
             const el = make('div', 'wf-polish-line');
             el.textContent = binaryString(12, 34);
             const r = hostRect();
@@ -111,7 +158,7 @@
         }
 
         // MID binary / most visible structure
-        for (let i = 0; i < 18; i++){
+        for (let i = 0; i < scaled(18, 5); i++){
             const el = make('div', 'wf-polish-line');
             el.textContent = binaryString(14, 28);
             const rot = choice([-78, -60, -42, -26, -12, 12, 22, 36, 58]);
@@ -129,7 +176,7 @@
         }
 
         // NEAR binary / fewer, larger, blurred
-        for (let i = 0; i < 7; i++){
+        for (let i = 0; i < scaled(7, 2); i++){
             const el = make('div', 'wf-polish-line is-near');
             el.textContent = binaryString(9, 20);
             const rot = choice([-72, -48, -24, 0, 18, 38, 62]);
@@ -156,7 +203,7 @@
             "DEPTH_MAP :: KOPPY_WORLD\nLOG_ROUTE :: BINARY_STREAM"
         ];
 
-        for (let i = 0; i < 12; i++){
+        for (let i = 0; i < scaled(12, 3); i++){
             const log = make('div', 'wf-polish-log');
             log.textContent = choice(logPool);
             log.style.left = rand(2, 88) + '%';
@@ -167,7 +214,7 @@
         }
 
         // Glowing nodes
-        for (let i = 0; i < 30; i++){
+        for (let i = 0; i < scaled(30, 8); i++){
             const node = make('div', 'wf-polish-node');
             node.style.left = rand(0, 100) + '%';
             node.style.top = rand(0, 100) + '%';
@@ -177,7 +224,7 @@
         }
 
         // Ice crystals
-        for (let i = 0; i < 8; i++){
+        for (let i = 0; i < scaled(8, 3); i++){
             const crystal = make('div', 'wf-polish-crystal');
             crystal.innerHTML = crystalSVG();
             crystal.style.left = rand(4, 94) + '%';
@@ -190,6 +237,10 @@
             crystals.appendChild(crystal);
         }
     }
+
+    window.KoppyWorldPolish = {
+        rebuild: build
+    };
 
     if (document.readyState === 'loading'){
         document.addEventListener('DOMContentLoaded', build, { once: true });
