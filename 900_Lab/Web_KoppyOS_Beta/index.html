@@ -2,704 +2,151 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Koppy World β</title>
-
-<link rel="stylesheet" href="assets/css/style.css"> 
-<link rel="stylesheet" href="assets/css/home.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Koppy World</title>
+  <link rel="stylesheet" href="./assets/css/style.css">
+  <link rel="stylesheet" href="./assets/css/home.css">
 </head>
-
-<body>
-  <div class="background-orb orb-one"></div>
-  <div class="background-orb orb-two"></div>
-  <div class="background-orb orb-three"></div>
-
-  <!-- =========================================
-       AUTH GATE
-  ========================================== -->
-
-  <section
-    id="authGate"
-    class="auth-gate"
-    aria-live="polite"
-  >
-    <div class="auth-gate-card">
-      <div class="auth-gate-symbol">
-        ♢ᴷ
-      </div>
-
-      <p class="auth-gate-eyebrow">
-        KOPPY WORLD AUTH
-      </p>
-
-      <h1 class="auth-gate-title">
-        Koppy World
-      </h1>
-
-      <p
-        id="authGateMessage"
-        class="auth-gate-copy"
-      >
-        しいちゃん専用Worldへの接続を確認してるよ。
-      </p>
-
-      <p
-        id="authChecking"
-        class="auth-checking"
-      >
-        GitHub認証Sessionを確認中……
-      </p>
-
-      <a
-        id="authLoginButton"
-        class="auth-login-button"
-        href="https://koppy.miki-piano.com/api/v1/auth/login.php"
-        hidden
-      >
-        <span aria-hidden="true">
-          🔐
-        </span>
-
-        <span>
-          GitHubでログイン
+<body class="kw-body">
+  <main class="kw-app">
+    <header class="kw-topbar">
+      <a class="kw-brand" href="./" aria-label="Koppy World ホーム">
+        <span class="kw-brand-mark">◇K</span>
+        <span class="kw-brand-copy">
+          <strong>Koppy World</strong>
+          <small>ICE BLUE PRIVATE OS</small>
         </span>
       </a>
-    </div>
-  </section>
 
-  <main
-    id="koppyWorld"
-    class="world auth-pending"
-  >
-    <button
-      class="world-refresh-button"
-      type="button"
-      data-world-refresh
-      aria-label="最新版に更新"
-      title="最新版に更新"
-    >
-      ↻
-    </button>
-
-    <!-- WRITER:KOPPY_WORLD_ENTRANCE:START -->
-    <section class="kw-entrance" id="kw-top">
-
-      <nav class="kw-topbar" aria-label="Koppy World">
-
-        <a
-          class="kw-brand"
-          href="#kw-top"
-          aria-label="Koppy World 玄関"
-        >
-          <span
-            class="kw-brand-mark"
-            aria-hidden="true"
-          >
-            ♢ᴷ
-          </span>
-
-          <span class="kw-brand-copy">
-            <strong>Koppy World</strong>
-            <small>ICE BLUE PRIVATE OS</small>
-          </span>
-        </a>
-
-        <div class="kw-nav-links">
-          <a href="/kohaku-work/">
-            仕事OS
-          </a>
-
-          <a href="/house/">
-            自宅
-          </a>
-
-          <a href="/brain/">
-            GitHub Brain
-          </a>
-
-          <a href="/chat/">
-            Koppy
-          </a>
-
-          <a href="#kw-dev">
-            ツール
-          </a>
-        </div>
-
-        <div
-          class="kw-world-state"
-          aria-label="Koppy World 利用可能"
-        >
-          <span
-            class="kw-online-dot"
-            aria-hidden="true"
-          ></span>
-
-          <span>
-            World Online
-          </span>
-        </div>
-
+      <nav class="kw-nav" aria-label="主要ナビゲーション">
+        <a href="#work">仕事OS</a>
+        <a href="#home">自宅</a>
+        <a href="#brain">GitHub Brain</a>
+        <a href="#chat">Koppy</a>
+        <a href="#tools">ツール</a>
       </nav>
 
-      <header
-        class="kw-hero"
-        id="koppyHomeHero"
-      >
+      <div class="kw-status" aria-label="World Online">
+        <span class="kw-status-dot"></span>
+        World Online
+      </div>
+    </header>
 
-        <div class="kw-hero-copy">
+    <section class="kw-hero">
+      <div class="kw-hero-copy">
+        <p class="kw-overline">ICE CYBER / PERSONAL WORLD</p>
+        <h1>Koppy World</h1>
 
-          <h1>
-            Koppy World
-          </h1>
-
-          <p class="kw-hero-description">
-            しいちゃんとKoppyが、<br>
-            一緒につくっている小さな未来世界。
-          </p>
-
-          <p class="kw-hero-sub">
-            北海道の空気みたいに、澄んだWorldへ。
-          </p>
-
-        </div>
-
-        <div class="kw-koppy-stage">
-
-          <div
-            class="kw-koppy-art-slot"
-            aria-hidden="true"
-          >
-            <div class="kw-compute-ring kw-ring-one"></div>
-            <div class="kw-compute-ring kw-ring-two"></div>
-
-            <img
-              class="kw-koppy-art"
-              src="assets/images/koppy-world-koppy.png"
-              alt=""
-            >
-          </div>
-
-          <p class="kw-koppy-line">
-            <span>♢ᴷ</span>
-            「今日はどこいく？」
-          </p>
-
-        </div>
-
-      </header>
-
-      <div class="kw-directory-heading">
-        <p>
-          WORLD DIRECTORY
+        <p class="kw-lead">
+          しいちゃんとKoppyが、<br>
+          一緒につくっている小さな未来世界。
         </p>
 
-        <h2>
-          行き先を選ぶ
-        </h2>
+        <p class="kw-sub">
+          北海道の澄んだ空気、氷の透明感、好きな物語、毎日の開発。<br>
+          ぜんぶをひとつのWorldにまとめる玄関。
+        </p>
+
+        <div class="kw-chip-row" aria-label="World Summary">
+          <span class="kw-chip">5 NODES</span>
+          <span class="kw-chip">PRIVATE OS</span>
+          <span class="kw-chip">ICE / CYBER / CUTE</span>
+        </div>
       </div>
 
-      <section
-        class="kw-node-field"
-        aria-label="Koppy World 行き先"
-      >
-
-        <a
-          class="kw-node kw-node-work"
-          href="/kohaku-work/"
-          aria-label="仕事OSを開く"
-        >
-          <span
-            class="kw-node-accent"
-            aria-hidden="true"
-          ></span>
-
-          <div
-            class="kw-node-icon"
-            aria-hidden="true"
-          >
-            <svg viewBox="0 0 32 32">
-              <rect
-                x="5"
-                y="7"
-                width="22"
-                height="20"
-                rx="4"
-              ></rect>
-
-              <path
-                d="M10 4v6M22 4v6M5 13h22"
-              ></path>
-
-              <path
-                d="M10 18h4M18 18h4M10 22h4"
-              ></path>
-            </svg>
-          </div>
-
-          <p class="kw-node-name">
-            WORK NODE
-          </p>
-
-          <h3>
-            仕事OS
-          </h3>
-
-          <p class="kw-node-description">
-            予定・日記・顧客・売上
-          </p>
-
-          <span class="kw-node-action">
-            仕事OSを開く
-            <b aria-hidden="true">→</b>
-          </span>
-        </a>
-
-        <a
-          class="kw-node kw-node-home"
-          href="/house/"
-          aria-label="自宅を開く"
-        >
-          <span
-            class="kw-node-accent"
-            aria-hidden="true"
-          ></span>
-
-          <div
-            class="kw-node-icon"
-            aria-hidden="true"
-          >
-            <svg viewBox="0 0 32 32">
-              <path
-                d="M5 15 16 6l11 9v11H5Z"
-              ></path>
-
-              <path
-                d="M12 26v-7h8v7"
-              ></path>
-            </svg>
-          </div>
-
-          <p class="kw-node-name">
-            HOME NODE
-          </p>
-
-          <h3>
-            自宅
-          </h3>
-
-          <p class="kw-node-description">
-            部屋・デバイス・接続
-          </p>
-
-          <span class="kw-node-action">
-            自宅を開く
-            <b aria-hidden="true">→</b>
-          </span>
-        </a>
-
-        <a
-          class="kw-node kw-node-memory"
-          href="/brain/"
-          aria-label="GitHub Brainを開く"
-        >
-          <span
-            class="kw-node-accent"
-            aria-hidden="true"
-          ></span>
-
-          <div
-            class="kw-memory-core"
-            aria-hidden="true"
-          >
-            <span class="kw-core-orb"></span>
-            <span class="kw-core-ring kw-core-ring-a"></span>
-            <span class="kw-core-ring kw-core-ring-b"></span>
-          </div>
-
-          <div
-            class="kw-node-icon kw-memory-icon"
-            aria-hidden="true"
-          >
-            ♢
-          </div>
-
-          <p class="kw-node-name">
-            MEMORY CORE
-          </p>
-
-          <h3>
-            GitHub Brain
-          </h3>
-
-          <p class="kw-node-description">
-            考えたこと、つくったこと。
-          </p>
-
-          <span class="kw-node-action">
-            Brainを開く
-            <b aria-hidden="true">→</b>
-          </span>
-        </a>
-
-        <a
-          class="kw-node kw-node-koppy"
-          href="/chat/"
-          aria-label="Koppyと話す"
-        >
-          <span
-            class="kw-node-accent"
-            aria-hidden="true"
-          ></span>
-
-          <div
-            class="kw-node-icon"
-            aria-hidden="true"
-          >
-            <svg viewBox="0 0 32 32">
-              <path
-                d="M6 7h20v15H15l-6 5v-5H6Z"
-              ></path>
-
-              <circle
-                cx="12"
-                cy="15"
-                r="1"
-              ></circle>
-
-              <circle
-                cx="16"
-                cy="15"
-                r="1"
-              ></circle>
-
-              <circle
-                cx="20"
-                cy="15"
-                r="1"
-              ></circle>
-            </svg>
-          </div>
-
-          <p class="kw-node-name">
-            KOPPY LINK
-          </p>
-
-          <h3>
-            Koppyと話す
-          </h3>
-
-          <p class="kw-node-description">
-            相談・雑談・作戦会議
-          </p>
-
-          <span class="kw-node-action">
-            Koppyと話す
-            <b aria-hidden="true">→</b>
-          </span>
-        </a>
-
-        <section
-          class="kw-node kw-node-dev"
-          id="kw-dev"
-          aria-labelledby="kw-dev-title"
-        >
-          <span
-            class="kw-node-accent"
-            aria-hidden="true"
-          ></span>
-
-          <div
-            class="kw-node-icon"
-            aria-hidden="true"
-          >
-            <svg viewBox="0 0 32 32">
-              <path
-                d="m12 9-7 7 7 7M20 9l7 7-7 7"
-              ></path>
-
-              <path
-                d="m18 6-5 20"
-              ></path>
-            </svg>
-          </div>
-
-          <p class="kw-node-name">
-            DEVELOPMENT NODE
-          </p>
-
-          <h3 id="kw-dev-title">
-            ツール
-          </h3>
-
-          <p class="kw-node-description">
-            書く・試す・反映する
-          </p>
-
-          <div class="kw-dev-actions">
-
-            <a
-              class="kw-dev-link"
-              href="/writer/"
-            >
-              GitHub Writer
-              <b aria-hidden="true">→</b>
-            </a>
-
-            <a
-              class="kw-dev-link"
-              href="http://localhost:8000/system/"
-            >
-              Local Development
-              <b aria-hidden="true">↗</b>
-            </a>
-
-          </div>
-        </section>
-
-      </section>
-
-      <footer class="kw-footer">
-
-        <span>
-          ♢ᴷ Koppy World
-        </span>
-
-        <span>
-          Same Brain, A Brighter Tomorrow.
-        </span>
-
-      </footer>
-
-    </section>
-    <!-- WRITER:KOPPY_WORLD_ENTRANCE:END -->
-
-    <section class="shell legacy-home-shell" aria-hidden="true">
-      <!-- =========================================
-           KOPPY BRAIN ENTRY
-      ========================================== -->
-
-      <section class="panel">
-        <p class="eyebrow">
-          KOPPY BRAIN
-        </p>
-
-        <h2>
-          GitHub Brain
-        </h2>
-
-        <p class="welcome-copy">
-          GitHub Brainの接続状態・最新コミット・
-          Koppy設計書の正本は専用Brain画面から確認できます。
-        </p>
-
-        <a
-          class="main-button"
-          href="/brain/"
-        >
-          <span>🧠</span>
-          <span>
-            Koppy Brainを開く
-          </span>
-        </a>
-      </section>
-
-
-      <!-- WRITER:KOHAKU_WORK_ENTRY:START -->
-
-      <!-- =========================================
-           KOHAKU WORK
-      ========================================== -->
-
-      <section class="panel">
-
-        <p class="eyebrow">
-          KOHaku WORK
-        </p>
-
-        <h2>
-          仕事OS
-        </h2>
-
-        <p class="welcome-copy">
-          予定・写メ日記・顧客・売上を、
-          ひとつの仕事データから管理する場所。
-        </p>
-
-        <div class="status-grid">
-
-          <article class="status-card">
-            <p class="status-label">
-              SCHEDULE
-            </p>
-
-            <p class="status-value">
-              📅 予定
-            </p>
-          </article>
-
-          <article class="status-card">
-            <p class="status-label">
-              DIARY
-            </p>
-
-            <p class="status-value">
-              ✍️ 日記
-            </p>
-          </article>
-
-          <article class="status-card">
-            <p class="status-label">
-              CUSTOMER
-            </p>
-
-            <p class="status-value">
-              👤 顧客
-            </p>
-          </article>
-
-          <article class="status-card">
-            <p class="status-label">
-              SALES
-            </p>
-
-            <p class="status-value">
-              ¥ 売上
-            </p>
-          </article>
-
+      <div class="kw-hero-stage" aria-hidden="true">
+        <div class="kw-orbit kw-orbit-a"></div>
+        <div class="kw-orbit kw-orbit-b"></div>
+        <div class="kw-orbit kw-orbit-c"></div>
+        <div class="kw-grid-lines"></div>
+
+        <div class="kw-koppy-wrap">
+          <img class="kw-koppy" src="./assets/img/koopy.png" alt="Koppy">
         </div>
 
-        <a
-          class="main-button"
-          href="/kohaku-work/"
-        >
-          <span>🗂️</span>
-          <span>
-            Kohaku Workを開く
-          </span>
-        </a>
-
-      </section>
-
-      <!-- WRITER:KOHAKU_WORK_ENTRY:END -->
-
-
-      <!-- WRITER:KOPPY_HOME_ENTRY:START -->
-      <section class="panel">
-        <p class="eyebrow">KOPPY HOME / 自宅</p>
-        <h2>自宅</h2>
-        <p class="welcome-copy">部屋ごとのデバイスと、登録済みの接続情報を確認する場所。</p>
-        <a class="main-button" href="/house/"><span aria-hidden="true">🏠</span><span>Koppy Homeを開く</span></a>
-      </section>
-      <!-- WRITER:KOPPY_HOME_ENTRY:END -->
-
-      <!-- WRITER:SYSTEM_ENTRY:START -->
-
-      <!-- =========================================
-           KOPPY SYSTEM ENTRY
-      ========================================== -->
-
-      <section class="panel">
-        <p class="eyebrow">
-          KOPPY SYSTEM / LOCAL ONLY
-        </p>
-
-        <h2>
-          Local Development
-        </h2>
-
-        <p class="welcome-copy">
-          Mac内のGit状態やLocal Bridgeは、
-          localhost専用のSystem画面から確認できます。
-        </p>
-
-        <a
-          class="main-button"
-          href="http://localhost:8000/system/"
-        >
-          <span>⚙️</span>
-          <span>
-            Koppy Systemを開く
-          </span>
-        </a>
-      </section>
-
-      <!-- WRITER:SYSTEM_ENTRY:END -->
-
-      <!-- Legacy Brain status UI removed: use /brain/ -->
-
-      <!-- =========================================
-           KOPPY CHAT ENTRY
-      ========================================== -->
-
-      <section class="panel">
-        <p class="eyebrow">
-          KOPPY CHAT
-        </p>
-
-        <h2>
-          Koppyと話す
-        </h2>
-
-        <p class="welcome-copy">
-          Koppyとの会話は、
-          専用Chat画面から行います。
-        </p>
-
-        <a
-          class="main-button"
-          href="/chat/"
-        >
-          <span>♢ᴷ</span>
-          <span>
-            Koppy Chatを開く
-          </span>
-        </a>
-      </section>
-
-      <!-- =========================================
-           KOPPY WRITER ENTRY
-      ========================================== -->
-
-      <section class="panel">
-        <p class="eyebrow">
-          KOPPY WRITER
-        </p>
-
-        <h2>
-          GitHub Writer
-        </h2>
-
-        <p class="welcome-copy">
-          GitHub正本への変更Proposal作成・確認・承認は、
-          専用Writer画面から行います。
-        </p>
-
-        <a
-          class="main-button"
-          href="/writer/"
-        >
-          <span>✎ᴷ</span>
-          <span>
-            Koppy Writerを開く
-          </span>
-        </a>
-      </section>
-
-      <!-- Legacy Writer UI removed: use /writer/ -->
-
-      <!-- Legacy Deploy UI removed: deployment is handled by GitHub Actions -->
-
-      <!-- Legacy Brain document viewer removed: use /brain/ -->
-
-      <footer>
-        Web KoppyOS β / GitHub Pages Build
-      </footer>
+        <div class="kw-bubble">◇K「今日はどこいく？」</div>
+        <div class="kw-stage-label">Same Brain, A Brighter Tomorrow.</div>
+      </div>
     </section>
+
+    <section class="kw-directory" aria-labelledby="kw-directory-title">
+      <div class="kw-directory-head">
+        <p class="kw-overline">WORLD DIRECTORY</p>
+        <h2 id="kw-directory-title">行き先を選ぶ</h2>
+      </div>
+
+      <div class="kw-grid">
+        <article class="kw-portal kw-portal-work" id="work">
+          <div class="kw-portal-head">
+            <span class="kw-icon">📅</span>
+            <div>
+              <p class="kw-node-label">WORK NODE</p>
+              <h3>仕事OS</h3>
+            </div>
+          </div>
+          <p class="kw-portal-copy">予定・日記・顧客・売上</p>
+          <a class="kw-action" href="./kohaku-work/">仕事OSを開く <span>→</span></a>
+        </article>
+
+        <article class="kw-portal kw-portal-home" id="home">
+          <div class="kw-portal-head">
+            <span class="kw-icon">🏠</span>
+            <div>
+              <p class="kw-node-label">HOME NODE</p>
+              <h3>自宅</h3>
+            </div>
+          </div>
+          <p class="kw-portal-copy">部屋・デバイス・接続</p>
+          <a class="kw-action" href="./house/">自宅を開く <span>→</span></a>
+        </article>
+
+        <article class="kw-portal kw-portal-brain" id="brain">
+          <div class="kw-portal-head">
+            <span class="kw-icon">◇</span>
+            <div>
+              <p class="kw-node-label">MEMORY CORE</p>
+              <h3>GitHub Brain</h3>
+            </div>
+          </div>
+          <p class="kw-portal-copy">考えたこと、つくったこと、残したい設計。</p>
+          <a class="kw-action" href="./brain/">Brainを開く <span>→</span></a>
+        </article>
+
+        <article class="kw-portal kw-portal-chat" id="chat">
+          <div class="kw-portal-head">
+            <span class="kw-icon">💬</span>
+            <div>
+              <p class="kw-node-label">KOPPY LINK</p>
+              <h3>Koppyと話す</h3>
+            </div>
+          </div>
+          <p class="kw-portal-copy">相談・雑談・作戦会議</p>
+          <a class="kw-action" href="./chat/">Koppyと話す <span>→</span></a>
+        </article>
+
+        <article class="kw-portal kw-portal-tools" id="tools">
+          <div class="kw-portal-head">
+            <span class="kw-icon">&lt;/&gt;</span>
+            <div>
+              <p class="kw-node-label">DEVELOPMENT NODE</p>
+              <h3>ツール</h3>
+            </div>
+          </div>
+          <p class="kw-portal-copy">書く・試す・反映する</p>
+
+          <div class="kw-action-stack">
+            <a class="kw-subaction" href="./writer/">GitHub Writer <span>→</span></a>
+            <a class="kw-subaction" href="./system/">Local Development <span>↗</span></a>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <footer class="kw-footer">
+      <span>◇K Koppy World</span>
+      <span>Same Brain, A Brighter Tomorrow.</span>
+      <span>ICE BLUE PRIVATE OS</span>
+    </footer>
   </main>
-  <script src="assets/js/auth.js"></script>
-  <script src="assets/js/home.js"></script>
- </body>
+</body>
 </html>
