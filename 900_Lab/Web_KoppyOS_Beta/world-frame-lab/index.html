@@ -1,98 +1,241 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Koppy World Frame Lab</title>
-  <link rel="stylesheet" href="./frame-lab.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World Frame Lab | Koppy World</title>
+  <link rel="stylesheet" href="../assets/css/world-frame.css">
 </head>
-<body class="wf-page">
-  <div class="wf-bg" aria-hidden="true">
-    <div class="wf-stars"></div>
-    <div class="wf-binary-layer wf-binary-layer--far" id="wfBinaryFar"></div>
-    <div class="wf-binary-layer wf-binary-layer--mid" id="wfBinaryMid"></div>
-    <div class="wf-binary-layer wf-binary-layer--near" id="wfBinaryNear"></div>
-    <div class="wf-log-layer" id="wfLogLayer"></div>
-    <div class="wf-glow wf-glow--left"></div>
-    <div class="wf-glow wf-glow--right"></div>
-  </div>
-
-  <main class="wf-shell">
-    <header class="wf-topbar">
-      <div class="wf-brand">
-        <div class="wf-brand__mark">◇K</div>
-        <div class="wf-brand__copy">
-          <strong>Koppy World</strong>
-          <span>ICE BLUE PRIVATE OS</span>
+<body class="world-frame-body">
+  <div class="wf-lab">
+    <header class="wf-lab__header">
+      <div class="wf-lab__brand">
+        <div class="wf-lab__badge">◇K</div>
+        <div class="wf-lab__brand-text">
+          <strong>World Frame Lab</strong>
+          <span>Outer Background / Shared Shell / Depth System</span>
         </div>
       </div>
-
-      <nav class="wf-nav" aria-label="Frame lab nav">
-        <a href="#">Layer 1</a>
-        <a href="#">Layer 2</a>
-        <a href="#">Depth</a>
-        <a href="#">Logs</a>
-      </nav>
-
-      <div class="wf-status">World Frame Active</div>
+      <div class="wf-lab__meta">
+        <span class="wf-chip">step 1</span>
+        <span class="wf-chip">binary depth</span>
+        <span class="wf-chip">ice crystal ready</span>
+      </div>
     </header>
 
-    <section class="wf-hero">
-      <div class="wf-hero__copy">
-        <p class="wf-eyebrow">WORLD FRAME LAB / STEP 1</p>
-        <h1>Outer Background Frame</h1>
+    <div class="wf-lab__layout">
+      <aside class="wf-panel wf-controls">
+        <h2>World Frame v2</h2>
         <p>
-          外側背景の奥行き、0/1の散布、微小ログ、ガラスフレームの透け感を
-          検証するための専用ラボ。
+          外側背景（Layer 1）と、内側のガラスシェル（Layer 2）を切り分けた
+          共通フレーム実験ページ。<br>
+          ホーム・自宅・Kohaku Work へ移植する前の土台をここで確認する。
         </p>
-      </div>
 
-      <div class="wf-hero__meta">
-        <div class="wf-meta-card">
-          <span>Binary streams</span>
-          <strong>active</strong>
-        </div>
-        <div class="wf-meta-card">
-          <span>Depth layers</span>
-          <strong>3 layers</strong>
-        </div>
-      </div>
-    </section>
+        <section class="wf-controls__group">
+          <h3>Preview Mode</h3>
+          <div class="wf-toggle-row">
+            <button type="button" class="wf-toggle" data-mode-set="background">Background Only</button>
+            <button type="button" class="wf-toggle" data-mode-set="shell">With Shell</button>
+            <button type="button" class="wf-toggle is-active" data-mode-set="sample">Sample Content</button>
+          </div>
+        </section>
 
-    <section class="wf-frame">
-      <div class="wf-frame__label">LAYER 2 / INNER FRAME</div>
+        <section class="wf-controls__group">
+          <h3>Motion</h3>
+          <div class="wf-toggle-row">
+            <button type="button" class="wf-toggle" data-motion-set="calm">Calm</button>
+            <button type="button" class="wf-toggle" data-motion-set="normal">Normal</button>
+            <button type="button" class="wf-toggle is-active" data-motion-set="rich">Rich</button>
+          </div>
+        </section>
 
-      <div class="wf-frame__stage">
-        <article class="wf-panel wf-panel--wide">
-          <p class="wf-panel__eyebrow">PLACEHOLDER</p>
-          <h2>ここに各ページの中身を置く</h2>
+        <section class="wf-controls__group">
+          <h3>Theme</h3>
+          <div class="wf-theme-row">
+            <button type="button" class="wf-theme is-active" data-theme-set="ice"   style="background:linear-gradient(135deg,#b5ecff,#4a92ff);" aria-label="Ice"></button>
+            <button type="button" class="wf-theme" data-theme-set="aqua"   style="background:linear-gradient(135deg,#7afff2,#1ca4ff);" aria-label="Aqua"></button>
+            <button type="button" class="wf-theme" data-theme-set="violet" style="background:linear-gradient(135deg,#d1c7ff,#678fff);" aria-label="Violet"></button>
+            <button type="button" class="wf-theme" data-theme-set="pink"   style="background:linear-gradient(135deg,#ffc2eb,#78cfff);" aria-label="Pink Frost"></button>
+          </div>
+        </section>
+
+        <section class="wf-controls__group">
+          <h3>Adopted Features</h3>
           <p>
-            この大きな透明フレームの中へ、ホーム画面・仕事OS・自宅・各ツールなどの
-            UIを差し込む想定。
+            ・0/1の奥行き3層<br>
+            ・上下左右斜めに散るランダムバイナリ<br>
+            ・微小ログ表示<br>
+            ・氷の結晶（ダスト / ワイヤー / ファセット）<br>
+            ・星粒とパララックス<br>
+            ・共通背景ファイル化
           </p>
-        </article>
+        </section>
+      </aside>
 
-        <article class="wf-panel">
-          <p class="wf-panel__eyebrow">OPTION A</p>
-          <h3>ホーム画面</h3>
-          <p>World Directory / Node UI を配置</p>
-        </article>
+      <main class="wf-panel wf-preview">
+        <div class="wf-preview__frame">
+          <div
+            class="wf-app"
+            id="wfApp"
+            data-mode="sample"
+            data-motion="rich"
+            data-theme="ice"
+          >
+            <div class="wf-stage">
+              <div class="wf-layer wf-layer--outer" aria-hidden="true">
+                <div class="wf-stars" data-layer="stars"></div>
+                <div class="wf-streams" data-layer="streams"></div>
+                <div class="wf-logs" data-layer="logs"></div>
+                <div class="wf-crystals" data-layer="crystals"></div>
+              </div>
 
-        <article class="wf-panel">
-          <p class="wf-panel__eyebrow">OPTION B</p>
-          <h3>各ページ共通化</h3>
-          <p>背景フレームを別ファイル化して移植</p>
-        </article>
-      </div>
-    </section>
+              <div class="wf-layer wf-layer--shell">
+                <div class="wf-shell">
+                  <div class="wf-shell__edge"></div>
 
-    <footer class="wf-footer">
-      <span>◇K Koppy World</span>
-      <span>Same Brain, A Brighter Tomorrow.</span>
-      <span>ICE BLUE PRIVATE OS</span>
-    </footer>
-  </main>
+                  <div class="wf-shell__content">
+                    <div class="wf-shell__topbar">
+                      <div class="wf-shell__brand">
+                        <div class="wf-shell__logo">◇K</div>
+                        <div class="wf-shell__brand-text">
+                          <strong>Koppy World</strong>
+                          <span>Ice Blue Private OS</span>
+                        </div>
+                      </div>
 
-  <script src="./frame-lab.js"></script>
+                      <nav class="wf-shell__nav">
+                        <a href="#">Layer 1</a>
+                        <a href="#">Layer 2</a>
+                        <a href="#">Depth</a>
+                        <a href="#">Logs</a>
+                      </nav>
+
+                      <div class="wf-shell__status">
+                        <i></i>
+                        <span>World Frame Active</span>
+                      </div>
+                    </div>
+
+                    <section class="wf-shell__hero">
+                      <div class="wf-shell__copy">
+                        <p class="wf-shell__eyebrow">World Frame Lab / Step 1</p>
+                        <h1 class="wf-shell__title">
+                          <span class="accent">Outer</span><br>
+                          Background<br>
+                          Frame
+                        </h1>
+                        <p class="wf-shell__lead">
+                          外側背景の奥行き、0/1の散布、微小ログ、氷の結晶、
+                          そして透けるガラスシェルを検証するための専用ラボ。
+                        </p>
+                        <p class="wf-shell__sub">
+                          この背景が固まったら、Koppy World ホーム、自宅、
+                          Kohaku Work などの各ページに共通レイヤーとして移植する。
+                        </p>
+                        <div class="wf-shell__chips">
+                          <span>Layer 1</span>
+                          <span>Layer 2</span>
+                          <span>Depth 3</span>
+                          <span>Ice Crystal</span>
+                        </div>
+                      </div>
+
+                      <div class="wf-shell__visual">
+                        <div class="wf-shell__orbit wf-shell__orbit--1"></div>
+                        <div class="wf-shell__orbit wf-shell__orbit--2"></div>
+                        <div class="wf-shell__orbit wf-shell__orbit--3"></div>
+
+                        <div class="wf-shell__fairy">
+                          <img id="wfFairyImage" src="../assets/img/koopy.png" alt="Koppy">
+                        </div>
+
+                        <div class="wf-shell__speech">◇K 「今日はどこいく？」</div>
+                        <div class="wf-shell__tagline">Same Brain, A Brighter Tomorrow.</div>
+                      </div>
+                    </section>
+
+                    <section class="wf-shell__directory">
+                      <div class="wf-shell__directory-head">
+                        <span>Layer 2 / Inner Frame</span>
+                        <h2>ここに各ページの中身を置く</h2>
+                      </div>
+
+                      <div class="wf-card-row">
+                        <article class="wf-node wf-node--work">
+                          <div class="wf-node__eyebrow">
+                            <span class="wf-node__icon">📅</span>
+                            <span>Option A</span>
+                          </div>
+                          <h3>ホーム画面</h3>
+                          <p>World Directory / Node UI を配置</p>
+                          <a class="wf-node__btn" href="#"><span>ホームを確認</span><span>→</span></a>
+                        </article>
+
+                        <article class="wf-node wf-node--home">
+                          <div class="wf-node__eyebrow">
+                            <span class="wf-node__icon">🏠</span>
+                            <span>Option B</span>
+                          </div>
+                          <h3>共通フレーム化</h3>
+                          <p>背景フレームを別ファイル化して移植</p>
+                          <a class="wf-node__btn" href="#"><span>構成を確認</span><span>→</span></a>
+                        </article>
+
+                        <article class="wf-node wf-node--memory">
+                          <div class="wf-node__eyebrow">
+                            <span class="wf-node__icon">◇</span>
+                            <span>Depth Layer</span>
+                          </div>
+                          <h3>奥行き演出</h3>
+                          <p>0/1・ログ・氷粒を重ねて空間感を作る</p>
+                          <a class="wf-node__btn" href="#"><span>Depthを見る</span><span>→</span></a>
+                        </article>
+
+                        <article class="wf-node wf-node--koppy">
+                          <div class="wf-node__eyebrow">
+                            <span class="wf-node__icon">💬</span>
+                            <span>Motion</span>
+                          </div>
+                          <h3>動きの調整</h3>
+                          <p>calm / normal / rich で密度と流速を切替</p>
+                          <a class="wf-node__btn" href="#"><span>Motion確認</span><span>→</span></a>
+                        </article>
+                      </div>
+
+                      <div class="wf-tool-row">
+                        <article class="wf-node wf-node--tools">
+                          <div>
+                            <div class="wf-node__eyebrow">
+                              <span class="wf-node__icon">&lt;/&gt;</span>
+                              <span>Shared Files</span>
+                            </div>
+                            <h3>共通化ファイル</h3>
+                            <p>assets/css/world-frame.css と assets/js/world-frame.js を土台にする。</p>
+                          </div>
+                          <div class="wf-tool-actions">
+                            <a href="#"><span>world-frame.css</span><span>→</span></a>
+                            <a href="#"><span>world-frame.js</span><span>↗</span></a>
+                          </div>
+                        </article>
+                      </div>
+                    </section>
+
+                    <footer class="wf-shell__footer">
+                      <div>◇K Koppy World</div>
+                      <div>Shared frame first, then each page.</div>
+                      <div>ICE BLUE PRIVATE OS</div>
+                    </footer>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../assets/js/world-frame.js"></script>
 </body>
 </html>

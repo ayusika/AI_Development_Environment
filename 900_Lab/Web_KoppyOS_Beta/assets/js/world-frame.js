@@ -1,362 +1,279 @@
 (() => {
-  "use strict";
+  const app = document.getElementById('wfApp');
+  if (!app) return;
 
-  const root = document.querySelector("[data-koppy-world-frame]");
+  const streamsLayer = app.querySelector('[data-layer="streams"]');
+  const logsLayer = app.querySelector('[data-layer="logs"]');
+  const crystalsLayer = app.querySelector('[data-layer="crystals"]');
+  const starsLayer = app.querySelector('[data-layer="stars"]');
+  const fairyImage = document.getElementById('wfFairyImage');
 
-  if (!root) {
-    return;
+  const motionMap = {
+    calm:   { streams: 34, logs: 10, crystals: 28, stars: 70 },
+    normal: { streams: 52, logs: 14, crystals: 40, stars: 96 },
+    rich:   { streams: 72, logs: 18, crystals: 56, stars: 130 }
+  };
+
+  const logFragments = [
+    'KOPPY_WORLD',
+    'PRIVATE_LINK',
+    'ACTIVE',
+    'WORLD_FRAME',
+    'DEPTH_MAP',
+    'ICE_NETWORK',
+    'MEMORY_CORE',
+    'SYNC',
+    'LOCAL_ACCESS',
+    'READY',
+    'WORLD_LAYER',
+    'BINARY_STREAM',
+    'SHELL_FRAME',
+    'PARALLAX',
+    'CRYSTAL_NODE',
+    'WORLD_ONLINE',
+    'LOG_ROUTE',
+    'NODE_MAP'
+  ];
+
+  const streamAngles = [0, 0, 0, 8, -8, 16, -16, 26, -26, 36, -36, 52, -52, 90, -90, 118, -118, 146, -146];
+
+  const rand = (min, max) => Math.random() * (max - min) + min;
+  const randInt = (min, max) => Math.floor(rand(min, max + 1));
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+
+  function binaryString(len) {
+    return Array.from({ length: len }, () => (Math.random() > 0.5 ? '1' : '0')).join('');
   }
 
-  const STREAM_COUNT = 44;
-  const LOG_COUNT = 14;
+  function buildStars(count) {
+    starsLayer.innerHTML = '';
+    const width = app.clientWidth;
+    const height = app.clientHeight;
 
-  const angles = [
-    -90,
-    -72,
-    -58,
-    -44,
-    -30,
-    -16,
-    -7,
-    0,
-    8,
-    17,
-    31,
-    46,
-    59,
-    73,
-    90
-  ];
+    for (let i = 0; i < count; i += 1) {
+      const el = document.createElement('i');
+      el.className = 'wf-star' + (Math.random() > 0.86 ? ' is-large' : '');
+      el.style.left = `${rand(0, width)}px`;
+      el.style.top = `${rand(0, height)}px`;
+      el.style.setProperty('--duration', `${rand(4.5, 10.5)}s`);
+      el.style.setProperty('--delay', `${rand(-7, 0)}s`);
+      starsLayer.appendChild(el);
+    }
+  }
 
-  const logAngles = [
-    -90,
-    -24,
-    -13,
-    -6,
-    0,
-    0,
-    0,
-    7,
-    14,
-    25,
-    90
-  ];
+  function buildStreams(count) {
+    streamsLayer.innerHTML = '';
+    const width = app.clientWidth;
+    const height = app.clientHeight;
 
-  const logMessages = [
-    ["WORLD_LAYER / 07", "ICE_NETWORK :: ONLINE"],
-    ["KOPPY_LINK :: ACTIVE", "SIGNAL :: STABLE"],
-    ["MEMORY_CORE :: SYNC", "ARCHIVE :: READY"],
-    ["PRIVATE_OS :: READY", "ACCESS :: LOCAL"],
-    ["NODE_MAP :: 05", "ROUTE :: OPEN"],
-    ["HOME_LINK :: STABLE", "DEVICE_MAP :: READY"],
-    ["DEVELOPMENT_NODE", "BUILD_CHANNEL :: OPEN"],
-    ["WORLD_FRAME :: ACTIVE", "DEPTH_MAP :: ONLINE"],
-    ["BINARY_FIELD :: SYNC", "FLOW :: NOMINAL"],
-    ["ICE_LAYER :: 01", "THERMAL :: STABLE"],
-    ["GITHUB_BRAIN", "MEMORY_ROUTE :: OPEN"],
-    ["KOPPY_WORLD", "PRIVATE_LINK :: ACTIVE"]
-  ];
+    for (let i = 0; i < count; i += 1) {
+      const el = document.createElement('div');
 
-  const streamsLayer = document.createElement("div");
-  streamsLayer.className = "kw-world-frame__streams";
-
-  const logsLayer = document.createElement("div");
-  logsLayer.className = "kw-world-frame__logs";
-
-  const vignette = document.createElement("div");
-  vignette.className = "kw-world-frame__vignette";
-
-  root.replaceChildren(
-    streamsLayer,
-    logsLayer,
-    vignette
-  );
-
-  const random = (min, max) =>
-    min + Math.random() * (max - min);
-
-  const pick = (items) =>
-    items[
-      Math.floor(
-        Math.random() * items.length
-      )
-    ];
-
-  const binary = (length) => {
-    let result = "";
-
-    for (let index = 0; index < length; index += 1) {
-      result += Math.random() > 0.5 ? "1" : "0";
-
-      if (
-        index > 0 &&
-        index % 8 === 7
-      ) {
-        result += " ";
+      const depthRoll = Math.random();
+      if (depthRoll > 0.72) {
+        el.className = 'wf-stream is-near';
+      } else if (depthRoll < 0.28) {
+        el.className = 'wf-stream is-far';
+      } else {
+        el.className = 'wf-stream';
       }
+
+      const angle = pick(streamAngles);
+      const x0 = rand(-width * 0.15, width * 1.05);
+      const y0 = rand(-height * 0.12, height * 1.08);
+
+      const driftBase = rand(60, 260);
+      const angleRad = angle * Math.PI / 180;
+      const dx = Math.cos(angleRad) * driftBase;
+      const dy = Math.sin(angleRad) * driftBase;
+
+      const x1 = x0 + dx;
+      const y1 = y0 + dy;
+
+      el.textContent = binaryString(randInt(18, 52)) + '   ' + binaryString(randInt(10, 34));
+
+      el.style.setProperty('--x0', `${x0}px`);
+      el.style.setProperty('--y0', `${y0}px`);
+      el.style.setProperty('--x1', `${x1}px`);
+      el.style.setProperty('--y1', `${y1}px`);
+      el.style.setProperty('--angle', `${angle}deg`);
+      el.style.setProperty('--duration', `${rand(14, 34)}s`);
+      el.style.setProperty('--pulse', `${rand(6, 12)}s`);
+      el.style.setProperty('--delay', `${rand(-26, 0)}s`);
+      el.style.setProperty('--o0', `${rand(0.18, 0.44)}`);
+      el.style.setProperty('--o1', `${rand(0.52, 0.90)}`);
+
+      streamsLayer.appendChild(el);
     }
-
-    return result.trim();
-  };
-
-  const depthProfile = () => {
-    const roll = Math.random();
-
-    if (roll < 0.43) {
-      return {
-        name: "far",
-        size: random(7, 9.2),
-        opacity: random(0.07, 0.16),
-        blur: random(0.45, 1.0),
-        glow: random(4, 7),
-        width: random(30, 52)
-      };
-    }
-
-    if (roll < 0.79) {
-      return {
-        name: "mid",
-        size: random(9, 12),
-        opacity: random(0.13, 0.25),
-        blur: random(0.10, 0.48),
-        glow: random(6, 11),
-        width: random(35, 62)
-      };
-    }
-
-    return {
-      name: "near",
-      size: random(11.5, 15),
-      opacity: random(0.18, 0.32),
-      blur: random(0, 0.20),
-      glow: random(8, 15),
-      width: random(40, 70)
-    };
-  };
-
-  const streamColor = () => {
-    const roll = Math.random();
-
-    if (roll < 0.65) {
-      return "132, 216, 255";
-    }
-
-    if (roll < 0.88) {
-      return "105, 177, 255";
-    }
-
-    return "171, 169, 255";
-  };
-
-  for (
-    let index = 0;
-    index < STREAM_COUNT;
-    index += 1
-  ) {
-    const depth = depthProfile();
-
-    const wrapper =
-      document.createElement("div");
-
-    wrapper.className =
-      "kw-world-frame__stream";
-
-    wrapper.dataset.depth =
-      depth.name;
-
-    const angle =
-      pick(angles) +
-      random(-4.2, 4.2);
-
-    const reverse =
-      Math.random() > 0.5;
-
-    const duration =
-      random(26, 78);
-
-    wrapper.style.setProperty(
-      "--x",
-      `${random(-3, 103).toFixed(2)}%`
-    );
-
-    wrapper.style.setProperty(
-      "--y",
-      `${random(-3, 103).toFixed(2)}%`
-    );
-
-    wrapper.style.setProperty(
-      "--angle",
-      `${angle.toFixed(2)}deg`
-    );
-
-    wrapper.style.setProperty(
-      "--width",
-      `${depth.width.toFixed(2)}vw`
-    );
-
-    wrapper.style.setProperty(
-      "--size",
-      `${depth.size.toFixed(2)}px`
-    );
-
-    wrapper.style.setProperty(
-      "--opacity",
-      depth.opacity.toFixed(3)
-    );
-
-    wrapper.style.setProperty(
-      "--blur",
-      `${depth.blur.toFixed(2)}px`
-    );
-
-    wrapper.style.setProperty(
-      "--glow",
-      `${depth.glow.toFixed(2)}px`
-    );
-
-    wrapper.style.setProperty(
-      "--spacing",
-      `${random(0.17, 0.40).toFixed(3)}em`
-    );
-
-    wrapper.style.setProperty(
-      "--stream-rgb",
-      streamColor()
-    );
-
-    wrapper.style.setProperty(
-      "--duration",
-      `${duration.toFixed(2)}s`
-    );
-
-    wrapper.style.setProperty(
-      "--delay",
-      `${(-random(0, duration)).toFixed(2)}s`
-    );
-
-    wrapper.style.setProperty(
-      "--start",
-      reverse ? "-18vw" : "18vw"
-    );
-
-    wrapper.style.setProperty(
-      "--end",
-      reverse ? "18vw" : "-18vw"
-    );
-
-    const track =
-      document.createElement("span");
-
-    track.className =
-      "kw-world-frame__stream-track";
-
-    const code = binary(
-      Math.floor(
-        random(34, 82)
-      )
-    );
-
-    track.textContent =
-      `${code}     ${code}`;
-
-    wrapper.appendChild(track);
-    streamsLayer.appendChild(wrapper);
   }
 
-  for (
-    let index = 0;
-    index < LOG_COUNT;
-    index += 1
-  ) {
-    const log =
-      document.createElement("div");
+  function buildLogs(count) {
+    logsLayer.innerHTML = '';
+    const width = app.clientWidth;
+    const height = app.clientHeight;
 
-    log.className =
-      "kw-world-frame__log";
+    for (let i = 0; i < count; i += 1) {
+      const el = document.createElement('div');
+      el.className = 'wf-log';
 
-    const message =
-      pick(logMessages);
+      const lines = randInt(2, 4);
+      const parts = [];
+      for (let j = 0; j < lines; j += 1) {
+        parts.push(`${pick(logFragments)} :: ${pick(logFragments)}`);
+      }
+      el.textContent = parts.join('\n');
 
-    const rgb =
-      Math.random() > 0.82
-        ? "171, 169, 255"
-        : "132, 216, 255";
+      el.style.left = `${rand(24, width - 180)}px`;
+      el.style.top = `${rand(24, height - 60)}px`;
+      el.style.transform = `rotate(${pick([0, 0, 90, -90, 12, -12])}deg)`;
+      el.style.setProperty('--duration', `${rand(12, 22)}s`);
+      el.style.setProperty('--delay', `${rand(-14, 0)}s`);
 
-    const duration =
-      random(12, 28);
+      logsLayer.appendChild(el);
+    }
+  }
 
-    log.style.setProperty(
-      "--x",
-      `${random(3, 97).toFixed(2)}%`
-    );
+  function createWireCrystal() {
+    const el = document.createElement('div');
+    el.className = 'wf-crystal wf-crystal--wire';
+    el.appendChild(document.createElement('span'));
+    return el;
+  }
 
-    log.style.setProperty(
-      "--y",
-      `${random(4, 96).toFixed(2)}%`
-    );
+  function createFacetCrystal() {
+    const el = document.createElement('div');
+    el.className = 'wf-crystal wf-crystal--facet';
+    return el;
+  }
 
-    log.style.setProperty(
-      "--angle",
-      `${(
-        pick(logAngles) +
-        random(-3, 3)
-      ).toFixed(2)}deg`
-    );
+  function createDustCrystal() {
+    const el = document.createElement('div');
+    el.className = 'wf-crystal wf-crystal--dust';
+    return el;
+  }
 
-    log.style.setProperty(
-      "--size",
-      `${random(6.5, 9.2).toFixed(2)}px`
-    );
+  function buildCrystals(count) {
+    crystalsLayer.innerHTML = '';
+    const width = app.clientWidth;
+    const height = app.clientHeight;
 
-    log.style.setProperty(
-      "--opacity",
-      random(0.20, 0.46).toFixed(3)
-    );
+    for (let i = 0; i < count; i += 1) {
+      let el;
+      const typeRoll = Math.random();
+      if (typeRoll < 0.52) {
+        el = createDustCrystal();
+      } else if (typeRoll < 0.82) {
+        el = createWireCrystal();
+      } else {
+        el = createFacetCrystal();
+      }
 
-    log.style.setProperty(
-      "--blur",
-      `${random(0, 0.45).toFixed(2)}px`
-    );
+      el.style.left = `${rand(0, width)}px`;
+      el.style.top = `${rand(0, height)}px`;
+      el.style.setProperty('--duration', `${rand(10, 22)}s`);
+      el.style.setProperty('--delay', `${rand(-14, 0)}s`);
+      el.style.setProperty('--float-x', `${rand(-12, 12)}px`);
+      el.style.setProperty('--float-y', `${rand(-14, 14)}px`);
+      el.style.setProperty('--spin', `${rand(-24, 24)}deg`);
+      crystalsLayer.appendChild(el);
+    }
+  }
 
-    log.style.setProperty(
-      "--rule",
-      `${random(22, 58).toFixed(1)}px`
-    );
+  function rebuildScene() {
+    const mode = app.dataset.motion || 'rich';
+    const config = motionMap[mode] || motionMap.rich;
+    buildStars(config.stars);
+    buildStreams(config.streams);
+    buildLogs(config.logs);
+    buildCrystals(config.crystals);
+  }
 
-    log.style.setProperty(
-      "--log-rgb",
-      rgb
-    );
+  function setActive(buttons, key, value) {
+    buttons.forEach((btn) => {
+      btn.classList.toggle('is-active', btn.dataset[key] === value);
+    });
+  }
 
-    log.style.setProperty(
-      "--dx",
-      `${random(-18, 18).toFixed(1)}px`
-    );
+  function setupControls() {
+    const modeButtons = Array.from(document.querySelectorAll('[data-mode-set]'));
+    const motionButtons = Array.from(document.querySelectorAll('[data-motion-set]'));
+    const themeButtons = Array.from(document.querySelectorAll('[data-theme-set]'));
 
-    log.style.setProperty(
-      "--dy",
-      `${random(-14, 14).toFixed(1)}px`
-    );
-
-    log.style.setProperty(
-      "--duration",
-      `${duration.toFixed(2)}s`
-    );
-
-    log.style.setProperty(
-      "--delay",
-      `${(-random(0, duration)).toFixed(2)}s`
-    );
-
-    message.forEach((text) => {
-      const row =
-        document.createElement("span");
-
-      row.textContent = text;
-
-      log.appendChild(row);
+    modeButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const value = btn.dataset.modeSet;
+        app.dataset.mode = value;
+        setActive(modeButtons, 'modeSet', value);
+      });
     });
 
-    logsLayer.appendChild(log);
+    motionButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const value = btn.dataset.motionSet;
+        app.dataset.motion = value;
+        setActive(motionButtons, 'motionSet', value);
+        rebuildScene();
+      });
+    });
+
+    themeButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const value = btn.dataset.themeSet;
+        app.dataset.theme = value;
+        setActive(themeButtons, 'themeSet', value);
+      });
+    });
   }
+
+  function setupParallax() {
+    const preview = document.querySelector('.wf-preview__frame');
+    if (!preview) return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    preview.addEventListener('pointermove', (event) => {
+      const rect = preview.getBoundingClientRect();
+      const px = (event.clientX - rect.left) / rect.width - 0.5;
+      const py = (event.clientY - rect.top) / rect.height - 0.5;
+      app.style.setProperty('--wf-parallax-x', `${px * 30}px`);
+      app.style.setProperty('--wf-parallax-y', `${py * 20}px`);
+    });
+
+    preview.addEventListener('pointerleave', () => {
+      app.style.setProperty('--wf-parallax-x', '0px');
+      app.style.setProperty('--wf-parallax-y', '0px');
+    });
+  }
+
+  function setupResizeRebuild() {
+    let timer = null;
+    window.addEventListener('resize', () => {
+      clearTimeout(timer);
+      timer = setTimeout(rebuildScene, 120);
+    });
+  }
+
+  function setupFairyFallback() {
+    if (!fairyImage) return;
+    fairyImage.addEventListener('error', () => {
+      fairyImage.classList.add('wf-hidden');
+      const visual = fairyImage.closest('.wf-shell__fairy');
+      if (!visual) return;
+      const note = document.createElement('div');
+      note.style.color = 'rgba(239,247,255,.82)';
+      note.style.fontWeight = '800';
+      note.style.textAlign = 'center';
+      note.style.lineHeight = '1.8';
+      note.style.fontSize = '14px';
+      note.innerHTML = 'Koppy image placeholder<br>あとで koopy.png を差し込み';
+      visual.appendChild(note);
+    });
+  }
+
+  setupControls();
+  setupParallax();
+  setupResizeRebuild();
+  setupFairyFallback();
+  rebuildScene();
 })();
