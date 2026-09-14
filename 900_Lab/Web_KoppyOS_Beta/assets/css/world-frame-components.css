@@ -1,0 +1,369 @@
+/* =========================================================
+   KOPPY WORLD SHARED COMPONENTS v1
+
+   Shared Layer 3 components.
+   Individual pages may override variables locally.
+
+   Example:
+
+   [data-wf-page="work"] {
+     --wf-component-radius: 18px;
+   }
+========================================================= */
+
+:root {
+  --wf-component-radius:
+    var(--wf-radius-lg, 26px);
+
+  --wf-component-bg:
+    rgba(
+      128,
+      175,
+      230,
+      .09
+    );
+
+  --wf-component-bg-strong:
+    rgba(
+      145,
+      190,
+      238,
+      .14
+    );
+
+  --wf-component-border:
+    rgba(
+      181,
+      220,
+      255,
+      .17
+    );
+
+  --wf-component-highlight:
+    rgba(
+      255,
+      255,
+      255,
+      .075
+    );
+
+  --wf-component-shadow:
+    0 16px 38px
+    rgba(
+      0,
+      10,
+      32,
+      .18
+    );
+
+  --wf-component-blur:
+    10px;
+}
+
+/* ---------------------------------------------------------
+   INNER GLASS PANEL
+--------------------------------------------------------- */
+
+[data-wf-panel][data-wf-panel-surface] {
+  position:
+    relative;
+
+  overflow:
+    hidden;
+
+  box-sizing:
+    border-box;
+
+  border:
+    1px solid
+    var(--wf-component-border);
+
+  border-radius:
+    var(--wf-component-radius);
+
+  background:
+    linear-gradient(
+      180deg,
+      var(--wf-component-highlight),
+      transparent 34%
+    ),
+    linear-gradient(
+      135deg,
+      var(--wf-component-bg-strong),
+      var(--wf-component-bg)
+    );
+
+  backdrop-filter:
+    blur(
+      var(--wf-component-blur)
+    );
+
+  -webkit-backdrop-filter:
+    blur(
+      var(--wf-component-blur)
+    );
+
+  box-shadow:
+    var(--wf-component-shadow),
+    inset 0 1px 0
+    rgba(
+      255,
+      255,
+      255,
+      .07
+    );
+}
+
+[data-wf-panel][data-wf-panel-surface]::before {
+  content:
+    "";
+
+  position:
+    absolute;
+
+  inset:
+    0;
+
+  pointer-events:
+    none;
+
+  background:
+    radial-gradient(
+      circle at 14% 12%,
+      color-mix(
+        in srgb,
+        var(--wf-accent) 10%,
+        transparent
+      ),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 88% 88%,
+      color-mix(
+        in srgb,
+        var(--wf-accent-2) 8%,
+        transparent
+      ),
+      transparent 30%
+    );
+}
+
+/* Content stays over decorative glass. */
+
+[data-wf-panel][data-wf-panel-surface] > * {
+  position:
+    relative;
+
+  z-index:
+    1;
+}
+
+/* ---------------------------------------------------------
+   SYSTEM LABEL / KICKER
+--------------------------------------------------------- */
+
+.wf-system-label {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap:
+    var(--wf-space-2, 8px);
+
+  margin:
+    0;
+
+  font-family:
+    var(--wf-font-mono);
+
+  font-size:
+    var(--wf-panel-label-size, .67rem);
+
+  font-weight:
+    800;
+
+  line-height:
+    1;
+
+  letter-spacing:
+    .18em;
+
+  text-transform:
+    uppercase;
+
+  color:
+    var(--wf-accent);
+}
+
+.wf-system-label::before {
+  content:
+    "";
+
+  width:
+    6px;
+
+  height:
+    6px;
+
+  border-radius:
+    50%;
+
+  background:
+    var(--wf-accent);
+
+  box-shadow:
+    0 0 12px
+    color-mix(
+      in srgb,
+      var(--wf-accent) 58%,
+      transparent
+    );
+}
+
+/* ---------------------------------------------------------
+   SHARED ACTION
+--------------------------------------------------------- */
+
+.wf-action {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  gap:
+    10px;
+
+  min-height:
+    42px;
+
+  box-sizing:
+    border-box;
+
+  padding:
+    0 17px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 34%,
+      transparent
+    );
+
+  border-radius:
+    var(--wf-radius-pill, 999px);
+
+  background:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 9%,
+      transparent
+    );
+
+  color:
+    var(--wf-text, #eff7ff);
+
+  text-decoration:
+    none;
+
+  font-family:
+    var(--wf-font-ui);
+
+  font-size:
+    .82rem;
+
+  font-weight:
+    800;
+
+  cursor:
+    pointer;
+
+  transition:
+    transform
+    var(--wf-motion-fast, 160ms)
+    ease,
+    background
+    var(--wf-motion-fast, 160ms)
+    ease,
+    border-color
+    var(--wf-motion-fast, 160ms)
+    ease;
+}
+
+.wf-action:hover {
+  transform:
+    translateY(-1px);
+
+  border-color:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 58%,
+      transparent
+    );
+
+  background:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 15%,
+      transparent
+    );
+}
+
+/* ---------------------------------------------------------
+   STATUS DOT
+--------------------------------------------------------- */
+
+.wf-status-dot {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap:
+    8px;
+
+  font-family:
+    var(--wf-font-mono);
+
+  font-size:
+    .68rem;
+
+  letter-spacing:
+    .08em;
+
+  color:
+    var(--wf-text-soft);
+}
+
+.wf-status-dot::before {
+  content:
+    "";
+
+  width:
+    7px;
+
+  height:
+    7px;
+
+  border-radius:
+    50%;
+
+  background:
+    #62ffa0;
+
+  box-shadow:
+    0 0 12px
+    rgba(
+      98,
+      255,
+      160,
+      .58
+    );
+}

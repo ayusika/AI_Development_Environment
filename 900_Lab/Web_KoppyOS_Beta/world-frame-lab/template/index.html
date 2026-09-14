@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>World Frame Page Template</title>
+
+  <!-- ================================================
+       Koppy World shared design system
+  ================================================= -->
+
+  <link
+    rel="stylesheet"
+    href="../../assets/css/world-frame-tokens.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../../assets/css/world-frame.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../../assets/css/world-frame-polish.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../../assets/css/world-frame-shell.css"
+  >
+
+  <link
+    rel="stylesheet"
+    href="../../assets/css/world-frame-components.css"
+  >
+
+  <!-- Page-specific CSS -->
+  <link
+    rel="stylesheet"
+    href="./page.css"
+  >
+</head>
+
+<body
+  class="world-frame-body"
+  data-wf-profile="world"
+>
+  <!-- ================================================
+       WORLD FRAME ROOT
+
+       For another page:
+       data-wf-profile="work"
+       data-wf-profile="home"
+       data-wf-profile="brain"
+       data-wf-profile="koppy"
+       data-wf-profile="tools"
+  ================================================= -->
+
+  <div
+    class="wf-app"
+    id="wfApp"
+    data-theme="ice"
+    data-motion="rich"
+    data-wf-page="world"
+    data-wf-seed="4812"
+    data-wf-density="1"
+    data-wf-quality="balanced"
+    data-wf-readable-zone="on"
+  >
+    <div class="wf-stage">
+
+      <!-- ============================================
+           LAYER 1
+           Shared animated background
+      ============================================= -->
+
+      <div
+        class="wf-layer wf-layer--outer"
+        aria-hidden="true"
+      >
+        <div
+          class="wf-stars"
+          data-layer="stars"
+        ></div>
+
+        <div
+          class="wf-streams"
+          data-layer="streams"
+        ></div>
+
+        <div
+          class="wf-logs"
+          data-layer="logs"
+        ></div>
+
+        <div
+          class="wf-crystals"
+          data-layer="crystals"
+        ></div>
+      </div>
+
+      <!-- ============================================
+           LAYER 2
+           Shared adjustable glass shell
+      ============================================= -->
+
+      <div class="wf-layer wf-layer--shell">
+        <main
+          class="wf-shell"
+          data-wf-shell
+          data-wf-shell-mode="frost"
+          data-wf-shell-opacity="0.20"
+          data-wf-shell-blur="16"
+        >
+          <!-- ========================================
+               PAGE CONTENT
+               Everything below this point is
+               page-specific.
+          ========================================= -->
+
+          <div class="wft-page">
+            <header class="wft-header">
+              <div>
+                <p class="wf-system-label">
+                  PAGE TEMPLATE
+                </p>
+
+                <strong class="wft-brand">
+                  Koppy World
+                </strong>
+              </div>
+
+              <span class="wf-status-dot">
+                FRAME ONLINE
+              </span>
+            </header>
+
+            <section class="wft-hero">
+              <div class="wft-hero-copy">
+                <p class="wf-system-label">
+                  SHARED WORLD FRAME
+                </p>
+
+                <h1>
+                  実ページ用<br>
+                  テンプレート
+                </h1>
+
+                <p>
+                  背景・ガラスシェル・文字設計・
+                  内側パネルは共通部品。
+                  このページ固有のCSSは、
+                  主にレイアウトだけを書いている。
+                </p>
+
+                <div class="wft-actions">
+                  <a
+                    class="wf-action"
+                    href="../"
+                  >
+                    ← Labへ戻る
+                  </a>
+                </div>
+              </div>
+            </section>
+
+            <section class="wft-section">
+              <div class="wft-section-head">
+                <p class="wf-system-label">
+                  LAYER 3
+                </p>
+
+                <h2>
+                  共通パネルの確認
+                </h2>
+              </div>
+
+              <div class="wft-grid">
+                <article
+                  data-wf-panel
+                  data-wf-panel-surface
+                  class="wft-card"
+                >
+                  <p class="wf-system-label">
+                    PANEL A
+                  </p>
+
+                  <h3>
+                    共通タイポグラフィ
+                  </h3>
+
+                  <p>
+                    hタグ・pタグの基本値は
+                    World Frame側のTokenから受け取る。
+                  </p>
+                </article>
+
+                <article
+                  data-wf-panel
+                  data-wf-panel-surface
+                  class="wft-card"
+                >
+                  <p class="wf-system-label">
+                    PANEL B
+                  </p>
+
+                  <h3>
+                    ページ別Override
+                  </h3>
+
+                  <p>
+                    必要なページだけCSS変数を上書きして、
+                    他ページには影響させない。
+                  </p>
+                </article>
+
+                <article
+                  data-wf-panel
+                  data-wf-panel-surface
+                  class="wft-card"
+                >
+                  <p class="wf-system-label">
+                    PANEL C
+                  </p>
+
+                  <h3>
+                    コードを細く保つ
+                  </h3>
+
+                  <p>
+                    各ページは内容と配置に集中。
+                    背景やガラス表現を毎回書き直さない。
+                  </p>
+                </article>
+              </div>
+            </section>
+
+            <footer class="wft-footer">
+              <span>
+                Koppy World Design System
+              </span>
+
+              <span>
+                Shared frame / page-owned content
+              </span>
+            </footer>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================
+       Shared runtime
+       No Lab controls are loaded on this page.
+  ================================================= -->
+
+  <script
+    src="../../assets/js/world-frame.js"
+  ></script>
+
+  <script
+    src="../../assets/js/world-frame-polish.js"
+  ></script>
+
+  <script
+    src="../../assets/js/world-frame-shell.js"
+  ></script>
+
+  <script
+    src="../../assets/js/world-frame-profiles.js"
+  ></script>
+
+  <script
+    src="../../assets/js/world-frame-runtime.js"
+  ></script>
+</body>
+</html>

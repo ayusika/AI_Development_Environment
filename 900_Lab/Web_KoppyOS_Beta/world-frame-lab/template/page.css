@@ -1,0 +1,303 @@
+/* =========================================================
+   PAGE-SPECIFIC CSS
+
+   Shared system owns:
+   - background
+   - binary / logs / crystals
+   - glass shell
+   - inner glass panel appearance
+   - typography defaults
+   - shared buttons
+   - profile themes
+
+   This file owns:
+   - this page's layout
+   - this page's unique overrides
+========================================================= */
+
+.wft-page {
+  min-height:
+    800px;
+
+  box-sizing:
+    border-box;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  padding:
+    26px
+    30px;
+}
+
+/* Example page-level override.
+   Delete it if the default is already perfect. */
+
+[data-wf-page="world"] {
+  --wf-shell-h1-size:
+    clamp(
+      3.3rem,
+      7.5vw,
+      6.8rem
+    );
+}
+
+.wft-header {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  gap:
+    20px;
+
+  padding-bottom:
+    22px;
+
+  border-bottom:
+    1px solid
+    rgba(
+      188,
+      223,
+      255,
+      .11
+    );
+}
+
+.wft-brand {
+  display:
+    block;
+
+  margin-top:
+    8px;
+
+  font-size:
+    1.15rem;
+}
+
+.wft-hero {
+  min-height:
+    410px;
+
+  display:
+    grid;
+
+  align-items:
+    center;
+
+  grid-template-columns:
+    minmax(
+      0,
+      720px
+    );
+
+  padding:
+    44px
+    8px
+    36px;
+}
+
+.wft-hero-copy h1 {
+  margin:
+    16px
+    0
+    0;
+
+  font-family:
+    var(--wf-font-display);
+
+  font-size:
+    var(--wf-shell-h1-size);
+
+  font-weight:
+    var(--wf-shell-heading-weight);
+
+  line-height:
+    .96;
+
+  letter-spacing:
+    -.055em;
+
+  color:
+    var(--wf-text);
+}
+
+.wft-hero-copy > p:not(.wf-system-label) {
+  max-width:
+    48rem;
+
+  margin:
+    22px
+    0
+    0;
+
+  font-size:
+    var(--wf-shell-p-size);
+
+  line-height:
+    var(--wf-shell-body-line);
+
+  color:
+    var(--wf-text-soft);
+}
+
+.wft-actions {
+  display:
+    flex;
+
+  flex-wrap:
+    wrap;
+
+  gap:
+    10px;
+
+  margin-top:
+    24px;
+}
+
+.wft-section {
+  padding:
+    10px
+    8px
+    34px;
+}
+
+.wft-section-head {
+  margin-bottom:
+    18px;
+}
+
+.wft-section-head h2 {
+  margin:
+    9px
+    0
+    0;
+
+  font-family:
+    var(--wf-font-display);
+
+  font-size:
+    var(--wf-shell-h2-size);
+
+  line-height:
+    1.1;
+
+  letter-spacing:
+    -.035em;
+}
+
+.wft-grid {
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap:
+    14px;
+}
+
+.wft-card {
+  min-height:
+    190px;
+
+  padding:
+    22px;
+}
+
+.wft-card h3 {
+  margin:
+    18px
+    0
+    0;
+}
+
+.wft-card p:not(.wf-system-label) {
+  margin:
+    12px
+    0
+    0;
+
+  color:
+    var(--wf-text-soft);
+}
+
+.wft-footer {
+  margin-top:
+    auto;
+
+  display:
+    flex;
+
+  justify-content:
+    space-between;
+
+  gap:
+    20px;
+
+  padding:
+    20px
+    8px
+    4px;
+
+  border-top:
+    1px solid
+    rgba(
+      188,
+      223,
+      255,
+      .09
+    );
+
+  font-size:
+    .7rem;
+
+  color:
+    var(--wf-text-dim);
+}
+
+@media (max-width: 860px) {
+  .wft-page {
+    padding:
+      20px;
+  }
+
+  .wft-grid {
+    grid-template-columns:
+      1fr;
+  }
+
+  .wft-hero {
+    min-height:
+      360px;
+  }
+}
+
+@media (max-width: 560px) {
+  .wft-header,
+  .wft-footer {
+    align-items:
+      flex-start;
+
+    flex-direction:
+      column;
+  }
+
+  .wft-page {
+    padding:
+      16px;
+  }
+}
