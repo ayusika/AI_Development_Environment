@@ -2,6 +2,21 @@
     const ROOT = document.documentElement;
     const MODES = ['clear', 'frost', 'dense'];
 
+    const PRESETS = {
+        clear: {
+            opacity: 0.06,
+            blur: 4
+        },
+        frost: {
+            opacity: 0.20,
+            blur: 16
+        },
+        dense: {
+            opacity: 0.42,
+            blur: 30
+        }
+    };
+
     function $(sel, ctx=document){
         return ctx.querySelector(sel);
     }
@@ -89,24 +104,119 @@
         return inner;
     }
 
-    function applyMode(target, mode){
-        MODES.forEach(m => target.classList.remove('wf-shell-mode-' + m));
-        target.classList.add('wf-shell-mode-' + mode);
-        document.querySelectorAll('.wf-shell-mode-btn').forEach(btn => {
-            btn.classList.toggle('is-active', btn.dataset.mode === mode);
+    function clearModeActive(){
+        document
+            .querySelectorAll('.wf-shell-mode-btn')
+            .forEach(btn => {
+                btn.classList.remove('is-active');
+            });
+    }
+
+    function applyOpacity(target, value){
+        const v =
+            Math.max(
+                0,
+                Math.min(
+                    0.55,
+                    Number(value)
+                )
+            );
+
+        /*
+           IMPORTANT:
+           Write directly on the shell target.
+           This beats the mode class custom properties.
+        */
+        target.style.setProperty(
+            '--wf-shell-opacity',
+            String(v)
+        );
+
+        const val =
+            document.querySelector(
+                '.wf-shell-opacity-value'
+            );
+
+        if (val){
+            val.textContent =
+                Math.round(v * 100) + '%';
+        }
+    }
+
+    function applyBlur(target, value){
+        const v =
+            Math.max(
+                0,
+                Math.min(
+                    40,
+                    Number(value)
+                )
+            );
+
+        target.style.setProperty(
+            '--wf-shell-blur',
+            v + 'px'
+        );
+
+        const val =
+            document.querySelector(
+                '.wf-shell-blur-value'
+            );
+
+        if (val){
+            val.textContent =
+                v + 'px';
+        }
+    }
+
+    function applyMode(
+        target,
+        mode,
+        opacityInput,
+        blurInput
+    ){
+        const preset =
+            PRESETS[mode] ||
+            PRESETS.frost;
+
+        MODES.forEach(m => {
+            target.classList.remove(
+                'wf-shell-mode-' + m
+            );
         });
-    }
 
-    function applyOpacity(v){
-        ROOT.style.setProperty('--wf-shell-opacity', String(v));
-        const val = document.querySelector('.wf-shell-opacity-value');
-        if (val) val.textContent = Math.round(v * 100) + '%';
-    }
+        target.classList.add(
+            'wf-shell-mode-' + mode
+        );
 
-    function applyBlur(v){
-        ROOT.style.setProperty('--wf-shell-blur', v + 'px');
-        const val = document.querySelector('.wf-shell-blur-value');
-        if (val) val.textContent = v + 'px';
+        document
+            .querySelectorAll('.wf-shell-mode-btn')
+            .forEach(btn => {
+                btn.classList.toggle(
+                    'is-active',
+                    btn.dataset.mode === mode
+                );
+            });
+
+        opacityInput.value =
+            String(
+                Math.round(
+                    preset.opacity * 100
+                )
+            );
+
+        blurInput.value =
+            String(preset.blur);
+
+        applyOpacity(
+            target,
+            preset.opacity
+        );
+
+        applyBlur(
+            target,
+            preset.blur
+        );
     }
 
     function buildControls(target){
@@ -120,11 +230,24 @@
         const opacityValue = create('div', 'wf-shell-value wf-shell-opacity-value', '20%');
         const opacityInput = create('input');
         opacityInput.type = 'range';
-        opacityInput.min = '8';
-        opacityInput.max = '38';
+        opacityInput.min = '0';
+        opacityInput.max = '55';
         opacityInput.step = '1';
         opacityInput.value = '20';
-        opacityInput.addEventListener('input', () => applyOpacity(Number(opacityInput.value) / 100));
+
+        opacityInput.addEventListener(
+            'input',
+            () => {
+                clearModeActive();
+
+                applyOpacity(
+                    target,
+                    Number(
+                        opacityInput.value
+                    ) / 100
+                );
+            }
+        );
         opacityBlock.append(opacityLabel, opacityInput, opacityValue);
 
         const blurBlock = create('div', 'wf-shell-control');
@@ -132,11 +255,24 @@
         const blurValue = create('div', 'wf-shell-value wf-shell-blur-value', '16px');
         const blurInput = create('input');
         blurInput.type = 'range';
-        blurInput.min = '8';
-        blurInput.max = '28';
+        blurInput.min = '0';
+        blurInput.max = '40';
         blurInput.step = '1';
         blurInput.value = '16';
-        blurInput.addEventListener('input', () => applyBlur(Number(blurInput.value)));
+
+        blurInput.addEventListener(
+            'input',
+            () => {
+                clearModeActive();
+
+                applyBlur(
+                    target,
+                    Number(
+                        blurInput.value
+                    )
+                );
+            }
+        );
         blurBlock.append(blurLabel, blurInput, blurValue);
 
         const modeBlock = create('div', 'wf-shell-control');
@@ -146,7 +282,17 @@
             const btn = create('button', 'wf-shell-mode-btn', mode.toUpperCase());
             btn.type = 'button';
             btn.dataset.mode = mode;
-            btn.addEventListener('click', () => applyMode(target, mode));
+            btn.addEventListener(
+                'click',
+                () => {
+                    applyMode(
+                        target,
+                        mode,
+                        opacityInput,
+                        blurInput
+                    );
+                }
+            );
             modeGroup.appendChild(btn);
         }
         modeBlock.append(modeLabel, modeGroup);
@@ -155,9 +301,12 @@
 
         host.appendChild(box);
 
-        applyOpacity(0.20);
-        applyBlur(16);
-        applyMode(target, 'frost');
+        applyMode(
+            target,
+            'frost',
+            opacityInput,
+            blurInput
+        );
     }
 
     function init(){

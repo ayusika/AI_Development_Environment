@@ -15,12 +15,43 @@
     position: relative;
     isolation: isolate;
     overflow: hidden;
-    backdrop-filter: blur(var(--wf-shell-blur)) saturate(135%);
-    -webkit-backdrop-filter: blur(var(--wf-shell-blur)) saturate(135%);
+
+    /*
+       Actual glass body.
+       0 = almost fully transparent
+       higher values = denser glass
+    */
+    background:
+        linear-gradient(
+            180deg,
+            rgba(180, 220, 255, 0.035),
+            rgba(80, 125, 190, 0.018)
+        ),
+        rgba(
+            7,
+            24,
+            52,
+            var(--wf-shell-opacity)
+        ) !important;
+
+    backdrop-filter:
+        blur(var(--wf-shell-blur))
+        saturate(135%);
+
+    -webkit-backdrop-filter:
+        blur(var(--wf-shell-blur))
+        saturate(135%);
+
     box-shadow:
         0 18px 48px rgba(2, 16, 44, var(--wf-shell-shadow-opacity)),
         inset 0 1px 0 rgba(255,255,255,0.10),
         inset 0 0 0 1px rgba(180, 220, 255, var(--wf-shell-border-opacity));
+
+    transition:
+        background .16s ease,
+        backdrop-filter .16s ease,
+        -webkit-backdrop-filter .16s ease,
+        box-shadow .16s ease;
 }
 
 .wf-shell-surface::before{
@@ -34,7 +65,11 @@
             rgba(214, 235, 255, 0.16),
             rgba(132, 176, 238, 0.07) 42%,
             rgba(74, 108, 180, 0.12) 100%);
-    opacity: var(--wf-shell-opacity);
+    opacity:
+        calc(
+            0.12 +
+            var(--wf-shell-opacity) * 0.65
+        );
 }
 
 .wf-shell-surface::after{
