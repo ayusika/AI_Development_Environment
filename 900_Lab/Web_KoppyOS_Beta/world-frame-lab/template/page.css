@@ -15,9 +15,34 @@
    - this page's unique overrides
 ========================================================= */
 
+/*
+   Real page viewport sizing.
+
+   - Short page:
+     glass shell reaches the bottom of the viewport.
+   - Long page:
+     shell grows naturally with content.
+   - 60px = shared shell layer top/bottom padding.
+*/
+
+.wf-app,
+.wf-stage {
+  min-height:
+    100svh;
+}
+
+.wf-layer--shell > [data-wf-shell] {
+  min-height:
+    calc(
+      100svh - 60px
+    );
+}
+
 .wft-page {
   min-height:
-    800px;
+    calc(
+      100svh - 60px
+    );
 
   box-sizing:
     border-box;
