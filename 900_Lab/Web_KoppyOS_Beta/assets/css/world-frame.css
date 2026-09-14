@@ -2247,3 +2247,119 @@ body.wf-focus-active .wf-focus-exit{
 }
 
 /* ==== WORLD FRAME ENGINE V1 END ==== */
+
+/* ==== WORLD FRAME COLOR PACK V1 START ==== */
+
+/* ---------------------------------------------------------
+   EMBER
+   Amber / Orange / warm metallic light
+--------------------------------------------------------- */
+
+.wf-app[data-theme="ember"]{
+  --wf-bg-0:#160b04;
+  --wf-bg-1:#2b1507;
+  --wf-bg-2:#6b320b;
+
+  --wf-bg-glow:#ffad4a;
+
+  --wf-accent:#ffc46f;
+  --wf-accent-2:#ff7c32;
+  --wf-accent-3:#ffe1ad;
+
+  --wf-binary:rgba(255,177,96,.29);
+  --wf-binary-soft:rgba(255,177,96,.12);
+
+  --wf-log:rgba(255,215,169,.46);
+
+  --wf-crystal:#ffe3bd;
+  --wf-crystal-wire:rgba(255,210,154,.38);
+
+  --wf-star:rgba(255,231,203,.84);
+  --wf-inner-outline:rgba(255,185,109,.17);
+}
+
+/* ---------------------------------------------------------
+   ROSE
+   Deeper neon pink than Pink Frost
+--------------------------------------------------------- */
+
+.wf-app[data-theme="rose"]{
+  --wf-bg-0:#170715;
+  --wf-bg-1:#33102f;
+  --wf-bg-2:#7a245f;
+
+  --wf-bg-glow:#ff70cf;
+
+  --wf-accent:#ff9edf;
+  --wf-accent-2:#ff58bb;
+  --wf-accent-3:#ffd4ef;
+
+  --wf-binary:rgba(255,154,218,.28);
+  --wf-binary-soft:rgba(255,154,218,.11);
+
+  --wf-log:rgba(255,205,238,.46);
+
+  --wf-crystal:#ffd9f1;
+  --wf-crystal-wire:rgba(255,183,226,.38);
+
+  --wf-star:rgba(255,220,242,.84);
+  --wf-inner-outline:rgba(255,142,211,.17);
+}
+
+/* ---------------------------------------------------------
+   CRIMSON
+   Deep cyber red
+--------------------------------------------------------- */
+
+.wf-app[data-theme="crimson"]{
+  --wf-bg-0:#160607;
+  --wf-bg-1:#31090e;
+  --wf-bg-2:#731822;
+
+  --wf-bg-glow:#ff4c60;
+
+  --wf-accent:#ff7c88;
+  --wf-accent-2:#ff3d50;
+  --wf-accent-3:#ffc5cb;
+
+  --wf-binary:rgba(255,117,132,.29);
+  --wf-binary-soft:rgba(255,117,132,.11);
+
+  --wf-log:rgba(255,190,199,.45);
+
+  --wf-crystal:#ffd4d8;
+  --wf-crystal-wire:rgba(255,164,175,.37);
+
+  --wf-star:rgba(255,219,224,.84);
+  --wf-inner-outline:rgba(255,112,127,.17);
+}
+
+/* ---------------------------------------------------------
+   AURORA
+   Emerald / green aurora
+--------------------------------------------------------- */
+
+.wf-app[data-theme="aurora"]{
+  --wf-bg-0:#04150e;
+  --wf-bg-1:#082b1e;
+  --wf-bg-2:#0d6545;
+
+  --wf-bg-glow:#55ffc0;
+
+  --wf-accent:#7dffd1;
+  --wf-accent-2:#3de59a;
+  --wf-accent-3:#c1ffe7;
+
+  --wf-binary:rgba(112,255,200,.28);
+  --wf-binary-soft:rgba(112,255,200,.11);
+
+  --wf-log:rgba(192,255,229,.44);
+
+  --wf-crystal:#d0ffef;
+  --wf-crystal-wire:rgba(161,255,220,.36);
+
+  --wf-star:rgba(215,255,240,.83);
+  --wf-inner-outline:rgba(105,244,190,.16);
+}
+
+/* ==== WORLD FRAME COLOR PACK V1 END ==== */
