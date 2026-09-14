@@ -1149,3 +1149,416 @@
     animation:none !important;
   }
 }
+
+/* ==== WORLD FRAME LAB LARGE PREVIEW START ==== */
+
+/*
+   Lab viewer only.
+   The reusable World Frame itself is intentionally untouched.
+*/
+
+/* Use almost the full browser width. */
+
+.wf-lab{
+  padding:
+    18px
+    20px
+    28px;
+}
+
+.wf-lab__header,
+.wf-lab__layout{
+  width:
+    min(
+      1880px,
+      100%
+    );
+}
+
+/* Controls become a compact horizontal console. */
+
+.wf-lab__layout{
+  display:grid;
+
+  grid-template-columns:
+    minmax(0, 1fr);
+
+  gap:12px;
+}
+
+.wf-controls{
+  position:relative;
+  top:auto;
+
+  display:grid;
+
+  grid-template-columns:
+    minmax(270px, 1.25fr)
+    minmax(210px, .8fr)
+    minmax(180px, .7fr)
+    minmax(170px, .65fr);
+
+  grid-template-rows:
+    auto
+    auto;
+
+  column-gap:22px;
+  row-gap:6px;
+
+  align-items:start;
+
+  padding:
+    14px
+    18px;
+}
+
+/* Intro lives in column 1. */
+
+.wf-controls > h2{
+  grid-column:1;
+  grid-row:1;
+
+  margin:
+    2px
+    0
+    3px;
+
+  font-size:22px;
+}
+
+.wf-controls > p{
+  grid-column:1;
+  grid-row:2;
+
+  margin:0;
+
+  max-width:42ch;
+
+  font-size:11px;
+  line-height:1.55;
+}
+
+/* Preview mode */
+
+.wf-controls__group:nth-of-type(1){
+  grid-column:2;
+  grid-row:1 / span 2;
+}
+
+/* Motion */
+
+.wf-controls__group:nth-of-type(2){
+  grid-column:3;
+  grid-row:1 / span 2;
+}
+
+/* Theme */
+
+.wf-controls__group:nth-of-type(3){
+  grid-column:4;
+  grid-row:1 / span 2;
+}
+
+/* Already documented elsewhere.
+   Hide it while visually inspecting the frame. */
+
+.wf-controls__group:nth-of-type(4){
+  display:none;
+}
+
+.wf-controls__group + .wf-controls__group{
+  margin-top:0;
+}
+
+.wf-controls__group h3{
+  margin:
+    0
+    0
+    8px;
+
+  font-size:10px;
+}
+
+/* Slightly denser controls */
+
+.wf-toggle-row,
+.wf-theme-row{
+  gap:7px;
+}
+
+.wf-toggle{
+  padding:
+    9px
+    11px;
+
+  font-size:11px;
+}
+
+.wf-theme{
+  width:29px;
+  height:29px;
+}
+
+/* Preview is now the star of the lab. */
+
+.wf-preview{
+  width:100%;
+  min-width:0;
+
+  padding:7px;
+
+  overflow:hidden;
+}
+
+.wf-preview__frame{
+  min-height:
+    max(
+      900px,
+      calc(100vh - 175px)
+    );
+}
+
+.wf-app,
+.wf-stage{
+  min-height:
+    max(
+      900px,
+      calc(100vh - 175px)
+    );
+}
+
+/* Focus button */
+
+.wf-focus-trigger{
+  appearance:none;
+
+  cursor:pointer;
+
+  font-family:
+    var(--wf-ui-font);
+
+  transition:
+    border-color .18s ease,
+    background .18s ease,
+    transform .18s ease,
+    box-shadow .18s ease;
+}
+
+.wf-focus-trigger:hover{
+  transform:
+    translateY(-1px);
+
+  border-color:
+    rgba(
+      164,
+      224,
+      255,
+      .52
+    );
+
+  background:
+    rgba(
+      94,
+      163,
+      242,
+      .14
+    );
+
+  box-shadow:
+    0 8px 22px
+    rgba(
+      32,
+      98,
+      180,
+      .12
+    );
+}
+
+/* Hidden until focus mode. */
+
+.wf-focus-exit{
+  display:none;
+
+  position:fixed;
+
+  top:18px;
+  right:18px;
+
+  z-index:9999;
+
+  appearance:none;
+
+  padding:
+    11px
+    16px;
+
+  border-radius:999px;
+
+  border:
+    1px solid
+    rgba(
+      196,
+      230,
+      255,
+      .26
+    );
+
+  color:#eff8ff;
+
+  background:
+    rgba(
+      7,
+      20,
+      42,
+      .68
+    );
+
+  backdrop-filter:
+    blur(16px);
+
+  -webkit-backdrop-filter:
+    blur(16px);
+
+  box-shadow:
+    0 14px 36px
+    rgba(
+      0,
+      8,
+      26,
+      .32
+    );
+
+  font:
+    700 12px/1
+    var(--wf-ui-font);
+
+  cursor:pointer;
+}
+
+/* ------------------------------------------------------
+   TRUE FULL PREVIEW
+------------------------------------------------------ */
+
+.wf-lab.is-focus{
+  padding:0;
+}
+
+.wf-lab.is-focus .wf-lab__header,
+.wf-lab.is-focus .wf-controls{
+  display:none;
+}
+
+.wf-lab.is-focus .wf-lab__layout{
+  width:100%;
+  max-width:none;
+
+  margin:0;
+
+  display:block;
+}
+
+.wf-lab.is-focus .wf-preview{
+  padding:0;
+
+  border:0;
+
+  border-radius:0;
+
+  background:transparent;
+
+  box-shadow:none;
+}
+
+.wf-lab.is-focus .wf-preview__frame,
+.wf-lab.is-focus .wf-app,
+.wf-lab.is-focus .wf-stage{
+  min-height:100vh;
+}
+
+.wf-lab.is-focus .wf-app{
+  border-radius:0;
+}
+
+body.wf-focus-active .wf-focus-exit{
+  display:inline-flex;
+
+  align-items:center;
+  justify-content:center;
+}
+
+/* Larger monitors should really use the space. */
+
+@media (min-width: 1500px){
+
+  .wf-lab{
+    padding-left:28px;
+    padding-right:28px;
+  }
+
+  .wf-preview__frame,
+  .wf-app,
+  .wf-stage{
+    min-height:
+      max(
+        960px,
+        calc(100vh - 175px)
+      );
+  }
+}
+
+/* Tablet: controls become two rows. */
+
+@media (max-width: 1050px){
+
+  .wf-controls{
+    grid-template-columns:
+      minmax(240px, 1fr)
+      repeat(
+        3,
+        minmax(
+          150px,
+          auto
+        )
+      );
+  }
+
+  .wf-controls > p{
+    display:none;
+  }
+
+  .wf-controls > h2{
+    grid-row:
+      1 / span 2;
+
+    align-self:center;
+  }
+}
+
+/* Small screen: preserve existing stacked behaviour. */
+
+@media (max-width: 760px){
+
+  .wf-controls{
+    display:block;
+  }
+
+  .wf-controls > p{
+    display:block;
+
+    margin-bottom:14px;
+  }
+
+  .wf-controls__group:nth-of-type(1),
+  .wf-controls__group:nth-of-type(2),
+  .wf-controls__group:nth-of-type(3){
+    margin-top:14px;
+  }
+
+  .wf-preview__frame,
+  .wf-app,
+  .wf-stage{
+    min-height:860px;
+  }
+}
+
+/* ==== WORLD FRAME LAB LARGE PREVIEW END ==== */

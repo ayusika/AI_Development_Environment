@@ -194,6 +194,69 @@
     });
   }
 
+  function setupLabFocus() {
+    const lab = document.querySelector('.wf-lab');
+    const enterButton = document.querySelector('[data-lab-focus]');
+    const exitButton = document.querySelector('[data-lab-focus-exit]');
+
+    if (!lab || !enterButton || !exitButton) {
+      return;
+    }
+
+    const setFocus = (enabled) => {
+      lab.classList.toggle('is-focus', enabled);
+      document.body.classList.toggle('wf-focus-active', enabled);
+
+      enterButton.setAttribute(
+        'aria-pressed',
+        enabled ? 'true' : 'false'
+      );
+
+      window.setTimeout(
+        rebuildScene,
+        100
+      );
+    };
+
+    enterButton.addEventListener('click', () => {
+      setFocus(
+        !lab.classList.contains('is-focus')
+      );
+    });
+
+    exitButton.addEventListener('click', () => {
+      setFocus(false);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      const target = event.target;
+
+      const isTyping =
+        target instanceof HTMLInputElement ||
+        target instanceof HTMLTextAreaElement ||
+        target instanceof HTMLSelectElement ||
+        target?.isContentEditable;
+
+      if (isTyping) {
+        return;
+      }
+
+      if (event.key === 'Escape') {
+        setFocus(false);
+        return;
+      }
+
+      if (
+        event.key === 'f' ||
+        event.key === 'F'
+      ) {
+        setFocus(
+          !lab.classList.contains('is-focus')
+        );
+      }
+    });
+  }
+
   function setupControls() {
     const modeButtons = Array.from(document.querySelectorAll('[data-mode-set]'));
     const motionButtons = Array.from(document.querySelectorAll('[data-motion-set]'));
@@ -272,6 +335,7 @@
   }
 
   setupControls();
+  setupLabFocus();
   setupParallax();
   setupResizeRebuild();
   setupFairyFallback();
