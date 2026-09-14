@@ -11,6 +11,7 @@ on:
       - "900_Lab/Web_KoppyOS_Beta/chat/**"
       - "900_Lab/Web_KoppyOS_Beta/brain/**"
       - "900_Lab/Web_KoppyOS_Beta/house/**"
+      - "900_Lab/Web_KoppyOS_Beta/world-frame-lab/**"
       - "900_Lab/Web_KoppyOS_Beta/kohaku-work/**"
       - "600_KoppyOS/server/api/**"
       - "600_KoppyOS/server/database/migrate-sales-v2.php"
@@ -143,6 +144,7 @@ jobs:
           CHAT_SOURCE="900_Lab/Web_KoppyOS_Beta/chat"
           BRAIN_SOURCE="900_Lab/Web_KoppyOS_Beta/brain"
           HOUSE_SOURCE="900_Lab/Web_KoppyOS_Beta/house"
+          WORLD_FRAME_LAB_SOURCE="900_Lab/Web_KoppyOS_Beta/world-frame-lab"
 
           KOHAKU_WORK_SOURCE="900_Lab/Web_KoppyOS_Beta/kohaku-work"
           KOHAKU_WORK_REMOTE="/home/users/2/her.jp-mikipiano/web/koppy/kohaku-work"
@@ -156,6 +158,7 @@ jobs:
           test -d "$CHAT_SOURCE"
           test -d "$BRAIN_SOURCE"
           test -d "$HOUSE_SOURCE"
+          test -d "$WORLD_FRAME_LAB_SOURCE"
           test -d "$KOHAKU_WORK_SOURCE"
           test -d "$API_SOURCE"
 
@@ -191,6 +194,10 @@ jobs:
           cp -R \
             "$HOUSE_SOURCE" \
             "$DEPLOY_PACKAGE_DIR/house"
+
+          cp -R \
+            "$WORLD_FRAME_LAB_SOURCE" \
+            "$DEPLOY_PACKAGE_DIR/world-frame-lab"
 
           cp -R \
             "$KOHAKU_WORK_SOURCE" \
