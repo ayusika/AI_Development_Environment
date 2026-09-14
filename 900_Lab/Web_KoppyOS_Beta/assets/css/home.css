@@ -1627,3 +1627,128 @@ body.kw-body::after {
     transition: none !important;
   }
 }
+
+/* === KOPPY WORLD ICE DIGITS: START === */
+.kw-entrance{
+    position:relative;
+    overflow:hidden;
+    isolation:isolate;
+}
+
+.kw-entrance > *{
+    position:relative;
+    z-index:1;
+}
+
+.kw-entrance::before,
+.kw-entrance::after{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    white-space:pre;
+    font-family:"SFMono-Regular","SF Mono",Consolas,Menlo,monospace;
+    font-weight:600;
+    font-size:12px;
+    line-height:2.2;
+    letter-spacing:0.28em;
+    z-index:0;
+    opacity:1;
+    -webkit-mask-image:
+        radial-gradient(circle at 50% 42%, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.82) 38%, rgba(0,0,0,0.18) 72%, transparent 100%);
+    mask-image:
+        radial-gradient(circle at 50% 42%, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.82) 38%, rgba(0,0,0,0.18) 72%, transparent 100%);
+}
+
+.kw-entrance::before{
+    content:
+        "01 001 10 0101 01 10 001 010 01 10 001\A"
+        "001 10 01 0010 110 01 10 001 01 001 10\A"
+        "10 001 01 10 0010 01 110 01 10 001 01\A"
+        "0101 01 10 001 010 01 10 001 0101 01\A"
+        "01 10 001 01 0010 10 01 10 001 010 01\A"
+        "001 01 10 001 0101 01 10 001 01 0010\A"
+        "10 0010 01 110 01 10 001 01 10 001 01\A"
+        "01 001 10 0101 01 10 001 010 01 10 001\A"
+        "001 10 01 0010 110 01 10 001 01 001 10\A"
+        "10 001 01 10 0010 01 110 01 10 001 01\A"
+        "0101 01 10 001 010 01 10 001 0101 01\A"
+        "01 10 001 01 0010 10 01 10 001 010 01";
+    padding:56px 72px 120px;
+    color:rgba(174, 231, 255, 0.11);
+    text-shadow:
+        0 0 8px rgba(165, 231, 255, 0.18),
+        0 0 18px rgba(128, 212, 255, 0.10);
+    transform:translate3d(0, 0, 0);
+    animation:kwIceDigitsDriftA 30s linear infinite;
+}
+
+.kw-entrance::after{
+    content:
+        "0 1 0 1 001 01 10 001 010 01 10\A"
+        "01 10 001 01 0010 10 01 10 001\A"
+        "001 10 01 0010 110 01 10 001 01\A"
+        "10 001 01 10 0010 01 110 01 10\A"
+        "0101 01 10 001 010 01 10 0010\A"
+        "01 001 10 0101 01 10 001 010 01\A"
+        "0 1 0 1 001 01 10 001 010 01 10\A"
+        "01 10 001 01 0010 10 01 10 001\A"
+        "001 10 01 0010 110 01 10 001 01\A"
+        "10 001 01 10 0010 01 110 01 10";
+    padding:120px 110px 64px;
+    text-align:right;
+    color:rgba(214, 244, 255, 0.075);
+    text-shadow:
+        0 0 10px rgba(214, 244, 255, 0.14),
+        0 0 24px rgba(184, 232, 255, 0.10);
+    filter:blur(0.25px);
+    transform:translate3d(0, 0, 0) scale(1.02);
+    animation:kwIceDigitsDriftB 42s linear infinite;
+}
+
+@keyframes kwIceDigitsDriftA{
+    0%{
+        transform:translate3d(0, -10px, 0);
+    }
+    50%{
+        transform:translate3d(-18px, 14px, 0);
+    }
+    100%{
+        transform:translate3d(0, 34px, 0);
+    }
+}
+
+@keyframes kwIceDigitsDriftB{
+    0%{
+        transform:translate3d(10px, 0, 0) scale(1.02);
+    }
+    50%{
+        transform:translate3d(-12px, 18px, 0) scale(1.03);
+    }
+    100%{
+        transform:translate3d(-24px, 36px, 0) scale(1.02);
+    }
+}
+
+@media (max-width: 720px){
+    .kw-entrance::before,
+    .kw-entrance::after{
+        font-size:10px;
+        letter-spacing:0.18em;
+    }
+
+    .kw-entrance::before{
+        padding:48px 28px 100px;
+    }
+
+    .kw-entrance::after{
+        padding:110px 32px 40px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce){
+    .kw-entrance::before,
+    .kw-entrance::after{
+        animation:none !important;
+    }
+}
+/* === KOPPY WORLD ICE DIGITS: END === */
