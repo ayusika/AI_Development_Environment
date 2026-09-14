@@ -2173,6 +2173,45 @@
           card.dataset.workflowPath =
             workflow.path;
 
+          /*
+             FAST status is intentionally lightweight.
+
+             Keep the already-fetched GitHub run state on
+             the card so FAST can reconcile a status file
+             that was left behind at "running".
+          */
+
+          card.dataset.runId =
+            run?.id
+              ? String(
+                  run.id
+                )
+              : '';
+
+          card.dataset.runStatus =
+            String(
+              run?.status
+              || ''
+            );
+
+          card.dataset.runConclusion =
+            String(
+              run?.conclusion
+              || ''
+            );
+
+          card.dataset.runUpdatedAt =
+            String(
+              run?.updated_at
+              || ''
+            );
+
+          card.dataset.runLabel =
+            String(
+              status.label
+              || ''
+            );
+
 
           const runLink =
             run?.html_url
@@ -2533,6 +2572,153 @@
     }
 
 
+    /*
+       FAST status files are written directly to Lolipop.
+
+       Normally they move:
+
+         running -> success / failure
+
+       If the terminal status upload fails after the actual
+       deployment has completed, the JSON can remain stuck
+       at "running".
+
+       GitHub Actions is authoritative for the final state.
+
+       We only reconcile when:
+       - FAST run_id exists
+       - GitHub run_id exists
+       - both IDs are the SAME run
+       - GitHub says the run is completed
+
+       Therefore an older cached GitHub run can never hide a
+       genuinely newer FAST "running" deployment.
+    */
+
+    function reconcileFastStatusWithRun(
+      source,
+      payload,
+      display,
+      card
+    ) {
+      const fastRunId =
+        String(
+          payload?.run_id
+          || ''
+        );
+
+      const githubRunId =
+        String(
+          card?.dataset.runId
+          || ''
+        );
+
+
+      if (
+        fastRunId === ''
+        ||
+        githubRunId === ''
+        ||
+        fastRunId !== githubRunId
+      ) {
+        return display;
+      }
+
+
+      if (
+        card.dataset.runStatus
+        !== 'completed'
+      ) {
+        return display;
+      }
+
+
+      const githubKind =
+        String(
+          card.dataset.kind
+          || ''
+        );
+
+      const githubLabel =
+        String(
+          card.dataset.runLabel
+          || ''
+        );
+
+      const githubUpdatedAt =
+        card.dataset.runUpdatedAt
+        || null;
+
+
+      if (
+        githubKind === 'success'
+      ) {
+        return {
+          kind:
+            'success',
+
+          value:
+            source.successLabel,
+
+          time:
+            formatDateTime(
+              githubUpdatedAt
+            ),
+        };
+      }
+
+
+      if (
+        githubKind === 'failure'
+      ) {
+        return {
+          kind:
+            'failure',
+
+          value:
+            source.failureLabel,
+
+          time:
+            formatDateTime(
+              githubUpdatedAt
+            ),
+        };
+      }
+
+
+      /*
+         Includes cases such as:
+         - cancelled
+         - DB Migration "検知のみ"
+
+         Preserve the semantic status already calculated
+         from the GitHub run instead of falsely calling it
+         a successful FAST operation.
+      */
+
+      if (
+        githubKind === 'warning'
+      ) {
+        return {
+          kind:
+            'warning',
+
+          value:
+            githubLabel
+            || '終了済み',
+
+          time:
+            formatDateTime(
+              githubUpdatedAt
+            ),
+        };
+      }
+
+
+      return display;
+    }
+
+
     async function loadFastStatus(
       source
     ) {
@@ -2633,10 +2819,19 @@
                     source
                   );
 
-                const display =
+                let display =
                   getFastStatusDisplay(
                     source,
                     payload
+                  );
+
+
+                display =
+                  reconcileFastStatusWithRun(
+                    source,
+                    payload,
+                    display,
+                    card
                   );
 
 
