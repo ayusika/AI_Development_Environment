@@ -2547,160 +2547,498 @@ body.kw-body::after {
   }
 }
 
-
-/* ==== KOPPY WORLD OUTER BINARY BACKGROUND START ==== */
+/* ==== KOPPY OUTER CYBER SPACE V1 START ==== */
 
 /*
-  Outer background only:
-  - do not rebuild inside layout
-  - show deep cyber binary space behind the main shell
-  - keep the shell semi-transparent so the far background is visible through it
+   IMPORTANT:
+   This layer lives OUTSIDE .kw-app.
+   The existing Koppy World panel is intentionally untouched.
 */
 
-html,
-body {
-  min-height: 100%;
-}
-
-body {
-  background:
-    radial-gradient(circle at 50% 18%, rgba(70, 150, 255, 0.18) 0%, rgba(70, 150, 255, 0.06) 18%, rgba(5, 18, 38, 0) 42%),
-    radial-gradient(circle at 0% 50%, rgba(30, 110, 210, 0.22) 0%, rgba(30, 110, 210, 0.05) 24%, transparent 44%),
-    radial-gradient(circle at 100% 50%, rgba(30, 110, 210, 0.22) 0%, rgba(30, 110, 210, 0.05) 24%, transparent 44%),
-    linear-gradient(180deg, #07152a 0%, #071a33 35%, #06142a 100%);
+body.kw-body {
   position: relative;
+  isolation: isolate;
   overflow-x: hidden;
 }
 
-/* far stars + soft depth */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 1;
-  background:
-    radial-gradient(circle at 4% 12%, rgba(173, 225, 255, 0.95) 0 1.3px, transparent 2px),
-    radial-gradient(circle at 10% 28%, rgba(173, 225, 255, 0.65) 0 1.1px, transparent 2px),
-    radial-gradient(circle at 16% 70%, rgba(173, 225, 255, 0.75) 0 1.4px, transparent 2.2px),
-    radial-gradient(circle at 23% 44%, rgba(173, 225, 255, 0.55) 0 1px, transparent 2px),
-    radial-gradient(circle at 31% 18%, rgba(173, 225, 255, 0.78) 0 1.2px, transparent 2px),
-    radial-gradient(circle at 39% 86%, rgba(173, 225, 255, 0.55) 0 1px, transparent 2px),
-    radial-gradient(circle at 47% 37%, rgba(173, 225, 255, 0.72) 0 1.25px, transparent 2px),
-    radial-gradient(circle at 56% 12%, rgba(173, 225, 255, 0.80) 0 1.35px, transparent 2px),
-    radial-gradient(circle at 64% 62%, rgba(173, 225, 255, 0.58) 0 1.1px, transparent 2px),
-    radial-gradient(circle at 71% 30%, rgba(173, 225, 255, 0.82) 0 1.3px, transparent 2px),
-    radial-gradient(circle at 77% 78%, rgba(173, 225, 255, 0.60) 0 1.1px, transparent 2px),
-    radial-gradient(circle at 84% 18%, rgba(173, 225, 255, 0.72) 0 1.15px, transparent 2px),
-    radial-gradient(circle at 91% 55%, rgba(173, 225, 255, 0.82) 0 1.3px, transparent 2px),
-    radial-gradient(circle at 96% 10%, rgba(173, 225, 255, 0.68) 0 1.1px, transparent 2px),
-    linear-gradient(90deg, rgba(40, 90, 170, 0.10), rgba(20, 40, 70, 0.02) 16%, rgba(10, 20, 40, 0) 50%, rgba(20, 40, 70, 0.02) 84%, rgba(40, 90, 170, 0.10));
-}
-
-/* binary streams + tiny logs on the farthest background */
-body::after {
-  content:
-    "010011011001 001001110101 011010010111 001101001010 010111001101 00111010 01100111 01010101 00110001 01010010\A"
-    "\A"
-    "MEMORY_CORE :: LINK_ACTIVE :: WORLD_STATUS :: ICE_LAYER_SYNC\A"
-    "01010110 00101010 01100101 01011100 00101101 01010101 01001001 00110110 01100111 01000110 00101001 01100011\A"
-    "HOME_NODE :: DEVICE_MAP :: PRIVATE_WORLD :: BINARY_DEPTH\A"
-    "\A"
-    "001011010101 010010010011 011001110100 010100100101 001101100001 011001110100 010101000011 001100100111\A"
-    "KOPPY_LINK :: MEMORY_LOG :: DEVELOPMENT_NODE :: GITHUB_BRAIN\A"
-    "010011100101 001101010111 011000010010 010111000111 001011110001 010100110101 011001100100 010001010010";
-  white-space: pre;
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  color: rgba(167, 219, 255, 0.17);
-  font-family: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, monospace;
-  font-size: 12px;
-  line-height: 2.0;
-  letter-spacing: 0.22em;
-  text-shadow: 0 0 8px rgba(135, 210, 255, 0.14);
-  padding: 22px 20px;
-  opacity: 0.85;
-  overflow: hidden;
-  background:
-    linear-gradient(100deg,
-      rgba(130, 205, 255, 0.00) 0%,
-      rgba(130, 205, 255, 0.00) 8%,
-      rgba(130, 205, 255, 0.14) 10%,
-      rgba(130, 205, 255, 0.04) 14%,
-      rgba(130, 205, 255, 0.00) 18%,
-      rgba(130, 205, 255, 0.00) 82%,
-      rgba(130, 205, 255, 0.04) 86%,
-      rgba(130, 205, 255, 0.14) 90%,
-      rgba(130, 205, 255, 0.00) 94%,
-      rgba(130, 205, 255, 0.00) 100%
-    ),
-    linear-gradient(80deg,
-      rgba(130, 205, 255, 0.00) 0%,
-      rgba(130, 205, 255, 0.00) 10%,
-      rgba(130, 205, 255, 0.10) 14%,
-      rgba(130, 205, 255, 0.03) 18%,
-      rgba(130, 205, 255, 0.00) 22%,
-      rgba(130, 205, 255, 0.00) 78%,
-      rgba(130, 205, 255, 0.03) 82%,
-      rgba(130, 205, 255, 0.10) 86%,
-      rgba(130, 205, 255, 0.00) 90%,
-      rgba(130, 205, 255, 0.00) 100%
-    );
-  mask-image:
-    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.22) 0%, rgba(0, 0, 0, 0.78) 40%, rgba(0, 0, 0, 1) 72%),
-    linear-gradient(180deg, rgba(0,0,0,0.95), rgba(0,0,0,0.95));
-  -webkit-mask-image:
-    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.22) 0%, rgba(0, 0, 0, 0.78) 40%, rgba(0, 0, 0, 1) 72%),
-    linear-gradient(180deg, rgba(0,0,0,0.95), rgba(0,0,0,0.95));
-  animation: kwOuterBinaryDrift 26s linear infinite;
-}
-
-/* keep the big inner shell translucent so the far background shows through */
-.kw-shell {
+/* keep the existing Koppy World shell above the outer universe */
+body.kw-body > .kw-app {
   position: relative;
-  z-index: 1;
-  background:
-    linear-gradient(180deg, rgba(8, 24, 48, 0.72), rgba(8, 24, 48, 0.58)) !important;
-  backdrop-filter: blur(18px) saturate(120%);
-  -webkit-backdrop-filter: blur(18px) saturate(120%);
-  box-shadow:
-    0 18px 48px rgba(0, 0, 0, 0.34),
-    0 0 0 1px rgba(153, 214, 255, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  z-index: 2;
 }
 
-/* subtle moving icy vertical light trails */
-.kw-shell::after {
+/* ------------------------------------------------------
+   OUTER WORLD
+------------------------------------------------------ */
+
+.kw-outer-space {
+  position: fixed;
+  inset: 0;
+
+  z-index: 0;
+
+  overflow: hidden;
+  pointer-events: none;
+
+  perspective: 900px;
+
+  background:
+    radial-gradient(
+      ellipse at 50% 34%,
+      rgba(63, 146, 255, .15),
+      transparent 42%
+    ),
+    radial-gradient(
+      ellipse at 0% 52%,
+      rgba(54, 141, 255, .15),
+      transparent 34%
+    ),
+    radial-gradient(
+      ellipse at 100% 52%,
+      rgba(76, 151, 255, .15),
+      transparent 34%
+    );
+}
+
+/* stars */
+.kw-outer-space::before {
   content: "";
+
   position: absolute;
   inset: 0;
-  pointer-events: none;
-  border-radius: inherit;
-  background:
-    linear-gradient(180deg, rgba(180, 230, 255, 0.00) 0%, rgba(180, 230, 255, 0.10) 18%, rgba(180, 230, 255, 0.00) 40%),
-    linear-gradient(180deg, rgba(180, 230, 255, 0.00) 0%, rgba(180, 230, 255, 0.07) 24%, rgba(180, 230, 255, 0.00) 46%);
-  background-size: 2px 240px, 1px 180px;
-  background-repeat: repeat-y, repeat-y;
-  background-position: 18% -20px, 82% 40px;
-  opacity: 0.14;
+
+  background-image:
+    radial-gradient(
+      circle,
+      rgba(205, 239, 255, .82) 0 1px,
+      transparent 1.5px
+    ),
+    radial-gradient(
+      circle,
+      rgba(115, 198, 255, .52) 0 1px,
+      transparent 1.7px
+    );
+
+  background-size:
+    145px 145px,
+    235px 235px;
+
+  background-position:
+    18px 8px,
+    76px 112px;
+
+  opacity: .40;
+
+  animation:
+    kwOuterStars
+    70s linear infinite;
 }
 
-@keyframes kwOuterBinaryDrift {
+/* very faint depth rays */
+.kw-outer-space::after {
+  content: "";
+
+  position: absolute;
+  inset: -20%;
+
+  background:
+    repeating-linear-gradient(
+      91deg,
+      transparent 0 72px,
+      rgba(103, 190, 255, .020) 73px 74px,
+      transparent 75px 152px
+    );
+
+  transform:
+    perspective(700px)
+    rotateX(69deg)
+    translateY(38%);
+
+  transform-origin:
+    center bottom;
+
+  opacity: .65;
+}
+
+/* ------------------------------------------------------
+   LEFT / RIGHT BINARY WALLS
+------------------------------------------------------ */
+
+.kw-outer-wall {
+  position: absolute;
+
+  top: -7vh;
+  bottom: -7vh;
+
+  width: 55vw;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+
+  overflow: hidden;
+
+  opacity: .78;
+
+  font-family:
+    "SFMono-Regular",
+    "SF Mono",
+    Menlo,
+    Consolas,
+    monospace;
+
+  filter:
+    drop-shadow(
+      0 0 12px
+      rgba(83, 181, 255, .12)
+    );
+}
+
+.kw-outer-wall-left {
+  left: -18vw;
+
+  transform-origin:
+    left center;
+
+  transform:
+    rotateY(57deg)
+    rotateZ(-3.5deg)
+    scaleX(1.32);
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(58, 155, 255, .10),
+      rgba(58, 155, 255, .045) 52%,
+      transparent 100%
+    );
+}
+
+.kw-outer-wall-right {
+  right: -18vw;
+
+  transform-origin:
+    right center;
+
+  transform:
+    rotateY(-57deg)
+    rotateZ(3.5deg)
+    scaleX(1.32);
+
+  background:
+    linear-gradient(
+      270deg,
+      rgba(58, 155, 255, .10),
+      rgba(58, 155, 255, .045) 52%,
+      transparent 100%
+    );
+}
+
+/* each binary ribbon */
+
+.kw-outer-code {
+  flex: 0 0 auto;
+
+  width: 180%;
+
+  white-space: nowrap;
+
+  color:
+    rgba(
+      147,
+      220,
+      255,
+      .30
+    );
+
+  font-size:
+    clamp(
+      9px,
+      .72vw,
+      13px
+    );
+
+  font-weight: 650;
+
+  letter-spacing:
+    .28em;
+
+  line-height: 1;
+
+  text-shadow:
+    0 0 5px
+      rgba(172, 232, 255, .24),
+    0 0 14px
+      rgba(79, 179, 255, .18);
+
+  opacity: .82;
+}
+
+/* slightly different depths */
+
+.kw-code-a,
+.kw-code-f {
+  font-size: clamp(11px, .82vw, 15px);
+  opacity: .88;
+}
+
+.kw-code-b,
+.kw-code-g {
+  opacity: .52;
+  filter: blur(.25px);
+}
+
+.kw-code-c,
+.kw-code-h {
+  font-size: clamp(8px, .62vw, 11px);
+  opacity: .66;
+}
+
+.kw-code-d,
+.kw-code-i {
+  opacity: .42;
+  filter: blur(.45px);
+}
+
+.kw-code-e,
+.kw-code-j {
+  font-size: clamp(10px, .72vw, 13px);
+  opacity: .72;
+}
+
+/* opposite-direction movement creates depth */
+
+.kw-outer-wall-left .kw-outer-code {
+  animation:
+    kwOuterCodeLeft
+    38s linear infinite;
+}
+
+.kw-outer-wall-left .kw-code-b {
+  animation-duration: 55s;
+}
+
+.kw-outer-wall-left .kw-code-c {
+  animation-duration: 46s;
+}
+
+.kw-outer-wall-left .kw-code-d {
+  animation-duration: 64s;
+}
+
+.kw-outer-wall-left .kw-code-e {
+  animation-duration: 49s;
+}
+
+.kw-outer-wall-right .kw-outer-code {
+  animation:
+    kwOuterCodeRight
+    42s linear infinite;
+}
+
+.kw-outer-wall-right .kw-code-g {
+  animation-duration: 58s;
+}
+
+.kw-outer-wall-right .kw-code-h {
+  animation-duration: 51s;
+}
+
+.kw-outer-wall-right .kw-code-i {
+  animation-duration: 67s;
+}
+
+.kw-outer-wall-right .kw-code-j {
+  animation-duration: 45s;
+}
+
+/* ------------------------------------------------------
+   TINY WORLD LOGS
+------------------------------------------------------ */
+
+.kw-outer-log {
+  position: absolute;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 9px;
+
+  font-family:
+    "SFMono-Regular",
+    "SF Mono",
+    Menlo,
+    Consolas,
+    monospace;
+
+  font-size:
+    clamp(
+      7px,
+      .48vw,
+      9px
+    );
+
+  line-height: 1.2;
+
+  letter-spacing:
+    .20em;
+
+  color:
+    rgba(
+      154,
+      218,
+      255,
+      .31
+    );
+
+  text-transform:
+    uppercase;
+
+  text-shadow:
+    0 0 8px
+      rgba(102, 195, 255, .15);
+
+  opacity: .78;
+}
+
+.kw-outer-log-left {
+  left: 2.3vw;
+  top: 34%;
+
+  transform:
+    rotate(-4deg);
+}
+
+.kw-outer-log-right {
+  right: 2vw;
+  top: 60%;
+
+  text-align: right;
+
+  transform:
+    rotate(4deg);
+}
+
+/* little luminous nodes beside logs */
+
+.kw-outer-log::before {
+  content: "";
+
+  position: absolute;
+
+  top: -22px;
+
+  width: 34px;
+  height: 1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(116, 211, 255, .62)
+    );
+
+  box-shadow:
+    0 0 8px
+      rgba(86, 188, 255, .30);
+}
+
+.kw-outer-log-left::before {
+  left: 0;
+}
+
+.kw-outer-log-right::before {
+  right: 0;
+
+  transform:
+    scaleX(-1);
+}
+
+/* ------------------------------------------------------
+   MOTION
+------------------------------------------------------ */
+
+@keyframes kwOuterCodeLeft {
   from {
-    transform: translate3d(0, 0, 0);
+    transform:
+      translate3d(
+        0,
+        0,
+        0
+      );
   }
+
   to {
-    transform: translate3d(0, -18px, 0);
+    transform:
+      translate3d(
+        -22%,
+        0,
+        0
+      );
+  }
+}
+
+@keyframes kwOuterCodeRight {
+  from {
+    transform:
+      translate3d(
+        -20%,
+        0,
+        0
+      );
+  }
+
+  to {
+    transform:
+      translate3d(
+        3%,
+        0,
+        0
+      );
+  }
+}
+
+@keyframes kwOuterStars {
+  from {
+    background-position:
+      18px 8px,
+      76px 112px;
+  }
+
+  to {
+    background-position:
+      98px 138px,
+      6px 252px;
+  }
+}
+
+/* ------------------------------------------------------
+   RESPONSIVE
+------------------------------------------------------ */
+
+@media (max-width: 900px) {
+  .kw-outer-wall {
+    width: 64vw;
+  }
+
+  .kw-outer-wall-left {
+    left: -29vw;
+  }
+
+  .kw-outer-wall-right {
+    right: -29vw;
+  }
+
+  .kw-outer-log {
+    display: none;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  body::after {
-    animation: none;
+  .kw-outer-code,
+  .kw-outer-space::before {
+    animation: none !important;
   }
 }
 
-/* ==== KOPPY WORLD OUTER BINARY BACKGROUND END ==== */
+/* ==== KOPPY OUTER CYBER SPACE V1 END ==== */
