@@ -1,0 +1,161 @@
+/* =========================================================
+   WORLD FRAME / GLASS SHELL
+   shared glass shell layer + adjustable opacity
+========================================================= */
+
+:root{
+    --wf-shell-opacity: 0.20;
+    --wf-shell-blur: 16px;
+    --wf-shell-border-opacity: 0.22;
+    --wf-shell-highlight-opacity: 0.16;
+    --wf-shell-shadow-opacity: 0.28;
+}
+
+.wf-shell-surface{
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    backdrop-filter: blur(var(--wf-shell-blur)) saturate(135%);
+    -webkit-backdrop-filter: blur(var(--wf-shell-blur)) saturate(135%);
+    box-shadow:
+        0 18px 48px rgba(2, 16, 44, var(--wf-shell-shadow-opacity)),
+        inset 0 1px 0 rgba(255,255,255,0.10),
+        inset 0 0 0 1px rgba(180, 220, 255, var(--wf-shell-border-opacity));
+}
+
+.wf-shell-surface::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:0;
+    background:
+        linear-gradient(180deg,
+            rgba(214, 235, 255, 0.16),
+            rgba(132, 176, 238, 0.07) 42%,
+            rgba(74, 108, 180, 0.12) 100%);
+    opacity: var(--wf-shell-opacity);
+}
+
+.wf-shell-surface::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    z-index:1;
+    background:
+        radial-gradient(circle at 18% 12%, rgba(255,255,255,0.12), transparent 24%),
+        linear-gradient(135deg, rgba(255,255,255,var(--wf-shell-highlight-opacity)), transparent 18%, transparent 82%, rgba(196,225,255,0.08));
+    mix-blend-mode: screen;
+    opacity: 1;
+}
+
+.wf-shell-inner{
+    position: relative;
+    z-index: 2;
+}
+
+/* modes */
+.wf-shell-mode-clear{
+    --wf-shell-opacity: 0.14;
+    --wf-shell-blur: 12px;
+    --wf-shell-border-opacity: 0.18;
+    --wf-shell-highlight-opacity: 0.13;
+}
+
+.wf-shell-mode-frost{
+    --wf-shell-opacity: 0.22;
+    --wf-shell-blur: 18px;
+    --wf-shell-border-opacity: 0.24;
+    --wf-shell-highlight-opacity: 0.16;
+}
+
+.wf-shell-mode-dense{
+    --wf-shell-opacity: 0.30;
+    --wf-shell-blur: 22px;
+    --wf-shell-border-opacity: 0.28;
+    --wf-shell-highlight-opacity: 0.20;
+}
+
+/* controls */
+.wf-shell-controls{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:flex-end;
+    gap:16px;
+    padding:14px 16px;
+    margin-top:14px;
+    border-radius:18px;
+    background: rgba(7, 18, 48, 0.34);
+    border:1px solid rgba(126, 176, 255, 0.18);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+.wf-shell-control{
+    min-width: 160px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
+.wf-shell-control label{
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    color:rgba(216, 234, 255, 0.84);
+}
+
+.wf-shell-control input[type="range"]{
+    width:100%;
+    accent-color:#8fd0ff;
+}
+
+.wf-shell-value{
+    font-size:12px;
+    color:rgba(226, 238, 255, 0.92);
+}
+
+.wf-shell-mode-group{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+}
+
+.wf-shell-mode-btn{
+    appearance:none;
+    border:none;
+    cursor:pointer;
+    padding:10px 14px;
+    border-radius:999px;
+    background: rgba(255,255,255,0.05);
+    color:rgba(236,244,255,0.92);
+    border:1px solid rgba(155, 196, 255, 0.16);
+    font-size:12px;
+    font-weight:700;
+    letter-spacing:0.06em;
+    transition: transform .18s ease, background .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+.wf-shell-mode-btn:hover{
+    transform: translateY(-1px);
+    background: rgba(150, 198, 255, 0.10);
+    border-color: rgba(155, 196, 255, 0.28);
+}
+
+.wf-shell-mode-btn.is-active{
+    background: rgba(122, 191, 255, 0.18);
+    border-color: rgba(160, 210, 255, 0.42);
+    box-shadow: 0 0 0 1px rgba(180, 220, 255, 0.10) inset;
+}
+
+@media (max-width: 900px){
+    .wf-shell-controls{
+        gap:12px;
+        padding:12px;
+    }
+
+    .wf-shell-control{
+        min-width: 100%;
+    }
+}

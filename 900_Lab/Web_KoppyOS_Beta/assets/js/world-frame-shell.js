@@ -1,0 +1,177 @@
+(function(){
+    const ROOT = document.documentElement;
+    const MODES = ['clear', 'frost', 'dense'];
+
+    function $(sel, ctx=document){
+        return ctx.querySelector(sel);
+    }
+
+    function $all(sel, ctx=document){
+        return Array.from(ctx.querySelectorAll(sel));
+    }
+
+    function create(tag, cls, text){
+        const el = document.createElement(tag);
+        if (cls) el.className = cls;
+        if (typeof text === 'string') el.textContent = text;
+        return el;
+    }
+
+    function pickControlHost(){
+        return (
+            $('.wfl-toolbar') ||
+            $('.wfl-topbar') ||
+            $('.wf-toolbar') ||
+            $('.wf-topbar') ||
+            $('.wfl-header-panel') ||
+            $('.wfl-sidebar') ||
+            $('header') ||
+            $('main') ||
+            document.body
+        );
+    }
+
+    function score(el){
+        const r = el.getBoundingClientRect();
+        if (r.width < window.innerWidth * 0.45) return -1;
+        if (r.height < window.innerHeight * 0.35) return -1;
+        const style = getComputedStyle(el);
+        const radius = parseFloat(style.borderTopLeftRadius || '0') || 0;
+        let s = r.width * r.height;
+        s += radius * 500;
+        if (style.position !== 'static') s += 5000;
+        if (el.closest('.wf-shell-controls')) s -= 999999;
+        return s;
+    }
+
+    function pickShellTarget(){
+        const preferred = [
+            '.wfl-focus-stage',
+            '.wf-focus-stage',
+            '.wfl-preview-stage',
+            '.wf-preview-stage',
+            '.wfl-shell',
+            '.wf-shell',
+            '.world-frame-shell',
+            '.world-frame-preview',
+            '.wfl-frame',
+            '.wf-frame',
+            '.wfl-inner-frame',
+            '.wf-inner-frame'
+        ];
+
+        for (const sel of preferred){
+            const hit = $(sel);
+            if (hit) return hit;
+        }
+
+        const candidates = $all('main div, main section, body > div, .container, .panel, .frame');
+        let best = null;
+        let bestScore = -1;
+        for (const el of candidates){
+            const s = score(el);
+            if (s > bestScore){
+                bestScore = s;
+                best = el;
+            }
+        }
+        return best;
+    }
+
+    function ensureInnerWrap(target){
+        if (!target) return null;
+        if (target.querySelector(':scope > .wf-shell-inner')) return target.querySelector(':scope > .wf-shell-inner');
+
+        const inner = create('div', 'wf-shell-inner');
+        const children = Array.from(target.childNodes);
+        children.forEach(node => inner.appendChild(node));
+        target.appendChild(inner);
+        return inner;
+    }
+
+    function applyMode(target, mode){
+        MODES.forEach(m => target.classList.remove('wf-shell-mode-' + m));
+        target.classList.add('wf-shell-mode-' + mode);
+        document.querySelectorAll('.wf-shell-mode-btn').forEach(btn => {
+            btn.classList.toggle('is-active', btn.dataset.mode === mode);
+        });
+    }
+
+    function applyOpacity(v){
+        ROOT.style.setProperty('--wf-shell-opacity', String(v));
+        const val = document.querySelector('.wf-shell-opacity-value');
+        if (val) val.textContent = Math.round(v * 100) + '%';
+    }
+
+    function applyBlur(v){
+        ROOT.style.setProperty('--wf-shell-blur', v + 'px');
+        const val = document.querySelector('.wf-shell-blur-value');
+        if (val) val.textContent = v + 'px';
+    }
+
+    function buildControls(target){
+        if ($('.wf-shell-controls')) return;
+
+        const host = pickControlHost();
+        const box = create('section', 'wf-shell-controls');
+
+        const opacityBlock = create('div', 'wf-shell-control');
+        const opacityLabel = create('label', '', 'Glass opacity');
+        const opacityValue = create('div', 'wf-shell-value wf-shell-opacity-value', '20%');
+        const opacityInput = create('input');
+        opacityInput.type = 'range';
+        opacityInput.min = '8';
+        opacityInput.max = '38';
+        opacityInput.step = '1';
+        opacityInput.value = '20';
+        opacityInput.addEventListener('input', () => applyOpacity(Number(opacityInput.value) / 100));
+        opacityBlock.append(opacityLabel, opacityInput, opacityValue);
+
+        const blurBlock = create('div', 'wf-shell-control');
+        const blurLabel = create('label', '', 'Glass blur');
+        const blurValue = create('div', 'wf-shell-value wf-shell-blur-value', '16px');
+        const blurInput = create('input');
+        blurInput.type = 'range';
+        blurInput.min = '8';
+        blurInput.max = '28';
+        blurInput.step = '1';
+        blurInput.value = '16';
+        blurInput.addEventListener('input', () => applyBlur(Number(blurInput.value)));
+        blurBlock.append(blurLabel, blurInput, blurValue);
+
+        const modeBlock = create('div', 'wf-shell-control');
+        const modeLabel = create('label', '', 'Shell mode');
+        const modeGroup = create('div', 'wf-shell-mode-group');
+        for (const mode of MODES){
+            const btn = create('button', 'wf-shell-mode-btn', mode.toUpperCase());
+            btn.type = 'button';
+            btn.dataset.mode = mode;
+            btn.addEventListener('click', () => applyMode(target, mode));
+            modeGroup.appendChild(btn);
+        }
+        modeBlock.append(modeLabel, modeGroup);
+
+        box.append(opacityBlock, blurBlock, modeBlock);
+
+        host.appendChild(box);
+
+        applyOpacity(0.20);
+        applyBlur(16);
+        applyMode(target, 'frost');
+    }
+
+    function init(){
+        const target = pickShellTarget();
+        if (!target) return;
+
+        target.classList.add('wf-shell-surface');
+        ensureInnerWrap(target);
+        buildControls(target);
+    }
+
+    if (document.readyState === 'loading'){
+        document.addEventListener('DOMContentLoaded', init, { once: true });
+    } else {
+        init();
+    }
+})();
