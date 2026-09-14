@@ -1,0 +1,312 @@
+html{
+  scroll-behavior:smooth;
+}
+
+body.world-frame-body{
+  overflow-x:hidden;
+}
+
+.app-lab-ambient{
+  background:
+    radial-gradient(
+      circle at 20% 15%,
+      rgba(71,196,255,.14),
+      transparent 34%
+    ),
+    #061527;
+}
+
+.app-lab-shell{
+  min-height:100svh;
+  color:var(--wf-text);
+}
+
+.app-lab-header{
+  position:sticky;
+  top:0;
+  z-index:80;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+
+  padding:
+    calc(14px + env(safe-area-inset-top))
+    18px
+    14px;
+
+  border-bottom:
+    1px solid
+    rgba(131,221,255,.20);
+
+  background:
+    rgba(5,22,42,.86);
+
+  backdrop-filter:
+    blur(18px);
+}
+
+.app-lab-header small{
+  display:block;
+  margin-top:3px;
+  color:var(--wf-text-dim);
+}
+
+#appLabState{
+  font-size:11px;
+  color:var(--wf-text-soft);
+}
+
+#appLabState.ok{
+  color:#8effbd;
+}
+
+#appLabState.fail{
+  color:#ff9daf;
+}
+
+.app-lab-main{
+  width:
+    min(
+      820px,
+      calc(100% - 32px)
+    );
+
+  margin:0 auto;
+
+  padding:
+    28px 0
+    calc(
+      110px +
+      env(safe-area-inset-bottom)
+    );
+}
+
+.app-lab-hero,
+.app-lab-card{
+  margin-bottom:20px;
+  padding:26px;
+}
+
+.app-lab-hero h1{
+  margin:0;
+  max-width:700px;
+  font-size:clamp(42px,7vw,72px);
+  line-height:1.02;
+}
+
+.app-lab-toolbar{
+  position:sticky;
+  top:
+    calc(
+      70px +
+      env(safe-area-inset-top)
+    );
+
+  z-index:70;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+
+  margin-bottom:20px;
+  padding:12px 14px;
+
+  border:
+    1px solid
+    rgba(131,221,255,.20);
+
+  border-radius:16px;
+
+  background:
+    rgba(5,22,42,.90);
+
+  backdrop-filter:
+    blur(18px);
+}
+
+button,
+.app-lab-bottom-nav a{
+  font:inherit;
+}
+
+.app-lab-toolbar button,
+.app-lab-modal button{
+  min-height:38px;
+  padding:8px 14px;
+
+  border:
+    1px solid
+    rgba(131,221,255,.30);
+
+  border-radius:12px;
+
+  color:var(--wf-text);
+  background:rgba(255,255,255,.06);
+
+  cursor:pointer;
+  touch-action:manipulation;
+}
+
+.app-lab-checks{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:20px;
+}
+
+.app-lab-checks > div{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+
+  padding:12px;
+
+  border:
+    1px solid
+    rgba(131,221,255,.16);
+
+  border-radius:12px;
+}
+
+.app-lab-checks .ok strong{
+  color:#8effbd;
+}
+
+.app-lab-checks .fail strong{
+  color:#ff9daf;
+}
+
+.app-lab-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+  margin-bottom:20px;
+}
+
+.app-lab-grid > section{
+  min-height:260px;
+  padding:24px;
+}
+
+.app-lab-inner{
+  height:250px;
+  margin-top:18px;
+  overflow-y:auto;
+  overscroll-behavior:contain;
+
+  border:
+    1px solid
+    rgba(131,221,255,.18);
+
+  border-radius:16px;
+}
+
+.app-lab-inner > div{
+  padding:20px;
+  border-bottom:
+    1px solid
+    rgba(131,221,255,.10);
+}
+
+.app-lab-bottom-nav{
+  position:fixed;
+  left:50%;
+  bottom:0;
+  z-index:100;
+
+  width:min(820px,100%);
+
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+
+  padding:
+    8px 12px
+    calc(
+      8px +
+      env(safe-area-inset-bottom)
+    );
+
+  transform:translateX(-50%);
+
+  background:
+    rgba(5,22,42,.94);
+
+  border-top:
+    1px solid
+    rgba(131,221,255,.20);
+
+  backdrop-filter:
+    blur(20px);
+}
+
+.app-lab-bottom-nav a,
+.app-lab-bottom-nav button{
+  min-height:52px;
+
+  border:0;
+  border-radius:12px;
+
+  color:var(--wf-text-soft);
+  background:transparent;
+
+  text-decoration:none;
+  cursor:pointer;
+
+  display:grid;
+  place-items:center;
+
+  touch-action:manipulation;
+}
+
+.app-lab-modal{
+  position:fixed;
+  inset:0;
+  z-index:500;
+
+  place-items:center;
+
+  padding:24px;
+
+  background:
+    rgba(0,6,18,.72);
+
+  backdrop-filter:
+    blur(12px);
+}
+
+.app-lab-modal:not([hidden]){
+  display:grid;
+}
+
+.app-lab-modal-card{
+  width:min(500px,100%);
+  padding:28px;
+
+  border:
+    1px solid
+    rgba(131,221,255,.30);
+
+  border-radius:24px;
+
+  color:var(--wf-text);
+  background:#09213c;
+}
+
+@media(max-width:680px){
+  .app-lab-main{
+    width:calc(100% - 24px);
+  }
+
+  .app-lab-checks,
+  .app-lab-grid{
+    grid-template-columns:1fr;
+  }
+
+  .app-lab-grid > section{
+    min-height:210px;
+  }
+}

@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+  <title>World Frame App Mode Lab</title>
+
+  <link rel="stylesheet" href="../../assets/css/world-frame-tokens.css">
+  <link rel="stylesheet" href="../../assets/css/world-frame.css">
+  <link rel="stylesheet" href="../../assets/css/world-frame-polish.css">
+  <link rel="stylesheet" href="../../assets/css/world-frame-shell.css">
+  <link rel="stylesheet" href="../../assets/css/world-frame-atmosphere.css">
+  <link rel="stylesheet" href="../../assets/css/world-frame-components.css">
+  <link rel="stylesheet" href="./app-mode.css">
+</head>
+
+<body
+  class="world-frame-body"
+  data-wf-profile="work"
+  data-wf-layout="app"
+  data-wf-refresh="off"
+>
+  <div
+    class="wf-app"
+    id="wfApp"
+    data-theme="electric"
+    data-motion="normal"
+    data-wf-page="work"
+    data-wf-seed="7301"
+    data-wf-density="0.78"
+    data-wf-quality="balanced"
+    data-wf-readable-zone="on"
+  >
+
+    <!-- NO data-wf-shell ON PURPOSE -->
+    <div
+      class="wf-stage app-lab-ambient"
+      data-wf-ambient
+      data-wf-atmosphere-host
+      data-wf-atmosphere="subtle"
+      aria-hidden="true"
+    >
+      <div class="wf-layer wf-layer--outer">
+        <div class="wf-stars" data-layer="stars"></div>
+        <div class="wf-streams" data-layer="streams"></div>
+        <div class="wf-logs" data-layer="logs"></div>
+        <div class="wf-crystals" data-layer="crystals"></div>
+      </div>
+    </div>
+
+    <div class="app-lab-shell" data-wf-content>
+
+      <header class="app-lab-header">
+        <div>
+          <strong>◇K App Mode Lab</strong>
+          <small>KOHaku Work compatibility test</small>
+        </div>
+
+        <strong id="appLabState">
+          CHECKING
+        </strong>
+      </header>
+
+      <main class="app-lab-main">
+
+        <section
+          class="app-lab-hero"
+          data-wf-panel
+          data-wf-panel-surface
+        >
+          <p class="wf-eyebrow">
+            WORLD FRAME / APP MODE
+          </p>
+
+          <h1>
+            アプリはフレームに閉じ込めない。
+          </h1>
+
+          <p class="wf-panel-copy">
+            World Frameは背景とProfileを担当。
+            アプリはscroll / sticky / fixed /
+            modalを自分で所有する。
+          </p>
+        </section>
+
+        <section class="app-lab-toolbar">
+          <strong>
+            Sticky Toolbar
+          </strong>
+
+          <button
+            type="button"
+            data-action="open-modal"
+          >
+            Fixed Modal
+          </button>
+        </section>
+
+        <section
+          class="app-lab-card"
+          data-wf-panel
+          data-wf-panel-surface
+        >
+          <h2 class="wf-panel-title">
+            自動診断
+          </h2>
+
+          <div class="app-lab-checks">
+
+            <div data-check="profile">
+              WORK Profile
+              <strong>CHECK</strong>
+            </div>
+
+            <div data-check="shell">
+              Shellなし
+              <strong>CHECK</strong>
+            </div>
+
+            <div data-check="document">
+              Browser Scroll
+              <strong>CHECK</strong>
+            </div>
+
+            <div data-check="sticky">
+              Sticky
+              <strong>CHECK</strong>
+            </div>
+
+            <div data-check="fixed">
+              Fixed Nav
+              <strong>CHECK</strong>
+            </div>
+
+            <div data-check="atmosphere">
+              Atmosphere Host
+              <strong>CHECK</strong>
+            </div>
+
+          </div>
+        </section>
+
+        <div class="app-lab-grid">
+
+          <section data-wf-panel data-wf-panel-surface>
+            <h2 class="wf-panel-title">Home View</h2>
+            <p class="wf-panel-copy">
+              普通のアプリView領域。
+            </p>
+          </section>
+
+          <section data-wf-panel data-wf-panel-surface>
+            <h2 class="wf-panel-title">Diary View</h2>
+            <p class="wf-panel-copy">
+              長いDocumentを再現。
+            </p>
+          </section>
+
+          <section data-wf-panel data-wf-panel-surface>
+            <h2 class="wf-panel-title">Schedule</h2>
+            <p class="wf-panel-copy">
+              sticky/fixedと共存。
+            </p>
+          </section>
+
+          <section data-wf-panel data-wf-panel-surface>
+            <h2 class="wf-panel-title">Customers</h2>
+            <p class="wf-panel-copy">
+              アプリ側z-indexを維持。
+            </p>
+          </section>
+
+        </div>
+
+        <section
+          class="app-lab-card"
+          id="innerScroll"
+          data-wf-panel
+          data-wf-panel-surface
+        >
+          <h2 class="wf-panel-title">
+            Inner Scroll
+          </h2>
+
+          <div class="app-lab-inner">
+            <div>01 / DATA</div>
+            <div>02 / DATA</div>
+            <div>03 / DATA</div>
+            <div>04 / DATA</div>
+            <div>05 / DATA</div>
+            <div>06 / DATA</div>
+            <div>07 / DATA</div>
+            <div>08 / DATA</div>
+            <div>09 / DATA</div>
+            <div>10 / DATA</div>
+          </div>
+        </section>
+
+        <div class="app-lab-grid">
+
+          <section data-wf-panel data-wf-panel-surface>
+            <h2 class="wf-panel-title">Sales</h2>
+          </section>
+
+          <section data-wf-panel data-wf-panel-surface>
+            <h2 class="wf-panel-title">Database</h2>
+          </section>
+
+          <section data-wf-panel data-wf-panel-surface>
+            <h2 class="wf-panel-title">Settings</h2>
+          </section>
+
+          <section data-wf-panel data-wf-panel-surface>
+            <h2 class="wf-panel-title">
+              End of Document
+            </h2>
+          </section>
+
+        </div>
+
+      </main>
+
+      <nav class="app-lab-bottom-nav">
+        <a href="#">HOME</a>
+        <a href="#innerScroll">SCROLL</a>
+
+        <button
+          type="button"
+          data-action="open-modal"
+        >
+          MODAL
+        </button>
+      </nav>
+
+    </div>
+
+    <div
+      class="app-lab-modal"
+      id="appLabModal"
+      hidden
+    >
+      <div class="app-lab-modal-card">
+        <h2 class="wf-section-title">
+          Fixed Modal
+        </h2>
+
+        <p>
+          viewport基準のアプリUI。
+        </p>
+
+        <button
+          type="button"
+          data-action="close-modal"
+        >
+          閉じる
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="../../assets/js/world-frame.js"></script>
+  <script src="../../assets/js/world-frame-polish.js"></script>
+
+  <!-- loaded intentionally with NO production shell -->
+  <script src="../../assets/js/world-frame-shell.js"></script>
+
+  <script src="../../assets/js/world-frame-atmosphere.js"></script>
+  <script src="../../assets/js/world-frame-profiles.js"></script>
+  <script src="../../assets/js/world-frame-runtime.js"></script>
+
+  <script src="./app-mode.js"></script>
+</body>
+</html>
