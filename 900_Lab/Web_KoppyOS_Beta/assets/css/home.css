@@ -1861,3 +1861,378 @@ body.kw-body::after {
     top: 8%;
   }
 }
+
+/* ======================================================
+   KOPPY WORLD V5 INTERACTION POLISH
+   Responsive data edges / Koppy wake / final balance
+====================================================== */
+
+/* ------------------------------------------------------
+   Portal data stream
+------------------------------------------------------ */
+
+.kw-portal-code {
+  position: absolute;
+
+  top: 7px;
+  left: 10%;
+  right: 7%;
+
+  z-index: 0;
+
+  height: 12px;
+
+  overflow: hidden;
+
+  pointer-events: none;
+
+  white-space: nowrap;
+
+  color:
+    rgba(
+      var(--kw-node-rgb),
+      .72
+    );
+
+  font-family:
+    "SFMono-Regular",
+    "SF Mono",
+    Menlo,
+    Consolas,
+    monospace;
+
+  font-size: 8px;
+  font-weight: 700;
+
+  line-height: 12px;
+
+  letter-spacing: .20em;
+
+  opacity: 0;
+
+  transform:
+    translate3d(
+      -14%,
+      0,
+      0
+    );
+
+  text-shadow:
+    0 0 6px
+      rgba(
+        var(--kw-node-rgb),
+        .38
+      ),
+    0 0 14px
+      rgba(
+        var(--kw-node-rgb),
+        .17
+      );
+
+  -webkit-mask-image:
+    linear-gradient(
+      90deg,
+      transparent,
+      #000 13%,
+      #000 86%,
+      transparent
+    );
+
+  mask-image:
+    linear-gradient(
+      90deg,
+      transparent,
+      #000 13%,
+      #000 86%,
+      transparent
+    );
+}
+
+.kw-portal-head,
+.kw-portal-copy,
+.kw-action,
+.kw-action-stack {
+  position: relative;
+  z-index: 1;
+}
+
+.kw-portal:hover .kw-portal-code,
+.kw-portal:focus-within .kw-portal-code {
+  opacity: .66;
+
+  animation:
+    kwPortalCodeSweep
+    2.15s linear infinite;
+}
+
+@keyframes kwPortalCodeSweep {
+  from {
+    transform:
+      translate3d(
+        -22%,
+        0,
+        0
+      );
+  }
+
+  to {
+    transform:
+      translate3d(
+        18%,
+        0,
+        0
+      );
+  }
+}
+
+/* tiny light runner under the code */
+
+.kw-portal:hover {
+  background:
+    linear-gradient(
+      155deg,
+      rgba(255,255,255,.12),
+      rgba(226,244,255,.056) 48%,
+      rgba(255,255,255,.030)
+    )
+    padding-box,
+
+    linear-gradient(
+      115deg,
+      rgba(var(--kw-node-rgb), .72),
+      rgba(231,250,255,.27) 26%,
+      rgba(var(--kw-node-rgb), .23) 54%,
+      rgba(255,255,255,.46) 76%,
+      rgba(var(--kw-node-rgb), .64)
+    )
+    border-box;
+}
+
+/* ------------------------------------------------------
+   Koppy wake response
+------------------------------------------------------ */
+
+.kw-orbit,
+.kw-koppy-wrap,
+.kw-bubble {
+  transition:
+    border-color .32s ease,
+    box-shadow .32s ease,
+    filter .32s ease,
+    opacity .32s ease;
+}
+
+.kw-hero-stage:hover .kw-orbit-a {
+  animation:
+    kwOrbitWakeA
+    2.3s ease-in-out infinite alternate;
+}
+
+.kw-hero-stage:hover .kw-orbit-b {
+  animation:
+    kwOrbitWakeB
+    2.8s ease-in-out infinite alternate;
+}
+
+.kw-hero-stage:hover .kw-orbit-c {
+  animation:
+    kwOrbitWakeC
+    3.4s ease-in-out infinite alternate;
+}
+
+.kw-hero-stage:hover .kw-koppy-wrap {
+  box-shadow:
+    inset 0 0 62px
+      rgba(147,230,255,.085),
+    0 0 68px
+      rgba(84,190,255,.11),
+    0 0 110px
+      rgba(138,145,255,.045);
+}
+
+.kw-hero-stage:hover .kw-bubble {
+  border-color:
+    rgba(177,232,255,.42);
+
+  box-shadow:
+    0 12px 34px
+      rgba(12,26,49,.30),
+    0 0 24px
+      rgba(104,207,255,.10);
+}
+
+@keyframes kwOrbitWakeA {
+  from {
+    border-color:
+      rgba(130,220,255,.24);
+
+    box-shadow:
+      0 0 24px
+      rgba(104,198,255,.08);
+  }
+
+  to {
+    border-color:
+      rgba(164,235,255,.48);
+
+    box-shadow:
+      0 0 38px
+      rgba(104,213,255,.18);
+  }
+}
+
+@keyframes kwOrbitWakeB {
+  from {
+    border-color:
+      rgba(188,170,255,.24);
+
+    box-shadow:
+      0 0 20px
+      rgba(159,143,255,.07);
+  }
+
+  to {
+    border-color:
+      rgba(204,194,255,.44);
+
+    box-shadow:
+      0 0 34px
+      rgba(166,149,255,.16);
+  }
+}
+
+@keyframes kwOrbitWakeC {
+  from {
+    border-color:
+      rgba(120,218,255,.18);
+
+    box-shadow:
+      0 0 18px
+      rgba(91,201,255,.06);
+  }
+
+  to {
+    border-color:
+      rgba(154,230,255,.36);
+
+    box-shadow:
+      0 0 32px
+      rgba(91,201,255,.13);
+  }
+}
+
+/* ------------------------------------------------------
+   Koppy Link title
+------------------------------------------------------ */
+
+.kw-portal-chat h3 {
+  white-space: nowrap;
+
+  font-size:
+    clamp(
+      20px,
+      1.8vw,
+      31px
+    );
+}
+
+/* ------------------------------------------------------
+   Development Node
+------------------------------------------------------ */
+
+@media (min-width: 980px) {
+  .kw-portal-tools {
+    min-height: 166px;
+
+    padding:
+      22px
+      30px;
+
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(330px, .72fr);
+
+    grid-template-rows:
+      auto
+      auto;
+
+    column-gap: 36px;
+    row-gap: 6px;
+  }
+
+  .kw-portal-tools .kw-portal-head {
+    grid-column: 1;
+    grid-row: 1;
+
+    align-self: end;
+  }
+
+  .kw-portal-tools .kw-portal-copy {
+    grid-column: 1;
+    grid-row: 2;
+
+    align-self: start;
+
+    margin:
+      4px
+      0
+      0;
+  }
+
+  .kw-portal-tools .kw-action-stack {
+    grid-column: 2;
+    grid-row:
+      1 / span 2;
+
+    align-self: center;
+    justify-self: end;
+
+    width:
+      min(
+        100%,
+        450px
+      );
+  }
+}
+
+/* ------------------------------------------------------
+   Mobile
+------------------------------------------------------ */
+
+@media (max-width: 780px) {
+  .kw-portal-code {
+    font-size: 7px;
+
+    opacity: 0;
+  }
+
+  .kw-portal-chat h3 {
+    font-size:
+      clamp(
+        22px,
+        8vw,
+        31px
+      );
+  }
+}
+
+/* ------------------------------------------------------
+   Reduced motion
+------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+  .kw-portal:hover .kw-portal-code,
+  .kw-portal:focus-within .kw-portal-code,
+  .kw-hero-stage:hover .kw-orbit-a,
+  .kw-hero-stage:hover .kw-orbit-b,
+  .kw-hero-stage:hover .kw-orbit-c {
+    animation: none !important;
+  }
+
+  .kw-portal:hover .kw-portal-code,
+  .kw-portal:focus-within .kw-portal-code {
+    opacity: .45;
+
+    transform: none;
+  }
+}
