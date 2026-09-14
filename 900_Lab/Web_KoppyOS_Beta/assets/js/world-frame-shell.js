@@ -2,6 +2,12 @@
     const ROOT = document.documentElement;
     const MODES = ['clear', 'frost', 'dense'];
 
+    const MODE_LABELS = {
+        clear: '薄い',
+        frost: '標準',
+        dense: '濃い'
+    };
+
     const PRESETS = {
         clear: {
             opacity: 0.06,
@@ -227,7 +233,7 @@
         const box = create('section', 'wf-shell-controls');
 
         const opacityBlock = create('div', 'wf-shell-control');
-        const opacityLabel = create('label', '', 'Glass opacity');
+        const opacityLabel = create('label', '', 'ガラス濃度');
         const opacityValue = create('div', 'wf-shell-value wf-shell-opacity-value', '20%');
         const opacityInput = create('input');
         opacityInput.type = 'range';
@@ -253,7 +259,7 @@
         opacityBlock.append(opacityLabel, opacityInput, opacityValue);
 
         const blurBlock = create('div', 'wf-shell-control');
-        const blurLabel = create('label', '', 'Glass blur');
+        const blurLabel = create('label', '', '背景ぼかし');
         const blurValue = create('div', 'wf-shell-value wf-shell-blur-value', '16px');
         const blurInput = create('input');
         blurInput.type = 'range';
@@ -279,10 +285,10 @@
         blurBlock.append(blurLabel, blurInput, blurValue);
 
         const modeBlock = create('div', 'wf-shell-control');
-        const modeLabel = create('label', '', 'Shell mode');
+        const modeLabel = create('label', '', 'ガラス質感');
         const modeGroup = create('div', 'wf-shell-mode-group');
         for (const mode of MODES){
-            const btn = create('button', 'wf-shell-mode-btn', mode.toUpperCase());
+            const btn = create('button', 'wf-shell-mode-btn', MODE_LABELS[mode] || mode);
             btn.type = 'button';
             btn.dataset.mode = mode;
             btn.addEventListener(

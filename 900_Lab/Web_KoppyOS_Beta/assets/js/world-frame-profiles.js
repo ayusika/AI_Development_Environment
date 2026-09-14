@@ -3,7 +3,7 @@
 
   const PROFILES = {
     world: {
-      label: "WORLD",
+      label: "世界",
       theme: "ice",
       motion: "rich",
       shellMode: "frost",
@@ -16,7 +16,7 @@
     },
 
     work: {
-      label: "WORK",
+      label: "仕事",
       theme: "electric",
       motion: "normal",
       shellMode: "dense",
@@ -29,7 +29,7 @@
     },
 
     home: {
-      label: "HOME",
+      label: "自宅",
       theme: "aqua",
       motion: "calm",
       shellMode: "clear",
@@ -42,7 +42,7 @@
     },
 
     brain: {
-      label: "BRAIN",
+      label: "記憶",
       theme: "violet",
       motion: "normal",
       shellMode: "frost",
@@ -55,7 +55,7 @@
     },
 
     koppy: {
-      label: "KOPPY",
+      label: "Koppy",
       theme: "pink",
       motion: "calm",
       shellMode: "clear",
@@ -68,7 +68,7 @@
     },
 
     tools: {
-      label: "TOOLS",
+      label: "ツール",
       theme: "electric",
       motion: "rich",
       shellMode: "frost",
@@ -358,7 +358,7 @@
       );
 
     label.textContent =
-      "Page profile";
+      "ページ用プリセット";
 
     const group =
       document.createElement(

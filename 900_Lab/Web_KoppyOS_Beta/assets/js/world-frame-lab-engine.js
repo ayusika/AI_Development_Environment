@@ -205,7 +205,7 @@
   };
 
   const flashSaved = (
-    text = "SAVED"
+    text = "保存済み"
   ) => {
     const label =
       $("[data-wf-engine-saved]");
@@ -224,7 +224,7 @@
           text
         ) {
           label.textContent =
-            "AUTO SAVE";
+            "自動保存";
         }
       },
       900
@@ -297,8 +297,8 @@
 
     button.textContent =
       enabled
-        ? "ON"
-        : "OFF";
+        ? "有効"
+        : "無効";
   };
 
   const updateQualityButtons = (
@@ -512,7 +512,7 @@
       false;
 
     flashSaved(
-      "RESTORED"
+      "復元済み"
     );
   };
 
@@ -581,7 +581,7 @@
 
     block.innerHTML = `
       <div class="wf-engine-control">
-        <label>Scene Seed</label>
+        <label>背景の配置パターン</label>
 
         <div class="wf-engine-inline">
           <input
@@ -598,13 +598,13 @@
             class="wf-engine-btn"
             data-wf-engine-reroll
           >
-            REROLL
+            別パターン
           </button>
         </div>
       </div>
 
       <div class="wf-engine-control">
-        <label>Background Density</label>
+        <label>背景の量</label>
 
         <div class="wf-engine-inline">
           <input
@@ -626,19 +626,19 @@
       </div>
 
       <div class="wf-engine-control">
-        <label>Readable Zone</label>
+        <label>文字まわりを見やすく</label>
 
         <button
           type="button"
           class="wf-engine-btn wf-engine-readable is-active"
           data-wf-engine-readable
         >
-          ON
+          有効
         </button>
       </div>
 
       <div class="wf-engine-control">
-        <label>Quality / Responsive Auto</label>
+        <label>描画品質</label>
 
         <div class="wf-engine-quality">
           <button
@@ -646,7 +646,7 @@
             class="wf-engine-btn"
             data-wf-engine-quality="high"
           >
-            HIGH
+            高品質
           </button>
 
           <button
@@ -654,7 +654,7 @@
             class="wf-engine-btn is-active"
             data-wf-engine-quality="balanced"
           >
-            BALANCED
+            標準
           </button>
 
           <button
@@ -662,7 +662,7 @@
             class="wf-engine-btn"
             data-wf-engine-quality="light"
           >
-            LIGHT
+            軽量
           </button>
         </div>
       </div>
@@ -672,7 +672,7 @@
           class="wf-engine-saved"
           data-wf-engine-saved
         >
-          AUTO SAVE
+          自動保存
         </span>
 
         <button
@@ -680,7 +680,7 @@
           class="wf-engine-btn"
           data-wf-engine-reset
         >
-          RESET
+          初期化
         </button>
       </div>
     `;
@@ -814,7 +814,7 @@
         safeStorage.remove();
 
         flashSaved(
-          "RESET"
+          "初期化"
         );
 
         window.setTimeout(
