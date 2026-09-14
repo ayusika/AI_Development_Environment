@@ -3,7 +3,7 @@
 
   const PROFILES = {
     world: {
-      label: "世界",
+      label: "WORLD",
       theme: "ice",
       motion: "rich",
       shellMode: "frost",
@@ -16,7 +16,7 @@
     },
 
     work: {
-      label: "仕事",
+      label: "WORK",
       theme: "electric",
       motion: "normal",
       shellMode: "dense",
@@ -29,7 +29,7 @@
     },
 
     home: {
-      label: "自宅",
+      label: "HOME",
       theme: "aqua",
       motion: "calm",
       shellMode: "clear",
@@ -42,7 +42,7 @@
     },
 
     brain: {
-      label: "記憶",
+      label: "BRAIN",
       theme: "violet",
       motion: "normal",
       shellMode: "frost",
@@ -55,7 +55,7 @@
     },
 
     koppy: {
-      label: "Koppy",
+      label: "KOPPY",
       theme: "pink",
       motion: "calm",
       shellMode: "clear",
@@ -68,7 +68,7 @@
     },
 
     tools: {
-      label: "ツール",
+      label: "TOOLS",
       theme: "electric",
       motion: "rich",
       shellMode: "frost",
