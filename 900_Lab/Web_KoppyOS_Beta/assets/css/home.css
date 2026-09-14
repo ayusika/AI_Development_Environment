@@ -2966,3 +2966,63 @@ body.kw-body::before{
 }
 
 /* ==== KOPPY WORLD SHARED PANELS V1 END ==== */
+
+/* ==== KOPPY WORLD TOUCH NAV SAFETY V1 START ==== */
+
+/*
+   Desktop portal hover intentionally moves the card and
+   wakes the binary stream.
+
+   On touch devices that can interfere with Safari's tap
+   activation because the target moves between touchstart
+   and click.
+
+   Keep the visual portal intact, but freeze hover motion
+   while a finger is being used.
+*/
+
+@media (hover: none), (pointer: coarse) {
+
+  .kw-action,
+  .kw-subaction {
+    touch-action:
+      manipulation;
+  }
+
+  /*
+     Do not move the whole clickable portal while tapping.
+  */
+
+  .kw-portal:hover,
+  .kw-portal:focus-within {
+    transform:
+      none;
+
+    filter:
+      none;
+  }
+
+  /*
+     The stream is decorative and already visually hidden
+     on mobile. display:none prevents a touch-hover state
+     from waking it before link activation.
+  */
+
+  .kw-portal-code {
+    display:
+      none;
+  }
+
+  /*
+     Shared/Home action hover must not move the link under
+     the user's finger.
+  */
+
+  .kw-action:hover,
+  .kw-subaction:hover {
+    transform:
+      none;
+  }
+}
+
+/* ==== KOPPY WORLD TOUCH NAV SAFETY V1 END ==== */

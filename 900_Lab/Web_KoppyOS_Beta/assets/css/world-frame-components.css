@@ -239,6 +239,13 @@
   gap:
     10px;
 
+  /*
+     Native link/button taps should win immediately
+     on touch devices.
+  */
+  touch-action:
+    manipulation;
+
   min-height:
     42px;
 
@@ -296,23 +303,25 @@
     ease;
 }
 
-.wf-action:hover {
-  transform:
-    translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .wf-action:hover {
+    transform:
+      translateY(-1px);
 
-  border-color:
-    color-mix(
-      in srgb,
-      var(--wf-accent) 58%,
-      transparent
-    );
+    border-color:
+      color-mix(
+        in srgb,
+        var(--wf-accent) 58%,
+        transparent
+      );
 
-  background:
-    color-mix(
-      in srgb,
-      var(--wf-accent) 15%,
-      transparent
-    );
+    background:
+      color-mix(
+        in srgb,
+        var(--wf-accent) 15%,
+        transparent
+      );
+  }
 }
 
 /* ---------------------------------------------------------
