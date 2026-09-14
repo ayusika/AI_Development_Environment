@@ -1628,127 +1628,236 @@ body.kw-body::after {
   }
 }
 
-/* === KOPPY WORLD ICE DIGITS: START === */
-.kw-entrance{
-    position:relative;
-    overflow:hidden;
-    isolation:isolate;
+/* ======================================================
+   KOPPY WORLD ICE BINARY FIELD V2
+   Flowing frozen 0 / 1 data
+====================================================== */
+
+.kw-app {
+  isolation: isolate;
 }
 
-.kw-entrance > *{
-    position:relative;
-    z-index:1;
+.kw-binary-field {
+  position: absolute;
+  inset: 0;
+
+  z-index: 0;
+
+  overflow: hidden;
+
+  pointer-events: none;
+
+  opacity: .78;
+
+  -webkit-mask-image:
+    linear-gradient(
+      to bottom,
+      rgba(0,0,0,.52),
+      rgba(0,0,0,.96) 14%,
+      rgba(0,0,0,.92) 82%,
+      rgba(0,0,0,.28)
+    );
+
+  mask-image:
+    linear-gradient(
+      to bottom,
+      rgba(0,0,0,.52),
+      rgba(0,0,0,.96) 14%,
+      rgba(0,0,0,.92) 82%,
+      rgba(0,0,0,.28)
+    );
 }
 
-.kw-entrance::before,
-.kw-entrance::after{
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-    white-space:pre;
-    font-family:"SFMono-Regular","SF Mono",Consolas,Menlo,monospace;
-    font-weight:600;
-    font-size:12px;
-    line-height:2.2;
-    letter-spacing:0.28em;
-    z-index:0;
-    opacity:1;
-    -webkit-mask-image:
-        radial-gradient(circle at 50% 42%, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.82) 38%, rgba(0,0,0,0.18) 72%, transparent 100%);
-    mask-image:
-        radial-gradient(circle at 50% 42%, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.82) 38%, rgba(0,0,0,0.18) 72%, transparent 100%);
+.kw-binary-stream {
+  position: absolute;
+
+  left: var(--x);
+  top: -38%;
+
+  display: block;
+
+  writing-mode: vertical-rl;
+  text-orientation: upright;
+
+  color:
+    rgba(
+      150,
+      225,
+      255,
+      calc(.23 * var(--alpha))
+    );
+
+  font-family:
+    "SFMono-Regular",
+    "SF Mono",
+    Menlo,
+    Consolas,
+    monospace;
+
+  font-size: 12px;
+  font-weight: 700;
+
+  line-height: 1;
+
+  letter-spacing: .36em;
+
+  white-space: nowrap;
+
+  text-shadow:
+    0 0 6px rgba(180, 238, 255, .30),
+    0 0 14px rgba(98, 205, 255, .19),
+    0 0 28px rgba(75, 160, 255, .08);
+
+  filter:
+    drop-shadow(
+      0 0 5px
+      rgba(164, 230, 255, .13)
+    );
+
+  animation:
+    kwBinaryFall
+    var(--dur)
+    linear
+    var(--delay)
+    infinite;
 }
 
-.kw-entrance::before{
-    content:
-        "01 001 10 0101 01 10 001 010 01 10 001\A"
-        "001 10 01 0010 110 01 10 001 01 001 10\A"
-        "10 001 01 10 0010 01 110 01 10 001 01\A"
-        "0101 01 10 001 010 01 10 001 0101 01\A"
-        "01 10 001 01 0010 10 01 10 001 010 01\A"
-        "001 01 10 001 0101 01 10 001 01 0010\A"
-        "10 0010 01 110 01 10 001 01 10 001 01\A"
-        "01 001 10 0101 01 10 001 010 01 10 001\A"
-        "001 10 01 0010 110 01 10 001 01 001 10\A"
-        "10 001 01 10 0010 01 110 01 10 001 01\A"
-        "0101 01 10 001 010 01 10 001 0101 01\A"
-        "01 10 001 01 0010 10 01 10 001 010 01";
-    padding:56px 72px 120px;
-    color:rgba(174, 231, 255, 0.11);
-    text-shadow:
-        0 0 8px rgba(165, 231, 255, 0.18),
-        0 0 18px rgba(128, 212, 255, 0.10);
-    transform:translate3d(0, 0, 0);
-    animation:kwIceDigitsDriftA 30s linear infinite;
+.kw-binary-stream::before {
+  content: "";
+
+  position: absolute;
+
+  left: 50%;
+  top: -28px;
+
+  width: 1px;
+  height: 48px;
+
+  transform:
+    translateX(-50%);
+
+  background:
+    linear-gradient(
+      to bottom,
+      transparent,
+      rgba(184,239,255,.36),
+      transparent
+    );
+
+  box-shadow:
+    0 0 10px
+    rgba(125,215,255,.24);
 }
 
-.kw-entrance::after{
-    content:
-        "0 1 0 1 001 01 10 001 010 01 10\A"
-        "01 10 001 01 0010 10 01 10 001\A"
-        "001 10 01 0010 110 01 10 001 01\A"
-        "10 001 01 10 0010 01 110 01 10\A"
-        "0101 01 10 001 010 01 10 0010\A"
-        "01 001 10 0101 01 10 001 010 01\A"
-        "0 1 0 1 001 01 10 001 010 01 10\A"
-        "01 10 001 01 0010 10 01 10 001\A"
-        "001 10 01 0010 110 01 10 001 01\A"
-        "10 001 01 10 0010 01 110 01 10";
-    padding:120px 110px 64px;
-    text-align:right;
-    color:rgba(214, 244, 255, 0.075);
-    text-shadow:
-        0 0 10px rgba(214, 244, 255, 0.14),
-        0 0 24px rgba(184, 232, 255, 0.10);
-    filter:blur(0.25px);
-    transform:translate3d(0, 0, 0) scale(1.02);
-    animation:kwIceDigitsDriftB 42s linear infinite;
+.kw-binary-stream-bright {
+  color:
+    rgba(
+      211,
+      246,
+      255,
+      calc(.28 * var(--alpha))
+    );
+
+  text-shadow:
+    0 0 7px rgba(223, 249, 255, .34),
+    0 0 18px rgba(122, 218, 255, .22),
+    0 0 34px rgba(91, 157, 255, .10);
 }
 
-@keyframes kwIceDigitsDriftA{
-    0%{
-        transform:translate3d(0, -10px, 0);
-    }
-    50%{
-        transform:translate3d(-18px, 14px, 0);
-    }
-    100%{
-        transform:translate3d(0, 34px, 0);
-    }
+/* actual UI stays above the binary field */
+
+.kw-topbar {
+  z-index: 4;
 }
 
-@keyframes kwIceDigitsDriftB{
-    0%{
-        transform:translate3d(10px, 0, 0) scale(1.02);
-    }
-    50%{
-        transform:translate3d(-12px, 18px, 0) scale(1.03);
-    }
-    100%{
-        transform:translate3d(-24px, 36px, 0) scale(1.02);
-    }
+.kw-hero,
+.kw-directory,
+.kw-footer {
+  position: relative;
+  z-index: 2;
 }
 
-@media (max-width: 720px){
-    .kw-entrance::before,
-    .kw-entrance::after{
-        font-size:10px;
-        letter-spacing:0.18em;
-    }
+/* faint frozen glass between data and UI */
 
-    .kw-entrance::before{
-        padding:48px 28px 100px;
-    }
-
-    .kw-entrance::after{
-        padding:110px 32px 40px;
-    }
+.kw-hero::before {
+  z-index: -1;
 }
 
-@media (prefers-reduced-motion: reduce){
-    .kw-entrance::before,
-    .kw-entrance::after{
-        animation:none !important;
-    }
+.kw-directory::after {
+  content: "";
+
+  position: absolute;
+  inset: 0;
+
+  z-index: -1;
+
+  pointer-events: none;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(9, 22, 43, .16),
+      rgba(9, 22, 43, .035)
+    );
+
+  backdrop-filter:
+    blur(.35px);
+
+  -webkit-backdrop-filter:
+    blur(.35px);
 }
-/* === KOPPY WORLD ICE DIGITS: END === */
+
+@keyframes kwBinaryFall {
+  0% {
+    transform:
+      translate3d(
+        0,
+        -18%,
+        0
+      );
+
+    opacity: .22;
+  }
+
+  12% {
+    opacity: 1;
+  }
+
+  82% {
+    opacity: .88;
+  }
+
+  100% {
+    transform:
+      translate3d(
+        0,
+        165vh,
+        0
+      );
+
+    opacity: .12;
+  }
+}
+
+@media (max-width: 780px) {
+  .kw-binary-field {
+    opacity: .58;
+  }
+
+  .kw-binary-stream {
+    font-size: 10px;
+    letter-spacing: .32em;
+  }
+
+  .kw-binary-stream:nth-child(even) {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kw-binary-stream {
+    animation: none !important;
+
+    top: 8%;
+  }
+}
