@@ -1,0 +1,148 @@
+/* =========================================================
+   KOPPY HOME / WORLD FRAME BRIDGE V1
+
+   Phase 1:
+   - World Frame owns outer background / shell / Chrome.
+   - Existing Home DOM and house.js remain unchanged.
+   - Legacy inner panels are migrated in a later phase.
+========================================================= */
+
+body.world-frame-body{
+  padding:
+    0;
+
+  overflow-x:
+    hidden;
+}
+
+.house-frame-shell{
+  min-height:
+    calc(
+      100svh - 60px
+    );
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+}
+
+/* ---------------------------------------------------------
+   EXISTING HOME CONTENT INSIDE WORLD FRAME
+--------------------------------------------------------- */
+
+.house-frame-shell .house{
+  width:
+    min(
+      1120px,
+      calc(100% - 48px)
+    );
+
+  margin:
+    0 auto;
+
+  padding:
+    42px 0 38px;
+
+  color:
+    var(
+      --wf-text,
+      #edf8ff
+    );
+}
+
+.house-frame-shell .house header{
+  margin:
+    0 0 28px;
+}
+
+.house-frame-shell .house header .eyebrow{
+  color:
+    var(
+      --wf-accent,
+      #7deaff
+    );
+}
+
+.house-frame-shell .house header h1{
+  color:
+    var(
+      --wf-text,
+      #edf8ff
+    );
+
+  text-shadow:
+    0 0 30px
+    rgba(
+      125,
+      234,
+      255,
+      .14
+    );
+}
+
+.house-frame-shell .house header > p:last-child,
+.house-frame-shell #houseStatus{
+  color:
+    var(
+      --wf-text-soft,
+      #b5cfe6
+    );
+}
+
+/*
+   Keep the existing Home panels visually intact for Phase 1.
+   Only give them a slightly colder shell-compatible edge.
+*/
+
+.house-frame-shell .house .panel{
+  border-color:
+    rgba(
+      125,
+      234,
+      255,
+      .26
+    );
+}
+
+/* ---------------------------------------------------------
+   LEGACY CONTROLS
+
+   house.js still depends on these existing elements.
+--------------------------------------------------------- */
+
+.house-frame-shell #houseRetry,
+.house-frame-shell #houseLogin{
+  touch-action:
+    manipulation;
+}
+
+.house-frame-shell > .wf-chrome-footer{
+  margin-top:
+    auto;
+}
+
+/* ---------------------------------------------------------
+   MOBILE
+--------------------------------------------------------- */
+
+@media (max-width:780px){
+
+  .house-frame-shell .house{
+    width:
+      calc(100% - 32px);
+
+    padding:
+      30px 0 28px;
+  }
+
+  .house-frame-shell .house header{
+    margin-bottom:
+      22px;
+  }
+}
+
+/* =========================================================
+   END KOPPY HOME / WORLD FRAME BRIDGE V1
+========================================================= */

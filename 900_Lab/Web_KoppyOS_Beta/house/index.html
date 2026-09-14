@@ -4,12 +4,142 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Koppy Home / 自宅</title>
+
+  <!-- Legacy shared styles remain during Phase 1 -->
   <link rel="stylesheet" href="../assets/css/style.css">
+
+  <!-- World Frame shared design system -->
+  <link rel="stylesheet" href="../assets/css/world-frame-tokens.css">
+  <link rel="stylesheet" href="../assets/css/world-frame.css">
+  <link rel="stylesheet" href="../assets/css/world-frame-polish.css">
+  <link rel="stylesheet" href="../assets/css/world-frame-shell.css">
+  <link rel="stylesheet" href="../assets/css/world-frame-atmosphere.css">
+  <link rel="stylesheet" href="../assets/css/world-frame-components.css">
+  <link rel="stylesheet" href="../assets/css/world-frame-chrome.css">
+  <link rel="stylesheet" href="../assets/css/world-frame-utility.css">
+
+  <!-- Home page styles -->
   <link rel="stylesheet" href="house.css">
+  <link rel="stylesheet" href="house-frame.css">
 </head>
-<body>
-  <main class="world house">
-    <a href="/">← Koppy World</a>
+<body
+  class="world-frame-body"
+  data-wf-profile="home"
+>
+  <div
+    class="wf-app"
+    id="wfApp"
+    data-theme="aqua"
+    data-motion="calm"
+    data-wf-page="home"
+    data-wf-seed="2190"
+    data-wf-density="1.08"
+    data-wf-quality="high"
+    data-wf-readable-zone="off"
+  >
+    <div class="wf-stage">
+
+      <!-- Layer 1 / shared background -->
+      <div
+        class="wf-layer wf-layer--outer"
+        aria-hidden="true"
+      >
+        <div
+          class="wf-stars"
+          data-layer="stars"
+        ></div>
+
+        <div
+          class="wf-streams"
+          data-layer="streams"
+        ></div>
+
+        <div
+          class="wf-logs"
+          data-layer="logs"
+        ></div>
+
+        <div
+          class="wf-crystals"
+          data-layer="crystals"
+        ></div>
+      </div>
+
+      <!-- Layer 2 / shared shell -->
+      <div class="wf-layer wf-layer--shell">
+        <div
+          class="wf-shell house-frame-shell"
+          data-wf-shell
+          data-wf-shell-mode="clear"
+          data-wf-shell-opacity="0.14"
+          data-wf-shell-blur="10"
+          data-wf-atmosphere="rich"
+        >
+
+          <!-- Shared World Chrome -->
+          <header
+            class="wf-chrome"
+            data-wf-chrome
+          >
+            <a
+              class="wf-chrome-brand"
+              href="../"
+              aria-label="Koppy World ホーム"
+            >
+              <span class="wf-chrome-mark">
+                ◇K
+              </span>
+
+              <span class="wf-chrome-brand-copy">
+                <strong>
+                  Koppy Home
+                </strong>
+
+                <small>
+                  HOME NODE
+                </small>
+              </span>
+            </a>
+
+            <nav
+              class="wf-chrome-nav"
+              aria-label="主要ナビゲーション"
+            >
+              <a href="../">
+                WORLD
+              </a>
+
+              <a href="../kohaku-work/">
+                WORK
+              </a>
+
+              <a href="../brain/">
+                BRAIN
+              </a>
+
+              <a href="../chat/">
+                KOPPY
+              </a>
+
+              <a href="../writer/">
+                TOOLS
+              </a>
+            </nav>
+
+            <div
+              class="wf-chrome-status"
+              aria-label="Home Online"
+            >
+              <span
+                class="wf-chrome-status-dot"
+              ></span>
+
+              HOME ONLINE
+            </div>
+          </header>
+
+          <!-- Layer 3 / existing Home content -->
+          <main class="world house">
     <header><p class="eyebrow">KOPPY HOME</p><h1>🏠 自宅</h1><p>部屋ごとのデバイスを確認する場所</p></header>
     <p id="houseStatus" role="status" aria-live="polite">自宅データを読み込んでいます……</p>
     <a id="houseLogin" class="main-button" href="https://koppy.miki-piano.com/api/v1/auth/login.php" hidden>GitHubでログイン</a>
@@ -21,7 +151,40 @@
       <section class="panel"><h2>持ち運び</h2></section>
     </div>
     <noscript>自宅データの表示にはJavaScriptを有効にしてください。</noscript>
-  </main>
+          </main>
+
+          <footer
+            class="wf-chrome-footer"
+            data-wf-footer
+          >
+            <span>
+              ◇K Koppy Home
+            </span>
+
+            <span>
+              Devices / Rooms / Connections
+            </span>
+
+            <span>
+              HOME NODE
+            </span>
+          </footer>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- World Frame shared runtime -->
+  <script src="../assets/js/world-frame.js"></script>
+  <script src="../assets/js/world-frame-polish.js"></script>
+  <script src="../assets/js/world-frame-shell.js"></script>
+  <script src="../assets/js/world-frame-atmosphere.js"></script>
+  <script src="../assets/js/world-frame-profiles.js"></script>
+  <script src="../assets/js/world-frame-runtime.js"></script>
+  <script src="../assets/js/world-frame-utility.js"></script>
+
+  <!-- Existing Home behavior -->
   <script src="../assets/js/auth.js"></script>
   <script src="house.js"></script>
 </body>
