@@ -39,6 +39,13 @@
 }
 
 .wft-page {
+  --wf-shell-h1-size:
+    clamp(
+      3.3rem,
+      7.5vw,
+      6.8rem
+    );
+
   min-height:
     calc(
       100svh - 60px
@@ -56,18 +63,6 @@
   padding:
     26px
     30px;
-}
-
-/* Example page-level override.
-   Delete it if the default is already perfect. */
-
-[data-wf-page="world"] {
-  --wf-shell-h1-size:
-    clamp(
-      3.3rem,
-      7.5vw,
-      6.8rem
-    );
 }
 
 .wft-hero {

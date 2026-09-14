@@ -61,20 +61,34 @@
   >
 </head>
 
+<!-- =================================================
+     TEMPLATE PROFILE
+
+     Change ONLY data-wf-profile below when creating
+     another World Frame page.
+
+     Allowed profiles:
+     world / work / home / brain / koppy / tools
+
+     The shared runtime automatically applies:
+     theme / motion / shell / atmosphere /
+     seed / density / quality / readable zone
+================================================= -->
+
 <body
   class="world-frame-body"
   data-wf-profile="world"
 >
   <!-- ================================================
        WORLD FRAME ROOT
-
-       For another page:
-       data-wf-profile="work"
-       data-wf-profile="home"
-       data-wf-profile="brain"
-       data-wf-profile="koppy"
-       data-wf-profile="tools"
   ================================================= -->
+
+  <!--
+       Boot fallback values below keep first paint stable.
+       Do NOT edit them when changing page profile.
+       world-frame-runtime.js overwrites them from
+       body[data-wf-profile].
+  -->
 
   <div
     class="wf-app"
