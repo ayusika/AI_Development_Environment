@@ -12,7 +12,8 @@
       seed: 4812,
       density: 1.00,
       quality: "balanced",
-      readable: true
+      readable: true,
+      atmosphere: "normal"
     },
 
     work: {
@@ -25,7 +26,8 @@
       seed: 7301,
       density: 0.78,
       quality: "balanced",
-      readable: true
+      readable: true,
+      atmosphere: "subtle"
     },
 
     home: {
@@ -38,7 +40,8 @@
       seed: 2190,
       density: 1.08,
       quality: "high",
-      readable: false
+      readable: false,
+      atmosphere: "rich"
     },
 
     brain: {
@@ -51,7 +54,8 @@
       seed: 8821,
       density: 0.90,
       quality: "balanced",
-      readable: true
+      readable: true,
+      atmosphere: "subtle"
     },
 
     koppy: {
@@ -64,7 +68,8 @@
       seed: 5427,
       density: 1.02,
       quality: "high",
-      readable: false
+      readable: false,
+      atmosphere: "normal"
     },
 
     tools: {
@@ -77,7 +82,8 @@
       seed: 3141,
       density: 0.86,
       quality: "balanced",
-      readable: true
+      readable: true,
+      atmosphere: "subtle"
     }
   };
 
@@ -224,6 +230,23 @@
 
     app.dataset.wfPage =
       name;
+
+    const atmosphere =
+      profile.atmosphere ||
+      "normal";
+
+    shell.dataset.wfAtmosphere =
+      atmosphere;
+
+    window
+      .KoppyWorldAtmosphere
+      ?.setMode
+      ?.(
+        atmosphere,
+        {
+          silent: true
+        }
+      );
 
     if (
       window

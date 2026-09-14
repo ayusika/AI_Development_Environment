@@ -1,0 +1,371 @@
+/* =========================================================
+   KOPPY WORLD / SHELL ATMOSPHERE v1
+
+   Layer 2.5
+
+   Layer 1 : Outer World
+   Layer 2 : Glass Shell
+   Layer 2.5 : Snow Code / Ice Dust
+   Layer 3 : Page Content
+========================================================= */
+
+.wf-shell-atmosphere{
+  position:absolute;
+  inset:0;
+
+  z-index:1;
+
+  overflow:hidden;
+
+  pointer-events:none;
+  user-select:none;
+
+  border-radius:inherit;
+
+  opacity:1;
+
+  -webkit-mask-image:
+    linear-gradient(
+      180deg,
+      transparent 0%,
+      #000 7%,
+      #000 92%,
+      transparent 100%
+    );
+
+  mask-image:
+    linear-gradient(
+      180deg,
+      transparent 0%,
+      #000 7%,
+      #000 92%,
+      transparent 100%
+    );
+}
+
+/*
+   Shell content always stays above Layer 2.5.
+*/
+
+.wf-shell-surface > .wf-shell-inner,
+[data-wf-shell] > .wf-shell-inner{
+  position:relative;
+  z-index:2;
+}
+
+/* ---------------------------------------------------------
+   FALLING BINARY
+--------------------------------------------------------- */
+
+.wf-atmosphere-code{
+  position:absolute;
+
+  top:-36%;
+
+  font-family:
+    var(--wf-font-mono);
+
+  font-size:
+    var(--wf-atmosphere-size, 10px);
+
+  font-weight:700;
+
+  line-height:1;
+
+  letter-spacing:.20em;
+
+  writing-mode:vertical-rl;
+  text-orientation:upright;
+
+  white-space:nowrap;
+
+  color:
+    var(
+      --wf-atmosphere-color,
+      #9bdfff
+    );
+
+  opacity:
+    var(
+      --wf-atmosphere-opacity,
+      .20
+    );
+
+  text-shadow:
+    0 0 8px
+      color-mix(
+        in srgb,
+        var(--wf-atmosphere-color, #9bdfff) 42%,
+        transparent
+      ),
+    0 0 18px
+      color-mix(
+        in srgb,
+        var(--wf-atmosphere-color, #9bdfff) 16%,
+        transparent
+      );
+
+  animation:
+    wfAtmosphereFall
+    var(--wf-atmosphere-duration, 16s)
+    linear
+    infinite;
+
+  animation-delay:
+    var(--wf-atmosphere-delay, 0s);
+}
+
+.wf-atmosphere-code.is-soft{
+  filter:blur(.42px);
+
+  opacity:
+    calc(
+      var(--wf-atmosphere-opacity, .20)
+      * .58
+    );
+}
+
+.wf-atmosphere-code.is-near{
+  font-size:
+    calc(
+      var(--wf-atmosphere-size, 10px)
+      * 1.32
+    );
+
+  filter:blur(.08px);
+
+  opacity:
+    calc(
+      var(--wf-atmosphere-opacity, .20)
+      * 1.20
+    );
+}
+
+/* ---------------------------------------------------------
+   ICE DUST
+--------------------------------------------------------- */
+
+.wf-atmosphere-dust{
+  position:absolute;
+
+  top:-12%;
+
+  width:
+    var(--wf-dust-size, 3px);
+
+  height:
+    var(--wf-dust-size, 3px);
+
+  border-radius:50%;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--wf-atmosphere-color, #c9efff) 78%,
+      white
+    );
+
+  opacity:
+    var(--wf-dust-opacity, .42);
+
+  box-shadow:
+    0 0 8px
+      color-mix(
+        in srgb,
+        var(--wf-atmosphere-color, #9bdfff) 38%,
+        transparent
+      );
+
+  animation:
+    wfAtmosphereDustFall
+    var(--wf-dust-duration, 13s)
+    linear
+    infinite;
+
+  animation-delay:
+    var(--wf-dust-delay, 0s);
+}
+
+.wf-atmosphere-dust.is-diamond{
+  border-radius:1px;
+
+  transform:
+    rotate(45deg);
+}
+
+/* ---------------------------------------------------------
+   MODES
+--------------------------------------------------------- */
+
+[data-wf-atmosphere="off"]
+.wf-shell-atmosphere{
+  display:none;
+}
+
+[data-wf-atmosphere="subtle"]
+.wf-shell-atmosphere{
+  opacity:.68;
+}
+
+[data-wf-atmosphere="normal"]
+.wf-shell-atmosphere{
+  opacity:.90;
+}
+
+[data-wf-atmosphere="rich"]
+.wf-shell-atmosphere{
+  opacity:1;
+}
+
+/* ---------------------------------------------------------
+   LAB CONTROL
+--------------------------------------------------------- */
+
+.wf-atmosphere-control{
+  min-width:270px;
+}
+
+.wf-atmosphere-mode-group{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+}
+
+.wf-atmosphere-mode-btn{
+  appearance:none;
+
+  border:
+    1px solid
+    rgba(
+      157,
+      203,
+      255,
+      .16
+    );
+
+  border-radius:999px;
+
+  padding:
+    9px
+    12px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      .04
+    );
+
+  color:
+    rgba(
+      235,
+      246,
+      255,
+      .90
+    );
+
+  font-family:
+    var(--wf-font-ui);
+
+  font-size:11px;
+  font-weight:800;
+
+  cursor:pointer;
+
+  transition:
+    transform .16s ease,
+    background .16s ease,
+    border-color .16s ease;
+}
+
+.wf-atmosphere-mode-btn:hover{
+  transform:
+    translateY(-1px);
+
+  background:
+    rgba(
+      111,
+      190,
+      255,
+      .10
+    );
+
+  border-color:
+    rgba(
+      154,
+      220,
+      255,
+      .36
+    );
+}
+
+.wf-atmosphere-mode-btn.is-active{
+  background:
+    rgba(
+      111,
+      190,
+      255,
+      .20
+    );
+
+  border-color:
+    rgba(
+      154,
+      224,
+      255,
+      .58
+    );
+}
+
+/* ---------------------------------------------------------
+   ANIMATION
+--------------------------------------------------------- */
+
+@keyframes wfAtmosphereFall{
+  from{
+    transform:
+      translate3d(
+        0,
+        -15%,
+        0
+      );
+  }
+
+  to{
+    transform:
+      translate3d(
+        var(--wf-atmosphere-drift, 0px),
+        var(--wf-atmosphere-distance, 1100px),
+        0
+      );
+  }
+}
+
+@keyframes wfAtmosphereDustFall{
+  from{
+    transform:
+      translate3d(
+        0,
+        -20px,
+        0
+      )
+      rotate(0deg);
+  }
+
+  to{
+    transform:
+      translate3d(
+        var(--wf-dust-drift, 0px),
+        var(--wf-atmosphere-distance, 1100px),
+        0
+      )
+      rotate(180deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+  .wf-shell-atmosphere{
+    display:none;
+  }
+}

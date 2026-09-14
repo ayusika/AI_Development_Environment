@@ -198,6 +198,12 @@
       shellMode:
         getShellMode(),
 
+      atmosphere:
+        targetShell
+          ?.dataset
+          .wfAtmosphere ||
+        "normal",
+
       opacity,
 
       blur
@@ -489,6 +495,17 @@
     restoreShell(
       state
     );
+
+    window
+      .KoppyWorldAtmosphere
+      ?.setMode
+      ?.(
+        state.atmosphere ??
+        "normal",
+        {
+          silent: true
+        }
+      );
 
     applyScene({
       seed:
@@ -844,7 +861,7 @@
       event => {
         if (
           event.target.closest(
-            "[data-theme-set], [data-motion-set], [data-mode-set], [data-wf-profile], .wf-shell-mode-btn"
+            "[data-theme-set], [data-motion-set], [data-mode-set], [data-wf-profile], .wf-shell-mode-btn, .wf-atmosphere-mode-btn"
           )
         ) {
           scheduleSave();
