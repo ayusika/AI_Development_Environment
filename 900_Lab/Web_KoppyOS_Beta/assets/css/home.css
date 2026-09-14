@@ -416,17 +416,6 @@ a{
   border-radius:999px;
 }
 
-.kw-footer{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:20px;
-  padding:22px 34px 28px;
-  color:rgba(215,234,248,.74);
-  font-size:13px;
-  border-top:1px solid rgba(171,218,255,.12);
-}
-
 @keyframes kwFloat{
   0%,100%{ transform:translateY(0); }
   50%{ transform:translateY(-12px); }
@@ -464,25 +453,6 @@ a{
     width:min(100% - 20px, 100%);
     margin:10px auto 24px;
     border-radius:28px;
-  }
-
-  .kw-topbar{
-    grid-template-columns:1fr;
-    justify-items:start;
-    gap:16px;
-    padding:18px 18px 16px;
-  }
-
-  .kw-nav{
-    justify-content:flex-start;
-    overflow:auto;
-    width:100%;
-    padding-bottom:2px;
-    scrollbar-width:none;
-  }
-
-  .kw-nav::-webkit-scrollbar{
-    display:none;
   }
 
   .kw-hero{
@@ -555,12 +525,6 @@ a{
     min-width:0;
   }
 
-  .kw-footer{
-    flex-direction:column;
-    text-align:center;
-    gap:10px;
-    padding:20px 16px 24px;
-  }
 }
 
 @media (prefers-reduced-motion: reduce){

@@ -512,3 +512,123 @@
       13px;
   }
 }
+
+/* ==== WORLD FRAME CHROME EXTENSIONS V1 START ==== */
+
+/* ---------------------------------------------------------
+   SHARED FOOTER
+--------------------------------------------------------- */
+
+.wf-chrome-footer{
+  position:relative;
+  z-index:3;
+
+  display:flex;
+
+  justify-content:
+    space-between;
+
+  align-items:
+    center;
+
+  gap:
+    20px;
+
+  padding:
+    22px
+    34px
+    28px;
+
+  border-top:
+    1px solid
+    var(
+      --wf-chrome-border,
+      rgba(171,218,255,.12)
+    );
+
+  color:
+    rgba(
+      215,
+      234,
+      248,
+      .74
+    );
+
+  font-family:
+    var(--wf-font-ui);
+
+  font-size:
+    13px;
+}
+
+/* ---------------------------------------------------------
+   MOBILE CHROME
+
+   Matches the current Koppy World mobile behavior,
+   but is now shared by every World Frame page.
+--------------------------------------------------------- */
+
+@media (max-width:780px){
+
+  .wf-chrome{
+    grid-template-columns:
+      1fr;
+
+    justify-items:
+      start;
+
+    gap:
+      16px;
+
+    padding:
+      18px
+      18px
+      16px;
+  }
+
+  .wf-chrome-nav{
+    grid-column:
+      auto;
+
+    grid-row:
+      auto;
+
+    justify-content:
+      flex-start;
+
+    overflow:
+      auto;
+
+    width:
+      100%;
+
+    padding-bottom:
+      2px;
+
+    scrollbar-width:
+      none;
+  }
+
+  .wf-chrome-nav::-webkit-scrollbar{
+    display:
+      none;
+  }
+
+  .wf-chrome-footer{
+    flex-direction:
+      column;
+
+    text-align:
+      center;
+
+    gap:
+      10px;
+
+    padding:
+      20px
+      16px
+      24px;
+  }
+}
+
+/* ==== WORLD FRAME CHROME EXTENSIONS V1 END ==== */
