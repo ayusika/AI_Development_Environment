@@ -70,43 +70,6 @@
     );
 }
 
-.wft-header {
-  display:
-    flex;
-
-  align-items:
-    center;
-
-  justify-content:
-    space-between;
-
-  gap:
-    20px;
-
-  padding-bottom:
-    22px;
-
-  border-bottom:
-    1px solid
-    rgba(
-      188,
-      223,
-      255,
-      .11
-    );
-}
-
-.wft-brand {
-  display:
-    block;
-
-  margin-top:
-    8px;
-
-  font-size:
-    1.15rem;
-}
-
 .wft-hero {
   min-height:
     410px;
@@ -263,35 +226,6 @@
 .wft-footer {
   margin-top:
     auto;
-
-  display:
-    flex;
-
-  justify-content:
-    space-between;
-
-  gap:
-    20px;
-
-  padding:
-    20px
-    8px
-    4px;
-
-  border-top:
-    1px solid
-    rgba(
-      188,
-      223,
-      255,
-      .09
-    );
-
-  font-size:
-    .7rem;
-
-  color:
-    var(--wf-text-dim);
 }
 
 @media (max-width: 860px) {
@@ -312,15 +246,6 @@
 }
 
 @media (max-width: 560px) {
-  .wft-header,
-  .wft-footer {
-    align-items:
-      flex-start;
-
-    flex-direction:
-      column;
-  }
-
   .wft-page {
     padding:
       16px;

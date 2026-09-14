@@ -46,6 +46,11 @@
 
   <link
     rel="stylesheet"
+    href="../../assets/css/world-frame-chrome.css"
+  >
+
+  <link
+    rel="stylesheet"
     href="../../assets/css/world-frame-utility.css"
   >
 
@@ -135,20 +140,53 @@
           ========================================= -->
 
           <div class="wft-page">
-            <header class="wft-header">
-              <div>
-                <p class="wf-system-label">
-                  PAGE TEMPLATE
-                </p>
+            <header
+              class="wft-header wf-chrome"
+              data-wf-chrome
+            >
+              <a
+                class="wf-chrome-brand"
+                href="../../"
+                aria-label="Koppy World ホーム"
+              >
+                <span class="wf-chrome-mark">
+                  ◇K
+                </span>
 
-                <strong class="wft-brand">
-                  Koppy World
-                </strong>
-              </div>
+                <span class="wf-chrome-brand-copy">
+                  <strong>
+                    Koppy World
+                  </strong>
 
-              <span class="wf-status-dot">
+                  <small>
+                    PAGE TEMPLATE
+                  </small>
+                </span>
+              </a>
+
+              <nav
+                class="wf-chrome-nav"
+                aria-label="テンプレートナビゲーション"
+              >
+                <a href="../../">
+                  WORLD
+                </a>
+
+                <a href="../">
+                  LAB
+                </a>
+              </nav>
+
+              <div
+                class="wf-chrome-status"
+                aria-label="Frame Online"
+              >
+                <span
+                  class="wf-chrome-status-dot"
+                ></span>
+
                 FRAME ONLINE
-              </span>
+              </div>
             </header>
 
             <section class="wft-hero">
@@ -251,7 +289,10 @@
               </div>
             </section>
 
-            <footer class="wft-footer">
+            <footer
+              class="wft-footer wf-chrome-footer"
+              data-wf-footer
+            >
               <span>
                 Koppy World Design System
               </span>

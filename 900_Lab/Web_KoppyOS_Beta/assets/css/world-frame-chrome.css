@@ -329,6 +329,9 @@
   text-decoration:
     none;
 
+  touch-action:
+    manipulation;
+
   transition:
     color
     var(--wf-motion-fast, 160ms)
@@ -341,23 +344,25 @@
     ease;
 }
 
-.wf-chrome-nav a:hover{
-  color:
-    var(
-      --wf-text,
-      #edf8ff
-    );
+@media (hover:hover) and (pointer:fine){
+  .wf-chrome-nav a:hover{
+    color:
+      var(
+        --wf-text,
+        #edf8ff
+      );
 
-  background:
-    rgba(
-      255,
-      255,
-      255,
-      .08
-    );
+    background:
+      rgba(
+        255,
+        255,
+        255,
+        .08
+      );
 
-  transform:
-    translateY(-1px);
+    transform:
+      translateY(-1px);
+  }
 }
 
 .wf-chrome-nav a:focus-visible{
