@@ -2326,3 +2326,223 @@ body.kw-body::after {
     font-size: 14px;
   }
 }
+
+/* ======================================================
+   KOPPY WORLD V5 FONT REBUILD
+   Sharp Japanese + geometric cyber UI
+====================================================== */
+
+:root {
+  --kw-font-jp:
+    "Zen Kaku Gothic New",
+    "Hiragino Sans",
+    "Yu Gothic",
+    sans-serif;
+
+  --kw-font-ui:
+    "Space Grotesk",
+    "Avenir Next",
+    "Helvetica Neue",
+    sans-serif;
+}
+
+/* --------------------------------
+   Hero copy
+-------------------------------- */
+
+.kw-lead {
+  font-family:
+    var(--kw-font-jp);
+
+  font-weight: 600;
+
+  letter-spacing:
+    -.035em;
+
+  line-height: 1.5;
+
+  font-feature-settings:
+    "palt" 1;
+
+  -webkit-font-smoothing:
+    antialiased;
+}
+
+.kw-sub {
+  font-family:
+    var(--kw-font-jp);
+
+  font-weight: 400;
+
+  letter-spacing:
+    .025em;
+
+  line-height: 1.95;
+
+  font-feature-settings:
+    "palt" 1;
+
+  color:
+    rgba(190, 215, 234, .76);
+}
+
+/* --------------------------------
+   Directory heading
+-------------------------------- */
+
+.kw-directory-head h2 {
+  font-family:
+    var(--kw-font-jp);
+
+  font-weight: 700;
+
+  letter-spacing:
+    -.045em;
+
+  font-feature-settings:
+    "palt" 1;
+}
+
+/* --------------------------------
+   Portal titles
+-------------------------------- */
+
+.kw-portal h3 {
+  font-family:
+    var(--kw-font-jp);
+
+  font-weight: 700;
+
+  letter-spacing:
+    -.045em;
+
+  line-height: 1.18;
+
+  font-feature-settings:
+    "palt" 1;
+
+  -webkit-font-smoothing:
+    antialiased;
+}
+
+.kw-portal-chat h3 {
+  font-family:
+    var(--kw-font-jp);
+
+  font-weight: 700;
+
+  letter-spacing:
+    -.045em;
+}
+
+/* --------------------------------
+   Portal descriptions
+-------------------------------- */
+
+.kw-portal-copy {
+  font-family:
+    var(--kw-font-jp);
+
+  font-weight: 400;
+
+  font-size: 14px;
+
+  letter-spacing:
+    .035em;
+
+  line-height: 1.8;
+
+  color:
+    rgba(208, 227, 241, .76);
+
+  font-feature-settings:
+    "palt" 1;
+}
+
+/* --------------------------------
+   English cyber labels
+-------------------------------- */
+
+.kw-overline,
+.kw-node-label,
+.kw-chip,
+.kw-brand-copy small {
+  font-family:
+    var(--kw-font-ui),
+    var(--kw-font-jp);
+
+  font-weight: 600;
+
+  text-transform:
+    uppercase;
+}
+
+.kw-node-label {
+  font-size: 10px;
+
+  letter-spacing:
+    .24em;
+
+  opacity:
+    .88;
+}
+
+.kw-overline {
+  letter-spacing:
+    .25em;
+}
+
+/* --------------------------------
+   Buttons
+-------------------------------- */
+
+.kw-action,
+.kw-subaction {
+  font-family:
+    var(--kw-font-jp);
+
+  font-weight: 600;
+
+  letter-spacing:
+    -.015em;
+
+  font-feature-settings:
+    "palt" 1;
+
+  -webkit-font-smoothing:
+    antialiased;
+}
+
+/* --------------------------------
+   Navigation / status
+-------------------------------- */
+
+.kw-nav a,
+.kw-status,
+.kw-brand-copy strong {
+  font-family:
+    var(--kw-font-ui),
+    var(--kw-font-jp);
+}
+
+/* --------------------------------
+   Global rendering polish
+-------------------------------- */
+
+.kw-hero-copy,
+.kw-directory {
+  text-rendering:
+    optimizeLegibility;
+}
+
+@media (max-width: 780px) {
+  .kw-lead {
+    letter-spacing:
+      -.025em;
+  }
+
+  .kw-portal-copy {
+    font-size:
+      14px;
+  }
+}
