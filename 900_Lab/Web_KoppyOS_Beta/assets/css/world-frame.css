@@ -1562,3 +1562,585 @@ body.wf-focus-active .wf-focus-exit{
 }
 
 /* ==== WORLD FRAME LAB LARGE PREVIEW END ==== */
+
+/* ==== WORLD FRAME V3 DEPTH POLISH START ==== */
+
+/* ------------------------------------------------------
+   SUPER-NEAR BINARY
+   A few blurred streams pass close to the "camera".
+------------------------------------------------------ */
+
+.wf-stream.is-foreground{
+  font-size:
+    clamp(
+      26px,
+      2.8vw,
+      48px
+    );
+
+  letter-spacing:
+    .24em;
+
+  color:
+    rgba(
+      220,
+      240,
+      255,
+      .24
+    );
+
+  opacity:.30;
+
+  filter:
+    blur(1.25px);
+
+  text-shadow:
+    0 0 24px
+    rgba(
+      160,
+      220,
+      255,
+      .20
+    ),
+    0 0 50px
+    rgba(
+      90,
+      160,
+      255,
+      .10
+    );
+
+  mix-blend-mode:screen;
+}
+
+/* Near streams are a little sharper and brighter. */
+
+.wf-stream.is-near{
+  font-size:
+    clamp(
+      15px,
+      1.25vw,
+      22px
+    );
+
+  filter:
+    blur(.12px);
+
+  mix-blend-mode:screen;
+}
+
+/* Far layer sinks deeper into the world. */
+
+.wf-stream.is-far{
+  font-size:
+    clamp(
+      7px,
+      .66vw,
+      10px
+    );
+
+  filter:
+    blur(.48px);
+
+  opacity:.30;
+}
+
+/* ------------------------------------------------------
+   HUD LOG CONNECTIONS
+------------------------------------------------------ */
+
+.wf-log{
+  position:absolute;
+}
+
+.wf-log.is-hudline::before{
+  content:"";
+
+  position:absolute;
+
+  left:-42px;
+  top:8px;
+
+  width:34px;
+  height:1px;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(
+        174,
+        225,
+        255,
+        .58
+      )
+    );
+
+  box-shadow:
+    0 0 8px
+    rgba(
+      120,
+      202,
+      255,
+      .24
+    );
+}
+
+.wf-log.is-hudline::after{
+  content:"";
+
+  position:absolute;
+
+  left:-48px;
+  top:5px;
+
+  width:6px;
+  height:6px;
+
+  border-radius:50%;
+
+  background:
+    rgba(
+      196,
+      236,
+      255,
+      .82
+    );
+
+  box-shadow:
+    0 0 8px
+      rgba(
+        145,
+        219,
+        255,
+        .72
+      ),
+    0 0 18px
+      rgba(
+        95,
+        176,
+        255,
+        .28
+      );
+
+  animation:
+    wfHudPing
+    calc(
+      4.8s
+      * var(--wf-speed-factor)
+    )
+    ease-in-out
+    infinite;
+}
+
+/* ------------------------------------------------------
+   LARGE / NEAR ICE CRYSTALS
+------------------------------------------------------ */
+
+.wf-crystal.is-near-crystal{
+  z-index:4;
+
+  filter:
+    drop-shadow(
+      0 0 14px
+      rgba(
+        181,
+        232,
+        255,
+        .25
+      )
+    );
+
+  opacity:.72;
+}
+
+.wf-crystal--wire.is-near-crystal{
+  width:46px;
+  height:46px;
+}
+
+.wf-crystal--facet.is-near-crystal{
+  width:30px;
+  height:30px;
+}
+
+/* ------------------------------------------------------
+   SIX-RAY ICE FLARE
+------------------------------------------------------ */
+
+.wf-crystal--flare{
+  width:42px;
+  height:42px;
+
+  opacity:.58;
+
+  filter:
+    drop-shadow(
+      0 0 10px
+      rgba(
+        190,
+        236,
+        255,
+        .36
+      )
+    )
+    drop-shadow(
+      0 0 22px
+      rgba(
+        119,
+        194,
+        255,
+        .16
+      )
+    );
+
+  mix-blend-mode:screen;
+}
+
+.wf-crystal--flare span{
+  position:absolute;
+
+  left:50%;
+  top:50%;
+
+  width:1px;
+  height:100%;
+
+  transform-origin:center;
+
+  background:
+    linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(
+        226,
+        248,
+        255,
+        .22
+      ) 16%,
+      rgba(
+        238,
+        251,
+        255,
+        .92
+      ) 48%,
+      rgba(
+        192,
+        232,
+        255,
+        .28
+      ) 82%,
+      transparent 100%
+    );
+
+  box-shadow:
+    0 0 6px
+    rgba(
+      206,
+      242,
+      255,
+      .42
+    );
+}
+
+.wf-crystal--flare span:nth-child(1){
+  transform:
+    translate(
+      -50%,
+      -50%
+    )
+    rotate(0deg);
+}
+
+.wf-crystal--flare span:nth-child(2){
+  transform:
+    translate(
+      -50%,
+      -50%
+    )
+    rotate(60deg);
+}
+
+.wf-crystal--flare span:nth-child(3){
+  transform:
+    translate(
+      -50%,
+      -50%
+    )
+    rotate(120deg);
+}
+
+.wf-crystal--flare::before{
+  content:"";
+
+  position:absolute;
+
+  left:50%;
+  top:50%;
+
+  width:7px;
+  height:7px;
+
+  transform:
+    translate(
+      -50%,
+      -50%
+    );
+
+  border-radius:50%;
+
+  background:
+    rgba(
+      244,
+      253,
+      255,
+      .92
+    );
+
+  box-shadow:
+    0 0 8px
+      rgba(
+        223,
+        247,
+        255,
+        .85
+      ),
+    0 0 22px
+      rgba(
+        138,
+        210,
+        255,
+        .38
+      ),
+    0 0 40px
+      rgba(
+        104,
+        164,
+        255,
+        .14
+      );
+
+  animation:
+    wfIceFlarePulse
+    calc(
+      5.6s
+      * var(--wf-speed-factor)
+    )
+    ease-in-out
+    infinite;
+}
+
+.wf-crystal--flare.is-near-crystal{
+  width:72px;
+  height:72px;
+
+  opacity:.68;
+
+  filter:
+    blur(.10px)
+    drop-shadow(
+      0 0 20px
+      rgba(
+        181,
+        232,
+        255,
+        .34
+      )
+    );
+}
+
+/* ------------------------------------------------------
+   SUBTLE LIGHT VEIL
+------------------------------------------------------ */
+
+.wf-layer--outer::before,
+.wf-layer--outer::after{
+  content:"";
+
+  position:absolute;
+
+  pointer-events:none;
+
+  border-radius:50%;
+
+  filter:
+    blur(30px);
+
+  mix-blend-mode:screen;
+}
+
+.wf-layer--outer::before{
+  width:420px;
+  height:180px;
+
+  left:-120px;
+  top:18%;
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(
+        111,
+        194,
+        255,
+        .10
+      ),
+      transparent 70%
+    );
+
+  animation:
+    wfVeilDriftA
+    calc(
+      26s
+      * var(--wf-speed-factor)
+    )
+    ease-in-out
+    infinite alternate;
+}
+
+.wf-layer--outer::after{
+  width:460px;
+  height:200px;
+
+  right:-150px;
+  bottom:13%;
+
+  background:
+    radial-gradient(
+      ellipse,
+      rgba(
+        161,
+        146,
+        255,
+        .08
+      ),
+      transparent 72%
+    );
+
+  animation:
+    wfVeilDriftB
+    calc(
+      32s
+      * var(--wf-speed-factor)
+    )
+    ease-in-out
+    infinite alternate;
+}
+
+/* ------------------------------------------------------
+   ANIMATIONS
+------------------------------------------------------ */
+
+@keyframes wfHudPing{
+  0%,
+  78%,
+  100%{
+    opacity:.32;
+
+    transform:
+      scale(.82);
+  }
+
+  84%{
+    opacity:1;
+
+    transform:
+      scale(1.45);
+  }
+
+  90%{
+    opacity:.55;
+
+    transform:
+      scale(1);
+  }
+}
+
+@keyframes wfIceFlarePulse{
+  0%,
+  74%,
+  100%{
+    opacity:.34;
+
+    transform:
+      translate(
+        -50%,
+        -50%
+      )
+      scale(.74);
+  }
+
+  82%{
+    opacity:1;
+
+    transform:
+      translate(
+        -50%,
+        -50%
+      )
+      scale(1.45);
+  }
+
+  89%{
+    opacity:.52;
+
+    transform:
+      translate(
+        -50%,
+        -50%
+      )
+      scale(.92);
+  }
+}
+
+@keyframes wfVeilDriftA{
+  from{
+    transform:
+      translate3d(
+        -20px,
+        -10px,
+        0
+      );
+  }
+
+  to{
+    transform:
+      translate3d(
+        120px,
+        55px,
+        0
+      );
+  }
+}
+
+@keyframes wfVeilDriftB{
+  from{
+    transform:
+      translate3d(
+        30px,
+        20px,
+        0
+      );
+  }
+
+  to{
+    transform:
+      translate3d(
+        -120px,
+        -50px,
+        0
+      );
+  }
+}
+
+@media (prefers-reduced-motion: reduce){
+
+  .wf-log.is-hudline::after,
+  .wf-crystal--flare::before,
+  .wf-layer--outer::before,
+  .wf-layer--outer::after{
+    animation:none !important;
+  }
+}
+
+/* ==== WORLD FRAME V3 DEPTH POLISH END ==== */

@@ -70,9 +70,12 @@
       const el = document.createElement('div');
 
       const depthRoll = Math.random();
-      if (depthRoll > 0.72) {
+
+      if (depthRoll > 0.91) {
+        el.className = 'wf-stream is-foreground';
+      } else if (depthRoll > 0.70) {
         el.className = 'wf-stream is-near';
-      } else if (depthRoll < 0.28) {
+      } else if (depthRoll < 0.30) {
         el.className = 'wf-stream is-far';
       } else {
         el.className = 'wf-stream';
@@ -114,7 +117,11 @@
 
     for (let i = 0; i < count; i += 1) {
       const el = document.createElement('div');
-      el.className = 'wf-log';
+
+      el.className =
+        Math.random() > 0.54
+          ? 'wf-log is-hudline'
+          : 'wf-log';
 
       const lines = randInt(2, 4);
       const parts = [];
@@ -152,6 +159,19 @@
     return el;
   }
 
+  function createFlareCrystal() {
+    const el = document.createElement('div');
+    el.className = 'wf-crystal wf-crystal--flare';
+
+    for (let index = 0; index < 3; index += 1) {
+      el.appendChild(
+        document.createElement('span')
+      );
+    }
+
+    return el;
+  }
+
   function buildCrystals(count) {
     crystalsLayer.innerHTML = '';
     const width = app.clientWidth;
@@ -160,12 +180,24 @@
     for (let i = 0; i < count; i += 1) {
       let el;
       const typeRoll = Math.random();
-      if (typeRoll < 0.52) {
+
+      if (typeRoll < 0.46) {
         el = createDustCrystal();
-      } else if (typeRoll < 0.82) {
+      } else if (typeRoll < 0.72) {
         el = createWireCrystal();
-      } else {
+      } else if (typeRoll < 0.88) {
         el = createFacetCrystal();
+      } else {
+        el = createFlareCrystal();
+      }
+
+      if (
+        !el.classList.contains('wf-crystal--dust') &&
+        Math.random() > 0.88
+      ) {
+        el.classList.add(
+          'is-near-crystal'
+        );
       }
 
       el.style.left = `${rand(0, width)}px`;
