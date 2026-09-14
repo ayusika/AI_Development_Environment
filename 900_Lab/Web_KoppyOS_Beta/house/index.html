@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Koppy Home / 自宅</title>
 
-  <!-- Legacy shared styles remain during Phase 1 -->
-  <link rel="stylesheet" href="../assets/css/style.css">
-
   <!-- World Frame shared design system -->
   <link rel="stylesheet" href="../assets/css/world-frame-tokens.css">
   <link rel="stylesheet" href="../assets/css/world-frame.css">
@@ -140,17 +137,104 @@
 
           <!-- Layer 3 / existing Home content -->
           <main class="world house">
-    <header><p class="eyebrow">KOPPY HOME</p><h1>🏠 自宅</h1><p>部屋ごとのデバイスを確認する場所</p></header>
-    <p id="houseStatus" role="status" aria-live="polite">自宅データを読み込んでいます……</p>
-    <a id="houseLogin" class="main-button" href="https://koppy.miki-piano.com/api/v1/auth/login.php" hidden>GitHubでログイン</a>
-    <button id="houseRetry" type="button">再読み込み</button>
-    <div id="houseRooms">
-      <section class="panel"><h2>リビング・キッチン</h2></section>
-      <section class="panel"><h2>寝室</h2></section>
-      <section class="panel"><h2>ゲーム部屋</h2><h3>デスク周り接続マップ</h3><p>接続情報を読み込んでいます……</p></section>
-      <section class="panel"><h2>持ち運び</h2></section>
-    </div>
-    <noscript>自宅データの表示にはJavaScriptを有効にしてください。</noscript>
+            <header class="house-hero">
+              <p class="eyebrow wf-eyebrow">
+                KOPPY HOME
+              </p>
+
+              <h1>
+                🏠 自宅
+              </h1>
+
+              <p class="house-hero-copy wf-hero-copy">
+                部屋ごとのデバイスを確認する場所
+              </p>
+            </header>
+
+            <div class="house-status-area">
+              <p
+                id="houseStatus"
+                class="house-status"
+                role="status"
+                aria-live="polite"
+              >
+                自宅データを読み込んでいます……
+              </p>
+
+              <div class="house-actions">
+                <a
+                  id="houseLogin"
+                  class="wf-action"
+                  href="https://koppy.miki-piano.com/api/v1/auth/login.php"
+                  hidden
+                >
+                  GitHubでログイン
+                  <span>→</span>
+                </a>
+
+                <button
+                  id="houseRetry"
+                  class="wf-action"
+                  type="button"
+                >
+                  再読み込み
+                  <span>↻</span>
+                </button>
+              </div>
+            </div>
+            <div id="houseRooms">
+              <section
+                class="panel"
+                data-wf-panel
+                data-wf-panel-surface
+              >
+                <h2 class="wf-panel-title">
+                  リビング・キッチン
+                </h2>
+              </section>
+
+              <section
+                class="panel"
+                data-wf-panel
+                data-wf-panel-surface
+              >
+                <h2 class="wf-panel-title">
+                  寝室
+                </h2>
+              </section>
+
+              <section
+                class="panel"
+                data-wf-panel
+                data-wf-panel-surface
+              >
+                <h2 class="wf-panel-title">
+                  ゲーム部屋
+                </h2>
+
+                <h3>
+                  デスク周り接続マップ
+                </h3>
+
+                <p>
+                  接続情報を読み込んでいます……
+                </p>
+              </section>
+
+              <section
+                class="panel"
+                data-wf-panel
+                data-wf-panel-surface
+              >
+                <h2 class="wf-panel-title">
+                  持ち運び
+                </h2>
+              </section>
+            </div>
+
+            <noscript>
+              自宅データの表示にはJavaScriptを有効にしてください。
+            </noscript>
           </main>
 
           <footer

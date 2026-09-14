@@ -29,7 +29,15 @@
     const byId = new Map(data.devices.map(device => [String(device.id), device]));
     for (const room of data.rooms) {
       const section = node('section', null, 'panel');
-      section.append(node('h2', room.name));
+      section.dataset.wfPanel = '';
+      section.dataset.wfPanelSurface = '';
+      section.append(
+        node(
+          'h2',
+          room.name,
+          'wf-panel-title'
+        )
+      );
       section.append(deviceList(data.devices.filter(device => String(device.room_id) === String(room.id))));
       if (room.code === 'gaming') {
         const map = node('div', null, 'connections');
@@ -51,7 +59,21 @@
       fragment.append(section);
     }
     const portable = node('section', null, 'panel');
-    portable.append(node('h2', '持ち運び'), deviceList(data.devices.filter(device => Number(device.portable) === 1)));
+    portable.dataset.wfPanel = '';
+    portable.dataset.wfPanelSurface = '';
+    portable.append(
+      node(
+        'h2',
+        '持ち運び',
+        'wf-panel-title'
+      ),
+      deviceList(
+        data.devices.filter(
+          device =>
+            Number(device.portable) === 1
+        )
+      )
+    );
     fragment.append(portable);
     roomsElement.replaceChildren(fragment);
   }
