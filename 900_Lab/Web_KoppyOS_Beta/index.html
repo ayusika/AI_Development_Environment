@@ -9,100 +9,67 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="./assets/css/style.css">
+
+  <!-- Koppy World Design System -->
+  <link rel="stylesheet" href="./assets/css/world-frame-tokens.css">
+  <link rel="stylesheet" href="./assets/css/world-frame.css">
+  <link rel="stylesheet" href="./assets/css/world-frame-polish.css">
+  <link rel="stylesheet" href="./assets/css/world-frame-shell.css">
+
+  <!-- Home-specific layout -->
   <link rel="stylesheet" href="./assets/css/home.css">
 </head>
-<body class="kw-body">
-  <!-- KOPPY OUTER CYBER SPACE START -->
-  <div class="kw-outer-space" aria-hidden="true">
-    <div class="kw-outer-wall kw-outer-wall-left">
-      <div class="kw-outer-code kw-code-a">
-        01001101 00110110 01010101 00101101 01001011 01100101 00110101 01001001 01101001 01010101 00110010
-      </div>
-      <div class="kw-outer-code kw-code-b">
-        00110101 01101001 01001100 00101110 01010101 00110001 01100101 01001011 00110110 01010101 01100010
-      </div>
-      <div class="kw-outer-code kw-code-c">
-        01010110 00101101 01100110 01001001 00110011 01010101 01101001 00110101 01001011 01100101 00101101
-      </div>
-      <div class="kw-outer-code kw-code-d">
-        01100110 01001011 00110100 01010101 00101101 01101001 01001100 00110110 01010101 00110010 01100101
-      </div>
-      <div class="kw-outer-code kw-code-e">
-        00101101 01010101 00110001 01100101 01001011 00110110 01010101 01100010 00110101 01001001 01101001
-      </div>
-    </div>
+<body
+  class="kw-body"
+  data-wf-profile="world"
+>
 
-    <div class="kw-outer-wall kw-outer-wall-right">
-      <div class="kw-outer-code kw-code-f">
-        10100110 01011001 00101101 01101010 01010100 00110011 01100101 01001001 00110101 01010110 01100010
-      </div>
-      <div class="kw-outer-code kw-code-g">
-        01011010 00110101 01101001 01001100 00101110 01010110 00110001 01100101 01001011 00110110 01010101
-      </div>
-      <div class="kw-outer-code kw-code-h">
-        00110101 01010110 01100010 00101101 01001001 01101001 00110011 01010101 01100101 00110101 01001011
-      </div>
-      <div class="kw-outer-code kw-code-i">
-        01100101 00110101 01001011 00101101 01010110 01100010 00110001 01001001 01101001 01010101 00110110
-      </div>
-      <div class="kw-outer-code kw-code-j">
-        00101110 01010110 00110001 01100101 01001011 00110110 01010101 01100010 00110101 01001001 01101001
-      </div>
-    </div>
+  <!-- KOPPY WORLD SHARED FRAME / LAYER 1 -->
+  <div
+    class="wf-app kw-world-engine"
+    id="wfApp"
+    data-theme="ice"
+    data-motion="rich"
+    data-wf-page="world"
+    data-wf-seed="4812"
+    data-wf-density="1"
+    data-wf-quality="balanced"
+    data-wf-readable-zone="on"
+    aria-hidden="true"
+  >
+    <div class="wf-stage">
+      <div class="wf-layer wf-layer--outer">
+        <div
+          class="wf-stars"
+          data-layer="stars"
+        ></div>
 
-    <div class="kw-outer-log kw-outer-log-left">
-      <span>WORLD_LAYER / 07</span>
-      <span>ICE_NETWORK :: ONLINE</span>
-      <span>MEMORY_CORE :: SYNC</span>
-      <span>KOPPY_LINK :: ACTIVE</span>
-    </div>
+        <div
+          class="wf-streams"
+          data-layer="streams"
+        ></div>
 
-    <div class="kw-outer-log kw-outer-log-right">
-      <span>PRIVATE_OS :: READY</span>
-      <span>NODE_MAP :: 05</span>
-      <span>HOME_LINK :: STABLE</span>
-      <span>DATA_DEPTH :: 92%</span>
+        <div
+          class="wf-logs"
+          data-layer="logs"
+        ></div>
+
+        <div
+          class="wf-crystals"
+          data-layer="crystals"
+        ></div>
+      </div>
     </div>
   </div>
-  <!-- KOPPY OUTER CYBER SPACE END -->
-  <main class="kw-app">
-    <!-- KOPPY WORLD ICE BINARY FIELD -->
-    <div class="kw-binary-field" aria-hidden="true">
-      <span
-        class="kw-binary-stream"
-        style="--x:5%; --dur:31s; --delay:-9s; --alpha:.78;"
-      >0101101001011010010110100101101001011010010110100101101001011010</span>
 
-      <span
-        class="kw-binary-stream"
-        style="--x:18%; --dur:37s; --delay:-21s; --alpha:.46;"
-      >1010011010100101100101011001010110100101101010010110010101100101</span>
-
-      <span
-        class="kw-binary-stream"
-        style="--x:34%; --dur:27s; --delay:-14s; --alpha:.62;"
-      >0010110101001011010010110100101101001011010010110100101101001011</span>
-
-      <span
-        class="kw-binary-stream kw-binary-stream-bright"
-        style="--x:51%; --dur:42s; --delay:-29s; --alpha:.52;"
-      >0101011001010110010101100101011001010110010101100101011001010110</span>
-
-      <span
-        class="kw-binary-stream"
-        style="--x:67%; --dur:33s; --delay:-17s; --alpha:.72;"
-      >1100101011010010110100101101001011010010110100101101001011010010</span>
-
-      <span
-        class="kw-binary-stream"
-        style="--x:82%; --dur:39s; --delay:-6s; --alpha:.48;"
-      >0100110101001101010011010100110101001101010011010100110101001101</span>
-
-      <span
-        class="kw-binary-stream kw-binary-stream-bright"
-        style="--x:94%; --dur:29s; --delay:-19s; --alpha:.64;"
-      >1011010010110100101101001011010010110100101101001011010010110100</span>
-    </div>
+  <!-- KOPPY WORLD SHARED FRAME / LAYER 2 -->
+  <main
+    class="kw-app"
+    data-wf-shell
+    data-wf-shell-mode="frost"
+    data-wf-shell-opacity="0.20"
+    data-wf-shell-blur="16"
+  >
     <header class="kw-topbar">
       <a class="kw-brand" href="./" aria-label="Koppy World ホーム">
         <span class="kw-brand-mark">◇K</span>
@@ -252,5 +219,11 @@
       <span>ICE BLUE PRIVATE OS</span>
     </footer>
   </main>
+  <!-- Koppy World shared runtime -->
+  <script src="./assets/js/world-frame.js"></script>
+  <script src="./assets/js/world-frame-polish.js"></script>
+  <script src="./assets/js/world-frame-shell.js"></script>
+  <script src="./assets/js/world-frame-profiles.js"></script>
+  <script src="./assets/js/world-frame-runtime.js"></script>
 </body>
 </html>
