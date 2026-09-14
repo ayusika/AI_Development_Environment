@@ -8,7 +8,10 @@
     <link rel="stylesheet" href="../assets/css/world-frame-polish.css">
     <link rel="stylesheet" href="../assets/css/world-frame-shell.css">
 </head>
-<body class="world-frame-body">
+<body
+  class="world-frame-body"
+  data-world-frame-lab="true"
+>
   <div class="wf-lab">
     <header class="wf-lab__header">
       <div class="wf-lab__brand">
@@ -68,6 +71,7 @@
             <button type="button" class="wf-theme" data-theme-set="aqua"   style="background:linear-gradient(135deg,#7afff2,#1ca4ff);" aria-label="Aqua"></button>
             <button type="button" class="wf-theme" data-theme-set="violet" style="background:linear-gradient(135deg,#d1c7ff,#678fff);" aria-label="Violet"></button>
             <button type="button" class="wf-theme" data-theme-set="pink"   style="background:linear-gradient(135deg,#ffc2eb,#78cfff);" aria-label="Pink Frost"></button>
+            <button type="button" class="wf-theme" data-theme-set="electric" style="background:linear-gradient(135deg,#76edff,#326cff);" aria-label="Electric Blue"></button>
           </div>
         </section>
 
@@ -102,7 +106,13 @@
               </div>
 
               <div class="wf-layer wf-layer--shell">
-                <div class="wf-shell">
+                <div
+                  class="wf-shell"
+                  data-wf-shell
+                  data-wf-shell-mode="frost"
+                  data-wf-shell-opacity="0.20"
+                  data-wf-shell-blur="16"
+                >
                   <div class="wf-shell__edge"></div>
 
                   <div class="wf-shell__content">
@@ -259,5 +269,6 @@
   <script src="../assets/js/world-frame.js"></script>
     <script src="../assets/js/world-frame-polish.js"></script>
     <script src="../assets/js/world-frame-shell.js"></script>
+    <script src="../assets/js/world-frame-profiles.js"></script>
 </body>
 </html>

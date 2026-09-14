@@ -1,0 +1,373 @@
+(() => {
+  "use strict";
+
+  const PROFILES = {
+    world: {
+      label: "WORLD",
+      theme: "ice",
+      motion: "rich",
+      shellMode: "frost",
+      opacity: 0.20,
+      blur: 16
+    },
+
+    work: {
+      label: "WORK",
+      theme: "electric",
+      motion: "normal",
+      shellMode: "dense",
+      opacity: 0.28,
+      blur: 22
+    },
+
+    home: {
+      label: "HOME",
+      theme: "aqua",
+      motion: "calm",
+      shellMode: "clear",
+      opacity: 0.14,
+      blur: 10
+    },
+
+    brain: {
+      label: "BRAIN",
+      theme: "violet",
+      motion: "normal",
+      shellMode: "frost",
+      opacity: 0.22,
+      blur: 18
+    },
+
+    koppy: {
+      label: "KOPPY",
+      theme: "pink",
+      motion: "calm",
+      shellMode: "clear",
+      opacity: 0.16,
+      blur: 12
+    },
+
+    tools: {
+      label: "TOOLS",
+      theme: "electric",
+      motion: "rich",
+      shellMode: "frost",
+      opacity: 0.24,
+      blur: 16
+    }
+  };
+
+  const MODES = [
+    "clear",
+    "frost",
+    "dense"
+  ];
+
+  const clamp = (
+    value,
+    min,
+    max
+  ) => Math.max(
+    min,
+    Math.min(
+      max,
+      Number(value)
+    )
+  );
+
+  const getApp = () =>
+    document.querySelector(
+      "#wfApp"
+    );
+
+  const getShell = () =>
+    document.querySelector(
+      "[data-wf-shell]"
+    ) ||
+    document.querySelector(
+      ".wf-shell-surface"
+    );
+
+  const updateShellControls = (
+    opacity,
+    blur,
+    mode
+  ) => {
+    const opacityInput =
+      document.querySelector(
+        "[data-wf-shell-opacity]"
+      );
+
+    const blurInput =
+      document.querySelector(
+        "[data-wf-shell-blur]"
+      );
+
+    const opacityValue =
+      document.querySelector(
+        ".wf-shell-opacity-value"
+      );
+
+    const blurValue =
+      document.querySelector(
+        ".wf-shell-blur-value"
+      );
+
+    if (opacityInput) {
+      opacityInput.value =
+        String(
+          Math.round(
+            opacity * 100
+          )
+        );
+    }
+
+    if (blurInput) {
+      blurInput.value =
+        String(blur);
+    }
+
+    if (opacityValue) {
+      opacityValue.textContent =
+        Math.round(
+          opacity * 100
+        ) + "%";
+    }
+
+    if (blurValue) {
+      blurValue.textContent =
+        blur + "px";
+    }
+
+    document
+      .querySelectorAll(
+        ".wf-shell-mode-btn"
+      )
+      .forEach(button => {
+        button.classList.toggle(
+          "is-active",
+          button.dataset.mode === mode
+        );
+      });
+  };
+
+  const apply = (name) => {
+    const profile =
+      PROFILES[name];
+
+    if (!profile) {
+      return;
+    }
+
+    const app =
+      getApp();
+
+    const shell =
+      getShell();
+
+    if (!app || !shell) {
+      return;
+    }
+
+    /*
+       Reuse the existing Lab controls when available,
+       so world-frame.js can rebuild motion density too.
+    */
+
+    const themeButton =
+      document.querySelector(
+        `[data-theme-set="${profile.theme}"]`
+      );
+
+    const motionButton =
+      document.querySelector(
+        `[data-motion-set="${profile.motion}"]`
+      );
+
+    if (themeButton) {
+      themeButton.click();
+    } else {
+      app.dataset.theme =
+        profile.theme;
+    }
+
+    if (motionButton) {
+      motionButton.click();
+    } else {
+      app.dataset.motion =
+        profile.motion;
+    }
+
+    MODES.forEach(mode => {
+      shell.classList.remove(
+        "wf-shell-mode-" + mode
+      );
+    });
+
+    shell.classList.add(
+      "wf-shell-mode-" +
+      profile.shellMode
+    );
+
+    const opacity =
+      clamp(
+        profile.opacity,
+        0,
+        0.55
+      );
+
+    const blur =
+      clamp(
+        profile.blur,
+        0,
+        40
+      );
+
+    shell.style.setProperty(
+      "--wf-shell-opacity",
+      String(opacity)
+    );
+
+    shell.style.setProperty(
+      "--wf-shell-blur",
+      blur + "px"
+    );
+
+    shell.dataset.wfShellMode =
+      profile.shellMode;
+
+    shell.dataset.wfShellOpacity =
+      String(opacity);
+
+    shell.dataset.wfShellBlur =
+      String(blur);
+
+    updateShellControls(
+      opacity,
+      blur,
+      profile.shellMode
+    );
+
+    document
+      .querySelectorAll(
+        "[data-wf-profile]"
+      )
+      .forEach(button => {
+        button.classList.toggle(
+          "is-active",
+          button.dataset.wfProfile === name
+        );
+      });
+  };
+
+  const buildLabControls = () => {
+    if (
+      document.body.dataset.worldFrameLab !== "true"
+    ) {
+      return;
+    }
+
+    const controls =
+      document.querySelector(
+        ".wf-shell-controls"
+      );
+
+    if (
+      !controls ||
+      controls.querySelector(
+        "[data-wf-profile]"
+      )
+    ) {
+      return;
+    }
+
+    const block =
+      document.createElement(
+        "div"
+      );
+
+    block.className =
+      "wf-shell-control wf-shell-profile-control";
+
+    const label =
+      document.createElement(
+        "label"
+      );
+
+    label.textContent =
+      "Page profile";
+
+    const group =
+      document.createElement(
+        "div"
+      );
+
+    group.className =
+      "wf-shell-profile-group";
+
+    Object
+      .entries(PROFILES)
+      .forEach(
+        ([name, profile]) => {
+          const button =
+            document.createElement(
+              "button"
+            );
+
+          button.type =
+            "button";
+
+          button.className =
+            "wf-shell-profile-btn";
+
+          button.dataset.wfProfile =
+            name;
+
+          button.textContent =
+            profile.label;
+
+          button.addEventListener(
+            "click",
+            () => {
+              apply(name);
+            }
+          );
+
+          group.appendChild(
+            button
+          );
+        }
+      );
+
+    block.append(
+      label,
+      group
+    );
+
+    controls.appendChild(
+      block
+    );
+
+    apply("world");
+  };
+
+  window.KoppyWorldProfiles = {
+    profiles: PROFILES,
+    apply
+  };
+
+  if (
+    document.readyState ===
+    "loading"
+  ) {
+    document.addEventListener(
+      "DOMContentLoaded",
+      buildLabControls,
+      {
+        once: true
+      }
+    );
+  } else {
+    buildLabControls();
+  }
+})();

@@ -2144,3 +2144,27 @@ body.wf-focus-active .wf-focus-exit{
 }
 
 /* ==== WORLD FRAME V3 DEPTH POLISH END ==== */
+
+/* ==== WORLD FRAME ELECTRIC THEME START ==== */
+
+.wf-app[data-theme="electric"]{
+  --wf-bg-0:#020c1d;
+  --wf-bg-1:#061a36;
+  --wf-bg-2:#0b3f75;
+
+  --wf-bg-glow:#53c8ff;
+
+  --wf-accent:#72e1ff;
+  --wf-accent-2:#438dff;
+  --wf-accent-3:#b7f3ff;
+
+  --wf-binary:rgba(105, 211, 255, .30);
+  --wf-binary-soft:rgba(105, 211, 255, .13);
+
+  --wf-log:rgba(172, 227, 255, .46);
+
+  --wf-crystal:#d2f6ff;
+  --wf-crystal-wire:rgba(171, 233, 255, .38);
+}
+
+/* ==== WORLD FRAME ELECTRIC THEME END ==== */

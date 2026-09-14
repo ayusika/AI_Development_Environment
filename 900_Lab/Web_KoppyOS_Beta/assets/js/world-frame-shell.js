@@ -61,6 +61,7 @@
 
     function pickShellTarget(){
         const preferred = [
+            '[data-wf-shell]',
             '.wfl-focus-stage',
             '.wf-focus-stage',
             '.wfl-preview-stage',
@@ -230,6 +231,7 @@
         const opacityValue = create('div', 'wf-shell-value wf-shell-opacity-value', '20%');
         const opacityInput = create('input');
         opacityInput.type = 'range';
+        opacityInput.dataset.wfShellOpacity = '';
         opacityInput.min = '0';
         opacityInput.max = '55';
         opacityInput.step = '1';
@@ -255,6 +257,7 @@
         const blurValue = create('div', 'wf-shell-value wf-shell-blur-value', '16px');
         const blurInput = create('input');
         blurInput.type = 'range';
+        blurInput.dataset.wfShellBlur = '';
         blurInput.min = '0';
         blurInput.max = '40';
         blurInput.step = '1';
@@ -315,7 +318,54 @@
 
         target.classList.add('wf-shell-surface');
         ensureInnerWrap(target);
-        buildControls(target);
+
+        const mode =
+            target.dataset.wfShellMode ||
+            'frost';
+
+        const opacity =
+            Number(
+                target.dataset.wfShellOpacity ??
+                PRESETS[mode]?.opacity ??
+                PRESETS.frost.opacity
+            );
+
+        const blur =
+            Number(
+                target.dataset.wfShellBlur ??
+                PRESETS[mode]?.blur ??
+                PRESETS.frost.blur
+            );
+
+        MODES.forEach(m => {
+            target.classList.remove(
+                'wf-shell-mode-' + m
+            );
+        });
+
+        target.classList.add(
+            'wf-shell-mode-' + mode
+        );
+
+        applyOpacity(
+            target,
+            opacity
+        );
+
+        applyBlur(
+            target,
+            blur
+        );
+
+        /*
+           Lab-only.
+           Production pages will NOT grow sliders.
+        */
+        if (
+            document.body.dataset.worldFrameLab === 'true'
+        ){
+            buildControls(target);
+        }
     }
 
     if (document.readyState === 'loading'){
