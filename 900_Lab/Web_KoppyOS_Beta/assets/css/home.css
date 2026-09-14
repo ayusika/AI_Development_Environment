@@ -3584,3 +3584,121 @@ body::after{
 }
 
 /* KOPPY WORLD V8 END */
+
+/* KOPPY WORLD V9 START */
+
+.kw-data-river{
+    display:none !important;
+}
+
+.kw-hero{
+    position:relative;
+    overflow:hidden;
+    isolation:isolate;
+}
+
+.kw-hero > :not(.kw-hero-binary){
+    position:relative;
+    z-index:2;
+}
+
+.kw-hero-binary{
+    position:absolute;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    overflow:hidden;
+}
+
+.kw-hero-binary::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+        radial-gradient(circle at 50% 42%, rgba(93, 174, 255, 0.11), transparent 24%),
+        radial-gradient(circle at 18% 50%, rgba(108, 198, 255, 0.06), transparent 18%),
+        radial-gradient(circle at 84% 50%, rgba(162, 187, 255, 0.05), transparent 18%);
+    opacity:0.95;
+}
+
+.kw-hero-binary__plane{
+    position:absolute;
+    top:14%;
+    width:42%;
+    white-space:pre;
+    font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size:11px;
+    line-height:2.5;
+    letter-spacing:0.42em;
+    color:rgba(153, 223, 255, 0.11);
+    text-shadow:
+        0 0 10px rgba(116, 202, 255, 0.14),
+        0 0 20px rgba(116, 202, 255, 0.08);
+    user-select:none;
+    filter:blur(0.15px);
+}
+
+.kw-hero-binary__plane--left{
+    left:-2%;
+    transform-origin:left center;
+    transform:perspective(1200px) rotateY(48deg) rotateX(2deg);
+    opacity:0.78;
+    mask-image:linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.96) 16%, rgba(0,0,0,0.92) 72%, transparent 100%);
+    -webkit-mask-image:linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.96) 16%, rgba(0,0,0,0.92) 72%, transparent 100%);
+    animation:kwHeroBinaryLeft 18s ease-in-out infinite;
+}
+
+.kw-hero-binary__plane--right{
+    right:-3%;
+    text-align:right;
+    transform-origin:right center;
+    transform:perspective(1200px) rotateY(-50deg) rotateX(2deg);
+    opacity:0.68;
+    mask-image:linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.90) 28%, rgba(0,0,0,0.96) 84%, transparent 100%);
+    -webkit-mask-image:linear-gradient(90deg, transparent 0%, rgba(0,0,0,0.90) 28%, rgba(0,0,0,0.96) 84%, transparent 100%);
+    animation:kwHeroBinaryRight 20s ease-in-out infinite;
+}
+
+@keyframes kwHeroBinaryLeft{
+    0%,100%{
+        transform:perspective(1200px) rotateY(48deg) rotateX(2deg) translate3d(0,0,0);
+    }
+    50%{
+        transform:perspective(1200px) rotateY(48deg) rotateX(2deg) translate3d(12px,-3px,0);
+    }
+}
+
+@keyframes kwHeroBinaryRight{
+    0%,100%{
+        transform:perspective(1200px) rotateY(-50deg) rotateX(2deg) translate3d(0,0,0);
+    }
+    50%{
+        transform:perspective(1200px) rotateY(-50deg) rotateX(2deg) translate3d(-14px,4px,0);
+    }
+}
+
+@media (max-width: 900px){
+    .kw-hero-binary__plane{
+        font-size:9px;
+        letter-spacing:0.28em;
+        line-height:2.25;
+        width:48%;
+    }
+
+    .kw-hero-binary__plane--left{
+        left:-8%;
+    }
+
+    .kw-hero-binary__plane--right{
+        right:-8%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce){
+    .kw-hero-binary__plane--left,
+    .kw-hero-binary__plane--right{
+        animation:none !important;
+    }
+}
+
+/* KOPPY WORLD V9 END */
