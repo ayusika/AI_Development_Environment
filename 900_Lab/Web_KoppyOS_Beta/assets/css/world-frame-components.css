@@ -367,3 +367,137 @@
       .58
     );
 }
+
+/* ==== WORLD FRAME PANEL TYPOGRAPHY V1 START ==== */
+
+/*
+   Layer 3 shared typography.
+
+   Page-specific CSS may override the variables,
+   without editing this shared component file.
+*/
+
+:root{
+  --wf-panel-title-size:
+    clamp(
+      24px,
+      2.2vw,
+      40px
+    );
+
+  --wf-panel-title-weight:
+    900;
+
+  --wf-panel-title-line:
+    1.1;
+
+  --wf-panel-copy-size:
+    18px;
+
+  --wf-panel-copy-line:
+    1.7;
+
+  --wf-panel-label-size:
+    12px;
+
+  --wf-panel-label-weight:
+    900;
+
+  --wf-panel-label-spacing:
+    .18em;
+}
+
+/* Node / system label */
+
+[data-wf-panel] [data-wf-label]{
+  margin:
+    0 0 6px;
+
+  color:
+    var(--wf-accent);
+
+  font-family:
+    var(--wf-font-mono);
+
+  font-size:
+    var(--wf-panel-label-size);
+
+  font-weight:
+    var(--wf-panel-label-weight);
+
+  line-height:
+    1;
+
+  letter-spacing:
+    var(--wf-panel-label-spacing);
+
+  text-transform:
+    uppercase;
+}
+
+/* Panel title */
+
+[data-wf-panel] .wf-panel-title{
+  margin:
+    0;
+
+  font-family:
+    var(--wf-font-ui);
+
+  font-size:
+    var(--wf-panel-title-size);
+
+  font-weight:
+    var(--wf-panel-title-weight);
+
+  line-height:
+    var(--wf-panel-title-line);
+
+  letter-spacing:
+    -.025em;
+}
+
+/* Panel description */
+
+[data-wf-panel] .wf-panel-copy{
+  margin:
+    18px 0 0;
+
+  color:
+    var(
+      --wf-text-soft,
+      #b5cfe6
+    );
+
+  font-family:
+    var(--wf-font-ui);
+
+  font-size:
+    var(--wf-panel-copy-size);
+
+  font-weight:
+    500;
+
+  line-height:
+    var(--wf-panel-copy-line);
+}
+
+/*
+   Action hooks.
+
+   Current Home styling is intentionally retained.
+   These classes establish the shared component contract
+   before the legacy Home rules are removed.
+*/
+
+.wf-action--portal{
+  --wf-action-role:
+    portal;
+}
+
+.wf-action--sub{
+  --wf-action-role:
+    sub;
+}
+
+/* ==== WORLD FRAME PANEL TYPOGRAPHY V1 END ==== */
