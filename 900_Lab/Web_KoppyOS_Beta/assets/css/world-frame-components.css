@@ -586,3 +586,181 @@
 }
 
 /* ==== WORLD FRAME PANEL TYPOGRAPHY V1 END ==== */
+
+/* ==== WORLD FRAME MICRO UI V1 START ==== */
+
+:root{
+  --wf-eyebrow-size:
+    14px;
+
+  --wf-eyebrow-weight:
+    800;
+
+  --wf-eyebrow-spacing:
+    .24em;
+
+  --wf-eyebrow-color:
+    var(
+      --wf-accent,
+      #80d8ff
+    );
+
+  --wf-chip-size:
+    12px;
+
+  --wf-chip-weight:
+    800;
+
+  --wf-chip-spacing:
+    .14em;
+
+  --wf-section-title-size:
+    32px;
+
+  --wf-section-title-weight:
+    900;
+
+  --wf-section-title-line:
+    1.2;
+}
+
+/* ---------------------------------------------------------
+   EYEBROW / SYSTEM KICKER
+--------------------------------------------------------- */
+
+.wf-eyebrow{
+  margin:
+    0 0 18px;
+
+  color:
+    var(--wf-eyebrow-color);
+
+  font-family:
+    var(--wf-font-ui);
+
+  font-size:
+    var(--wf-eyebrow-size);
+
+  font-weight:
+    var(--wf-eyebrow-weight);
+
+  line-height:
+    1.25;
+
+  letter-spacing:
+    var(--wf-eyebrow-spacing);
+
+  text-transform:
+    uppercase;
+}
+
+[data-wf-section-heading]
+.wf-eyebrow{
+  margin:
+    0;
+}
+
+/* ---------------------------------------------------------
+   CHIP ROW
+--------------------------------------------------------- */
+
+.wf-chip-row{
+  display:
+    flex;
+
+  flex-wrap:
+    wrap;
+
+  gap:
+    12px;
+
+  margin-top:
+    30px;
+}
+
+.wf-chip{
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  padding:
+    10px
+    14px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 30%,
+      transparent
+    );
+
+  border-radius:
+    var(
+      --wf-radius-pill,
+      999px
+    );
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      .06
+    );
+
+  backdrop-filter:
+    blur(12px);
+
+  -webkit-backdrop-filter:
+    blur(12px);
+
+  color:
+    #d8f7ff;
+
+  font-family:
+    var(--wf-font-ui);
+
+  font-size:
+    var(--wf-chip-size);
+
+  font-weight:
+    var(--wf-chip-weight);
+
+  line-height:
+    1;
+
+  letter-spacing:
+    var(--wf-chip-spacing);
+}
+
+/* ---------------------------------------------------------
+   SECTION TITLE
+--------------------------------------------------------- */
+
+.wf-section-title{
+  margin:
+    0;
+
+  font-family:
+    var(--wf-font-ui);
+
+  font-size:
+    var(--wf-section-title-size);
+
+  font-weight:
+    var(--wf-section-title-weight);
+
+  line-height:
+    var(--wf-section-title-line);
+
+  letter-spacing:
+    -.025em;
+}
+
+/* ==== WORLD FRAME MICRO UI V1 END ==== */
