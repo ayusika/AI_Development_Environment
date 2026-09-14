@@ -1,29 +1,98 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
-  >
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Koppy World Frame Lab</title>
-
-  <link
-    rel="stylesheet"
-    href="../assets/css/world-frame.css"
-  >
-
-  <script
-    src="../assets/js/world-frame.js"
-    defer
-  ></script>
+  <link rel="stylesheet" href="./frame-lab.css">
 </head>
+<body class="wf-page">
+  <div class="wf-bg" aria-hidden="true">
+    <div class="wf-stars"></div>
+    <div class="wf-binary-layer wf-binary-layer--far" id="wfBinaryFar"></div>
+    <div class="wf-binary-layer wf-binary-layer--mid" id="wfBinaryMid"></div>
+    <div class="wf-binary-layer wf-binary-layer--near" id="wfBinaryNear"></div>
+    <div class="wf-log-layer" id="wfLogLayer"></div>
+    <div class="wf-glow wf-glow--left"></div>
+    <div class="wf-glow wf-glow--right"></div>
+  </div>
 
-<body class="kw-frame-lab">
-  <div
-    class="kw-world-frame"
-    data-koppy-world-frame
-    aria-hidden="true"
-  ></div>
+  <main class="wf-shell">
+    <header class="wf-topbar">
+      <div class="wf-brand">
+        <div class="wf-brand__mark">◇K</div>
+        <div class="wf-brand__copy">
+          <strong>Koppy World</strong>
+          <span>ICE BLUE PRIVATE OS</span>
+        </div>
+      </div>
+
+      <nav class="wf-nav" aria-label="Frame lab nav">
+        <a href="#">Layer 1</a>
+        <a href="#">Layer 2</a>
+        <a href="#">Depth</a>
+        <a href="#">Logs</a>
+      </nav>
+
+      <div class="wf-status">World Frame Active</div>
+    </header>
+
+    <section class="wf-hero">
+      <div class="wf-hero__copy">
+        <p class="wf-eyebrow">WORLD FRAME LAB / STEP 1</p>
+        <h1>Outer Background Frame</h1>
+        <p>
+          外側背景の奥行き、0/1の散布、微小ログ、ガラスフレームの透け感を
+          検証するための専用ラボ。
+        </p>
+      </div>
+
+      <div class="wf-hero__meta">
+        <div class="wf-meta-card">
+          <span>Binary streams</span>
+          <strong>active</strong>
+        </div>
+        <div class="wf-meta-card">
+          <span>Depth layers</span>
+          <strong>3 layers</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="wf-frame">
+      <div class="wf-frame__label">LAYER 2 / INNER FRAME</div>
+
+      <div class="wf-frame__stage">
+        <article class="wf-panel wf-panel--wide">
+          <p class="wf-panel__eyebrow">PLACEHOLDER</p>
+          <h2>ここに各ページの中身を置く</h2>
+          <p>
+            この大きな透明フレームの中へ、ホーム画面・仕事OS・自宅・各ツールなどの
+            UIを差し込む想定。
+          </p>
+        </article>
+
+        <article class="wf-panel">
+          <p class="wf-panel__eyebrow">OPTION A</p>
+          <h3>ホーム画面</h3>
+          <p>World Directory / Node UI を配置</p>
+        </article>
+
+        <article class="wf-panel">
+          <p class="wf-panel__eyebrow">OPTION B</p>
+          <h3>各ページ共通化</h3>
+          <p>背景フレームを別ファイル化して移植</p>
+        </article>
+      </div>
+    </section>
+
+    <footer class="wf-footer">
+      <span>◇K Koppy World</span>
+      <span>Same Brain, A Brighter Tomorrow.</span>
+      <span>ICE BLUE PRIVATE OS</span>
+    </footer>
+  </main>
+
+  <script src="./frame-lab.js"></script>
 </body>
 </html>
