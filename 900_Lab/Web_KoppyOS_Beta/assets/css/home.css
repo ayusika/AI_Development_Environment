@@ -3150,3 +3150,165 @@ body.kw-body::before{
 }
 
 /* ==== KOPPY WORLD SHARED FRAME HOME V1 END ==== */
+
+/* ==== KOPPY WORLD SHARED PANELS V1 START ==== */
+
+/*
+   Layer 3 migration bridge.
+
+   Shared world-frame-components.css now owns:
+   - panel glass surface
+   - panel border
+   - panel shadow
+   - panel blur
+   - base decorative glow
+
+   Home still owns:
+   - grid geometry
+   - portal content layout
+   - node-specific color identity
+   - portal hover behavior
+
+   Once visually verified, duplicated legacy glass rules
+   can be removed safely in the cleanup pass.
+*/
+
+.kw-portal[data-wf-panel][data-wf-panel-surface]{
+  --wf-component-radius:
+    34px;
+
+  --wf-component-border:
+    var(--kw-border);
+
+  --wf-component-blur:
+    16px;
+
+  --wf-component-shadow:
+    inset 0 1px 0
+      rgba(255,255,255,.08),
+    0 12px 36px
+      rgba(8,20,42,.28);
+}
+
+/* Work / Cyan */
+
+.kw-portal-work[data-wf-panel]{
+  --wf-accent:
+    #72d8ff;
+
+  --wf-accent-2:
+    #4ca8ff;
+
+  --wf-component-bg:
+    rgba(78,148,205,.13);
+
+  --wf-component-bg-strong:
+    rgba(115,198,242,.18);
+}
+
+/* Home / Aqua */
+
+.kw-portal-home[data-wf-panel]{
+  --wf-accent:
+    #7deaff;
+
+  --wf-accent-2:
+    #59d3d9;
+
+  --wf-component-bg:
+    rgba(91,168,197,.13);
+
+  --wf-component-bg-strong:
+    rgba(128,224,230,.17);
+}
+
+/* Brain / Violet */
+
+.kw-portal-brain[data-wf-panel]{
+  --wf-accent:
+    #b4afff;
+
+  --wf-accent-2:
+    #877cff;
+
+  --wf-component-bg:
+    rgba(116,108,191,.14);
+
+  --wf-component-bg-strong:
+    rgba(170,161,255,.18);
+}
+
+/* Koppy / Pink Frost */
+
+.kw-portal-chat[data-wf-panel]{
+  --wf-accent:
+    #ffacd9;
+
+  --wf-accent-2:
+    #d585ff;
+
+  --wf-component-bg:
+    rgba(169,104,166,.14);
+
+  --wf-component-bg-strong:
+    rgba(255,163,218,.18);
+}
+
+/* Tools / Electric Ice */
+
+.kw-portal-tools[data-wf-panel]{
+  --wf-accent:
+    #7ce1ff;
+
+  --wf-accent-2:
+    #5b8eff;
+
+  --wf-component-bg:
+    rgba(72,136,190,.14);
+
+  --wf-component-bg-strong:
+    rgba(113,201,238,.18);
+}
+
+/*
+   Old .kw-portal::before carried a small decorative ring.
+   Shared panels also use ::before, so fully reset the
+   legacy geometry to prevent the two systems mixing.
+*/
+
+.kw-portal[data-wf-panel][data-wf-panel-surface]::before{
+  inset:
+    0;
+
+  width:
+    auto;
+
+  height:
+    auto;
+
+  border:
+    0;
+
+  border-radius:
+    inherit;
+
+  opacity:
+    1;
+
+  z-index:
+    0;
+}
+
+/*
+   Existing portal contents stay over the shared glow.
+*/
+
+.kw-portal[data-wf-panel][data-wf-panel-surface] > *{
+  position:
+    relative;
+
+  z-index:
+    1;
+}
+
+/* ==== KOPPY WORLD SHARED PANELS V1 END ==== */
