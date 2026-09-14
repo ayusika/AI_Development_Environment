@@ -493,11 +493,96 @@
 .wf-action--portal{
   --wf-action-role:
     portal;
+
+  justify-content:
+    space-between;
+
+  gap:
+    14px;
+
+  margin-top:
+    30px;
+
+  align-self:
+    flex-start;
+
+  min-width:
+    220px;
+
+  min-height:
+    0;
+
+  padding:
+    14px
+    18px;
+
+  color:
+    #eefaff;
+
+  font-weight:
+    800;
+
+  transition:
+    .25s ease;
 }
 
 .wf-action--sub{
   --wf-action-role:
     sub;
+
+  justify-content:
+    space-between;
+
+  gap:
+    14px;
+
+  width:
+    100%;
+
+  min-height:
+    0;
+
+  padding:
+    16px
+    18px;
+
+  color:
+    #eefaff;
+
+  font-weight:
+    800;
+
+  transition:
+    .25s ease;
+}
+
+.wf-action--portal > span,
+.wf-action--sub > span{
+  font-size:
+    18px;
+
+  line-height:
+    1;
+}
+
+/*
+   Shared keyboard focus.
+   Page-specific hover colors may still override the
+   border / background / shadow.
+*/
+
+.wf-action--portal:focus-visible,
+.wf-action--sub:focus-visible{
+  outline:
+    2px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 72%,
+      white
+    );
+
+  outline-offset:
+    2px;
 }
 
 /* ==== WORLD FRAME PANEL TYPOGRAPHY V1 END ==== */
