@@ -1,0 +1,210 @@
+/* =========================================================
+   KOHaku WORK NEXT / VERIFICATION EDIT V1
+========================================================= */
+
+.next-schedule-detail-footer{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+  gap:10px 12px;
+}
+
+.next-schedule-detail-footer-copy{
+  min-width:0;
+}
+
+.next-schedule-detail-footer #nextScheduleWriteStatus[data-state="writing"]{
+  color:#ffe58a;
+}
+
+.next-schedule-detail-footer #nextScheduleWriteStatus[data-state="error"]{
+  color:#ff9caf;
+}
+
+.next-schedule-detail-footer #nextScheduleWriteStatus[data-state="saved"]{
+  color:#8effc1;
+}
+
+.next-schedule-edit-open{
+  min-height:38px;
+  padding:8px 13px;
+  border:1px solid color-mix(in srgb,var(--wf-accent) 38%,transparent);
+  border-radius:12px;
+  color:var(--wf-text);
+  background:color-mix(in srgb,var(--wf-accent) 12%,transparent);
+  font:inherit;
+  font-size:10px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.next-schedule-edit-form{
+  display:block;
+}
+
+.next-schedule-edit-warning{
+  margin-bottom:14px;
+  padding:12px 13px;
+  border:1px solid rgba(255,216,104,.22);
+  border-radius:14px;
+  background:rgba(255,216,104,.055);
+}
+
+.next-schedule-edit-warning strong,
+.next-schedule-edit-warning span{
+  display:block;
+}
+
+.next-schedule-edit-warning strong{
+  color:#ffe58a;
+  font-size:11px;
+}
+
+.next-schedule-edit-warning span{
+  margin-top:4px;
+  color:var(--wf-text-dim);
+  font-size:9px;
+}
+
+.next-schedule-edit-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+
+.next-schedule-edit-grid label{
+  min-width:0;
+}
+
+.next-schedule-edit-grid label.is-wide{
+  grid-column:1 / -1;
+}
+
+.next-schedule-edit-grid label > span{
+  display:block;
+  margin:0 0 5px 2px;
+  color:var(--wf-text-dim);
+  font-size:9px;
+  font-weight:800;
+}
+
+.next-schedule-edit-grid input,
+.next-schedule-edit-grid select{
+  width:100%;
+  min-height:42px;
+  padding:8px 10px;
+  border:1px solid color-mix(in srgb,var(--wf-accent) 19%,transparent);
+  border-radius:11px;
+  color:var(--wf-text);
+  background:rgba(255,255,255,.045);
+  font:inherit;
+  font-size:12px;
+  outline:none;
+  color-scheme:dark;
+}
+
+.next-schedule-edit-grid input:focus,
+.next-schedule-edit-grid select:focus{
+  border-color:color-mix(in srgb,var(--wf-accent) 60%,transparent);
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--wf-accent) 12%,transparent);
+}
+
+.next-schedule-edit-grid input:disabled{
+  opacity:.48;
+  cursor:not-allowed;
+}
+
+.next-schedule-edit-lock-note,
+.next-schedule-edit-scope{
+  margin:10px 2px 0;
+  color:var(--wf-text-dim);
+  font-size:9px;
+  line-height:1.55;
+}
+
+.next-schedule-edit-lock-note{
+  color:#ffe58a;
+}
+
+.next-schedule-edit-change-request{
+  display:flex;
+  align-items:flex-start;
+  gap:9px;
+  margin-top:14px;
+  padding:11px 12px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;
+  background:rgba(255,255,255,.025);
+  color:var(--wf-text-soft);
+  font-size:10px;
+  line-height:1.45;
+}
+
+.next-schedule-edit-change-request input{
+  margin-top:2px;
+  accent-color:var(--wf-accent);
+}
+
+.next-schedule-edit-message{
+  min-height:18px;
+  margin:11px 2px 0;
+  color:#8effc1;
+  font-size:10px;
+  font-weight:800;
+}
+
+.next-schedule-edit-message.is-error{
+  color:#ff9caf;
+}
+
+.next-schedule-edit-actions{
+  display:grid;
+  grid-template-columns:1fr 1.25fr;
+  gap:9px;
+  margin-top:12px;
+}
+
+.next-schedule-edit-actions button{
+  min-height:42px;
+  padding:9px 11px;
+  border-radius:12px;
+  font:inherit;
+  font-size:10px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.next-schedule-edit-cancel{
+  border:1px solid rgba(255,255,255,.10);
+  color:var(--wf-text-soft);
+  background:rgba(255,255,255,.035);
+}
+
+.next-schedule-edit-save{
+  border:1px solid color-mix(in srgb,var(--wf-accent) 42%,transparent);
+  color:var(--wf-text);
+  background:color-mix(in srgb,var(--wf-accent) 15%,transparent);
+}
+
+.next-schedule-edit-actions button:disabled{
+  opacity:.5;
+  cursor:wait;
+}
+
+@media(max-width:420px){
+  .next-schedule-edit-grid{
+    grid-template-columns:1fr;
+  }
+
+  .next-schedule-edit-grid label.is-wide{
+    grid-column:auto;
+  }
+
+  .next-schedule-detail-footer{
+    grid-template-columns:1fr;
+  }
+
+  .next-schedule-edit-open{
+    width:100%;
+  }
+}

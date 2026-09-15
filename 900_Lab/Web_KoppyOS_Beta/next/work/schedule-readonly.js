@@ -330,6 +330,7 @@
     if (drawer) {
       drawer.classList.remove("is-open");
       drawer.setAttribute("aria-hidden", "true");
+      delete drawer.dataset.visitId;
     }
     if (backdrop) backdrop.hidden = true;
     document.body.classList.remove("next-schedule-detail-open");
@@ -348,6 +349,7 @@
     if (!drawer || !backdrop || !title || !body || !visit) return;
 
     lastDetailTrigger = trigger;
+    drawer.dataset.visitId = String(Number(visit.id));
 
     const customer = detailCustomerLabel(visit);
     const date = String(visit.started_at || "").slice(0, 10) || "未登録";
@@ -588,7 +590,7 @@
         : [];
       state.loaded = true;
 
-      status.textContent = "READ ONLY";
+      status.textContent = "VERIFY DB";
       status.classList.remove("is-loading", "is-error");
       render();
 
@@ -690,6 +692,7 @@
   window.KohakuWorkNextSchedule = {
     load,
     render,
+    openDetail,
     closeDetail,
     state,
     productionWriteEnabled:false,
