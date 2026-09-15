@@ -13,6 +13,7 @@ on:
       - "900_Lab/Web_KoppyOS_Beta/house/**"
       - "900_Lab/Web_KoppyOS_Beta/world-frame-lab/**"
       - "900_Lab/Web_KoppyOS_Beta/kohaku-work/**"
+      - "900_Lab/Web_KoppyOS_Beta/next/**"
       - "600_KoppyOS/server/api/**"
       - "600_KoppyOS/server/database/migrate-sales-v2.php"
       - "600_KoppyOS/server/database/migrate-sapporo-rates-v2.php"
@@ -145,6 +146,7 @@ jobs:
           BRAIN_SOURCE="900_Lab/Web_KoppyOS_Beta/brain"
           HOUSE_SOURCE="900_Lab/Web_KoppyOS_Beta/house"
           WORLD_FRAME_LAB_SOURCE="900_Lab/Web_KoppyOS_Beta/world-frame-lab"
+          NEXT_SOURCE="900_Lab/Web_KoppyOS_Beta/next"
 
           KOHAKU_WORK_SOURCE="900_Lab/Web_KoppyOS_Beta/kohaku-work"
           KOHAKU_WORK_REMOTE="/home/users/2/her.jp-mikipiano/web/koppy/kohaku-work"
@@ -159,6 +161,7 @@ jobs:
           test -d "$BRAIN_SOURCE"
           test -d "$HOUSE_SOURCE"
           test -d "$WORLD_FRAME_LAB_SOURCE"
+          test -d "$NEXT_SOURCE"
           test -d "$KOHAKU_WORK_SOURCE"
           test -d "$API_SOURCE"
 
@@ -198,6 +201,10 @@ jobs:
           cp -R \
             "$WORLD_FRAME_LAB_SOURCE" \
             "$DEPLOY_PACKAGE_DIR/world-frame-lab"
+
+          cp -R \
+            "$NEXT_SOURCE" \
+            "$DEPLOY_PACKAGE_DIR/next"
 
           cp -R \
             "$KOHAKU_WORK_SOURCE" \
