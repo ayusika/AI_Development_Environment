@@ -1135,9 +1135,38 @@
         : [];
 
     const regular =
-      courses.filter(course =>
-        course.course_type === "regular"
-      );
+      courses
+        .filter(course =>
+          course.course_type === "regular"
+        )
+        .sort((a, b) => {
+          const categoryA =
+            a.pricing_category === "foreign"
+              ? 1
+              : 0;
+
+          const categoryB =
+            b.pricing_category === "foreign"
+              ? 1
+              : 0;
+
+          if (categoryA !== categoryB) {
+            return categoryA - categoryB;
+          }
+
+          const minuteDiff =
+            Number(a.course_minutes || 0)
+            - Number(b.course_minutes || 0);
+
+          if (minuteDiff !== 0) {
+            return minuteDiff;
+          }
+
+          return (
+            Number(a.store_course_id || 0)
+            - Number(b.store_course_id || 0)
+          );
+        });
 
     const extensions =
       courses.filter(course =>
@@ -1154,17 +1183,41 @@
             Number(v2Session.storeCourseId)
               === id;
 
-          const prefix =
-            course.pricing_category
-              === "foreign"
-              ? "外"
-              : "";
+          const minutes =
+            Number(course.course_minutes || 0);
 
-          const name =
+          const isForeign =
+            course.pricing_category
+              === "foreign";
+
+          const baseLabel =
+            isForeign
+              ? `外国人 ${minutes}分`
+              : `${minutes}分`;
+
+          const rawName =
             String(
               course.course_name
-              || `${course.course_minutes}分`
-            );
+              || ""
+            ).trim();
+
+          const normalizedName =
+            rawName.replace(/\s+/g, "");
+
+          const redundantNames =
+            new Set([
+              `${minutes}分`,
+              String(minutes),
+              `外${minutes}分`,
+              `外国人${minutes}分`,
+              `外国人${minutes}`,
+            ]);
+
+          const detailName =
+            rawName
+            && !redundantNames.has(normalizedName)
+              ? ` / ${rawName}`
+              : "";
 
           return `
             <option
@@ -1172,7 +1225,7 @@
               ${selected ? "selected" : ""}
             >
               ${escapeHtml(
-                `${prefix}${Number(course.course_minutes)}分 / ${name} / 手取り ${v2Money(course.take_home)}`
+                `${baseLabel}${detailName} / 手取り ${v2Money(course.take_home)}`
               )}
             </option>
           `;
