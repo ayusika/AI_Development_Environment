@@ -537,6 +537,47 @@
         </section>
         <!-- WRITER:NEXT_WORK_SCHEDULE_TIME_AXIS:END -->
 
+        <!-- WRITER:NEXT_WORK_SCHEDULE_DETAIL_READONLY:START -->
+        <div
+          class="next-schedule-detail-backdrop"
+          id="nextScheduleDetailBackdrop"
+          hidden
+        ></div>
+
+        <aside
+          class="next-schedule-detail-drawer"
+          id="nextScheduleDetailDrawer"
+          aria-hidden="true"
+          aria-label="予約詳細"
+        >
+          <header class="next-schedule-detail-header">
+            <div>
+              <p class="wf-eyebrow">RESERVATION DETAIL / READ ONLY</p>
+              <h2 id="nextScheduleDetailTitle">予約詳細</h2>
+            </div>
+
+            <button
+              type="button"
+              class="next-schedule-detail-close"
+              data-next-schedule-detail-close
+              aria-label="予約詳細を閉じる"
+            >
+              ×
+            </button>
+          </header>
+
+          <div
+            class="next-schedule-detail-body"
+            id="nextScheduleDetailBody"
+          ></div>
+
+          <footer class="next-schedule-detail-footer">
+            <span>PRODUCTION / READ ONLY</span>
+            <small>このDrawerから本番データは変更しません。</small>
+          </footer>
+        </aside>
+        <!-- WRITER:NEXT_WORK_SCHEDULE_DETAIL_READONLY:END -->
+
         <section
           class="work-next-view"
           data-view="shift"

@@ -50,6 +50,12 @@
     });
 
     if (
+      name !== "schedule"
+    ) {
+      window.KohakuWorkNextSchedule?.closeDetail?.();
+    }
+
+    if (
       name === "schedule"
     ) {
       const loadSchedule =

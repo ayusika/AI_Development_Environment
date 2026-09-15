@@ -245,7 +245,9 @@
     const courseText = `${visit.pricing_category === "foreign" ? "外" : ""}${Number(visit.course_minutes || 0)}分`;
 
     return `
-      <div
+      <button
+        type="button"
+        data-next-schedule-event="${Number(visit.id)}"
         class="next-schedule-event ${storeClass(visit.store_name)} ${courseClass(visit.course_minutes)} ${repeat ? "is-repeat" : ""}"
         style="top:${top}px;height:${height}px"
       >
@@ -261,7 +263,133 @@
           <span class="${Number(visit.diary_linked) ? "" : "is-incomplete"}">📓</span>
           <span class="${Number(visit.sales_entered) ? "" : "is-incomplete"}">¥</span>
         </span>
+      </button>`;
+  }
+
+  /* ======================================================
+     PHASE 2D / READ ONLY DETAIL DRAWER
+  ====================================================== */
+
+  let lastDetailTrigger = null;
+
+  function formatMoney(value) {
+    const amount = Number(value || 0);
+    return `¥${Math.abs(amount).toLocaleString("ja-JP")}`;
+  }
+
+  function detailCustomerLabel(visit) {
+    const prefixes = {
+      nickname: "",
+      kashikoi: "カ:",
+      okini_talk: "オ:",
+      line: "L:",
+      x: "X:",
+      instagram: "I:",
+    };
+
+    const names = (Array.isArray(visit.customer_names) ? visit.customer_names : [])
+      .filter(record => record?.name)
+      .map(record => `${prefixes[record.name_type] || ""}${String(record.name)}`);
+
+    return names.length
+      ? names.join(" / ")
+      : (visit.customer_name || visit.customer_code || statusLabel(visit.customer_status));
+  }
+
+  function detailOptionText(visit) {
+    const names = (Array.isArray(visit.options) ? visit.options : [])
+      .map(option => {
+        const name = option.name || option.custom_name || "";
+        if (!name) return "";
+        if (option.custom_name && option.income_amount !== null && option.income_amount !== "") {
+          return `${name} ${formatMoney(option.income_amount)}`;
+        }
+        return name;
+      })
+      .filter(Boolean);
+
+    return names.length ? names.join(" / ") : "なし";
+  }
+
+  function detailVisitorType(value) {
+    return ({ local:"地元", travel:"旅行", business:"出張" })[value] || "不明";
+  }
+
+  function detailState(label, complete, completeText, incompleteText) {
+    return `
+      <div class="next-schedule-detail-state ${complete ? "is-complete" : ""}">
+        <span>${escapeHtml(label)}</span>
+        <strong>${escapeHtml(complete ? completeText : incompleteText)}</strong>
       </div>`;
+  }
+
+  function closeDetail({ restoreFocus = true } = {}) {
+    const drawer = document.getElementById("nextScheduleDetailDrawer");
+    const backdrop = document.getElementById("nextScheduleDetailBackdrop");
+
+    if (drawer) {
+      drawer.classList.remove("is-open");
+      drawer.setAttribute("aria-hidden", "true");
+    }
+    if (backdrop) backdrop.hidden = true;
+    document.body.classList.remove("next-schedule-detail-open");
+
+    if (restoreFocus && lastDetailTrigger?.isConnected) {
+      lastDetailTrigger.focus({ preventScroll:true });
+    }
+    lastDetailTrigger = null;
+  }
+
+  function openDetail(visit, trigger = null) {
+    const drawer = document.getElementById("nextScheduleDetailDrawer");
+    const backdrop = document.getElementById("nextScheduleDetailBackdrop");
+    const title = document.getElementById("nextScheduleDetailTitle");
+    const body = document.getElementById("nextScheduleDetailBody");
+    if (!drawer || !backdrop || !title || !body || !visit) return;
+
+    lastDetailTrigger = trigger;
+
+    const customer = detailCustomerLabel(visit);
+    const date = String(visit.started_at || "").slice(0, 10) || "未登録";
+    const time = compactTime(visit.started_at);
+    const course = `${visit.pricing_category === "foreign" ? "外" : ""}${Number(visit.course_minutes || 0)}分`;
+    const tip = Number(visit.tip_amount || 0);
+    const adjustment = Number(visit.adjustment_amount || 0);
+    const tipText = tip > 0 ? formatMoney(tip) : "なし";
+    const adjustmentText = adjustment === 0
+      ? "なし"
+      : `${adjustment > 0 ? "+" : "-"}${formatMoney(adjustment)}`;
+
+    title.textContent = customer;
+
+    body.innerHTML = `
+      <p class="next-schedule-detail-section-label">RESERVATION</p>
+      <div class="next-schedule-detail-card">
+        <div class="next-schedule-detail-row"><span>日時</span><strong>${escapeHtml(date)} ${escapeHtml(time)}</strong></div>
+        <div class="next-schedule-detail-row"><span>店舗</span><strong>${escapeHtml(visit.store_name || "未登録")}</strong></div>
+        <div class="next-schedule-detail-row"><span>予約時間</span><strong>${escapeHtml(course)}</strong></div>
+        <div class="next-schedule-detail-row"><span>区分</span><strong>${escapeHtml(statusLabel(visit.customer_status))}</strong></div>
+        <div class="next-schedule-detail-row"><span>来訪タイプ</span><strong>${escapeHtml(detailVisitorType(visit.visitor_type))}</strong></div>
+        <div class="next-schedule-detail-row"><span>OP</span><strong>${escapeHtml(detailOptionText(visit))}</strong></div>
+        <div class="next-schedule-detail-row"><span>チップ</span><strong>${escapeHtml(tipText)}</strong></div>
+        <div class="next-schedule-detail-row"><span>調整分</span><strong>${escapeHtml(adjustmentText)}</strong></div>
+      </div>
+
+      <p class="next-schedule-detail-section-label">PROGRESS</p>
+      <div class="next-schedule-detail-progress">
+        ${detailState("顧客", Number(visit.customer_linked) === 1, "紐付け済", "未紐付け")}
+        ${detailState("日記", Number(visit.diary_linked) === 1, "完了", "未入力")}
+        ${detailState("売上", Number(visit.sales_entered) === 1, "入力済", "未入力")}
+      </div>`;
+
+    backdrop.hidden = false;
+    document.body.classList.add("next-schedule-detail-open");
+    drawer.setAttribute("aria-hidden", "false");
+
+    requestAnimationFrame(() => {
+      drawer.classList.add("is-open");
+      drawer.querySelector("[data-next-schedule-detail-close]")?.focus({ preventScroll:true });
+    });
   }
 
   function businessDateForNow(now) {
@@ -529,6 +657,31 @@
     if (zoom) setZoom(zoom.dataset.nextTimelineZoom);
   });
 
+  document.addEventListener("click", event => {
+    const reservation = event.target.closest("[data-next-schedule-event]");
+
+    if (reservation) {
+      const visitId = Number(reservation.dataset.nextScheduleEvent || 0);
+      const visit = state.visits.find(item => Number(item.id) === visitId) || null;
+      if (visit) {
+        event.preventDefault();
+        openDetail(visit, reservation);
+      }
+      return;
+    }
+
+    if (
+      event.target.closest("[data-next-schedule-detail-close]")
+      || event.target.id === "nextScheduleDetailBackdrop"
+    ) {
+      closeDetail();
+    }
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") closeDetail();
+  });
+
   window.setInterval(refreshNowLine, 15 * 1000);
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") refreshNowLine();
@@ -537,6 +690,7 @@
   window.KohakuWorkNextSchedule = {
     load,
     render,
+    closeDetail,
     state,
     productionWriteEnabled:false,
   };
