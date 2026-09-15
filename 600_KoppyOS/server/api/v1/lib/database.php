@@ -1,13 +1,39 @@
 <?php
 
-function koppyDatabase(): PDO
+function koppyDatabaseContext(): string
 {
-    static $pdo = null;
+    $context =
+        defined('KOPPY_DATABASE_CONTEXT')
+            ? strtolower(
+                trim(
+                    (string) constant(
+                        'KOPPY_DATABASE_CONTEXT'
+                    )
+                )
+            )
+            : 'production';
 
-    if ($pdo instanceof PDO) {
-        return $pdo;
+    if (
+        !in_array(
+            $context,
+            [
+                'production',
+                'verification',
+            ],
+            true
+        )
+    ) {
+        throw new RuntimeException(
+            'Invalid Kohaku Work database context.'
+        );
     }
 
+    return $context;
+}
+
+
+function koppyDatabasePath(): string
+{
     $documentRoot =
         $_SERVER['DOCUMENT_ROOT']
         ?? '';
@@ -18,13 +44,43 @@ function koppyDatabase(): PDO
         );
     }
 
-    $databasePath =
+    $context =
+        koppyDatabaseContext();
+
+    $databaseFilename =
+        $context === 'verification'
+            ? 'kohaku-work-verification.sqlite'
+            : 'kohaku-work.sqlite';
+
+    return
         $documentRoot
-        . '/../../.koppy-private/database/kohaku-work.sqlite';
+        . '/../../.koppy-private/database/'
+        . $databaseFilename;
+}
+
+
+function koppyDatabase(): PDO
+{
+    static $connections = [];
+
+    $context =
+        koppyDatabaseContext();
+
+    if (
+        isset($connections[$context])
+        && $connections[$context] instanceof PDO
+    ) {
+        return $connections[$context];
+    }
+
+    $databasePath =
+        koppyDatabasePath();
 
     if (!is_file($databasePath)) {
         throw new RuntimeException(
-            'Kohaku Work database was not found.'
+            'Kohaku Work '
+            . $context
+            . ' database was not found.'
         );
     }
 
@@ -45,5 +101,8 @@ function koppyDatabase(): PDO
         'PRAGMA foreign_keys = ON'
     );
 
-    return $pdo;
+    $connections[$context] =
+        $pdo;
+
+    return $connections[$context];
 }
