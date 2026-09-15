@@ -79,6 +79,9 @@
   const productionShiftsApi =
     "/api/v1/shifts.php";
 
+  const productionSalesApi =
+    "/api/v1/sales.php";
+
 
   function todayLocalDate() {
     const now =
@@ -489,6 +492,198 @@
     }
   }
 
+  /* ========================================
+     PHASE 2B / SALES READ ONLY
+  ======================================== */
+
+  function formatReadOnlyMoney(
+    value
+  ) {
+    const amount =
+      Number(
+        value || 0
+      );
+
+    return (
+      "¥ "
+      + amount.toLocaleString(
+        "ja-JP"
+      )
+    );
+  }
+
+
+  async function loadHomeSalesReadOnly() {
+    const status =
+      document.getElementById(
+        "nextHomeSalesStatus"
+      );
+
+    if (!status) {
+      return;
+    }
+
+
+    status.textContent =
+      "READING";
+
+    status.classList.remove(
+      "is-ok",
+      "is-error"
+    );
+
+
+    try {
+
+      const response =
+        await fetch(
+          `${productionSalesApi}?period=today`,
+          {
+            method:
+              "GET",
+
+            credentials:
+              "same-origin",
+
+            cache:
+              "no-store",
+          }
+        );
+
+
+      const result =
+        await readOnlyJson(
+          response,
+          "売上データの取得に失敗しました。"
+        );
+
+
+      const summary =
+        result.summary
+        || {};
+
+
+      const takeHome =
+        summary.net_take_home_total
+        ??
+        summary.take_home_total
+        ??
+        0;
+
+
+      const visitCount =
+        Number(
+          summary.visit_count
+          || 0
+        );
+
+
+      const unenteredCount =
+        Number(
+          summary.unentered_count
+          || 0
+        );
+
+
+      const dailyFee =
+        Number(
+          summary.daily_fee_total
+          || 0
+        );
+
+
+      readOnlyText(
+        "nextHomeTakeHome",
+        formatReadOnlyMoney(
+          takeHome
+        )
+      );
+
+
+      readOnlyText(
+        "nextHomeSalesVisits",
+        `${visitCount.toLocaleString(
+          "ja-JP"
+        )}件`
+      );
+
+
+      readOnlyText(
+        "nextHomeSalesUnentered",
+        `${unenteredCount.toLocaleString(
+          "ja-JP"
+        )}件`
+      );
+
+
+      readOnlyText(
+        "nextHomeDailyFee",
+        formatReadOnlyMoney(
+          dailyFee
+        )
+      );
+
+
+      const unenteredElement =
+        document.getElementById(
+          "nextHomeSalesUnentered"
+        );
+
+
+      if (unenteredElement) {
+        unenteredElement.classList.toggle(
+          "is-warning",
+          unenteredCount > 0
+        );
+      }
+
+
+      status.textContent =
+        "READ ONLY";
+
+      status.classList.add(
+        "is-ok"
+      );
+
+    } catch (error) {
+
+      console.error(
+        "Kohaku Work NEXT sales read-only load failed:",
+        error
+      );
+
+
+      readOnlyText(
+        "nextHomeTakeHome",
+        "取得失敗"
+      );
+
+      readOnlyText(
+        "nextHomeSalesVisits",
+        "−件"
+      );
+
+      readOnlyText(
+        "nextHomeSalesUnentered",
+        "−件"
+      );
+
+      readOnlyText(
+        "nextHomeDailyFee",
+        "取得失敗"
+      );
+
+
+      status.textContent =
+        "READ ERROR";
+
+      status.classList.add(
+        "is-error"
+      );
+    }
+  }
+
+
   window.KohakuWorkNext = {
     phase: 2,
     showView,
@@ -499,4 +694,5 @@
   };
 
   void loadHomeReadOnly();
+  void loadHomeSalesReadOnly();
 })();

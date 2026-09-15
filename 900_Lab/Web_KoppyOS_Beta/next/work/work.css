@@ -326,3 +326,30 @@
     grid-template-columns:1fr;
   }
 }
+
+/* ==== KOHaku WORK NEXT SALES READ ONLY V1 ==== */
+
+.work-next-sales{
+  margin-bottom:
+    20px;
+
+  padding:
+    24px;
+}
+
+#nextHomeTakeHome{
+  color:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 82%,
+      white
+    );
+
+  font-size:
+    20px;
+}
+
+#nextHomeSalesUnentered.is-warning{
+  color:
+    #ffd27d;
+}
