@@ -523,6 +523,1612 @@
     }
   );
 
+
+  /* =========================================================
+     VERIFICATION EDIT V2
+     store / course / extension / option / customer status
+  ========================================================= */
+
+  const V2_MASTER_API =
+    "/api/next/v1/sales-master.php";
+
+  const V2_STORES = [
+    { id:1, name:"札幌" },
+    { id:2, name:"千葉" },
+    { id:3, name:"東京" },
+    { id:4, name:"名古屋" },
+  ];
+
+  const V2_CUSTOMER_STATUS_LABELS = {
+    new:"新規",
+    repeat:"リピ",
+    other_store_repeat:"他店リピ",
+    repeat_unknown_id:"リピ・ID不明",
+  };
+
+  let v2Session = null;
+
+  function v2Money(value) {
+    return `¥${Number(value || 0).toLocaleString("ja-JP")}`;
+  }
+
+  function v2StandardOptionNames(visit) {
+    return Array.isArray(visit.options)
+      ? visit.options
+          .filter(option =>
+            option
+            && option.option_id
+            && option.name
+          )
+          .map(option => String(option.name))
+      : [];
+  }
+
+  function v2CustomOption(visit) {
+    const records =
+      Array.isArray(visit.options)
+        ? visit.options.filter(option =>
+            option
+            && (
+              option.custom_name
+              || !option.option_id
+            )
+          )
+        : [];
+
+    const first = records[0] || null;
+
+    return {
+      name:
+        first?.custom_name
+          ? String(first.custom_name)
+          : "",
+      amount:
+        first?.income_amount === null
+        || first?.income_amount === undefined
+        || first?.income_amount === ""
+          ? null
+          : Number(first.income_amount),
+      count:records.length,
+    };
+  }
+
+  function v2MakeSession(visit) {
+    const custom =
+      v2CustomOption(visit);
+
+    return {
+      visitId:Number(visit.id),
+      storeId:Number(visit.store_id || 0),
+      storeCourseId:
+        Number(visit.store_course_id || 0) || null,
+      courseMinutes:
+        Number(visit.course_minutes || 0),
+      pricingCategory:
+        String(
+          visit.pricing_category
+          || "standard"
+        ),
+      extensions:
+        Array.isArray(visit.extensions)
+          ? visit.extensions.map(item => ({
+              store_course_id:
+                Number(item.store_course_id),
+              quantity:
+                Math.max(
+                  1,
+                  Number(item.quantity || 1)
+                ),
+            }))
+          : [],
+      optionNames:
+        v2StandardOptionNames(visit),
+      customOption:
+        custom.name,
+      customOptionAmount:
+        custom.amount,
+      customOptionCount:
+        custom.count,
+      master:null,
+      masterLoaded:false,
+      storeChanged:false,
+    };
+  }
+
+  function v2SafeStatusOptions(visit) {
+    const linked =
+      Number(visit.customer_id || 0) > 0
+      || Boolean(Number(visit.customer_linked || 0));
+
+    const values =
+      linked
+        ? [
+            "repeat",
+            "other_store_repeat",
+          ]
+        : [
+            "new",
+            "repeat_unknown_id",
+            "other_store_repeat",
+          ];
+
+    const current =
+      String(visit.customer_status || "");
+
+    if (
+      current
+      && !values.includes(current)
+    ) {
+      values.unshift(current);
+    }
+
+    return values;
+  }
+
+  function v2RenderStoreOptions(visit) {
+    const selected =
+      Number(visit.store_id || 0);
+
+    return V2_STORES
+      .map(store => `
+        <option
+          value="${store.id}"
+          ${store.id === selected ? "selected" : ""}
+        >
+          ${escapeHtml(store.name)}
+        </option>
+      `)
+      .join("");
+  }
+
+  function v2RenderStatusOptions(visit) {
+    const current =
+      String(visit.customer_status || "");
+
+    return v2SafeStatusOptions(visit)
+      .map(value => `
+        <option
+          value="${escapeHtml(value)}"
+          ${value === current ? "selected" : ""}
+        >
+          ${escapeHtml(
+            V2_CUSTOMER_STATUS_LABELS[value]
+            || value
+          )}
+        </option>
+      `)
+      .join("");
+  }
+
+  function v2RenderEditForm(visit) {
+    const body =
+      document.getElementById("nextScheduleDetailBody");
+
+    if (!body || !visit) return;
+
+    v2Session =
+      v2MakeSession(visit);
+
+    const started =
+      startedParts(visit.started_at);
+
+    const booked =
+      bookedParts(visit.booked_at);
+
+    const salesConfirmed =
+      Boolean(visit.sales_confirmed_at);
+
+    const linkedCustomerId =
+      Number(visit.customer_id || 0);
+
+    body.innerHTML = `
+      <form
+        class="next-schedule-edit-form"
+        id="nextScheduleEditFormV2"
+        novalidate
+      >
+        <p class="next-schedule-detail-section-label">
+          VERIFICATION EDIT / V2
+        </p>
+
+        <div class="next-schedule-edit-warning">
+          <strong>検証DBだけを書き換えます。</strong>
+          <span>本番DBには反映されません。</span>
+        </div>
+
+        ${
+          salesConfirmed
+            ? `
+              <div class="next-schedule-v2-sales-warning">
+                <strong>売上確定済み</strong>
+                <span>
+                  予約内容を変更しても、確定済み売上は自動再計算しません。
+                  売上再計算は次フェーズで接続します。
+                </span>
+              </div>
+            `
+            : ""
+        }
+
+        <div class="next-schedule-edit-grid">
+          <label>
+            <span>予約日</span>
+            <input
+              id="nextScheduleEditDate"
+              type="date"
+              value="${escapeHtml(started.date)}"
+              required
+            >
+          </label>
+
+          <label>
+            <span>開始時間</span>
+            <input
+              id="nextScheduleEditTime"
+              type="time"
+              value="${escapeHtml(started.time)}"
+              required
+            >
+          </label>
+
+          <label>
+            <span>予約受付日</span>
+            <input
+              id="nextScheduleEditBookedDate"
+              type="date"
+              value="${escapeHtml(booked.date)}"
+            >
+          </label>
+
+          <label>
+            <span>予約受付時刻</span>
+            <input
+              id="nextScheduleEditBookedTime"
+              type="time"
+              value="${escapeHtml(booked.time)}"
+            >
+          </label>
+
+          <label class="is-wide">
+            <span>店舗</span>
+            <select id="nextScheduleEditStore">
+              ${v2RenderStoreOptions(visit)}
+            </select>
+          </label>
+
+          <label class="is-wide">
+            <span>顧客区分</span>
+            <select id="nextScheduleEditCustomerStatus">
+              ${v2RenderStatusOptions(visit)}
+            </select>
+          </label>
+
+          <label class="is-wide">
+            <span>来訪タイプ</span>
+            <select id="nextScheduleEditVisitorType">
+              <option value="" ${!visit.visitor_type ? "selected" : ""}>不明</option>
+              <option value="local" ${visit.visitor_type === "local" ? "selected" : ""}>地元</option>
+              <option value="travel" ${visit.visitor_type === "travel" ? "selected" : ""}>旅行</option>
+              <option value="business" ${visit.visitor_type === "business" ? "selected" : ""}>出張</option>
+            </select>
+          </label>
+        </div>
+
+        <p class="next-schedule-v2-identity-note">
+          ${
+            linkedCustomerId
+              ? `顧客 #${escapeHtml(linkedCustomerId)} との紐付けは維持します。`
+              : "顧客紐付けはありません。"
+          }
+          この画面では顧客そのものの紐付け変更は行いません。
+        </p>
+
+        <section class="next-schedule-v2-master">
+          <header>
+            <div>
+              <span>COURSE / OPTION MASTER</span>
+              <strong>コース・延長・OP</strong>
+            </div>
+
+            <small id="nextScheduleV2MasterStatus">
+              LOADING
+            </small>
+          </header>
+
+          <div
+            id="nextScheduleV2MasterBody"
+            class="next-schedule-v2-master-body"
+          >
+            <p class="next-schedule-v2-loading">
+              検証DBの料金マスタを読み込み中…
+            </p>
+          </div>
+        </section>
+
+        <div class="next-schedule-edit-grid">
+          <label>
+            <span>チップ</span>
+            <input
+              id="nextScheduleEditTip"
+              type="number"
+              min="0"
+              step="1"
+              inputmode="numeric"
+              value="${escapeHtml(Number(visit.tip_amount || 0))}"
+              ${salesConfirmed ? "disabled" : ""}
+            >
+          </label>
+
+          <label>
+            <span>調整分</span>
+            <input
+              id="nextScheduleEditAdjustment"
+              type="number"
+              step="1"
+              inputmode="numeric"
+              value="${escapeHtml(Number(visit.adjustment_amount || 0))}"
+              ${salesConfirmed ? "disabled" : ""}
+            >
+          </label>
+        </div>
+
+        ${
+          salesConfirmed
+            ? `
+              <p class="next-schedule-edit-lock-note">
+                売上確定済みのため、チップ・調整分はこの画面では変更しません。
+              </p>
+            `
+            : ""
+        }
+
+        <label class="next-schedule-edit-change-request">
+          <input
+            id="nextScheduleEditCustomerRequestedChange"
+            type="checkbox"
+          >
+          <span>
+            お客様都合の予約変更として履歴に記録する
+          </span>
+        </label>
+
+        <p class="next-schedule-edit-scope">
+          新規予約・削除・ドラッグ移動・顧客紐付け変更はまだ無効です。
+        </p>
+
+        <p
+          class="next-schedule-edit-message"
+          id="nextScheduleEditMessage"
+          aria-live="polite"
+        ></p>
+
+        <div class="next-schedule-edit-actions">
+          <button
+            type="button"
+            class="next-schedule-edit-cancel"
+            data-next-schedule-edit-cancel
+          >
+            キャンセル
+          </button>
+
+          <button
+            type="submit"
+            class="next-schedule-edit-save"
+            id="nextScheduleEditSaveV2"
+            disabled
+          >
+            マスタ読込中…
+          </button>
+        </div>
+      </form>
+    `;
+
+    setWriteStatus(
+      "VERIFICATION DB / EDIT V2",
+      "editing"
+    );
+
+    void v2LoadMaster({
+      resetForStoreChange:false,
+    });
+  }
+
+  function v2CaptureMasterState() {
+    if (!v2Session) return;
+
+    const courseSelect =
+      document.getElementById(
+        "nextScheduleV2Course"
+      );
+
+    if (courseSelect) {
+      if (courseSelect.value === "custom") {
+        v2Session.storeCourseId = null;
+
+        const customMinutes =
+          Number(
+            document.getElementById(
+              "nextScheduleV2CustomMinutes"
+            )?.value
+            || 0
+          );
+
+        if (customMinutes > 0) {
+          v2Session.courseMinutes =
+            customMinutes;
+        }
+      } else {
+        const courseId =
+          Number(courseSelect.value || 0);
+
+        const course =
+          v2Session.master?.courses
+            ?.find(item =>
+              Number(item.store_course_id)
+              === courseId
+              && item.course_type === "regular"
+            )
+          || null;
+
+        if (course) {
+          v2Session.storeCourseId =
+            Number(course.store_course_id);
+
+          v2Session.courseMinutes =
+            Number(course.course_minutes);
+
+          v2Session.pricingCategory =
+            String(
+              course.pricing_category
+              || "standard"
+            );
+        }
+      }
+    }
+
+    v2Session.extensions =
+      Array.from(
+        document.querySelectorAll(
+          "[data-next-v2-extension]:checked"
+        )
+      )
+        .map(input => {
+          const id =
+            Number(input.value);
+
+          const quantity =
+            Math.max(
+              1,
+              Number(
+                document.querySelector(
+                  `[data-next-v2-extension-qty="${id}"]`
+                )?.value
+                || 1
+              )
+            );
+
+          return {
+            store_course_id:id,
+            quantity,
+          };
+        });
+
+    v2Session.optionNames =
+      Array.from(
+        document.querySelectorAll(
+          "[data-next-v2-option]:checked"
+        )
+      )
+        .map(input =>
+          String(input.value)
+        );
+
+    v2Session.customOption =
+      document.getElementById(
+        "nextScheduleV2CustomOption"
+      )?.value?.trim()
+      || "";
+
+    const amountRaw =
+      document.getElementById(
+        "nextScheduleV2CustomOptionAmount"
+      )?.value?.trim()
+      || "";
+
+    v2Session.customOptionAmount =
+      amountRaw === ""
+        ? null
+        : Number(amountRaw);
+  }
+
+  function v2ChooseCourseForMaster(
+    courses,
+    resetForStoreChange
+  ) {
+    const regular =
+      courses.filter(course =>
+        course.course_type === "regular"
+      );
+
+    const exactId =
+      !resetForStoreChange
+      && v2Session.storeCourseId
+        ? regular.find(course =>
+            Number(course.store_course_id)
+            === Number(v2Session.storeCourseId)
+          )
+        : null;
+
+    const sameMinutesAndCategory =
+      regular.find(course =>
+        Number(course.course_minutes)
+          === Number(v2Session.courseMinutes)
+        && String(
+          course.pricing_category
+          || "standard"
+        )
+          === String(
+            v2Session.pricingCategory
+            || "standard"
+          )
+      )
+      || null;
+
+    const sameMinutes =
+      regular.find(course =>
+        Number(course.course_minutes)
+          === Number(v2Session.courseMinutes)
+      )
+      || null;
+
+    const selected =
+      exactId
+      || sameMinutesAndCategory
+      || sameMinutes
+      || null;
+
+    if (selected) {
+      v2Session.storeCourseId =
+        Number(selected.store_course_id);
+
+      v2Session.courseMinutes =
+        Number(selected.course_minutes);
+
+      v2Session.pricingCategory =
+        String(
+          selected.pricing_category
+          || "standard"
+        );
+
+    } else {
+      v2Session.storeCourseId = null;
+    }
+  }
+
+  function v2RenderMaster() {
+    const body =
+      document.getElementById(
+        "nextScheduleV2MasterBody"
+      );
+
+    const status =
+      document.getElementById(
+        "nextScheduleV2MasterStatus"
+      );
+
+    if (
+      !body
+      || !v2Session
+      || !v2Session.master
+    ) {
+      return;
+    }
+
+    const courses =
+      Array.isArray(v2Session.master.courses)
+        ? v2Session.master.courses
+        : [];
+
+    const options =
+      Array.isArray(v2Session.master.options)
+        ? v2Session.master.options
+        : [];
+
+    const regular =
+      courses.filter(course =>
+        course.course_type === "regular"
+      );
+
+    const extensions =
+      courses.filter(course =>
+        course.course_type === "extension"
+      );
+
+    const courseOptions =
+      regular
+        .map(course => {
+          const id =
+            Number(course.store_course_id);
+
+          const selected =
+            Number(v2Session.storeCourseId)
+              === id;
+
+          const prefix =
+            course.pricing_category
+              === "foreign"
+              ? "外"
+              : "";
+
+          const name =
+            String(
+              course.course_name
+              || `${course.course_minutes}分`
+            );
+
+          return `
+            <option
+              value="${id}"
+              ${selected ? "selected" : ""}
+            >
+              ${escapeHtml(
+                `${prefix}${Number(course.course_minutes)}分 / ${name} / 手取り ${v2Money(course.take_home)}`
+              )}
+            </option>
+          `;
+        })
+        .join("");
+
+    const customSelected =
+      !v2Session.storeCourseId;
+
+    const extensionHtml =
+      extensions.length
+        ? extensions
+            .map(course => {
+              const id =
+                Number(course.store_course_id);
+
+              const selected =
+                v2Session.extensions
+                  .find(item =>
+                    Number(item.store_course_id)
+                    === id
+                  )
+                || null;
+
+              const quantity =
+                selected
+                  ? Math.max(
+                      1,
+                      Number(selected.quantity || 1)
+                    )
+                  : 1;
+
+              return `
+                <div class="next-schedule-v2-extension-row">
+                  <label>
+                    <input
+                      type="checkbox"
+                      data-next-v2-extension
+                      value="${id}"
+                      ${selected ? "checked" : ""}
+                    >
+                    <span>
+                      ${escapeHtml(
+                        String(
+                          course.course_name
+                          || `延長 ${course.course_minutes}分`
+                        )
+                      )}
+                    </span>
+                  </label>
+
+                  <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    inputmode="numeric"
+                    value="${quantity}"
+                    data-next-v2-extension-qty="${id}"
+                    ${selected ? "" : "disabled"}
+                    aria-label="延長回数"
+                  >
+                </div>
+              `;
+            })
+            .join("")
+        : `
+            <p class="next-schedule-v2-empty">
+              この店舗の延長マスタはありません。
+            </p>
+          `;
+
+    const optionHtml =
+      options.length
+        ? options
+            .map(option => {
+              const name =
+                String(option.name || "");
+
+              const checked =
+                v2Session.optionNames
+                  .includes(name);
+
+              return `
+                <label class="next-schedule-v2-option">
+                  <input
+                    type="checkbox"
+                    data-next-v2-option
+                    value="${escapeHtml(name)}"
+                    ${checked ? "checked" : ""}
+                  >
+                  <span>
+                    <strong>${escapeHtml(name)}</strong>
+                    <small>
+                      手取り ${escapeHtml(v2Money(option.take_home))}
+                    </small>
+                  </span>
+                </label>
+              `;
+            })
+            .join("")
+        : `
+            <p class="next-schedule-v2-empty">
+              この店舗のOPマスタはありません。
+            </p>
+          `;
+
+    body.innerHTML = `
+      <div class="next-schedule-v2-section">
+        <label class="next-schedule-v2-field">
+          <span>コース</span>
+          <select id="nextScheduleV2Course">
+            ${courseOptions}
+            <option
+              value="custom"
+              ${customSelected ? "selected" : ""}
+            >
+              カスタム時間
+            </option>
+          </select>
+        </label>
+
+        <label
+          class="next-schedule-v2-field next-schedule-v2-custom-course"
+          id="nextScheduleV2CustomCourseWrap"
+          ${customSelected ? "" : "hidden"}
+        >
+          <span>カスタム予約時間（分）</span>
+          <input
+            id="nextScheduleV2CustomMinutes"
+            type="number"
+            min="1"
+            step="1"
+            inputmode="numeric"
+            value="${escapeHtml(v2Session.courseMinutes)}"
+          >
+        </label>
+      </div>
+
+      <div class="next-schedule-v2-section">
+        <span class="next-schedule-v2-label">
+          延長
+        </span>
+
+        <div class="next-schedule-v2-extension-list">
+          ${extensionHtml}
+        </div>
+      </div>
+
+      <div class="next-schedule-v2-section">
+        <span class="next-schedule-v2-label">
+          OP
+        </span>
+
+        <div class="next-schedule-v2-option-list">
+          ${optionHtml}
+        </div>
+
+        <div class="next-schedule-v2-custom-option-grid">
+          <label class="next-schedule-v2-field">
+            <span>その他OP名</span>
+            <input
+              id="nextScheduleV2CustomOption"
+              type="text"
+              value="${escapeHtml(v2Session.customOption)}"
+              placeholder="その他OP"
+            >
+          </label>
+
+          <label class="next-schedule-v2-field">
+            <span>その他OP手取り</span>
+            <input
+              id="nextScheduleV2CustomOptionAmount"
+              type="number"
+              min="0"
+              step="1"
+              inputmode="numeric"
+              value="${
+                v2Session.customOptionAmount === null
+                  ? ""
+                  : escapeHtml(v2Session.customOptionAmount)
+              }"
+              placeholder="0"
+            >
+          </label>
+        </div>
+      </div>
+    `;
+
+    if (status) {
+      status.textContent =
+        "VERIFICATION / READY";
+      status.dataset.state = "ready";
+    }
+
+    const save =
+      document.getElementById(
+        "nextScheduleEditSaveV2"
+      );
+
+    if (save) {
+      save.disabled = false;
+      save.textContent = "検証DBへ保存";
+    }
+  }
+
+  async function v2LoadMaster({
+    resetForStoreChange,
+  }) {
+    if (!v2Session) return;
+
+    v2CaptureMasterState();
+
+    const storeId =
+      Number(
+        document.getElementById(
+          "nextScheduleEditStore"
+        )?.value
+        || 0
+      );
+
+    const date =
+      document.getElementById(
+        "nextScheduleEditDate"
+      )?.value?.trim()
+      || "";
+
+    const time =
+      document.getElementById(
+        "nextScheduleEditTime"
+      )?.value?.trim()
+      || "";
+
+    const body =
+      document.getElementById(
+        "nextScheduleV2MasterBody"
+      );
+
+    const status =
+      document.getElementById(
+        "nextScheduleV2MasterStatus"
+      );
+
+    const save =
+      document.getElementById(
+        "nextScheduleEditSaveV2"
+      );
+
+    if (
+      !storeId
+      || !date
+      || !time
+    ) {
+      v2Session.masterLoaded = false;
+
+      if (body) {
+        body.innerHTML = `
+          <p class="next-schedule-v2-error">
+            店舗・予約日・開始時間を確認してね。
+          </p>
+        `;
+      }
+
+      if (status) {
+        status.textContent = "INPUT REQUIRED";
+        status.dataset.state = "error";
+      }
+
+      if (save) {
+        save.disabled = true;
+      }
+
+      return;
+    }
+
+    if (status) {
+      status.textContent = "LOADING";
+      status.dataset.state = "loading";
+    }
+
+    if (save) {
+      save.disabled = true;
+      save.textContent = "マスタ読込中…";
+    }
+
+    const params =
+      new URLSearchParams({
+        store_id:String(storeId),
+        at:`${date} ${time}:00`,
+      });
+
+    try {
+      const response =
+        await fetch(
+          `${V2_MASTER_API}?${params.toString()}`,
+          {
+            method:"GET",
+            credentials:"same-origin",
+            cache:"no-store",
+          }
+        );
+
+      const data =
+        await response.json();
+
+      if (
+        !response.ok
+        || !data
+        || data.success !== true
+      ) {
+        throw new Error(
+          data?.error
+          || "料金マスタを取得できませんでした。"
+        );
+      }
+
+      v2Session.master = {
+        store:data.store || null,
+        courses:
+          Array.isArray(data.courses)
+            ? data.courses
+            : [],
+        options:
+          Array.isArray(data.options)
+            ? data.options
+            : [],
+        dailyFeeRule:
+          data.daily_fee_rule || null,
+      };
+
+      if (resetForStoreChange) {
+        v2Session.storeChanged = true;
+        v2Session.extensions = [];
+
+        const availableOptions =
+          new Set(
+            v2Session.master.options
+              .map(option =>
+                String(option.name || "")
+              )
+          );
+
+        v2Session.optionNames =
+          v2Session.optionNames
+            .filter(name =>
+              availableOptions.has(name)
+            );
+      }
+
+      v2ChooseCourseForMaster(
+        v2Session.master.courses,
+        resetForStoreChange
+      );
+
+      v2Session.storeId = storeId;
+      v2Session.masterLoaded = true;
+
+      v2RenderMaster();
+
+    } catch (error) {
+      v2Session.masterLoaded = false;
+
+      if (body) {
+        body.innerHTML = `
+          <p class="next-schedule-v2-error">
+            ${escapeHtml(
+              error.message
+              || "料金マスタを取得できませんでした。"
+            )}
+          </p>
+        `;
+      }
+
+      if (status) {
+        status.textContent = "LOAD ERROR";
+        status.dataset.state = "error";
+      }
+
+      if (save) {
+        save.disabled = true;
+        save.textContent = "保存できません";
+      }
+    }
+  }
+
+  function v2ReadPositiveInteger(
+    id,
+    label
+  ) {
+    const raw =
+      document.getElementById(id)
+        ?.value
+        ?.trim()
+      || "";
+
+    const value =
+      Number(raw);
+
+    if (
+      !Number.isSafeInteger(value)
+      || value <= 0
+    ) {
+      throw new Error(
+        `${label}は1以上の整数で入力してね。`
+      );
+    }
+
+    return value;
+  }
+
+  function v2ReadNonNegativeInteger(
+    id,
+    label,
+    allowBlank = false
+  ) {
+    const raw =
+      document.getElementById(id)
+        ?.value
+        ?.trim()
+      || "";
+
+    if (
+      allowBlank
+      && raw === ""
+    ) {
+      return null;
+    }
+
+    const value =
+      Number(raw);
+
+    if (
+      !Number.isSafeInteger(value)
+      || value < 0
+    ) {
+      throw new Error(
+        `${label}は0以上の整数で入力してね。`
+      );
+    }
+
+    return value;
+  }
+
+  async function v2SaveEdit() {
+    const visit =
+      currentVisit();
+
+    if (
+      !visit
+      || !v2Session
+      || Number(v2Session.visitId)
+        !== Number(visit.id)
+    ) {
+      throw new Error(
+        "編集対象の予約が見つかりません。"
+      );
+    }
+
+    if (!v2Session.masterLoaded) {
+      throw new Error(
+        "料金マスタの読込が完了していません。"
+      );
+    }
+
+    v2CaptureMasterState();
+
+    const date =
+      document.getElementById(
+        "nextScheduleEditDate"
+      )?.value?.trim()
+      || "";
+
+    const time =
+      document.getElementById(
+        "nextScheduleEditTime"
+      )?.value?.trim()
+      || "";
+
+    if (!date || !time) {
+      throw new Error(
+        "予約日と開始時間を入れてね。"
+      );
+    }
+
+    const bookedDate =
+      document.getElementById(
+        "nextScheduleEditBookedDate"
+      )?.value?.trim()
+      || "";
+
+    const bookedTime =
+      document.getElementById(
+        "nextScheduleEditBookedTime"
+      )?.value?.trim()
+      || "";
+
+    if (
+      (bookedDate && !bookedTime)
+      || (!bookedDate && bookedTime)
+    ) {
+      throw new Error(
+        "予約受付日は日付と時刻を両方入れてね。"
+      );
+    }
+
+    const storeId =
+      Number(
+        document.getElementById(
+          "nextScheduleEditStore"
+        )?.value
+        || 0
+      );
+
+    if (!storeId) {
+      throw new Error(
+        "店舗を選んでね。"
+      );
+    }
+
+    const courseSelect =
+      document.getElementById(
+        "nextScheduleV2Course"
+      );
+
+    if (!courseSelect) {
+      throw new Error(
+        "コースを読み込めませんでした。"
+      );
+    }
+
+    let storeCourseId = null;
+    let courseMinutes = 0;
+
+    if (courseSelect.value === "custom") {
+      courseMinutes =
+        v2ReadPositiveInteger(
+          "nextScheduleV2CustomMinutes",
+          "カスタム予約時間"
+        );
+
+    } else {
+      storeCourseId =
+        Number(courseSelect.value || 0);
+
+      const course =
+        v2Session.master.courses
+          .find(item =>
+            Number(item.store_course_id)
+              === storeCourseId
+            && item.course_type === "regular"
+          )
+        || null;
+
+      if (!course) {
+        throw new Error(
+          "選択したコースが料金マスタにありません。"
+        );
+      }
+
+      courseMinutes =
+        Number(course.course_minutes);
+    }
+
+    const extensions =
+      Array.from(
+        document.querySelectorAll(
+          "[data-next-v2-extension]:checked"
+        )
+      )
+        .map(input => {
+          const id =
+            Number(input.value);
+
+          const quantityRaw =
+            document.querySelector(
+              `[data-next-v2-extension-qty="${id}"]`
+            )?.value
+            || "1";
+
+          const quantity =
+            Number(quantityRaw);
+
+          if (
+            !Number.isSafeInteger(quantity)
+            || quantity <= 0
+          ) {
+            throw new Error(
+              "延長回数は1以上の整数で入力してね。"
+            );
+          }
+
+          return {
+            store_course_id:id,
+            quantity,
+          };
+        });
+
+    const options =
+      Array.from(
+        document.querySelectorAll(
+          "[data-next-v2-option]:checked"
+        )
+      )
+        .map(input =>
+          String(input.value).trim()
+        )
+        .filter(Boolean);
+
+    const customOption =
+      document.getElementById(
+        "nextScheduleV2CustomOption"
+      )?.value?.trim()
+      || "";
+
+    const customOptionAmount =
+      v2ReadNonNegativeInteger(
+        "nextScheduleV2CustomOptionAmount",
+        "その他OP手取り",
+        true
+      );
+
+    if (
+      customOption === ""
+      && customOptionAmount !== null
+    ) {
+      throw new Error(
+        "その他OP金額を入れる場合は、その他OP名も入力してね。"
+      );
+    }
+
+    const customerStatus =
+      document.getElementById(
+        "nextScheduleEditCustomerStatus"
+      )?.value
+      || "";
+
+    if (!customerStatus) {
+      throw new Error(
+        "顧客区分を選んでね。"
+      );
+    }
+
+    const visitorType =
+      document.getElementById(
+        "nextScheduleEditVisitorType"
+      )?.value
+      || "";
+
+    const payload = {
+      id:Number(visit.id),
+      store_id:storeId,
+      started_at:`${date} ${time}`,
+      booked_at:
+        bookedDate && bookedTime
+          ? `${bookedDate} ${bookedTime}`
+          : null,
+      course_minutes:courseMinutes,
+      store_course_id:storeCourseId,
+      extensions,
+      options,
+      custom_option:customOption,
+      custom_option_amount:
+        customOptionAmount,
+      visitor_type:
+        visitorType || null,
+      customer_requested_change:
+        Boolean(
+          document.getElementById(
+            "nextScheduleEditCustomerRequestedChange"
+          )?.checked
+        ),
+    };
+
+    if (
+      customerStatus
+      !== String(
+        visit.customer_status || ""
+      )
+    ) {
+      payload.customer_status =
+        customerStatus;
+    }
+
+    if (!visit.sales_confirmed_at) {
+      payload.tip_amount =
+        readIntegerInput(
+          "nextScheduleEditTip",
+          { min:0 }
+        );
+
+      payload.adjustment_amount =
+        readIntegerInput(
+          "nextScheduleEditAdjustment"
+        );
+    }
+
+    const saveButton =
+      document.getElementById(
+        "nextScheduleEditSaveV2"
+      );
+
+    if (saveButton) {
+      saveButton.disabled = true;
+      saveButton.textContent = "保存中…";
+    }
+
+    editMessage(
+      "検証DBへ予約内容を保存しています…"
+    );
+
+    setWriteStatus(
+      "VERIFICATION DB / WRITING V2",
+      "writing"
+    );
+
+    try {
+      const response =
+        await fetch(
+          SCHEDULE_API,
+          {
+            method:"PATCH",
+            credentials:"same-origin",
+            cache:"no-store",
+            headers:{
+              "Content-Type":"application/json",
+            },
+            body:JSON.stringify(payload),
+          }
+        );
+
+      let data;
+
+      try {
+        data =
+          await response.json();
+      } catch {
+        throw new Error(
+          "予約編集APIの応答を読めませんでした。"
+        );
+      }
+
+      if (
+        !response.ok
+        || !data
+        || data.success !== true
+        || !data.visit
+      ) {
+        throw new Error(
+          data?.error
+          || "予約を保存できませんでした。"
+        );
+      }
+
+      const scheduleApi =
+        api();
+
+      const updatedVisit =
+        data.visit;
+
+      const index =
+        scheduleApi.state.visits
+          .findIndex(item =>
+            Number(item.id)
+              === Number(updatedVisit.id)
+          );
+
+      if (index >= 0) {
+        scheduleApi.state.visits[index] =
+          updatedVisit;
+      }
+
+      scheduleApi.render({
+        preserveScroll:true,
+      });
+
+      v2Session = null;
+
+      scheduleApi.openDetail(
+        updatedVisit,
+        null
+      );
+
+      setWriteStatus(
+        "SAVED / VERIFICATION V2",
+        "saved"
+      );
+
+    } catch (error) {
+      editMessage(
+        error.message
+        || "予約の保存に失敗しました。",
+        true
+      );
+
+      setWriteStatus(
+        "WRITE ERROR / VERIFICATION",
+        "error"
+      );
+
+      if (saveButton) {
+        saveButton.disabled = false;
+        saveButton.textContent =
+          "検証DBへ保存";
+      }
+    }
+  }
+
+  document.addEventListener(
+    "click",
+    event => {
+      const openButton =
+        event.target.closest(
+          "[data-next-schedule-edit-open]"
+        );
+
+      if (!openButton) {
+        return;
+      }
+
+      const visit =
+        currentVisit();
+
+      if (!visit) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      v2RenderEditForm(visit);
+    },
+    true
+  );
+
+  document.addEventListener(
+    "change",
+    event => {
+      if (
+        !event.target.closest(
+          "#nextScheduleEditFormV2"
+        )
+      ) {
+        return;
+      }
+
+      if (
+        event.target.matches(
+          "#nextScheduleEditStore"
+        )
+      ) {
+        void v2LoadMaster({
+          resetForStoreChange:true,
+        });
+        return;
+      }
+
+      if (
+        event.target.matches(
+          "#nextScheduleEditDate, #nextScheduleEditTime"
+        )
+      ) {
+        void v2LoadMaster({
+          resetForStoreChange:false,
+        });
+        return;
+      }
+
+      if (
+        event.target.matches(
+          "#nextScheduleV2Course"
+        )
+      ) {
+        const wrap =
+          document.getElementById(
+            "nextScheduleV2CustomCourseWrap"
+          );
+
+        if (wrap) {
+          wrap.hidden =
+            event.target.value !== "custom";
+        }
+
+        v2CaptureMasterState();
+        return;
+      }
+
+      if (
+        event.target.matches(
+          "[data-next-v2-extension]"
+        )
+      ) {
+        const id =
+          Number(event.target.value);
+
+        const quantity =
+          document.querySelector(
+            `[data-next-v2-extension-qty="${id}"]`
+          );
+
+        if (quantity) {
+          quantity.disabled =
+            !event.target.checked;
+        }
+
+        v2CaptureMasterState();
+        return;
+      }
+
+      if (
+        event.target.matches(
+          "[data-next-v2-extension-qty], [data-next-v2-option], #nextScheduleV2CustomOption, #nextScheduleV2CustomOptionAmount, #nextScheduleV2CustomMinutes"
+        )
+      ) {
+        v2CaptureMasterState();
+      }
+    }
+  );
+
+  document.addEventListener(
+    "submit",
+    event => {
+      const form =
+        event.target.closest(
+          "#nextScheduleEditFormV2"
+        );
+
+      if (!form) return;
+
+      event.preventDefault();
+
+      void v2SaveEdit().catch(error => {
+        editMessage(
+          error.message
+          || "予約の保存に失敗しました。",
+          true
+        );
+
+        setWriteStatus(
+          "WRITE ERROR / VERIFICATION",
+          "error"
+        );
+
+        const save =
+          document.getElementById(
+            "nextScheduleEditSaveV2"
+          );
+
+        if (save) {
+          save.disabled = false;
+          save.textContent =
+            "検証DBへ保存";
+        }
+      });
+    }
+  );
+
+
   const scheduleApi = api();
   scheduleApi.verificationWriteEnabled = true;
 
