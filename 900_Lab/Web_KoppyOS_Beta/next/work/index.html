@@ -89,7 +89,7 @@
 
             <div class="work-next-safety">
               <strong>SAFE BUILD</strong>
-              <span>API OFF / DB WRITE OFF</span>
+              <span>PRODUCTION READ / WRITE OFF</span>
             </div>
           </header>
 
@@ -102,12 +102,82 @@
             <button data-next-view="database"><span>▤</span><strong>DB</strong></button>
           </div>
 
+          <article
+            class="work-next-live"
+            data-wf-panel
+            data-wf-panel-surface
+          >
+            <div class="work-next-live-head">
+
+              <div>
+                <p data-wf-label>
+                  PRODUCTION / READ ONLY
+                </p>
+
+                <h2 class="wf-panel-title">
+                  今日の実データ
+                </h2>
+              </div>
+
+              <span
+                class="work-next-live-status"
+                id="nextHomeReadStatus"
+              >
+                READING
+              </span>
+
+            </div>
+
+            <div class="work-next-live-grid">
+
+              <div>
+                <span>今日のシフト</span>
+
+                <strong id="nextHomeShift">
+                  読み込み中…
+                </strong>
+              </div>
+
+              <div>
+                <span>予約</span>
+
+                <strong id="nextHomeReservations">
+                  −件
+                </strong>
+              </div>
+
+              <div>
+                <span>次の予約</span>
+
+                <strong id="nextHomeNextReservation">
+                  読み込み中…
+                </strong>
+              </div>
+
+              <div>
+                <span>Data Source</span>
+
+                <strong id="nextHomeSource">
+                  Production API
+                </strong>
+              </div>
+
+            </div>
+
+            <p class="work-next-live-note">
+              表示専用。
+              この画面から本番データの追加・変更・削除は行いません。
+            </p>
+
+          </article>
+
           <article class="work-next-panel" data-wf-panel data-wf-panel-surface>
             <p data-wf-label>MIGRATION STATUS</p>
             <h2 class="wf-panel-title">Phase 1 / App Structure</h2>
             <p class="wf-panel-copy">
               現行Kohaku Workと同じ15 ViewをNEXT側へ用意。
-              まだ本番データへの書き込みは行いません。
+              Homeだけ本番APIをREAD ONLYで接続中。
+              本番データへの書き込みは行いません。
             </p>
           </article>
 
