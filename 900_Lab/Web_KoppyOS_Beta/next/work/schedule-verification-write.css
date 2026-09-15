@@ -90,7 +90,10 @@
 
 .next-schedule-edit-grid input,
 .next-schedule-edit-grid select{
+  box-sizing:border-box;
   width:100%;
+  min-width:0;
+  max-width:100%;
   min-height:42px;
   padding:8px 10px;
   border:1px solid color-mix(in srgb,var(--wf-accent) 19%,transparent);
