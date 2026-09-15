@@ -19,6 +19,7 @@
   <link rel="stylesheet" href="/assets/css/world-frame-chrome.css">
   <link rel="stylesheet" href="/assets/css/world-frame-utility.css">
   <link rel="stylesheet" href="/next/_shared/scaffold.css">
+  <link rel="stylesheet" href="./work.css">
 </head>
 
 <body
@@ -71,54 +72,438 @@
       </header>
 
       <main class="next-app-main">
+        <!-- KOHaku WORK NEXT PHASE 1 -->
 
         <section
-          class="next-app-card"
-          data-wf-panel
-          data-wf-panel-surface
+          class="work-next-view is-active"
+          data-view="home"
+          id="view-home"
         >
 
-          <p class="wf-eyebrow">
-            WORK / NEXT BUILD
-          </p>
 
-          <h1>
-            Kohaku Work NEXT
-          </h1>
+          <header class="work-next-hero">
+            <div>
+              <p class="wf-eyebrow">KOHaku WORK / NEXT</p>
+              <h1>Kohaku Work</h1>
+              <p>現行版を残したまま、新実装を並行建造中。</p>
+            </div>
 
-          <p class="next-hero-copy">
-            現行Kohaku Workを動く仕様書として、同等機能をApp Mode上へ再構築する。
-          </p>
+            <div class="work-next-safety">
+              <strong>SAFE BUILD</strong>
+              <span>API OFF / DB WRITE OFF</span>
+            </div>
+          </header>
 
-          <span class="next-status">
-            APP MODE READY
-          </span>
-
-          <div class="wf-chip-row">
-            <span class="wf-chip">
-              NO SHELL
-            </span>
-
-            <span class="wf-chip">
-              APP OWNS LAYOUT
-            </span>
-
-            <span class="wf-chip">
-              PARALLEL BUILD
-            </span>
+          <div class="work-next-grid">
+            <button data-next-view="diary"><span>▧</span><strong>写メ日記</strong></button>
+            <button data-next-view="schedule"><span>▦</span><strong>予約</strong></button>
+            <button data-next-view="customers"><span>♙</span><strong>顧客</strong></button>
+            <button data-next-view="shift"><span>◫</span><strong>シフト</strong></button>
+            <button data-next-view="sales"><span>¥</span><strong>売上</strong></button>
+            <button data-next-view="database"><span>▤</span><strong>DB</strong></button>
           </div>
 
-          <a
-            class="wf-action"
-            href="/kohaku-work/"
-          >
-            現行Kohaku Workを開く
-            <span>→</span>
-          </a>
+          <article class="work-next-panel" data-wf-panel data-wf-panel-surface>
+            <p data-wf-label>MIGRATION STATUS</p>
+            <h2 class="wf-panel-title">Phase 1 / App Structure</h2>
+            <p class="wf-panel-copy">
+              現行Kohaku Workと同じ15 ViewをNEXT側へ用意。
+              まだ本番データへの書き込みは行いません。
+            </p>
+          </article>
+
+        </section>
+
+        <section
+          class="work-next-view"
+          data-view="diary"
+          id="view-diary" hidden
+        >
+
+          <div class="work-next-heading">
+            <button type="button" data-next-view="home">←</button>
+
+            <div>
+              <p class="wf-eyebrow">PHOTO DIARY</p>
+              <h1>写メ日記</h1>
+            </div>
+          </div>
+
+
+          <div class="work-next-menu">
+            <button data-next-view="nukinavi-create">ぬきナビ <span>→</span></button>
+            <button data-next-view="heaven-diary">ヘブン <span>→</span></button>
+            <button data-next-view="heaven-settings">ヘブン設定 <span>→</span></button>
+            <button data-next-view="diary-edit">下書き編集 <span>→</span></button>
+            <button data-next-view="post-prep">投稿準備 <span>→</span></button>
+          </div>
+
+        </section>
+
+        <section
+          class="work-next-view"
+          data-view="nukinavi-create"
+          id="view-nukinavi-create" hidden
+        >
+
+          <div class="work-next-heading">
+            <button type="button" data-next-view="home">←</button>
+
+            <div>
+              <p class="wf-eyebrow">NUKINAVI</p>
+              <h1>ぬきナビ日記作成</h1>
+            </div>
+          </div>
+
+
+          <article class="work-next-panel" data-wf-panel data-wf-panel-surface>
+            <span class="work-next-phase">PHASE 1</span>
+            <h2 class="wf-panel-title">View移植済み</h2>
+            <p class="wf-panel-copy">
+              現在は画面構造だけを移植済み。
+              API・検証DBへの接続は次の段階で行います。
+            </p>
+          </article>
+
+        </section>
+
+        <section
+          class="work-next-view"
+          data-view="heaven-diary"
+          id="view-heaven-diary" hidden
+        >
+
+          <div class="work-next-heading">
+            <button type="button" data-next-view="home">←</button>
+
+            <div>
+              <p class="wf-eyebrow">HEAVEN PHOTO DIARY</p>
+              <h1>ヘブン写メ日記</h1>
+            </div>
+          </div>
+
+
+          <article class="work-next-panel" data-wf-panel data-wf-panel-surface>
+            <span class="work-next-phase">PHASE 1</span>
+            <h2 class="wf-panel-title">View移植済み</h2>
+            <p class="wf-panel-copy">
+              現在は画面構造だけを移植済み。
+              API・検証DBへの接続は次の段階で行います。
+            </p>
+          </article>
+
+        </section>
+
+        <section
+          class="work-next-view"
+          data-view="heaven-settings"
+          id="view-heaven-settings" hidden
+        >
+
+          <div class="work-next-heading">
+            <button type="button" data-next-view="home">←</button>
+
+            <div>
+              <p class="wf-eyebrow">HEAVEN SETTINGS</p>
+              <h1>ヘブン設定</h1>
+            </div>
+          </div>
+
+
+          <article class="work-next-panel" data-wf-panel data-wf-panel-surface>
+            <span class="work-next-phase">PHASE 1</span>
+            <h2 class="wf-panel-title">View移植済み</h2>
+            <p class="wf-panel-copy">
+              現在は画面構造だけを移植済み。
+              API・検証DBへの接続は次の段階で行います。
+            </p>
+          </article>
+
+        </section>
+
+        <section
+          class="work-next-view"
+          data-view="heaven-create"
+          id="view-heaven-create" hidden
+        >
+
+          <div class="work-next-heading">
+            <button type="button" data-next-view="home">←</button>
+
+            <div>
+              <p class="wf-eyebrow">HEAVEN CREATE</p>
+              <h1>ヘブン予約連動作成</h1>
+            </div>
+          </div>
+
+
+          <article class="work-next-panel" data-wf-panel data-wf-panel-surface>
+            <span class="work-next-phase">PHASE 1</span>
+            <h2 class="wf-panel-title">View移植済み</h2>
+            <p class="wf-panel-copy">
+              現在は画面構造だけを移植済み。
+              API・検証DBへの接続は次の段階で行います。
+            </p>
+          </article>
+
+        </section>
+
+        <section
+          class="work-next-view"
+          data-view="diary-edit"
+          id="view-diary-edit" hidden
+        >
+
+          <div class="work-next-heading">
+            <button type="button" data-next-view="home">←</button>
+
+            <div>
+              <p class="wf-eyebrow">KOPPY DRAFT</p>
+              <h1>日記を仕上げる</h1>
+            </div>
+          </div>
+
+
+          <article class="work-next-panel" data-wf-panel data-wf-panel-surface>
+            <span class="work-next-phase">PHASE 1</span>
+            <h2 class="wf-panel-title">View移植済み</h2>
+            <p class="wf-panel-copy">
+              現在は画面構造だけを移植済み。
+              API・検証DBへの接続は次の段階で行います。
+            </p>
+          </article>
+
+        </section>
+
+        <section
+          class="work-next-view"
+          data-view="post-prep"
+          id="view-post-prep" hidden
+        >
+
+          <div class="work-next-heading">
+            <button type="button" data-next-view="home">←</button>
+
+            <div>
+              <p class="wf-eyebrow">READY</p>
+              <h1>投稿準備</h1>
+            </div>
+          </div>
+
+
+          <article class="work-next-panel" data-wf-panel data-wf-panel-surface>
+            <span class="work-next-phase">PHASE 1</span>
+            <h2 class="wf-panel-title">View移植済み</h2>
+            <p class="wf-panel-copy">
+              現在は画面構造だけを移植済み。
+              API・検証DBへの接続は次の段階で行います。
+            </p>
+          </article>
+
+        </section>
+
+        <section
+          class="work-next-view"
+          data-view="schedule"
+          id="view-schedule" hidden
+        >
+
+          <div class="work-next-heading">
+            <button type="button" data-next-view="home">←</button>
+
+            <div>
+              <p class="wf-eyebrow">WORK SCHEDULE</p>
+              <h1>予約</h1>
+            </div>
+          </div>
+
+
+          <article class="work-next-panel" data-wf-panel data-wf-panel-surface>
+            <span class="work-next-phase">PHASE 1</span>
+            <h2 class="wf-panel-title">View移植済み</h2>
+            <p class="wf-panel-copy">
+              現在は画面構造だけを移植済み。
+              API・検証DBへの接続は次の段階で行います。
+            </p>
+          </article>
+
+        </section>
+
+        <section
+          class="work-next-view"
+          data-view="shift"
+          id="view-shift" hidden
+        >
+
+          <div class="work-next-heading">
+            <button type="button" data-next-view="home">←</button>
+
+            <div>
+              <p class="wf-eyebrow">SHIFT</p>
+              <h1>シフト</h1>
+            </div>
+          </div>
+
+
+          <article class="work-next-panel" data-wf-panel data-wf-panel-surface>
+            <span class="work-next-phase">PHASE 1</span>
+            <h2 class="wf-panel-title">View移植済み</h2>
+            <p class="wf-panel-copy">
+              現在は画面構造だけを移植済み。
+              API・検証DBへの接続は次の段階で行います。
+            </p>
+          </article>
+
+        </section>
+
+        <section
+          class="work-next-view"
+          data-view="customers"
+          id="view-customers" hidden
+        >
+
+          <div class="work-next-heading">
+            <button type="button" data-next-view="home">←</button>
+
+            <div>
+              <p class="wf-eyebrow">CUSTOMERS</p>
+              <h1>顧客</h1>
+            </div>
+          </div>
+
+
+          <article class="work-next-panel" data-wf-panel data-wf-panel-surface>
+            <span class="work-next-phase">PHASE 1</span>
+            <h2 class="wf-panel-title">View移植済み</h2>
+            <p class="wf-panel-copy">
+              現在は画面構造だけを移植済み。
+              API・検証DBへの接続は次の段階で行います。
+            </p>
+          </article>
+
+        </section>
+
+        <section
+          class="work-next-view"
+          data-view="customer-detail"
+          id="view-customer-detail" hidden
+        >
+
+          <div class="work-next-heading">
+            <button type="button" data-next-view="home">←</button>
+
+            <div>
+              <p class="wf-eyebrow">CUSTOMER DETAIL</p>
+              <h1>顧客詳細</h1>
+            </div>
+          </div>
+
+
+          <article class="work-next-panel" data-wf-panel data-wf-panel-surface>
+            <span class="work-next-phase">PHASE 1</span>
+            <h2 class="wf-panel-title">View移植済み</h2>
+            <p class="wf-panel-copy">
+              現在は画面構造だけを移植済み。
+              API・検証DBへの接続は次の段階で行います。
+            </p>
+          </article>
+
+        </section>
+
+        <section
+          class="work-next-view"
+          data-view="sales"
+          id="view-sales" hidden
+        >
+
+          <div class="work-next-heading">
+            <button type="button" data-next-view="home">←</button>
+
+            <div>
+              <p class="wf-eyebrow">SALES</p>
+              <h1>売上</h1>
+            </div>
+          </div>
+
+
+          <article class="work-next-panel" data-wf-panel data-wf-panel-surface>
+            <span class="work-next-phase">PHASE 1</span>
+            <h2 class="wf-panel-title">View移植済み</h2>
+            <p class="wf-panel-copy">
+              現在は画面構造だけを移植済み。
+              API・検証DBへの接続は次の段階で行います。
+            </p>
+          </article>
+
+        </section>
+
+        <section
+          class="work-next-view"
+          data-view="database"
+          id="view-database" hidden
+        >
+
+          <div class="work-next-heading">
+            <button type="button" data-next-view="home">←</button>
+
+            <div>
+              <p class="wf-eyebrow">DATABASE</p>
+              <h1>DBビューア</h1>
+            </div>
+          </div>
+
+
+          <article class="work-next-panel" data-wf-panel data-wf-panel-surface>
+            <span class="work-next-phase">PHASE 1</span>
+            <h2 class="wf-panel-title">View移植済み</h2>
+            <p class="wf-panel-copy">
+              現在は画面構造だけを移植済み。
+              API・検証DBへの接続は次の段階で行います。
+            </p>
+          </article>
+
+        </section>
+
+        <section
+          class="work-next-view"
+          data-view="placeholder"
+          id="view-placeholder" hidden
+        >
+
+          <div class="work-next-heading">
+            <button type="button" data-next-view="home">←</button>
+
+            <div>
+              <p class="wf-eyebrow">KOPPY</p>
+              <h1>Koppy</h1>
+            </div>
+          </div>
+
+
+          <article class="work-next-panel" data-wf-panel data-wf-panel-surface>
+            <span class="work-next-phase">PHASE 1</span>
+            <h2 class="wf-panel-title">View移植済み</h2>
+            <p class="wf-panel-copy">
+              現在は画面構造だけを移植済み。
+              API・検証DBへの接続は次の段階で行います。
+            </p>
+          </article>
 
         </section>
 
       </main>
+
+
+      <nav class="work-next-bottom-nav" aria-label="Kohaku Work NEXT">
+        <button class="is-active" data-nav="home"><span>⌂</span><small>ホーム</small></button>
+        <button data-nav="diary"><span>▧</span><small>日記</small></button>
+        <button data-nav="customers"><span>♙</span><small>顧客</small></button>
+        <button data-nav="schedule"><span>▦</span><small>予約</small></button>
+        <button data-nav="shift"><span>◫</span><small>シフト</small></button>
+        <button data-nav="sales"><span>¥</span><small>売上</small></button>
+        <button data-nav="koppy"><span>♢ᴷ</span><small>Koppy</small></button>
+      </nav>
+
 
     </div>
 
@@ -131,5 +516,6 @@
   <script src="/assets/js/world-frame-profiles.js"></script>
   <script src="/assets/js/world-frame-runtime.js"></script>
   <script src="/assets/js/world-frame-utility.js"></script>
+  <script src="./work.js"></script>
 </body>
 </html>
