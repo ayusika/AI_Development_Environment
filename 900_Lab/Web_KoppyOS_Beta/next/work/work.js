@@ -48,6 +48,12 @@
       top: 0,
       behavior: "smooth",
     });
+
+    if (
+      name === "schedule"
+    ) {
+      void loadScheduleReadOnly();
+    }
   }
 
   document.addEventListener("click", event => {
@@ -682,6 +688,817 @@
       );
     }
   }
+
+
+  /* ========================================
+     PHASE 2C / SCHEDULE READ ONLY
+  ======================================== */
+
+  const scheduleReadOnlyState = {
+    anchorDate:
+      todayLocalDate(),
+  };
+
+
+  function parseReadOnlyDate(
+    value
+  ) {
+    const [
+      year,
+      month,
+      day,
+    ] =
+      String(value)
+        .split("-")
+        .map(Number);
+
+    return new Date(
+      year,
+      month - 1,
+      day,
+      12,
+      0,
+      0,
+      0
+    );
+  }
+
+
+  function formatReadOnlyDate(
+    date
+  ) {
+    return [
+      date.getFullYear(),
+
+      String(
+        date.getMonth() + 1
+      ).padStart(2, "0"),
+
+      String(
+        date.getDate()
+      ).padStart(2, "0"),
+    ].join("-");
+  }
+
+
+  function getScheduleReadOnlyPeriod() {
+    const anchor =
+      parseReadOnlyDate(
+        scheduleReadOnlyState
+          .anchorDate
+      );
+
+    const start =
+      new Date(anchor);
+
+    const day =
+      start.getDay();
+
+    const mondayOffset =
+      day === 0
+        ? -6
+        : 1 - day;
+
+    start.setDate(
+      start.getDate()
+      + mondayOffset
+    );
+
+
+    const dates = [];
+
+    for (
+      let index = 0;
+      index < 14;
+      index += 1
+    ) {
+      const date =
+        new Date(start);
+
+      date.setDate(
+        start.getDate()
+        + index
+      );
+
+      dates.push(
+        formatReadOnlyDate(
+          date
+        )
+      );
+    }
+
+
+    return {
+      start:
+        dates[0],
+
+      end:
+        dates[
+          dates.length - 1
+        ],
+
+      dates,
+    };
+  }
+
+
+  function formatScheduleReadOnlyPeriod(
+    period
+  ) {
+    const start =
+      parseReadOnlyDate(
+        period.start
+      );
+
+    const end =
+      parseReadOnlyDate(
+        period.end
+      );
+
+    return (
+      `${start.getMonth() + 1}/${start.getDate()}`
+      + " 〜 "
+      + `${end.getMonth() + 1}/${end.getDate()}`
+    );
+  }
+
+
+  function scheduleWeekdayLabel(
+    dateValue
+  ) {
+    return [
+      "日",
+      "月",
+      "火",
+      "水",
+      "木",
+      "金",
+      "土",
+    ][
+      parseReadOnlyDate(
+        dateValue
+      ).getDay()
+    ];
+  }
+
+
+  function scheduleCustomerLabel(
+    visit
+  ) {
+    const names =
+      Array.isArray(
+        visit.customer_names
+      )
+        ? visit.customer_names
+        : [];
+
+
+    const normalized =
+      names
+        .map(item => {
+
+          if (
+            typeof item
+            === "string"
+          ) {
+            return item;
+          }
+
+          if (
+            item
+            &&
+            typeof item
+              === "object"
+          ) {
+            return (
+              item.name
+              ||
+              item.customer_name
+              ||
+              item.display_name
+              ||
+              ""
+            );
+          }
+
+          return "";
+        })
+        .filter(Boolean);
+
+
+    if (normalized.length) {
+      return normalized.join(
+        " / "
+      );
+    }
+
+
+    return (
+      visit.customer_name
+      ||
+      visit.customer_label
+      ||
+      "お客様"
+    );
+  }
+
+
+  function scheduleElement(
+    tag,
+    className = "",
+    text = ""
+  ) {
+    const element =
+      document.createElement(
+        tag
+      );
+
+    if (className) {
+      element.className =
+        className;
+    }
+
+    if (text !== "") {
+      element.textContent =
+        text;
+    }
+
+    return element;
+  }
+
+
+  function renderScheduleReadOnly(
+    scheduleData,
+    shiftsData,
+    period
+  ) {
+    const container =
+      document.getElementById(
+        "nextScheduleDays"
+      );
+
+    const periodLabel =
+      document.getElementById(
+        "nextSchedulePeriod"
+      );
+
+    const status =
+      document.getElementById(
+        "nextScheduleReadStatus"
+      );
+
+
+    if (
+      !container
+      ||
+      !periodLabel
+      ||
+      !status
+    ) {
+      return;
+    }
+
+
+    periodLabel.textContent =
+      formatScheduleReadOnlyPeriod(
+        period
+      );
+
+
+    const visits =
+      Array.isArray(
+        scheduleData.visits
+      )
+        ? [...scheduleData.visits]
+        : [];
+
+
+    const shifts =
+      Array.isArray(
+        shiftsData.shifts
+      )
+        ? [...shiftsData.shifts]
+        : [];
+
+
+    visits.sort(
+      (left, right) =>
+        String(
+          left.started_at || ""
+        ).localeCompare(
+          String(
+            right.started_at || ""
+          )
+        )
+    );
+
+
+    container.replaceChildren();
+
+
+    const today =
+      todayLocalDate();
+
+
+    period.dates.forEach(
+      dateValue => {
+
+        const day =
+          scheduleElement(
+            "section",
+            "work-next-schedule-day"
+          );
+
+
+        if (
+          dateValue === today
+        ) {
+          day.classList.add(
+            "is-today"
+          );
+        }
+
+
+        const dayVisits =
+          visits.filter(
+            visit =>
+              String(
+                visit.started_at
+                || ""
+              ).slice(
+                0,
+                10
+              ) === dateValue
+          );
+
+
+        const dayShifts =
+          shifts.filter(
+            shift =>
+              shift.shift_date
+              === dateValue
+          );
+
+
+        const head =
+          scheduleElement(
+            "div",
+            "work-next-schedule-day-head"
+          );
+
+
+        const date =
+          scheduleElement(
+            "div",
+            "work-next-schedule-date"
+          );
+
+
+        const dateObject =
+          parseReadOnlyDate(
+            dateValue
+          );
+
+
+        date.append(
+          scheduleElement(
+            "strong",
+            "",
+            `${dateObject.getMonth() + 1}/${dateObject.getDate()}`
+          ),
+
+          scheduleElement(
+            "span",
+            "",
+            `(${scheduleWeekdayLabel(
+              dateValue
+            )})`
+          )
+        );
+
+
+        head.append(
+          date,
+
+          scheduleElement(
+            "span",
+            "work-next-schedule-count",
+            `${dayVisits.length}件`
+          )
+        );
+
+
+        day.append(
+          head
+        );
+
+
+        if (
+          dayShifts.length
+        ) {
+          const shiftRow =
+            scheduleElement(
+              "div",
+              "work-next-schedule-shifts"
+            );
+
+
+          dayShifts.forEach(
+            shift => {
+
+              const label = [
+                shift.store_name
+                  || "勤務",
+
+                `${compactTime(
+                  shift.start_at
+                )}〜${compactTime(
+                  shift.end_at
+                )}`,
+              ]
+                .filter(Boolean)
+                .join(" ");
+
+
+              shiftRow.append(
+                scheduleElement(
+                  "span",
+                  "work-next-schedule-shift",
+                  label
+                )
+              );
+            }
+          );
+
+
+          day.append(
+            shiftRow
+          );
+        }
+
+
+        const visitList =
+          scheduleElement(
+            "div",
+            "work-next-schedule-visits"
+          );
+
+
+        if (
+          !dayVisits.length
+        ) {
+          visitList.append(
+            scheduleElement(
+              "p",
+              "work-next-schedule-empty",
+              "予約なし"
+            )
+          );
+
+        } else {
+
+          dayVisits.forEach(
+            visit => {
+
+              const cancelled =
+                visit.status
+                  === "cancelled"
+                ||
+                Boolean(
+                  visit.cancelled_at
+                );
+
+
+              const row =
+                scheduleElement(
+                  "div",
+                  "work-next-schedule-visit"
+                );
+
+
+              if (cancelled) {
+                row.classList.add(
+                  "is-cancelled"
+                );
+              }
+
+
+              row.append(
+                scheduleElement(
+                  "span",
+                  "work-next-schedule-visit-time",
+                  compactTime(
+                    visit.started_at
+                  )
+                )
+              );
+
+
+              const main =
+                scheduleElement(
+                  "div",
+                  "work-next-schedule-visit-main"
+                );
+
+
+              main.append(
+                scheduleElement(
+                  "strong",
+                  "",
+                  scheduleCustomerLabel(
+                    visit
+                  )
+                )
+              );
+
+
+              const detail = [
+                visit.store_name,
+
+                visit.course_name
+                ||
+                (
+                  Number(
+                    visit.course_minutes
+                  ) > 0
+                    ? `${Number(
+                        visit.course_minutes
+                      )}分`
+                    : ""
+                ),
+              ]
+                .filter(Boolean)
+                .join(" / ");
+
+
+              main.append(
+                scheduleElement(
+                  "small",
+                  "",
+                  detail
+                  || "詳細未登録"
+                )
+              );
+
+
+              row.append(
+                main
+              );
+
+
+              row.append(
+                scheduleElement(
+                  "span",
+                  "work-next-schedule-visit-state",
+                  cancelled
+                    ? "キャンセル"
+                    : (
+                        visit.status
+                        || "予約"
+                      )
+                )
+              );
+
+
+              visitList.append(
+                row
+              );
+            }
+          );
+        }
+
+
+        day.append(
+          visitList
+        );
+
+
+        container.append(
+          day
+        );
+      }
+    );
+
+
+    const activeVisits =
+      visits.filter(
+        visit =>
+          visit.status
+            !== "cancelled"
+          &&
+          !visit.cancelled_at
+      );
+
+
+    status.textContent =
+      `${activeVisits.length}件 / READ ONLY`;
+
+    status.classList.remove(
+      "is-error"
+    );
+
+    status.classList.add(
+      "is-ok"
+    );
+  }
+
+
+  async function loadScheduleReadOnly() {
+    const status =
+      document.getElementById(
+        "nextScheduleReadStatus"
+      );
+
+    if (!status) {
+      return;
+    }
+
+
+    const period =
+      getScheduleReadOnlyPeriod();
+
+
+    status.textContent =
+      "READING";
+
+    status.classList.remove(
+      "is-ok",
+      "is-error"
+    );
+
+
+    readOnlyText(
+      "nextSchedulePeriod",
+      formatScheduleReadOnlyPeriod(
+        period
+      )
+    );
+
+
+    const params =
+      new URLSearchParams({
+        date_from:
+          period.start,
+
+        date_to:
+          period.end,
+      });
+
+
+    try {
+
+      const [
+        scheduleResponse,
+        shiftsResponse,
+      ] =
+        await Promise.all([
+          fetch(
+            `${productionScheduleApi}?${params.toString()}`,
+            {
+              method:
+                "GET",
+
+              credentials:
+                "same-origin",
+
+              cache:
+                "no-store",
+            }
+          ),
+
+          fetch(
+            `${productionShiftsApi}?${params.toString()}`,
+            {
+              method:
+                "GET",
+
+              credentials:
+                "same-origin",
+
+              cache:
+                "no-store",
+            }
+          ),
+        ]);
+
+
+      const scheduleData =
+        await readOnlyJson(
+          scheduleResponse,
+          "予約の取得に失敗しました。"
+        );
+
+
+      const shiftsData =
+        await readOnlyJson(
+          shiftsResponse,
+          "シフトの取得に失敗しました。"
+        );
+
+
+      renderScheduleReadOnly(
+        scheduleData,
+        shiftsData,
+        period
+      );
+
+    } catch (error) {
+
+      console.error(
+        "Kohaku Work NEXT schedule read-only load failed:",
+        error
+      );
+
+
+      status.textContent =
+        "READ ERROR";
+
+      status.classList.add(
+        "is-error"
+      );
+
+
+      const container =
+        document.getElementById(
+          "nextScheduleDays"
+        );
+
+
+      if (container) {
+        container.replaceChildren(
+          scheduleElement(
+            "p",
+            "work-next-schedule-empty",
+            "予約データを取得できませんでした。"
+          )
+        );
+      }
+    }
+  }
+
+
+  document.addEventListener(
+    "click",
+    event => {
+
+      const move =
+        event.target.closest(
+          "[data-next-schedule-move]"
+        );
+
+
+      if (move) {
+
+        const amount =
+          Number(
+            move.dataset
+              .nextScheduleMove
+          );
+
+
+        const anchor =
+          parseReadOnlyDate(
+            scheduleReadOnlyState
+              .anchorDate
+          );
+
+
+        anchor.setDate(
+          anchor.getDate()
+          + amount
+        );
+
+
+        scheduleReadOnlyState
+          .anchorDate =
+            formatReadOnlyDate(
+              anchor
+            );
+
+
+        void loadScheduleReadOnly();
+
+        return;
+      }
+
+
+      const today =
+        event.target.closest(
+          "[data-next-schedule-today]"
+        );
+
+
+      if (today) {
+
+        scheduleReadOnlyState
+          .anchorDate =
+            todayLocalDate();
+
+
+        void loadScheduleReadOnly();
+      }
+    }
+  );
 
 
   window.KohakuWorkNext = {

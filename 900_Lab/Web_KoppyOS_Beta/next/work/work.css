@@ -353,3 +353,445 @@
   color:
     #ffd27d;
 }
+
+/* ==== KOHaku WORK NEXT SCHEDULE READ ONLY V1 ==== */
+
+.work-next-schedule-toolbar{
+  display:
+    grid;
+
+  grid-template-columns:
+    auto
+    minmax(0,1fr)
+    auto
+    auto;
+
+  align-items:
+    center;
+
+  gap:
+    8px;
+
+  margin-bottom:
+    16px;
+
+  padding:
+    10px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 18%,
+      transparent
+    );
+
+  border-radius:
+    18px;
+
+  background:
+    rgba(255,255,255,.035);
+}
+
+.work-next-schedule-toolbar > div{
+  min-width:
+    0;
+
+  padding:
+    0 8px;
+}
+
+.work-next-schedule-toolbar span,
+.work-next-schedule-toolbar strong{
+  display:
+    block;
+}
+
+.work-next-schedule-toolbar span{
+  color:
+    var(--wf-text-dim);
+
+  font-size:
+    9px;
+
+  font-weight:
+    900;
+
+  letter-spacing:
+    .08em;
+}
+
+.work-next-schedule-toolbar strong{
+  margin-top:
+    3px;
+
+  color:
+    var(--wf-text);
+
+  font-size:
+    14px;
+}
+
+.work-next-schedule-toolbar button{
+  min-height:
+    40px;
+
+  padding:
+    8px 12px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 24%,
+      transparent
+    );
+
+  border-radius:
+    12px;
+
+  color:
+    var(--wf-text);
+
+  background:
+    rgba(255,255,255,.05);
+
+  font:
+    inherit;
+
+  font-size:
+    11px;
+
+  font-weight:
+    800;
+
+  cursor:
+    pointer;
+
+  touch-action:
+    manipulation;
+}
+
+.work-next-schedule-panel{
+  padding:
+    24px;
+}
+
+.work-next-schedule-days{
+  display:
+    grid;
+
+  gap:
+    10px;
+}
+
+.work-next-schedule-day{
+  min-width:
+    0;
+
+  padding:
+    15px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 15%,
+      transparent
+    );
+
+  border-radius:
+    16px;
+
+  background:
+    rgba(255,255,255,.025);
+}
+
+.work-next-schedule-day.is-today{
+  border-color:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 52%,
+      transparent
+    );
+
+  background:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 7%,
+      transparent
+    );
+}
+
+.work-next-schedule-day-head{
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  gap:
+    12px;
+
+  margin-bottom:
+    11px;
+}
+
+.work-next-schedule-date{
+  display:
+    flex;
+
+  align-items:
+    baseline;
+
+  gap:
+    8px;
+}
+
+.work-next-schedule-date strong{
+  color:
+    var(--wf-text);
+
+  font-size:
+    17px;
+}
+
+.work-next-schedule-date span{
+  color:
+    var(--wf-text-dim);
+
+  font-size:
+    10px;
+
+  font-weight:
+    800;
+}
+
+.work-next-schedule-count{
+  color:
+    var(--wf-accent);
+
+  font-size:
+    10px;
+
+  font-weight:
+    900;
+}
+
+.work-next-schedule-shifts{
+  display:
+    flex;
+
+  flex-wrap:
+    wrap;
+
+  gap:
+    6px;
+
+  margin-bottom:
+    10px;
+}
+
+.work-next-schedule-shift{
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap:
+    6px;
+
+  padding:
+    6px 9px;
+
+  border:
+    1px solid
+    rgba(130,220,255,.18);
+
+  border-radius:
+    999px;
+
+  color:
+    var(--wf-text-soft);
+
+  background:
+    rgba(255,255,255,.035);
+
+  font-size:
+    10px;
+}
+
+.work-next-schedule-visits{
+  display:
+    grid;
+
+  gap:
+    7px;
+}
+
+.work-next-schedule-visit{
+  display:
+    grid;
+
+  grid-template-columns:
+    auto
+    minmax(0,1fr)
+    auto;
+
+  align-items:
+    center;
+
+  gap:
+    12px;
+
+  padding:
+    11px 12px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 14%,
+      transparent
+    );
+
+  border-radius:
+    13px;
+
+  background:
+    rgba(0,10,24,.22);
+}
+
+.work-next-schedule-visit.is-cancelled{
+  opacity:
+    .48;
+}
+
+.work-next-schedule-visit-time{
+  color:
+    var(--wf-accent);
+
+  font-family:
+    var(--wf-font-mono);
+
+  font-size:
+    13px;
+
+  font-weight:
+    900;
+}
+
+.work-next-schedule-visit-main{
+  min-width:
+    0;
+}
+
+.work-next-schedule-visit-main strong,
+.work-next-schedule-visit-main small{
+  display:
+    block;
+}
+
+.work-next-schedule-visit-main strong{
+  overflow:
+    hidden;
+
+  color:
+    var(--wf-text);
+
+  font-size:
+    13px;
+
+  text-overflow:
+    ellipsis;
+
+  white-space:
+    nowrap;
+}
+
+.work-next-schedule-visit-main small{
+  margin-top:
+    3px;
+
+  color:
+    var(--wf-text-dim);
+
+  font-size:
+    10px;
+
+  line-height:
+    1.45;
+}
+
+.work-next-schedule-visit-state{
+  color:
+    var(--wf-text-dim);
+
+  font-size:
+    9px;
+
+  font-weight:
+    900;
+
+  text-align:
+    right;
+}
+
+.work-next-schedule-empty{
+  margin:
+    0;
+
+  padding:
+    12px;
+
+  color:
+    var(--wf-text-dim);
+
+  font-size:
+    11px;
+
+  text-align:
+    center;
+}
+
+@media(max-width:620px){
+
+  .work-next-schedule-toolbar{
+    grid-template-columns:
+      1fr
+      1fr
+      1fr;
+
+    gap:
+      7px;
+  }
+
+  .work-next-schedule-toolbar > div{
+    grid-column:
+      1 / -1;
+
+    grid-row:
+      1;
+
+    padding:
+      4px 5px 7px;
+  }
+
+  .work-next-schedule-visit{
+    grid-template-columns:
+      auto
+      minmax(0,1fr);
+  }
+
+  .work-next-schedule-visit-state{
+    grid-column:
+      2;
+
+    text-align:
+      left;
+  }
+}

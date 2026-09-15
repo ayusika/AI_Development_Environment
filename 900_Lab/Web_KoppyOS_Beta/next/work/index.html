@@ -253,7 +253,7 @@
             <h2 class="wf-panel-title">Phase 2 / Read Only Integration</h2>
             <p class="wf-panel-copy">
               現行Kohaku Workと同じ15 ViewをNEXT側へ用意。
-              Homeだけ本番APIをREAD ONLYで接続中。
+              Homeと予約Viewを本番APIへREAD ONLYで接続中。
               本番データへの書き込みは行いません。
             </p>
           </article>
@@ -455,22 +455,109 @@
         >
 
           <div class="work-next-heading">
-            <button type="button" data-next-view="home">←</button>
+
+            <button
+              type="button"
+              data-next-view="home"
+            >
+              ←
+            </button>
 
             <div>
-              <p class="wf-eyebrow">WORK SCHEDULE</p>
-              <h1>予約</h1>
+              <p class="wf-eyebrow">
+                WORK SCHEDULE / READ ONLY
+              </p>
+
+              <h1>
+                予約
+              </h1>
             </div>
+
           </div>
 
 
-          <article class="work-next-panel" data-wf-panel data-wf-panel-surface>
-            <span class="work-next-phase">PHASE 1</span>
-            <h2 class="wf-panel-title">View移植済み</h2>
-            <p class="wf-panel-copy">
-              現在は画面構造だけを移植済み。
-              API・検証DBへの接続は次の段階で行います。
+          <section
+            class="work-next-schedule-toolbar"
+            aria-label="予約表示期間"
+          >
+
+            <button
+              type="button"
+              data-next-schedule-move="-14"
+            >
+              ← 2週間
+            </button>
+
+            <div>
+              <span>
+                DISPLAY PERIOD
+              </span>
+
+              <strong id="nextSchedulePeriod">
+                読み込み中…
+              </strong>
+            </div>
+
+            <button
+              type="button"
+              data-next-schedule-today
+            >
+              今日
+            </button>
+
+            <button
+              type="button"
+              data-next-schedule-move="14"
+            >
+              2週間 →
+            </button>
+
+          </section>
+
+
+          <article
+            class="work-next-schedule-panel"
+            data-wf-panel
+            data-wf-panel-surface
+          >
+
+            <div class="work-next-live-head">
+
+              <div>
+                <p data-wf-label>
+                  PRODUCTION / READ ONLY
+                </p>
+
+                <h2 class="wf-panel-title">
+                  2週間の予約
+                </h2>
+              </div>
+
+              <span
+                class="work-next-live-status"
+                id="nextScheduleReadStatus"
+              >
+                READY
+              </span>
+
+            </div>
+
+
+            <div
+              class="work-next-schedule-days"
+              id="nextScheduleDays"
+            >
+              <p class="work-next-schedule-empty">
+                予約画面を開くと読み込みます。
+              </p>
+            </div>
+
+
+            <p class="work-next-live-note">
+              schedule.php / shifts.php のGETのみ。
+              新規予約・変更・削除・ドラッグ操作はまだ無効です。
             </p>
+
           </article>
 
         </section>
