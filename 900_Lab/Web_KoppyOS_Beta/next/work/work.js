@@ -52,7 +52,14 @@
     if (
       name === "schedule"
     ) {
-      void loadScheduleReadOnly();
+      const loadSchedule =
+        window.KohakuWorkNextSchedule?.load;
+
+      if (
+        typeof loadSchedule === "function"
+      ) {
+        void loadSchedule();
+      }
     }
   }
 

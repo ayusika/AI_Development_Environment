@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="/assets/css/world-frame-utility.css">
   <link rel="stylesheet" href="/next/_shared/scaffold.css">
   <link rel="stylesheet" href="./work.css">
+  <link rel="stylesheet" href="./schedule-readonly.css">
 </head>
 
 <body
@@ -448,119 +449,93 @@
 
         </section>
 
+        <!-- WRITER:NEXT_WORK_SCHEDULE_TIME_AXIS:START -->
         <section
-          class="work-next-view"
+          class="work-next-view work-next-schedule-view"
           data-view="schedule"
-          id="view-schedule" hidden
+          id="view-schedule"
+          hidden
         >
-
           <div class="work-next-heading">
-
             <button
               type="button"
               data-next-view="home"
+              aria-label="ホームへ戻る"
             >
               ←
             </button>
 
             <div>
               <p class="wf-eyebrow">
-                WORK SCHEDULE / READ ONLY
+                WORK SCHEDULE / TIME AXIS
               </p>
-
-              <h1>
-                予約
-              </h1>
+              <h1>予約</h1>
             </div>
 
+            <span
+              class="next-schedule-read-status"
+              id="nextScheduleReadStatus"
+            >
+              READ ONLY
+            </span>
           </div>
 
-
           <section
-            class="work-next-schedule-toolbar"
-            aria-label="予約表示期間"
+            class="next-schedule-calendar-shell"
+            id="nextScheduleShell"
+            aria-label="予約時間軸"
           >
-
-            <button
-              type="button"
-              data-next-schedule-move="-14"
+            <div
+              class="next-schedule-calendar"
+              id="nextScheduleTimeline"
             >
-              ← 2週間
-            </button>
-
-            <div>
-              <span>
-                DISPLAY PERIOD
-              </span>
-
-              <strong id="nextSchedulePeriod">
-                読み込み中…
-              </strong>
+              <div class="next-schedule-loading">
+                予約画面を開くと読み込みます。
+              </div>
             </div>
-
-            <button
-              type="button"
-              data-next-schedule-today
-            >
-              今日
-            </button>
-
-            <button
-              type="button"
-              data-next-schedule-move="14"
-            >
-              2週間 →
-            </button>
-
           </section>
 
-
-          <article
-            class="work-next-schedule-panel"
-            data-wf-panel
-            data-wf-panel-surface
+          <section
+            class="next-schedule-controls"
+            aria-label="予約カレンダー操作"
           >
-
-            <div class="work-next-live-head">
-
-              <div>
-                <p data-wf-label>
-                  PRODUCTION / READ ONLY
-                </p>
-
-                <h2 class="wf-panel-title">
-                  2週間の予約
-                </h2>
-              </div>
-
-              <span
-                class="work-next-live-status"
-                id="nextScheduleReadStatus"
-              >
-                READY
-              </span>
-
+            <div class="next-schedule-date-navigation">
+              <button type="button" data-next-timeline-move="-1" aria-label="前の期間">‹</button>
+              <button type="button" data-next-timeline-today>今日</button>
+              <button type="button" data-next-timeline-move="1" aria-label="次の期間">›</button>
             </div>
 
-
-            <div
-              class="work-next-schedule-days"
-              id="nextScheduleDays"
-            >
-              <p class="work-next-schedule-empty">
-                予約画面を開くと読み込みます。
-              </p>
+            <div class="next-schedule-period-heading">
+              <strong id="nextSchedulePeriod">読み込み中…</strong>
+              <span id="nextScheduleVisitCount">−件</span>
             </div>
 
+            <div class="next-schedule-view-switcher" aria-label="表示期間">
+              <button type="button" data-next-timeline-view="day">1日</button>
+              <button type="button" data-next-timeline-view="week">1週間</button>
+              <button class="is-selected" type="button" data-next-timeline-view="two-weeks">2週間</button>
+            </div>
 
-            <p class="work-next-live-note">
-              schedule.php / shifts.php のGETのみ。
-              新規予約・変更・削除・ドラッグ操作はまだ無効です。
-            </p>
+            <div class="next-schedule-zoom" aria-label="時間軸の表示倍率">
+              <button type="button" data-next-timeline-zoom="out">−</button>
+              <button type="button" id="nextScheduleZoomLabel" data-next-timeline-zoom="reset">100%</button>
+              <button type="button" data-next-timeline-zoom="in">＋</button>
+            </div>
+          </section>
 
-          </article>
+          <div class="next-schedule-store-legend" aria-label="店舗カラー">
+            <span class="store-sapporo"><i></i>札幌</span>
+            <span class="store-chiba"><i></i>千葉</span>
+            <span class="store-tokyo"><i></i>東京</span>
+            <span class="store-nagoya"><i></i>名古屋</span>
+          </div>
 
+          <p class="next-schedule-read-note">
+            本番 schedule.php / shifts.php のGETのみ。
+            新規予約・編集・削除・ドラッグはまだ無効です。
+          </p>
         </section>
+        <!-- WRITER:NEXT_WORK_SCHEDULE_TIME_AXIS:END -->
 
         <section
           class="work-next-view"
@@ -750,5 +725,6 @@
   <script src="/assets/js/world-frame-runtime.js"></script>
   <script src="/assets/js/world-frame-utility.js"></script>
   <script src="./work.js"></script>
+  <script src="./schedule-readonly.js"></script>
 </body>
 </html>
