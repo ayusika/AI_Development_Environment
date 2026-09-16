@@ -1,6 +1,6 @@
 # Koppy Local CLI Bridge Architecture
 
-Version: v0.2.1
+Version: v0.2.2
 Status: ACTIVE
 
 ## 1. Purpose
@@ -203,26 +203,60 @@ Bridgeの存在だけを理由に、managed fileの書き換え、delete、renam
 
 ## 11. ZIP / Package Handling
 
-ZIP download → 展開 → repository反映はCurrent v0.2の正式Command Contractには含めない。
+ZIP / Packageのrepository反映は、
+Koppy Local CLI Bridge本体の責務には含めない。
 
-将来候補：
+Bridgeは引き続き、
+
+- Observation
+- Inspection
+- Verification
+- Context Transfer
+
+を担当する。
+
+Packageの展開・repositoryへの反映は書き込み処理を伴うため、
+Bridgeとは責務を分離した独立Utilityとして設計する。
+
+詳細な安全仕様の正本：
+
+`600_KoppyOS/protocols/PACKAGE_SAFETY_PROTOCOL.md`
+
+想定Command：
 
 - `kpackage inspect`
 - `kpackage stage`
 - `kpackage diff`
 - `kpackage apply`
+- `kpackage rollback`
 
-想定Flow：
+ただし、これらはRuntimeへ実装されるまでは
+実行可能Commandとして扱わない。
+
+基本Flow：
 
 Package
-→ Temporary / Staging Area
-→ Contents Inspection
+→ Inspect
+→ Repository外Staging
 → Repositoryとの差分確認
-→ Safety Check
+→ Safety Gate
 → Explicit Apply
-→ Review
+→ `koppy review`
 
-ZIPを直接repositoryへ無検証展開するCommandは標準化しない。
+基本原則：
+
+- ZIP / Packageをrepositoryへ直接展開しない
+- stagingはrepository外に作成する
+- package pathを推測変換しない
+- apply前にGit / HEAD / worktree / package状態を再確認する
+- applyはcommit / pushを行わない
+- apply後は既存の `koppy review` を使用する
+- 正常反映後のtest失敗では自動rollbackしない
+- copy途中等のapply失敗では可能な範囲で元状態へ復旧する
+- rollbackは明示的Commandとして分離する
+
+Package UtilityはBridgeの安全機能を再利用できるが、
+BridgeそのものをExecutorへ変更するものではない。
 
 ## 12. Context Reduction Principle
 
@@ -236,7 +270,7 @@ Bridge仕様をConversation Memoryだけへ依存させない。
 
 Command Contractまたは重要な挙動を変更した場合はVersionを更新する。
 
-Current：`v0.2.1`
+Current：`v0.2.2`
 
 実戦で不足が確認された機能のみ追加する。機能数を増やすこと自体を目的としない。
 
@@ -245,6 +279,7 @@ Current：`v0.2.1`
 - `AGENTS.md`
 - `600_KoppyOS/protocols/EXECUTOR_SELECTION_PROTOCOL.md`
 - `600_KoppyOS/protocols/FILE_EDIT_PROTOCOL.md`
+- `600_KoppyOS/protocols/PACKAGE_SAFETY_PROTOCOL.md`
 - `600_KoppyOS/design/ARCHITECTURE.md`
 
 ## 15. Safety Capability Levels
@@ -294,6 +329,11 @@ Current Runtimeへ実装済みとは扱わない。
 - `kpackage stage`
 - `kpackage diff`
 - `kpackage apply`
+- `kpackage rollback`
+
+Package Utilityの詳細な安全仕様は
+`600_KoppyOS/protocols/PACKAGE_SAFETY_PROTOCOL.md`
+を正本とする。
 
 設計書に名前が存在することを理由に、
 未実装Commandをユーザーへ実行Commandとして提示してはならない。
