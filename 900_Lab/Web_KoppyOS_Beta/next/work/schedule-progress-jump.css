@@ -1,0 +1,38 @@
+/* KOHaku WORK NEXT / progress jump */
+
+.next-schedule-detail-state.is-action{
+  appearance:none;
+  width:100%;
+  border:1px solid rgba(255,255,255,.07);
+  color:inherit;
+  background:inherit;
+  font:inherit;
+  text-align:left;
+  cursor:pointer;
+  position:relative;
+}
+
+.next-schedule-detail-state.is-action:hover,
+.next-schedule-detail-state.is-action:focus-visible{
+  border-color:color-mix(in srgb,var(--wf-accent) 48%,transparent);
+  outline:none;
+}
+
+.next-progress-open{
+  position:absolute;
+  right:8px;
+  bottom:6px;
+  color:var(--wf-accent);
+  font-size:7px;
+  font-weight:900;
+  opacity:.78;
+}
+
+.is-next-progress-target{
+  animation:nextProgressTargetFlash 1.5s ease-out;
+}
+
+@keyframes nextProgressTargetFlash{
+  0%{box-shadow:0 0 0 2px color-mix(in srgb,var(--wf-accent) 70%,transparent);}
+  100%{box-shadow:0 0 0 0 transparent;}
+}

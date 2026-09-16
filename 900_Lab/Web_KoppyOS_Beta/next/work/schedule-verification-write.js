@@ -111,7 +111,7 @@
         novalidate
       >
         <p class="next-schedule-detail-section-label">
-          VERIFICATION EDIT / V1
+          VERIFICATION EDIT
         </p>
 
         <div class="next-schedule-edit-warning">
@@ -215,7 +215,7 @@
         </label>
 
         <p class="next-schedule-edit-scope">
-          店舗・コース・顧客区分・OPは次フェーズで追加します。
+          日時・店舗・コース・延長・OP・顧客区分・来訪タイプ・チップ・調整分を編集できます。
         </p>
 
         <p
