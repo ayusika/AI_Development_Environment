@@ -236,7 +236,7 @@ Bridge仕様をConversation Memoryだけへ依存させない。
 
 Command Contractまたは重要な挙動を変更した場合はVersionを更新する。
 
-Current：`v0.2.0`
+Current：`v0.2.1`
 
 実戦で不足が確認された機能のみ追加する。機能数を増やすこと自体を目的としない。
 
