@@ -388,23 +388,22 @@
         "[data-next-customer-profile-open]"
       )
     ) {
-      const customerId = currentCustomerId();
+      const customerId =
+        currentCustomerId();
 
-      if (
-        customerId
-        && failedCustomerId === customerId
-      ) {
+      if (customerId) {
         failedCustomerId = 0;
 
         queueMicrotask(() => {
           if (
             currentCustomerId() === customerId
-            && loadingCustomerId !== customerId
           ) {
-            void loadMeta(customerId);
+            mountHosts();
           }
         });
       }
+
+      return;
     }
 
     if (event.target.closest("[data-next-profile-meta-save]")) {
@@ -413,18 +412,10 @@
     }
   });
 
-  const observer = new MutationObserver(() => queueMicrotask(mountHosts));
-  observer.observe(body, { childList: true, subtree: true });
-  observer.observe(drawer, {
-    attributes: true,
-    attributeFilter: ["class", "data-visit-id", "data-detail-loaded-id"],
-  });
-
-  queueMicrotask(mountHosts);
-
   window.KohakuWorkNextCustomerProfileFull = {
     verificationReadEnabled: true,
     verificationWriteEnabled: true,
     productionWriteEnabled: false,
+    lazyMountEnabled: true,
   };
 })();
