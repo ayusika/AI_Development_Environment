@@ -210,59 +210,107 @@
 
     const salesHtml = sales
       ? `
-        <div class="next-schedule-detail-card">
-          <div class="next-schedule-detail-row">
-            <span>状態</span>
-            <strong>${escapeHtml(sales.confirmed_at ? "確定済み" : "未確定")}</strong>
+        <div class="next-detail-sales-overview">
+          <div class="next-detail-sales-total">
+            <div>
+              <span class="next-detail-sales-status">
+                ${escapeHtml(
+                  sales.confirmed_at
+                    ? "確定済み"
+                    : "未確定"
+                )}
+              </span>
+              <small>最終手取り</small>
+            </div>
+
+            <strong>
+              ${escapeHtml(
+                money(sales.take_home_total)
+              )}
+            </strong>
           </div>
-          <div class="next-schedule-detail-row">
-            <span>基本料金snapshot</span>
-            <strong>${escapeHtml(money(sales.base_price_snapshot))}</strong>
+
+          <div class="next-detail-sales-metrics">
+            <article>
+              <span>コース</span>
+              <strong>
+                ${escapeHtml(
+                  money(
+                    sales.course_take_home_snapshot
+                  )
+                )}
+              </strong>
+            </article>
+
+            <article>
+              <span>OP</span>
+              <strong>
+                ${escapeHtml(
+                  money(
+                    sales.option_take_home_total_snapshot
+                  )
+                )}
+              </strong>
+            </article>
+
+            <article>
+              <span>チップ</span>
+              <strong>
+                ${escapeHtml(
+                  money(sales.tip_amount)
+                )}
+              </strong>
+            </article>
+
+            <article>
+              <span>調整</span>
+              <strong>
+                ${escapeHtml(
+                  signedMoney(
+                    sales.adjustment_amount
+                  )
+                )}
+              </strong>
+            </article>
           </div>
-          <div class="next-schedule-detail-row">
-            <span>コース手取り</span>
-            <strong>${escapeHtml(money(sales.course_take_home_snapshot))}</strong>
-          </div>
-          <div class="next-schedule-detail-row">
-            <span>OP売上</span>
-            <strong>${escapeHtml(money(sales.option_price_total_snapshot))}</strong>
-          </div>
-          <div class="next-schedule-detail-row">
-            <span>OP手取り</span>
-            <strong>${escapeHtml(money(sales.option_take_home_total_snapshot))}</strong>
-          </div>
-          <div class="next-schedule-detail-row">
-            <span>チップ</span>
-            <strong>${escapeHtml(money(sales.tip_amount))}</strong>
-          </div>
-          <div class="next-schedule-detail-row">
-            <span>割引</span>
-            <strong>${escapeHtml(money(sales.discount_amount))}</strong>
-          </div>
-          <div class="next-schedule-detail-row">
-            <span>割引区分</span>
-            <strong>${escapeHtml(textOrNone(sales.discount_reason_type))}</strong>
-          </div>
-          <div class="next-schedule-detail-row">
-            <span>割引メモ</span>
-            <strong>${escapeHtml(textOrNone(sales.discount_reason_note))}</strong>
-          </div>
-          <div class="next-schedule-detail-row">
-            <span>調整分</span>
-            <strong>${escapeHtml(signedMoney(sales.adjustment_amount))}</strong>
-          </div>
-          <div class="next-schedule-detail-row">
-            <span>支払総額</span>
-            <strong>${escapeHtml(money(sales.customer_payment_total))}</strong>
-          </div>
-          <div class="next-schedule-detail-row">
-            <span>最終手取り</span>
-            <strong>${escapeHtml(money(sales.take_home_total))}</strong>
-          </div>
-          <div class="next-schedule-detail-row">
-            <span>確定日時</span>
-            <strong>${escapeHtml(textOrNone(sales.confirmed_at))}</strong>
-          </div>
+
+          <details class="next-detail-sales-breakdown">
+            <summary>
+              <span>売上内訳</span>
+              <strong>詳細を見る</strong>
+            </summary>
+
+            <div class="next-schedule-detail-card">
+              <div class="next-schedule-detail-row">
+                <span>基本料金snapshot</span>
+                <strong>${escapeHtml(money(sales.base_price_snapshot))}</strong>
+              </div>
+              <div class="next-schedule-detail-row">
+                <span>OP売上</span>
+                <strong>${escapeHtml(money(sales.option_price_total_snapshot))}</strong>
+              </div>
+              <div class="next-schedule-detail-row">
+                <span>割引</span>
+                <strong>${escapeHtml(money(sales.discount_amount))}</strong>
+              </div>
+              <div class="next-schedule-detail-row">
+                <span>割引区分</span>
+                <strong>${escapeHtml(textOrNone(sales.discount_reason_type))}</strong>
+              </div>
+              <div class="next-schedule-detail-row">
+                <span>割引メモ</span>
+                <strong>${escapeHtml(textOrNone(sales.discount_reason_note))}</strong>
+              </div>
+              <div class="next-schedule-detail-row">
+                <span>支払総額</span>
+                <strong>${escapeHtml(money(sales.customer_payment_total))}</strong>
+              </div>
+              <div class="next-schedule-detail-row">
+                <span>確定日時</span>
+                <strong>${escapeHtml(textOrNone(sales.confirmed_at))}</strong>
+              </div>
+            </div>
+          </details>
         </div>
       `
       : `
@@ -482,9 +530,16 @@
       const status =
         document.getElementById("nextScheduleWriteStatus");
 
-      if (status && !status.dataset.state) {
+      if (
+        status
+        && (
+          !status.dataset.state
+          || status.dataset.state === "editing"
+        )
+      ) {
         status.textContent =
-          "DETAIL FULL READ / EDIT READY";
+          "VERIFICATION DB / EDIT READY";
+        status.dataset.state = "";
       }
 
     } catch (error) {

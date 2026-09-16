@@ -104,21 +104,71 @@
       return `<p class="ncpf-state">名義・初回流入元を読み込み中…</p>`;
     }
 
-    const nameRows = NAME_TYPES.map(([type, label]) => `
-      <div class="ncpf-summary-row">
-        <span>${escapeHtml(label)}</span>
-        <strong>${escapeHtml(nameValue(meta, type) || "未登録")}</strong>
-      </div>
-    `).join("");
+    const knownNames =
+      NAME_TYPES
+        .map(([type, label]) => ({
+          type,
+          label,
+          value:nameValue(meta, type),
+        }))
+        .filter(item => item.value);
 
-    const source = meta.acquisition_source || null;
+    const source =
+      meta.acquisition_source || null;
+
+    const hasSource =
+      Boolean(
+        source
+        && (
+          (
+            source.source_type
+            && source.source_type !== "unknown"
+          )
+          || source.source_detail
+        )
+      );
+
+    const namesHtml =
+      knownNames.length
+        ? knownNames
+            .map(item => `
+              <span class="ncpf-summary-chip">
+                <small>${escapeHtml(item.label)}</small>
+                <strong>${escapeHtml(item.value)}</strong>
+              </span>
+            `)
+            .join("")
+        : `
+          <span class="ncpf-summary-empty">
+            名義情報はまだ登録されていません
+          </span>
+        `;
 
     return `
-      <div class="ncpf-summary-grid">${nameRows}</div>
-      <div class="ncpf-source-summary">
-        <span>初回流入元</span>
-        <strong>${escapeHtml(sourceLabel(source?.source_type))}</strong>
-        ${source?.source_detail ? `<small>${escapeHtml(source.source_detail)}</small>` : ""}
+      <div class="ncpf-summary-compact">
+        <div class="ncpf-summary-chips">
+          ${namesHtml}
+        </div>
+
+        ${
+          hasSource
+            ? `
+              <div class="ncpf-summary-source">
+                <span>初回流入元</span>
+                <strong>
+                  ${escapeHtml(
+                    sourceLabel(source?.source_type)
+                  )}
+                </strong>
+                ${
+                  source?.source_detail
+                    ? `<small>${escapeHtml(source.source_detail)}</small>`
+                    : ""
+                }
+              </div>
+            `
+            : ""
+        }
       </div>
     `;
   }

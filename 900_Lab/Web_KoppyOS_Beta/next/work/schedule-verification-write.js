@@ -924,7 +924,7 @@
     `;
 
     setWriteStatus(
-      "VERIFICATION DB / EDIT V2",
+      "VERIFICATION DB / EDITING",
       "editing"
     );
 
