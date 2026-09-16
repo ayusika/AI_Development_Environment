@@ -663,14 +663,28 @@
     state.generatedCore = null;
     renderBody("");
 
-    await loadSavedFinal();
+    const hasSavedFinal =
+      await loadSavedFinal();
+
     if (token !== state.openingToken) return;
 
-    await loadCloudDraft();
+    const hasCloudDraft =
+      await loadCloudDraft();
+
     if (token !== state.openingToken) return;
 
-    if (restoreLocalDraft()) {
+    const hasLocalDraft =
+      restoreLocalDraft();
+
+    if (hasLocalDraft) {
       setStatus("✓ この端末の下書きを復元しました");
+    } else if (
+      !hasCloudDraft
+      && !hasSavedFinal
+    ) {
+      setStatus(
+        "未保存の日記です。新しく作成できます。"
+      );
     }
 
     syncBridge();
