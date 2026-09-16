@@ -172,7 +172,10 @@
       visit.status === "cancelled"
       || visit.cancelled_at
         ? `
-          <p class="next-schedule-detail-section-label">
+          <p
+            class="next-schedule-detail-section-label"
+            data-next-detail-section="cancellation"
+          >
             CANCELLATION
           </p>
 
@@ -275,7 +278,47 @@
           class="next-schedule-complete-detail"
           data-next-complete-detail
         >
-          <p class="next-schedule-detail-section-label">
+          ${cancellation}
+
+          <p
+            class="next-schedule-detail-section-label"
+            data-next-detail-section="memos"
+          >
+            MEMOS
+          </p>
+
+          <div class="next-schedule-complete-notes">
+            ${memoBlock("特徴メモ", visit.customer_features)}
+            ${memoBlock("会話メモ", visit.conversation_notes)}
+            ${memoBlock("来店メモ", visit.visit_notes)}
+          </div>
+
+          <p
+            class="next-schedule-detail-section-label"
+            data-next-detail-section="diary"
+          >
+            DIARY
+          </p>
+
+          <div class="next-schedule-complete-stack">
+            ${memoBlock("日記素材", diary.note?.body)}
+            ${diaryItems}
+            ${heavenHtml(diary.heaven)}
+          </div>
+
+          <p
+            class="next-schedule-detail-section-label"
+            data-next-detail-section="sales"
+          >
+            SALES
+          </p>
+
+          ${salesHtml}
+
+          <p
+            class="next-schedule-detail-section-label"
+            data-next-detail-section="snapshot"
+          >
             INPUT SNAPSHOT
           </p>
 
@@ -314,34 +357,6 @@
               <strong>${escapeHtml(textOrNone(visit.updated_at))}</strong>
             </div>
           </div>
-
-          ${cancellation}
-
-          <p class="next-schedule-detail-section-label">
-            MEMOS
-          </p>
-
-          <div class="next-schedule-complete-notes">
-            ${memoBlock("特徴メモ", visit.customer_features)}
-            ${memoBlock("会話メモ", visit.conversation_notes)}
-            ${memoBlock("来店メモ", visit.visit_notes)}
-          </div>
-
-          <p class="next-schedule-detail-section-label">
-            DIARY
-          </p>
-
-          <div class="next-schedule-complete-stack">
-            ${memoBlock("日記素材", diary.note?.body)}
-            ${diaryItems}
-            ${heavenHtml(diary.heaven)}
-          </div>
-
-          <p class="next-schedule-detail-section-label">
-            SALES
-          </p>
-
-          ${salesHtml}
         </div>
       `
     );

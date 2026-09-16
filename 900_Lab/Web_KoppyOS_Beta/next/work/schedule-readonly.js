@@ -296,23 +296,77 @@
       : (visit.customer_name || visit.customer_code || statusLabel(visit.customer_status));
   }
 
-  function detailOptionText(visit) {
+  function detailOptionTagsHtml(visit) {
     const names = (Array.isArray(visit.options) ? visit.options : [])
       .map(option => {
         const name = option.name || option.custom_name || "";
         if (!name) return "";
-        if (option.custom_name && option.income_amount !== null && option.income_amount !== "") {
-          return `${name} ${formatMoney(option.income_amount)}`;
-        }
-        return name;
+
+        const label =
+          option.custom_name
+          && option.income_amount !== null
+          && option.income_amount !== ""
+            ? `${name} ${formatMoney(option.income_amount)}`
+            : name;
+
+        return `
+          <span class="next-detail-option-tag">
+            ${escapeHtml(label)}
+          </span>
+        `;
       })
       .filter(Boolean);
 
-    return names.length ? names.join(" / ") : "なし";
+    return names.length
+      ? `<span class="next-detail-option-tags">${names.join("")}</span>`
+      : `
+        <span class="next-detail-option-tags">
+          <span class="next-detail-option-tag is-empty">なし</span>
+        </span>
+      `;
   }
 
   function detailVisitorType(value) {
     return ({ local:"地元", travel:"旅行", business:"出張" })[value] || "不明";
+  }
+
+  function renderDetailMeta(title, visit, course) {
+    let meta =
+      document.getElementById(
+        "nextScheduleDetailMeta"
+      );
+
+    if (!meta) {
+      meta =
+        document.createElement("div");
+
+      meta.id =
+        "nextScheduleDetailMeta";
+
+      meta.className =
+        "next-schedule-detail-meta";
+
+      title.insertAdjacentElement(
+        "afterend",
+        meta
+      );
+    }
+
+    const values = [
+      visit.store_name || "店舗未登録",
+      course,
+      statusLabel(visit.customer_status),
+      detailVisitorType(visit.visitor_type),
+    ];
+
+    meta.innerHTML =
+      values
+        .map(value => `
+          <span>
+            ${escapeHtml(value)}
+          </span>
+        `)
+        .join("");
   }
 
   function detailState(label, complete, completeText, incompleteText) {
@@ -363,21 +417,32 @@
       : `${adjustment > 0 ? "+" : "-"}${formatMoney(adjustment)}`;
 
     title.textContent = customer;
+    renderDetailMeta(
+      title,
+      visit,
+      course
+    );
 
     body.innerHTML = `
-      <p class="next-schedule-detail-section-label">RESERVATION</p>
-      <div class="next-schedule-detail-card">
+      <p
+        class="next-schedule-detail-section-label"
+        data-next-detail-heading="reservation"
+      >RESERVATION</p>
+      <div class="next-schedule-detail-card next-detail-reservation-card">
         <div class="next-schedule-detail-row"><span>日時</span><strong>${escapeHtml(date)} ${escapeHtml(time)}</strong></div>
         <div class="next-schedule-detail-row"><span>店舗</span><strong>${escapeHtml(visit.store_name || "未登録")}</strong></div>
         <div class="next-schedule-detail-row"><span>予約時間</span><strong>${escapeHtml(course)}</strong></div>
         <div class="next-schedule-detail-row"><span>区分</span><strong>${escapeHtml(statusLabel(visit.customer_status))}</strong></div>
         <div class="next-schedule-detail-row"><span>来訪タイプ</span><strong>${escapeHtml(detailVisitorType(visit.visitor_type))}</strong></div>
-        <div class="next-schedule-detail-row"><span>OP</span><strong>${escapeHtml(detailOptionText(visit))}</strong></div>
+        <div class="next-schedule-detail-row"><span>OP</span><strong class="next-detail-option-cell">${detailOptionTagsHtml(visit)}</strong></div>
         <div class="next-schedule-detail-row"><span>チップ</span><strong>${escapeHtml(tipText)}</strong></div>
         <div class="next-schedule-detail-row"><span>調整分</span><strong>${escapeHtml(adjustmentText)}</strong></div>
       </div>
 
-      <p class="next-schedule-detail-section-label">PROGRESS</p>
+      <p
+        class="next-schedule-detail-section-label"
+        data-next-detail-heading="progress"
+      >PROGRESS</p>
       <div class="next-schedule-detail-progress">
         ${detailState("顧客", Number(visit.customer_linked) === 1, "紐付け済", "未紐付け")}
         ${detailState("日記", Number(visit.diary_linked) === 1, "完了", "未入力")}

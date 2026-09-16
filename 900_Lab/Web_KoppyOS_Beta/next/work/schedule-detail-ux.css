@@ -1,0 +1,321 @@
+/* =========================================================
+   KOHaku WORK NEXT / RESERVATION DETAIL UX POLISH V1
+   Visual hierarchy only. No API / DB behavior.
+========================================================= */
+
+.next-schedule-detail-header > div:first-child{
+  min-width:0;
+  flex:1 1 auto;
+}
+
+.next-schedule-detail-header{
+  padding-bottom:14px;
+  background:
+    radial-gradient(circle at 20% 0%,color-mix(in srgb,var(--wf-accent) 10%,transparent),transparent 44%),
+    rgba(7,29,51,.96);
+}
+
+#nextScheduleDetailTitle{
+  max-width:100%;
+  overflow-wrap:anywhere;
+}
+
+.next-schedule-detail-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+  margin-top:10px;
+}
+
+.next-schedule-detail-meta span{
+  display:inline-flex;
+  align-items:center;
+  min-height:24px;
+  padding:4px 8px;
+  border:1px solid color-mix(in srgb,var(--wf-accent) 22%,transparent);
+  border-radius:999px;
+  color:var(--wf-text-soft);
+  background:rgba(255,255,255,.035);
+  font-size:8px;
+  font-weight:900;
+  line-height:1;
+}
+
+.next-schedule-detail-body{
+  padding:15px 14px 30px;
+  scrollbar-gutter:stable;
+}
+
+.next-schedule-detail-section-label{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:12px;
+  margin:22px 2px 9px;
+  padding:0 2px 7px;
+  border-bottom:1px solid color-mix(in srgb,var(--wf-accent) 16%,transparent);
+}
+
+.next-schedule-detail-section-label::after{
+  color:var(--wf-text);
+  font-size:11px;
+  font-weight:900;
+  letter-spacing:0;
+  text-transform:none;
+}
+
+.next-schedule-detail-section-label[data-next-detail-heading="reservation"]{
+  margin-top:2px;
+}
+.next-schedule-detail-section-label[data-next-detail-heading="reservation"]::after{
+  content:"予約サマリー";
+}
+.next-schedule-detail-section-label[data-next-detail-heading="progress"]::after{
+  content:"次の操作";
+}
+.next-schedule-detail-section-label[data-next-detail-section="cancellation"]::after{
+  content:"キャンセル情報";
+  color:#ffc1cf;
+}
+.next-schedule-detail-section-label[data-next-detail-section="memos"]::after{
+  content:"接客メモ";
+}
+.next-schedule-detail-section-label[data-next-detail-section="diary"]::after{
+  content:"日記";
+}
+.next-schedule-detail-section-label[data-next-detail-section="sales"]::after{
+  content:"売上";
+}
+.next-schedule-detail-section-label[data-next-detail-section="snapshot"]::after{
+  content:"管理情報";
+  color:var(--wf-text-dim);
+}
+
+.next-detail-reservation-card{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:1px;
+  padding:1px;
+  overflow:hidden;
+  border-color:color-mix(in srgb,var(--wf-accent) 24%,transparent);
+  background:color-mix(in srgb,var(--wf-accent) 10%,rgba(255,255,255,.035));
+}
+
+.next-detail-reservation-card .next-schedule-detail-row{
+  display:grid;
+  align-content:start;
+  gap:5px;
+  min-width:0;
+  padding:12px;
+  border:0;
+  background:rgba(5,22,41,.64);
+}
+
+.next-detail-reservation-card .next-schedule-detail-row:nth-child(1),
+.next-detail-reservation-card .next-schedule-detail-row:nth-child(6){
+  grid-column:1 / -1;
+}
+
+.next-detail-reservation-card .next-schedule-detail-row > span{
+  flex:none;
+  width:auto;
+  color:var(--wf-text-dim);
+  font-size:8px;
+  letter-spacing:.02em;
+}
+
+.next-detail-reservation-card .next-schedule-detail-row > strong{
+  color:var(--wf-text);
+  font-size:12px;
+  line-height:1.35;
+  text-align:left;
+}
+
+.next-detail-reservation-card .next-schedule-detail-row:nth-child(1) > strong{
+  color:var(--wf-accent);
+  font-size:14px;
+}
+
+.next-detail-option-cell{
+  text-align:left !important;
+}
+
+.next-detail-option-tags{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-start;
+  gap:6px;
+}
+
+.next-detail-option-tag{
+  display:inline-flex;
+  align-items:center;
+  min-height:25px;
+  padding:4px 8px;
+  border:1px solid color-mix(in srgb,var(--wf-accent) 25%,transparent);
+  border-radius:9px;
+  color:var(--wf-text);
+  background:color-mix(in srgb,var(--wf-accent) 8%,rgba(255,255,255,.025));
+  font-size:9px;
+  font-weight:900;
+}
+
+.next-detail-option-tag.is-empty{
+  color:var(--wf-text-dim);
+  border-style:dashed;
+  background:rgba(255,255,255,.02);
+}
+
+.next-schedule-detail-progress{
+  gap:9px;
+  margin-bottom:4px;
+}
+
+.next-schedule-detail-state.is-action{
+  --next-progress-accent:var(--wf-accent);
+  min-height:94px;
+  padding:12px 11px 29px;
+  overflow:hidden;
+  border-color:color-mix(in srgb,var(--next-progress-accent) 30%,transparent);
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb,var(--next-progress-accent) 10%,transparent),
+      rgba(255,255,255,.025)
+    );
+  transition:
+    transform .16s ease,
+    border-color .16s ease,
+    background .16s ease;
+}
+
+.next-schedule-detail-state.is-action[data-next-progress-jump="customer"]{
+  --next-progress-accent:#70d8ff;
+}
+.next-schedule-detail-state.is-action[data-next-progress-jump="diary"]{
+  --next-progress-accent:#d7a7ff;
+}
+.next-schedule-detail-state.is-action[data-next-progress-jump="sales"]{
+  --next-progress-accent:#79e6ba;
+}
+
+.next-schedule-detail-state.is-action:hover,
+.next-schedule-detail-state.is-action:focus-visible{
+  transform:translateY(-1px);
+  border-color:color-mix(in srgb,var(--next-progress-accent) 68%,transparent);
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb,var(--next-progress-accent) 15%,transparent),
+      rgba(255,255,255,.04)
+    );
+}
+
+.next-schedule-detail-state.is-action > span{
+  color:var(--wf-text-soft);
+  font-size:9px;
+}
+
+.next-schedule-detail-state.is-action > strong{
+  margin-top:6px;
+  font-size:12px;
+}
+
+.next-schedule-detail-state.is-action.is-complete > strong{
+  color:#8effc1;
+}
+
+.next-schedule-detail-state.is-action:not(.is-complete) > strong{
+  color:#ffbf8e;
+}
+
+.next-progress-open{
+  left:11px;
+  right:auto;
+  bottom:8px;
+  color:var(--next-progress-accent);
+  font-size:8px;
+  opacity:1;
+}
+
+.next-schedule-complete-notes{
+  gap:9px;
+}
+
+.next-schedule-complete-notes .next-schedule-complete-note{
+  position:relative;
+  padding:11px 12px 11px 15px;
+  border-color:color-mix(in srgb,var(--wf-accent) 14%,transparent);
+  background:rgba(255,255,255,.03);
+}
+
+.next-schedule-complete-notes .next-schedule-complete-note::before{
+  content:"";
+  position:absolute;
+  top:10px;
+  bottom:10px;
+  left:6px;
+  width:2px;
+  border-radius:999px;
+  background:color-mix(in srgb,var(--wf-accent) 52%,transparent);
+}
+
+.next-schedule-complete-notes .next-schedule-complete-note > span{
+  color:var(--wf-accent);
+}
+
+.next-schedule-detail-section-label[data-next-detail-section="snapshot"]{
+  margin-top:28px;
+  opacity:.8;
+}
+
+.next-schedule-detail-section-label[data-next-detail-section="snapshot"]
++ .next-schedule-detail-card{
+  border-style:dashed;
+  border-color:rgba(255,255,255,.075);
+  background:rgba(255,255,255,.018);
+}
+
+.next-schedule-detail-section-label[data-next-detail-section="snapshot"]
++ .next-schedule-detail-card .next-schedule-detail-row{
+  padding-top:10px;
+  padding-bottom:10px;
+}
+
+.next-schedule-detail-section-label[data-next-detail-section="snapshot"]
++ .next-schedule-detail-card .next-schedule-detail-row > strong{
+  color:var(--wf-text-soft);
+  font-size:10px;
+}
+
+.next-schedule-detail-footer{
+  box-shadow:0 -14px 34px rgba(0,0,0,.24);
+}
+
+.next-schedule-detail-footer-copy{
+  min-width:0;
+}
+
+.next-schedule-edit-open{
+  border-color:color-mix(in srgb,var(--wf-accent) 48%,transparent) !important;
+  background:color-mix(in srgb,var(--wf-accent) 12%,transparent) !important;
+}
+
+@media(max-width:380px){
+  .next-detail-reservation-card{
+    grid-template-columns:1fr;
+  }
+
+  .next-detail-reservation-card .next-schedule-detail-row:nth-child(1),
+  .next-detail-reservation-card .next-schedule-detail-row:nth-child(6){
+    grid-column:auto;
+  }
+
+  .next-schedule-detail-progress{
+    grid-template-columns:1fr;
+  }
+
+  .next-schedule-detail-state.is-action{
+    min-height:72px;
+  }
+}

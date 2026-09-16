@@ -32,7 +32,24 @@
       button.type = "button";
       button.className = `${state.className} is-action`;
       button.dataset.nextProgressJump = target;
-      button.innerHTML = state.innerHTML + `<small class="next-progress-open">開く</small>`;
+
+      const actionLabel =
+        target === "customer"
+          ? (
+            state.classList.contains("is-complete")
+              ? "顧客情報 →"
+              : "顧客照合 →"
+          )
+          : (
+            target === "diary"
+              ? "お礼日記 →"
+              : "売上確認 →"
+          );
+
+      button.innerHTML =
+        state.innerHTML
+        + `<small class="next-progress-open">${actionLabel}</small>`;
+
       state.replaceWith(button);
     });
   }
