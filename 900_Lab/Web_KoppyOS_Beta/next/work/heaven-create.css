@@ -1,0 +1,234 @@
+/* =========================================================
+   KOHaku WORK NEXT / RESERVATION HEAVEN DIARY
+========================================================= */
+
+.next-heaven-create{
+  width:min(760px,100%);
+  margin:0 auto;
+  padding-bottom:96px;
+}
+
+.next-heaven-create .work-next-heading{
+  margin-bottom:16px;
+}
+
+.next-heaven-card{
+  display:grid;
+  gap:12px;
+  margin:0 0 12px;
+  padding:14px;
+  border:1px solid color-mix(in srgb,var(--wf-accent) 24%,transparent);
+  border-radius:16px;
+  background:rgba(8,31,52,.82);
+  box-shadow:0 12px 34px rgba(0,0,0,.14);
+}
+
+.next-heaven-banner{
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+}
+
+.next-heaven-banner span,
+.next-heaven-kicker{
+  color:var(--wf-accent);
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.12em;
+}
+
+.next-heaven-banner strong,
+.next-heaven-customer strong{
+  display:block;
+  margin-top:3px;
+  color:var(--wf-text);
+  font-size:16px;
+}
+
+.next-heaven-chip{
+  padding:6px 9px;
+  border:1px solid color-mix(in srgb,var(--wf-accent) 28%,transparent);
+  border-radius:999px;
+  color:var(--wf-accent);
+  font-size:8px;
+  font-weight:900;
+  background:color-mix(in srgb,var(--wf-accent) 9%,transparent);
+}
+
+.next-heaven-customer small{
+  color:var(--wf-text-dim);
+  font-size:9px;
+}
+
+.next-heaven-place{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+}
+
+.next-heaven-place label{
+  cursor:pointer;
+}
+
+.next-heaven-place input{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+
+.next-heaven-place span{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:42px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;
+  color:var(--wf-text-soft);
+  font-size:9px;
+  font-weight:900;
+  background:rgba(255,255,255,.025);
+}
+
+.next-heaven-place input:checked + span{
+  border-color:color-mix(in srgb,var(--wf-accent) 55%,transparent);
+  color:var(--wf-accent);
+  background:color-mix(in srgb,var(--wf-accent) 12%,transparent);
+}
+
+.next-heaven-field{
+  display:grid;
+  gap:6px;
+}
+
+.next-heaven-field>span{
+  color:var(--wf-text);
+  font-size:9px;
+  font-weight:900;
+}
+
+.next-heaven-field input,
+.next-heaven-field textarea{
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:12px;
+  padding:10px 11px;
+  color:var(--wf-text);
+  background:rgba(255,255,255,.04);
+  font:inherit;
+  font-size:10px;
+  line-height:1.6;
+  outline:none;
+  resize:vertical;
+}
+
+.next-heaven-field input:focus,
+.next-heaven-field textarea:focus{
+  border-color:color-mix(in srgb,var(--wf-accent) 55%,transparent);
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--wf-accent) 13%,transparent);
+}
+
+#nextHeavenBody{min-height:260px;}
+#nextHeavenNote{min-height:140px;}
+#nextHeavenExtraNote{min-height:90px;}
+
+.next-heaven-action{
+  min-height:44px;
+  border:1px solid color-mix(in srgb,var(--wf-accent) 44%,transparent);
+  border-radius:12px;
+  color:var(--wf-text);
+  background:color-mix(in srgb,var(--wf-accent) 14%,transparent);
+  font:inherit;
+  font-size:9px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.next-heaven-action.is-primary{
+  border-color:color-mix(in srgb,var(--wf-accent) 68%,transparent);
+  background:color-mix(in srgb,var(--wf-accent) 22%,transparent);
+}
+
+.next-heaven-action:disabled{
+  opacity:.46;
+  cursor:not-allowed;
+}
+
+.next-heaven-actions{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.next-heaven-save-row{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:12px;
+  align-items:center;
+  padding-top:12px;
+  border-top:1px solid rgba(255,255,255,.07);
+}
+
+.next-heaven-save-copy strong,
+.next-heaven-save-copy small{
+  display:block;
+}
+
+.next-heaven-save-copy strong{
+  color:var(--wf-text);
+  font-size:9px;
+}
+
+.next-heaven-save-copy small{
+  margin-top:3px;
+  color:var(--wf-text-dim);
+  font-size:8px;
+}
+
+.next-heaven-status{
+  min-height:18px;
+  margin:0;
+  color:#8dffc4;
+  font-size:8px;
+  font-weight:800;
+}
+
+.next-heaven-status.is-error{
+  color:#ff9eb5;
+}
+
+.next-heaven-bridge-status{
+  margin:-4px 0 0;
+  color:var(--wf-text-dim);
+  font-size:8px;
+  text-align:center;
+}
+
+.next-heaven-note{
+  margin:0;
+  color:var(--wf-text-dim);
+  font-size:8px;
+  line-height:1.6;
+}
+
+.next-heaven-bridge-compat{
+  position:fixed;
+  left:-10000px;
+  top:-10000px;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+  opacity:.001;
+  pointer-events:none;
+}
+
+@media(max-width:620px){
+  .next-heaven-place,
+  .next-heaven-actions{
+    grid-template-columns:1fr;
+  }
+
+  .next-heaven-save-row{
+    grid-template-columns:1fr;
+  }
+}

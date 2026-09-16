@@ -83,13 +83,36 @@
     }
   }
 
+  function openDiary() {
+    const visitId = Number(drawer.dataset.visitId || 0);
+    const visit = S.state?.visits?.find(
+      item => Number(item.id) === visitId
+    ) || null;
+
+    const diary =
+      window.KohakuWorkNextHeavenCreate;
+
+    if (
+      !visit
+      || !diary
+      || typeof diary.open !== "function"
+    ) {
+      window.alert(
+        "お礼日記画面を開けませんでした。"
+      );
+      return;
+    }
+
+    diary.open(visit);
+  }
+
   function jump(target) {
     if (target === "customer") {
       openCustomer();
       return;
     }
     if (target === "diary") {
-      scrollTarget(findDetailSection("DIARY"));
+      openDiary();
       return;
     }
     if (target === "sales") {
