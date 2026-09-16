@@ -3,6 +3,7 @@
 const API="/api/next/v1/schedule.php";
 const MASTER="/api/next/v1/sales-master.php";
 const SEARCH="/api/next/v1/customer-identity-search.php";
+const HISTORY="/api/next/v1/repeat-customer-history.php";
 const S=window.KohakuWorkNextSchedule;
 const V=document.getElementById("view-schedule");
 if(!S||!V)return;
@@ -55,9 +56,227 @@ function renderMaster(){
   document.getElementById("ncrExtensions").innerHTML=ex.length?ex.map(c=>`<div class="ncr-ext"><label class="ncr-check"><input type="checkbox" data-ncr-ex value="${c.store_course_id}"><span>${esc(c.course_name||`延長 ${c.course_minutes}分`)}<small>手取り ${money(c.take_home)}</small></span></label><input type="number" min="1" value="1" disabled data-ncr-qty="${c.store_course_id}"></div>`).join(""):`<p class="ncr-msg">延長マスタなし</p>`;
   document.getElementById("ncrOptions").innerHTML=(master.options||[]).map(o=>`<label class="ncr-check"><input type="checkbox" data-ncr-op value="${esc(o.name)}"><span>${esc(o.name)}<small>手取り ${money(o.take_home)}</small></span></label>`).join("");
 }
+function repeatCustomerDisplayName(v){
+  const parts=[];
+  const normal=String(v.customer_name||"").trim();
+  const kashikoi=String(v.customer_kashikoi_name||"").trim();
+
+  if(normal)parts.push(normal);
+  if(kashikoi&&kashikoi!==normal)parts.push(`カ:${kashikoi}`);
+
+  return parts.length
+    ? parts.join(" / ")
+    : `顧客 #${Number(v.customer_id||0)}`;
+}
+
+function repeatPastHistory(visits){
+  const now=new Date();
+  const nowText=[
+    now.getFullYear(),
+    String(now.getMonth()+1).padStart(2,"0"),
+    String(now.getDate()).padStart(2,"0"),
+  ].join("-")
+    +" "
+    +String(now.getHours()).padStart(2,"0")
+    +":"
+    +String(now.getMinutes()).padStart(2,"0");
+
+  return (Array.isArray(visits)?visits:[])
+    .filter(v=>{
+      const started=String(v.started_at||"");
+      if(!started)return false;
+
+      return v.status==="completed"
+        ||(
+          v.status==="scheduled"
+          && started<=nowText
+        );
+    })
+    .sort((a,b)=>
+      String(b.started_at||"").localeCompare(
+        String(a.started_at||"")
+      )
+      ||Number(b.id||0)-Number(a.id||0)
+    );
+}
+
+function repeatHistoryHtml(visits){
+  const past=repeatPastHistory(visits);
+
+  if(!past.length){
+    return `
+      <span class="ncr-history-empty">
+        過去予約なし
+      </span>
+    `;
+  }
+
+  return `
+    <span class="ncr-history-list">
+      ${past.map(v=>{
+        const started=String(v.started_at||"");
+        const date=started.slice(0,10).replaceAll("-","/");
+        const time=started.slice(11,16);
+        const course=
+          `${v.pricing_category==="foreign"?"外":""}${Number(v.course_minutes||0)}分`;
+        const optionNames=
+          Array.isArray(v.options)
+            ? v.options.filter(Boolean)
+            : [];
+        const optionText=
+          optionNames.length
+            ? optionNames.join("・")
+            : "なし";
+        const tip=
+          money(v.tip_amount||0);
+
+        return `
+          <span class="ncr-history-row">
+            <span class="ncr-history-main">
+              <strong>${esc(`${date} ${time}`)}</strong>
+              <span>${esc(course)}</span>
+            </span>
+
+            <small>
+              OP ${esc(optionText)}
+              <i>｜</i>
+              チップ ${esc(tip)}
+            </small>
+          </span>
+        `;
+      }).join("")}
+    </span>
+  `;
+}
+
 async function search(k){
-  const r=document.getElementById("ncrResults");if(!r)return;if(!k.trim()){r.innerHTML="";return}r.innerHTML=`<p class="ncr-msg">検索中…</p>`;
-  try{const q=new URLSearchParams({keyword:k.trim()}),d=await req(`${SEARCH}?${q}`,{method:"GET"}),map=new Map();(d.data?.visits||[]).forEach(v=>{const id=+v.customer_id;if(id&&!map.has(id))map.set(id,v)});const arr=[...map.values()].slice(0,12);r.innerHTML=arr.length?arr.map(v=>`<button type="button" class="ncr-customer" data-ncr-customer="${v.customer_id}"><strong>${esc(v.customer_name||v.customer_kashikoi_name||`顧客 #${v.customer_id}`)}</strong><small>#${v.customer_id} / ${esc(v.started_at||"")} / ${esc(v.store_name||"")}</small></button>`).join(""):`<p class="ncr-msg">該当顧客なし</p>`}catch(e){r.innerHTML=`<p class="ncr-msg is-error">${esc(e.message)}</p>`}
+  const r=document.getElementById("ncrResults");
+
+  if(!r)return;
+
+  if(!k.trim()){
+    r.innerHTML="";
+    return;
+  }
+
+  r.innerHTML=`
+    <p class="ncr-msg">
+      検索中…
+    </p>
+  `;
+
+  try{
+    const q=new URLSearchParams({
+      keyword:k.trim(),
+    });
+
+    const d=await req(
+      `${SEARCH}?${q}`,
+      {
+        method:"GET",
+      }
+    );
+
+    const customerMap=new Map();
+
+    (d.data?.visits||[]).forEach(v=>{
+      const id=Number(v.customer_id||0);
+
+      if(!id)return;
+
+      if(!customerMap.has(id)){
+        customerMap.set(id,v);
+      }
+    });
+
+    const customers=
+      [...customerMap.values()]
+        .slice(0,12);
+
+    if(!customers.length){
+      r.innerHTML=`
+        <p class="ncr-msg">
+          該当顧客なし
+        </p>
+      `;
+      return;
+    }
+
+    const ids=
+      customers.map(v=>
+        Number(v.customer_id)
+      );
+
+    const hq=new URLSearchParams({
+      customer_ids:ids.join(","),
+    });
+
+    const historyData=await req(
+      `${HISTORY}?${hq}`,
+      {
+        method:"GET",
+      }
+    );
+
+    const histories=
+      historyData.histories||{};
+
+    r.innerHTML=
+      customers
+        .map(v=>{
+          const id=
+            Number(v.customer_id);
+
+          const history=
+            histories[String(id)]
+            ||histories[id]
+            ||[];
+
+          const pastCount=
+            repeatPastHistory(
+              history
+            ).length;
+
+          const selected=
+            Number(customerId)
+            ===id;
+
+          return `
+            <button
+              type="button"
+              class="ncr-customer ${selected?"is-selected":""}"
+              data-ncr-customer="${id}"
+            >
+              <span class="ncr-customer-head">
+                <strong>
+                  ${esc(
+                    repeatCustomerDisplayName(v)
+                  )}
+                </strong>
+
+                <span class="ncr-selected-label">
+                  ✓ 選択中
+                </span>
+              </span>
+
+              <small>
+                顧客 #${id}
+                ・過去予約 ${pastCount}件
+              </small>
+
+              ${repeatHistoryHtml(history)}
+            </button>
+          `;
+        })
+        .join("");
+
+  }catch(e){
+    r.innerHTML=`
+      <p class="ncr-msg is-error">
+        ${esc(e.message)}
+      </p>
+    `;
+  }
 }
 function intv(id,min=null,fb=0){const raw=document.getElementById(id)?.value?.trim()??"";if(raw==="")return fb;const v=Number(raw);if(!Number.isSafeInteger(v)||min!==null&&v<min)throw Error("金額・回数の入力を確認してね。");return v}
 async function save(){
