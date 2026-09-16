@@ -552,6 +552,243 @@
     return `¥${Number(value || 0).toLocaleString("ja-JP")}`;
   }
 
+  function v2EstimateCourseTakeHome() {
+    if (!v2Session?.master) return null;
+
+    const select =
+      document.getElementById("nextScheduleV2Course");
+
+    if (!select) return null;
+    if (select.value === "custom") return null;
+
+    if (select.value === "__legacy__") {
+      const snapshot =
+        currentVisit()?.sales_detail
+          ?.course_take_home_snapshot;
+
+      return (
+        snapshot === null
+        || snapshot === undefined
+        || snapshot === ""
+      )
+        ? null
+        : Number(snapshot);
+    }
+
+    const id = Number(select.value || 0);
+    const course =
+      v2Session.master.courses
+        ?.find(item =>
+          Number(item.store_course_id) === id
+          && item.course_type === "regular"
+        )
+      || null;
+
+    return course
+      ? Number(course.take_home || 0)
+      : null;
+  }
+
+  function v2EstimateExtensionTakeHome() {
+    if (!v2Session?.master) return 0;
+
+    return Array.from(
+      document.querySelectorAll(
+        "[data-next-v2-extension]:checked"
+      )
+    ).reduce((sum, input) => {
+      const id = Number(input.value || 0);
+      const course =
+        v2Session.master.courses
+          ?.find(item =>
+            Number(item.store_course_id) === id
+            && item.course_type === "extension"
+          )
+        || null;
+
+      const quantity = Math.max(
+        1,
+        Number(
+          document.querySelector(
+            `[data-next-v2-extension-qty="${id}"]`
+          )?.value
+          || 1
+        )
+      );
+
+      return sum
+        + Number(course?.take_home || 0)
+          * quantity;
+    }, 0);
+  }
+
+  function v2EstimateOptionTakeHome() {
+    if (!v2Session?.master) return 0;
+
+    const standard =
+      Array.from(
+        document.querySelectorAll(
+          "[data-next-v2-option]:checked"
+        )
+      ).reduce((sum, input) => {
+        const name = String(input.value || "");
+        const option =
+          v2Session.master.options
+            ?.find(item =>
+              String(item.name || "") === name
+            )
+          || null;
+
+        return sum + Number(option?.take_home || 0);
+      }, 0);
+
+    const customRaw =
+      document.getElementById(
+        "nextScheduleV2CustomOptionAmount"
+      )?.value?.trim()
+      || "";
+
+    const custom =
+      customRaw === ""
+        ? 0
+        : Number(customRaw);
+
+    return standard
+      + (Number.isFinite(custom) ? custom : 0);
+  }
+
+  function v2EstimateInputAmount(id, fallback) {
+    const input = document.getElementById(id);
+
+    if (!input || input.disabled) {
+      return Number(fallback || 0);
+    }
+
+    const value = Number(input.value || 0);
+    return Number.isFinite(value) ? value : 0;
+  }
+
+  function v2EstimateMetric(label, value) {
+    return `
+      <article>
+        <span>${escapeHtml(label)}</span>
+        <strong>
+          ${
+            value === null
+              ? "−"
+              : escapeHtml(v2Money(value))
+          }
+        </strong>
+      </article>
+    `;
+  }
+
+  function v2RenderEstimateSummary() {
+    const form =
+      document.getElementById(
+        "nextScheduleEditFormV2"
+      );
+
+    if (!form) return;
+
+    let host =
+      form.querySelector(
+        "[data-next-schedule-estimate]"
+      );
+
+    if (!host) {
+      host = document.createElement("section");
+      host.className = "next-schedule-estimate";
+      host.dataset.nextScheduleEstimate = "true";
+
+      const anchor =
+        form.querySelector(
+          ".next-schedule-edit-change-request"
+        );
+
+      if (anchor) {
+        anchor.insertAdjacentElement(
+          "beforebegin",
+          host
+        );
+      }
+    }
+
+    if (!host) return;
+
+    const visit = currentVisit() || {};
+    const course = v2EstimateCourseTakeHome();
+    const extension = v2EstimateExtensionTakeHome();
+    const option = v2EstimateOptionTakeHome();
+    const nomination =
+      Number(visit.nomination_fee_amount || 0);
+
+    const tip =
+      v2EstimateInputAmount(
+        "nextScheduleEditTip",
+        visit.tip_amount
+      );
+
+    const adjustment =
+      v2EstimateInputAmount(
+        "nextScheduleEditAdjustment",
+        visit.adjustment_amount
+      );
+
+    const total =
+      course === null
+        ? null
+        : (
+          course
+          + extension
+          + option
+          + nomination
+          + tip
+          + adjustment
+        );
+
+    host.innerHTML = `
+      <div class="next-schedule-estimate-head">
+        <div>
+          <span>ESTIMATE</span>
+          <strong>今回の見込み</strong>
+        </div>
+        <small>予約内容ベース</small>
+      </div>
+
+      <div class="next-schedule-estimate-grid">
+        ${v2EstimateMetric("コース", course)}
+        ${v2EstimateMetric("延長", extension)}
+        ${v2EstimateMetric("OP", option)}
+        ${v2EstimateMetric("指名", nomination)}
+        ${v2EstimateMetric("チップ", tip)}
+        ${v2EstimateMetric("調整", adjustment)}
+      </div>
+
+      <div class="next-schedule-estimate-total">
+        <span>見込み手取り合計</span>
+        <strong>
+          ${
+            total === null
+              ? "計算待ち"
+              : escapeHtml(v2Money(total))
+          }
+        </strong>
+      </div>
+
+      ${
+        course === null
+          ? `
+            <p class="next-schedule-estimate-note">
+              カスタム時間・現行マスタ外コースは、
+              コース手取りを自動計算しません。
+            </p>
+          `
+          : ""
+      }
+    `;
+  }
+
   function v2StandardOptionNames(visit) {
     return Array.isArray(visit.options)
       ? visit.options
@@ -1938,7 +2175,7 @@
     );
 
     setWriteStatus(
-      "VERIFICATION DB / WRITING V2",
+      "VERIFICATION DB / WRITING",
       "writing"
     );
 
@@ -2010,7 +2247,7 @@
       );
 
       setWriteStatus(
-        "SAVED / VERIFICATION V2",
+        "SAVED / VERIFICATION ONLY",
         "saved"
       );
 
@@ -2143,6 +2380,43 @@
         v2CaptureMasterState();
       }
     }
+  );
+
+  function v2EstimateRefreshFromEvent(event) {
+    const target = event.target;
+
+    if (
+      !target
+      || !target.closest(
+        "#nextScheduleEditFormV2"
+      )
+    ) {
+      return;
+    }
+
+    if (
+      target.matches(
+        "#nextScheduleV2Course, "
+        + "[data-next-v2-extension], "
+        + "[data-next-v2-extension-qty], "
+        + "[data-next-v2-option], "
+        + "#nextScheduleV2CustomOptionAmount, "
+        + "#nextScheduleEditTip, "
+        + "#nextScheduleEditAdjustment"
+      )
+    ) {
+      queueMicrotask(v2RenderEstimateSummary);
+    }
+  }
+
+  document.addEventListener(
+    "input",
+    v2EstimateRefreshFromEvent
+  );
+
+  document.addEventListener(
+    "change",
+    v2EstimateRefreshFromEvent
   );
 
   document.addEventListener(
@@ -2681,6 +2955,8 @@
         `${reasons.join("。")}。この予約ではOP編集をロックし、既存DB値を全件そのまま保持します。`
       );
     }
+
+    v2RenderEstimateSummary();
   };
 
   function v2GuardMarkDirty(
@@ -3132,7 +3408,7 @@
     );
 
     setWriteStatus(
-      "VERIFICATION DB / WRITING V2",
+      "VERIFICATION DB / WRITING",
       "writing"
     );
 
@@ -3204,7 +3480,7 @@
       );
 
       setWriteStatus(
-        "SAVED / VERIFICATION V2",
+        "SAVED / VERIFICATION ONLY",
         "saved"
       );
 
