@@ -335,7 +335,38 @@ async function save(){
     b.textContent="検証DBへ予約作成";
   }
 }
-function open(){modal();const n=nowParts(),m=document.getElementById("nextCreateModal");m.classList.add("is-open");document.body.style.overflow="hidden";["ncrDate","ncrBookedDate"].forEach(id=>document.getElementById(id).value=n.date);["ncrTime","ncrBookedTime"].forEach(id=>document.getElementById(id).value=n.time);document.getElementById("ncrStore").value="1";document.getElementById("ncrStatus").value="new";customerUI();loadMaster()}
+function open(initial={}){
+  modal();
+  const n=nowParts();
+  const requestedDate=String(initial?.date||"");
+  const requestedTime=String(initial?.time||"");
+  const date=/^\d{4}-\d{2}-\d{2}$/.test(requestedDate)?requestedDate:n.date;
+  const time=/^\d{2}:\d{2}$/.test(requestedTime)?requestedTime:n.time;
+  const m=document.getElementById("nextCreateModal");
+
+  m.classList.add("is-open");
+  document.body.style.overflow="hidden";
+
+  document.getElementById("ncrDate").value=date;
+  document.getElementById("ncrTime").value=time;
+  document.getElementById("ncrBookedDate").value=n.date;
+  document.getElementById("ncrBookedTime").value=n.time;
+
+  const requestedStoreId=Number(initial?.storeId||0);
+
+  document.getElementById("ncrStore").value=
+    stores.some(([id])=>id===requestedStoreId)
+      ? String(requestedStoreId)
+      : "1";
+
+  document.getElementById("ncrStatus").value="new";
+  customerUI();
+  loadMaster();
+}
+
+function openAt(date,time,storeId=null){
+  open({date,time,storeId});
+}
 function close(){document.getElementById("nextCreateModal")?.classList.remove("is-open");document.body.style.overflow=""}
 function mount(){if(document.querySelector("[data-ncr-open]"))return;const h=V.querySelector(".work-next-heading");if(!h)return;const b=document.createElement("button");b.type="button";b.className="ncr-launch";b.dataset.ncrOpen="1";b.textContent="＋ 新規予約を作成";h.after(b)}
 document.addEventListener("click",e=>{if(e.target.closest("[data-ncr-open]"))return open();if(e.target.closest("[data-ncr-close]"))return close();const c=e.target.closest("[data-ncr-customer]");if(c){customerId=+c.dataset.ncrCustomer;document.querySelectorAll("[data-ncr-customer]").forEach(x=>x.classList.toggle("is-selected",x===c))}});
@@ -344,5 +375,5 @@ document.addEventListener("input",e=>{if(!e.target.matches("#ncrSearch"))return;
 document.addEventListener("submit",e=>{if(e.target.id!=="nextCreateForm")return;e.preventDefault();void save()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("nextCreateModal")?.classList.contains("is-open"))close()});
 mount();
-window.KohakuWorkNextReservationCreate={open,close,verificationWriteEnabled:true,productionWriteEnabled:false};
+window.KohakuWorkNextReservationCreate={open,openAt,close,verificationWriteEnabled:true,productionWriteEnabled:false};
 })();

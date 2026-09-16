@@ -16,6 +16,15 @@
   let suppressClick = false;
   let busy = false;
 
+  const stateProviders =
+    new Map();
+
+  let pendingAppState =
+    null;
+
+  let pendingAppStateTimer =
+    null;
+
   /* -------------------------------------------------------
      STORAGE
   ------------------------------------------------------- */
@@ -257,6 +266,159 @@
   };
 
   /* -------------------------------------------------------
+     APP SCREEN STATE REGISTRY
+  ------------------------------------------------------- */
+
+  const captureRegisteredState =
+    () => {
+      const result = {};
+
+      stateProviders.forEach(
+        (
+          provider,
+          key
+        ) => {
+          if (
+            typeof provider?.capture
+            !== "function"
+          ) {
+            return;
+          }
+
+          try {
+            const value =
+              provider.capture();
+
+            if (
+              value !== undefined
+            ) {
+              result[key] =
+                value;
+            }
+          } catch {
+            // A broken provider must not block refresh.
+          }
+        }
+      );
+
+      return result;
+    };
+
+  const restoreProvider = (
+    key,
+    provider
+  ) => {
+    if (
+      !pendingAppState
+      || !Object.prototype
+        .hasOwnProperty.call(
+          pendingAppState,
+          key
+        )
+      || typeof provider?.restore
+        !== "function"
+    ) {
+      return;
+    }
+
+    try {
+      provider.restore(
+        pendingAppState[
+          key
+        ]
+      );
+    } catch {
+      // A broken provider must not block restore.
+    }
+  };
+
+  const restoreRegisteredState =
+    appState => {
+      pendingAppState =
+        appState
+        && typeof appState
+          === "object"
+          ? appState
+          : null;
+
+      if (!pendingAppState) {
+        return;
+      }
+
+      stateProviders.forEach(
+        (
+          provider,
+          key
+        ) => {
+          restoreProvider(
+            key,
+            provider
+          );
+        }
+      );
+
+      window.clearTimeout(
+        pendingAppStateTimer
+      );
+
+      pendingAppStateTimer =
+        window.setTimeout(
+          () => {
+            pendingAppState =
+              null;
+          },
+          RESTORE_MAX_AGE
+        );
+    };
+
+  const registerStateProvider = (
+    key,
+    provider
+  ) => {
+    const normalizedKey =
+      String(
+        key || ""
+      ).trim();
+
+    if (
+      !normalizedKey
+      || !provider
+      || typeof provider
+        !== "object"
+    ) {
+      return () => {};
+    }
+
+    stateProviders.set(
+      normalizedKey,
+      provider
+    );
+
+    restoreProvider(
+      normalizedKey,
+      provider
+    );
+
+    return () => {
+      if (
+        stateProviders.get(
+          normalizedKey
+        )
+        === provider
+      ) {
+        stateProviders.delete(
+          normalizedKey
+        );
+      }
+    };
+  };
+
+  window.KoppyWorldFrameRefreshState = {
+    register:
+      registerStateProvider
+  };
+
+  /* -------------------------------------------------------
      SAME-SCREEN RESTORE
   ------------------------------------------------------- */
 
@@ -273,6 +435,9 @@
 
         y:
           window.scrollY,
+
+        appState:
+          captureRegisteredState(),
 
         time:
           Date.now()
@@ -302,6 +467,10 @@
     ) {
       return;
     }
+
+    restoreRegisteredState(
+      saved.appState
+    );
 
     const restore = () => {
       window.scrollTo(

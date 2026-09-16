@@ -69,6 +69,51 @@
     }
   }
 
+  window.KoppyWorldFrameRefreshState
+    ?.register?.(
+      "kohaku-work-next",
+      {
+        capture: () => {
+          const active =
+            views.find(
+              view =>
+                !view.hidden
+                && view.classList.contains(
+                  "is-active"
+                )
+            )
+            || views.find(
+              view => !view.hidden
+            )
+            || null;
+
+          return {
+            view:
+              active?.dataset.view
+              || "home",
+          };
+        },
+
+        restore: saved => {
+          const name =
+            String(
+              saved?.view || ""
+            );
+
+          if (
+            name
+            && views.some(
+              view =>
+                view.dataset.view
+                === name
+            )
+          ) {
+            showView(name);
+          }
+        },
+      }
+    );
+
   document.addEventListener("click", event => {
     const nav = event.target.closest("[data-nav]");
 
