@@ -80,8 +80,22 @@
         );
       }
 
+      const index =
+        scheduleApi.state.visits.findIndex(
+          item => Number(item.id) === visitId
+        );
+
+      if (index >= 0) {
+        scheduleApi.state.visits.splice(
+          index,
+          1
+        );
+      }
+
       scheduleApi.closeDetail();
-      await scheduleApi.load();
+      scheduleApi.render({
+        preserveScroll:true,
+      });
 
       window.alert(
         `予約 #${visitId} を検証DBから削除しました。`

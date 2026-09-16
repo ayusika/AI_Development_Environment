@@ -72,14 +72,56 @@ async function save(){
   const p={store_id:store,started_at:`${date} ${time}`,booked_at:bd&&bt?`${bd} ${bt}`:null,course_minutes:minutes,store_course_id:courseId,customer_status:status,customer_id:(status==="repeat"||status==="other_store_repeat")?customerId:null,options,custom_option:cn,custom_option_amount:ca,extensions,tip_amount:intv("ncrTip",0,0),adjustment_amount:intv("ncrAdjustment",null,0)};
   if(status==="new"||status==="repeat_unknown_id"){p.new_customer_name=document.getElementById("ncrNewName")?.value.trim()||"";p.new_customer_kashikoi_name=document.getElementById("ncrKashikoi")?.value.trim()||""}
   const b=document.getElementById("ncrSave");b.disabled=true;b.textContent="作成中…";msg("検証DBへ新規予約を作成しています…");
-  try{const d=await req(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(p)});msg(`予約 #${d.visit?.id||""} を作成。再読込中…`);await S.load();close();const v=S.state.visits.find(x=>+x.id===+d.visit?.id)||d.visit;if(v)S.openDetail(v,null)}catch(e){msg(e.message,true)}finally{b.disabled=false;b.textContent="検証DBへ予約作成"}
+  try{
+    const d=await req(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(p)});
+    const created=d.visit||null;
+    msg(`予約 #${created?.id||""} を作成しました。`);
+    if(created){
+      const text=String(created.started_at||"");
+      let businessDate=text.slice(0,10);
+      const hour=Number(text.slice(11,13));
+      if(hour>=0&&hour<3&&businessDate){
+        const parts=businessDate.split("-").map(Number);
+        const dateObject=new Date(parts[0],parts[1]-1,parts[2],12,0,0,0);
+        dateObject.setDate(dateObject.getDate()-1);
+        businessDate=[
+          dateObject.getFullYear(),
+          String(dateObject.getMonth()+1).padStart(2,"0"),
+          String(dateObject.getDate()).padStart(2,"0"),
+        ].join("-");
+      }
+      const visible=
+        Array.isArray(S.state.period?.dates)
+        && S.state.period.dates.includes(businessDate);
+      if(visible){
+        const existingIndex=S.state.visits.findIndex(x=>+x.id===+created.id);
+        if(existingIndex>=0){
+          S.state.visits[existingIndex]=created;
+        }else{
+          S.state.visits.push(created);
+        }
+        S.state.visits.sort((a,b)=>
+          String(a.started_at||"").localeCompare(String(b.started_at||""))
+          || Number(a.id||0)-Number(b.id||0)
+        );
+        S.render({preserveScroll:true});
+      }
+    }
+    close();
+    if(created)S.openDetail(created,null);
+  }catch(e){
+    msg(e.message,true);
+  }finally{
+    b.disabled=false;
+    b.textContent="検証DBへ予約作成";
+  }
 }
 function open(){modal();const n=nowParts(),m=document.getElementById("nextCreateModal");m.classList.add("is-open");document.body.style.overflow="hidden";["ncrDate","ncrBookedDate"].forEach(id=>document.getElementById(id).value=n.date);["ncrTime","ncrBookedTime"].forEach(id=>document.getElementById(id).value=n.time);document.getElementById("ncrStore").value="1";document.getElementById("ncrStatus").value="new";customerUI();loadMaster()}
 function close(){document.getElementById("nextCreateModal")?.classList.remove("is-open");document.body.style.overflow=""}
 function mount(){if(document.querySelector("[data-ncr-open]"))return;const h=V.querySelector(".work-next-heading");if(!h)return;const b=document.createElement("button");b.type="button";b.className="ncr-launch";b.dataset.ncrOpen="1";b.textContent="＋ 新規予約を作成";h.after(b)}
 document.addEventListener("click",e=>{if(e.target.closest("[data-ncr-open]"))return open();if(e.target.closest("[data-ncr-close]"))return close();const c=e.target.closest("[data-ncr-customer]");if(c){customerId=+c.dataset.ncrCustomer;document.querySelectorAll("[data-ncr-customer]").forEach(x=>x.classList.toggle("is-selected",x===c))}});
 document.addEventListener("change",e=>{if(!e.target.closest("#nextCreateModal"))return;if(e.target.matches("#ncrStatus"))return customerUI();if(e.target.matches("#ncrStore,#ncrDate,#ncrTime"))return void loadMaster();if(e.target.matches("#ncrCourseSelect")){document.getElementById("ncrCustomWrap").hidden=e.target.value!=="custom"}if(e.target.matches("[data-ncr-ex]")){const q=document.querySelector(`[data-ncr-qty="${e.target.value}"]`);if(q)q.disabled=!e.target.checked}});
-document.addEventListener("input",e=>{if(!e.target.matches("#ncrSearch"))return;clearTimeout(timer);timer=setTimeout(()=>search(e.target.value),300)});
+document.addEventListener("input",e=>{if(!e.target.matches("#ncrSearch"))return;clearTimeout(timer);timer=setTimeout(()=>search(e.target.value),120)});
 document.addEventListener("submit",e=>{if(e.target.id!=="nextCreateForm")return;e.preventDefault();void save()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("nextCreateModal")?.classList.contains("is-open"))close()});
 mount();
