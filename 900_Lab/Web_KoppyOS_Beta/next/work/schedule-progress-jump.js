@@ -106,6 +106,29 @@
     diary.open(visit);
   }
 
+  function openSales() {
+    const visitId = Number(drawer.dataset.visitId || 0);
+    const visit = S.state?.visits?.find(
+      item => Number(item.id) === visitId
+    ) || null;
+
+    const sales =
+      window.KohakuWorkNextScheduleSalesPanel;
+
+    if (
+      !visit
+      || !sales
+      || typeof sales.open !== "function"
+    ) {
+      window.alert(
+        "売上パネルを開けませんでした。"
+      );
+      return;
+    }
+
+    sales.open(visit);
+  }
+
   function jump(target) {
     if (target === "customer") {
       openCustomer();
@@ -116,7 +139,7 @@
       return;
     }
     if (target === "sales") {
-      scrollTarget(findDetailSection("SALES"));
+      openSales();
     }
   }
 

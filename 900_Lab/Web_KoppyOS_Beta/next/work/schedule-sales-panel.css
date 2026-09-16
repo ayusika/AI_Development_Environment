@@ -1,0 +1,182 @@
+/* =========================================================
+   KOHaku WORK NEXT / RESERVATION SALES PANEL
+========================================================= */
+
+.next-sales-panel{
+  display:grid;
+  gap:12px;
+  margin:12px 0 4px;
+  padding:14px;
+  border:1px solid color-mix(in srgb,var(--wf-accent) 28%,transparent);
+  border-radius:16px;
+  background:rgba(6,27,46,.92);
+  box-shadow:0 14px 36px rgba(0,0,0,.15);
+}
+
+.next-sales-panel[hidden]{display:none;}
+
+.next-sales-panel-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+}
+
+.next-sales-panel-head h3{
+  margin:3px 0 0;
+  color:var(--wf-text);
+  font-size:15px;
+}
+
+.next-sales-kicker{
+  margin:0;
+  color:var(--wf-accent);
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.12em;
+}
+
+.next-sales-state{
+  flex:0 0 auto;
+  padding:5px 8px;
+  border:1px solid color-mix(in srgb,var(--wf-accent) 35%,transparent);
+  border-radius:999px;
+  color:var(--wf-accent);
+  background:color-mix(in srgb,var(--wf-accent) 9%,transparent);
+  font-size:8px;
+  font-weight:900;
+}
+
+.next-sales-state.is-error{
+  border-color:rgba(255,126,157,.36);
+  color:#ff9eb5;
+  background:rgba(255,126,157,.08);
+}
+
+.next-sales-metrics{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+
+.next-sales-metrics article{
+  min-width:0;
+  padding:10px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;
+  background:rgba(255,255,255,.025);
+}
+
+.next-sales-metrics article.is-highlight{
+  grid-column:1 / -1;
+  border-color:color-mix(in srgb,var(--wf-accent) 38%,transparent);
+  background:color-mix(in srgb,var(--wf-accent) 10%,transparent);
+}
+
+.next-sales-metrics span,
+.next-sales-form-grid label>span,
+.next-sales-note-field>span{
+  display:block;
+  color:var(--wf-text-dim);
+  font-size:8px;
+  font-weight:800;
+}
+
+.next-sales-metrics strong{
+  display:block;
+  margin-top:4px;
+  overflow-wrap:anywhere;
+  color:var(--wf-text);
+  font-size:13px;
+}
+
+.next-sales-metrics article.is-highlight strong{
+  color:var(--wf-accent);
+  font-size:16px;
+}
+
+.next-sales-form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+
+.next-sales-form-grid label,
+.next-sales-note-field{
+  display:grid;
+  gap:6px;
+}
+
+.next-sales-form-grid input,
+.next-sales-form-grid select,
+.next-sales-note-field input{
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  min-height:40px;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:11px;
+  padding:8px 10px;
+  color:var(--wf-text);
+  background:rgba(255,255,255,.04);
+  font:inherit;
+  font-size:10px;
+  outline:none;
+}
+
+.next-sales-form-grid input:focus,
+.next-sales-form-grid select:focus,
+.next-sales-note-field input:focus{
+  border-color:color-mix(in srgb,var(--wf-accent) 58%,transparent);
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--wf-accent) 13%,transparent);
+}
+
+.next-sales-form-grid select option{
+  color:#06192a;
+  background:#f6fbff;
+}
+
+.next-sales-actions{display:grid;gap:8px;}
+
+.next-sales-action{
+  min-height:42px;
+  border:1px solid color-mix(in srgb,var(--wf-accent) 38%,transparent);
+  border-radius:11px;
+  color:var(--wf-text);
+  background:color-mix(in srgb,var(--wf-accent) 10%,transparent);
+  font:inherit;
+  font-size:9px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.next-sales-action.is-primary,
+.next-sales-action.is-editing{
+  border-color:color-mix(in srgb,var(--wf-accent) 65%,transparent);
+  background:color-mix(in srgb,var(--wf-accent) 20%,transparent);
+}
+
+.next-sales-action:disabled{opacity:.48;cursor:not-allowed;}
+
+.next-sales-message{
+  margin:0;
+  color:#8dffc4;
+  font-size:8px;
+  font-weight:800;
+  line-height:1.6;
+}
+
+.next-sales-message.is-error{color:#ff9eb5;}
+
+.next-sales-safety{
+  margin:0;
+  color:var(--wf-text-dim);
+  font-size:8px;
+  line-height:1.6;
+}
+
+@media(max-width:620px){
+  .next-sales-metrics,
+  .next-sales-form-grid{grid-template-columns:1fr;}
+  .next-sales-metrics article.is-highlight{grid-column:auto;}
+}
