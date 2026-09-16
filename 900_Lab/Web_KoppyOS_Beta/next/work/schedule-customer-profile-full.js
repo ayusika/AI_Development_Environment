@@ -36,6 +36,7 @@
   let meta = null;
   let metaCustomerId = 0;
   let loadingCustomerId = 0;
+  let failedCustomerId = 0;
   let loadToken = 0;
 
   function escapeHtml(value) {
@@ -270,7 +271,13 @@
       return;
     }
 
-    if (loadingCustomerId === customerId) return;
+    if (
+      loadingCustomerId === customerId
+      || failedCustomerId === customerId
+    ) {
+      return;
+    }
+
     void loadMeta(customerId);
   }
 
@@ -295,9 +302,15 @@
       if (editorHost) editorHost.dataset.renderedCustomerId = String(customerId);
 
     } catch (error) {
+      failedCustomerId = customerId;
+
       const summaryHost = document.querySelector("[data-next-profile-meta-summary]");
       if (summaryHost) {
-        summaryHost.innerHTML = `<p class="ncpf-state is-error">${escapeHtml(error.message || "名義情報を取得できませんでした。")}</p>`;
+        const html = `<p class="ncpf-state is-error">${escapeHtml(error.message || "名義情報を取得できませんでした。")}</p>`;
+
+        if (summaryHost.innerHTML !== html) {
+          summaryHost.innerHTML = html;
+        }
       }
     } finally {
       if (loadingCustomerId === customerId) loadingCustomerId = 0;
@@ -370,6 +383,30 @@
   }
 
   document.addEventListener("click", event => {
+    if (
+      event.target.closest(
+        "[data-next-customer-profile-open]"
+      )
+    ) {
+      const customerId = currentCustomerId();
+
+      if (
+        customerId
+        && failedCustomerId === customerId
+      ) {
+        failedCustomerId = 0;
+
+        queueMicrotask(() => {
+          if (
+            currentCustomerId() === customerId
+            && loadingCustomerId !== customerId
+          ) {
+            void loadMeta(customerId);
+          }
+        });
+      }
+    }
+
     if (event.target.closest("[data-next-profile-meta-save]")) {
       event.preventDefault();
       void saveMeta();
