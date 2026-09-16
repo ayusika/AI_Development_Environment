@@ -124,7 +124,15 @@
 
   function renderSummary() {
     const host = document.querySelector("[data-next-profile-meta-summary]");
-    if (host) host.innerHTML = summaryHtml();
+    if (!host) return;
+
+    const html = summaryHtml();
+
+    if (host.innerHTML === html) {
+      return;
+    }
+
+    host.innerHTML = html;
   }
 
   function editorHtml() {
