@@ -1,0 +1,87 @@
+(() => {
+"use strict";
+const API="/api/next/v1/schedule.php";
+const MASTER="/api/next/v1/sales-master.php";
+const SEARCH="/api/next/v1/customer-identity-search.php";
+const S=window.KohakuWorkNextSchedule;
+const V=document.getElementById("view-schedule");
+if(!S||!V)return;
+const stores=[[1,"札幌"],[2,"千葉"],[3,"東京"],[4,"名古屋"]];
+let master=null,customerId=null,timer=null;
+
+const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
+const money=v=>`¥${Number(v||0).toLocaleString("ja-JP")}`;
+async function req(url,opt={}){const r=await fetch(url,{credentials:"same-origin",cache:"no-store",...opt});let d;try{d=await r.json()}catch{throw Error("API応答を読めませんでした。")}if(!r.ok||d?.success!==true)throw Error(d?.error||"処理に失敗しました。");return d}
+function msg(t,e=false){const n=document.getElementById("nextCreateMsg");if(!n)return;n.textContent=t||"";n.classList.toggle("is-error",e)}
+function nowParts(){const d=new Date();d.setMinutes(Math.ceil(d.getMinutes()/10)*10,0,0);return {date:`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`,time:`${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`}}
+function modal(){
+  if(document.getElementById("nextCreateModal"))return;
+  const el=document.createElement("div");el.id="nextCreateModal";el.className="ncr-modal";
+  el.innerHTML=`<div class="ncr-back" data-ncr-close></div><section class="ncr-panel">
+  <header><div><small>VERIFICATION / CREATE</small><h2>新規予約</h2></div><button type="button" data-ncr-close>×</button></header>
+  <p class="ncr-note">検証DBだけに保存します。本番DBには書き込みません。</p>
+  <form id="nextCreateForm">
+  <div class="ncr-grid">
+  <label>予約日<input id="ncrDate" type="date" required></label><label>開始時間<input id="ncrTime" type="time" required></label>
+  <label>予約受付日<input id="ncrBookedDate" type="date"></label><label>予約受付時刻<input id="ncrBookedTime" type="time"></label>
+  <label>店舗<select id="ncrStore">${stores.map(([id,n])=>`<option value="${id}">${n}</option>`).join("")}</select></label>
+  <label>顧客区分<select id="ncrStatus"><option value="new">新規</option><option value="repeat">リピ</option><option value="other_store_repeat">他店リピ</option><option value="repeat_unknown_id">リピ・ID不明</option></select></label>
+  </div>
+  <section class="ncr-sec" id="ncrCustomer"></section>
+  <section class="ncr-sec"><b>コース</b><div id="ncrCourse">読込中…</div></section>
+  <section class="ncr-sec"><b>延長</b><div id="ncrExtensions"></div></section>
+  <section class="ncr-sec"><b>OP</b><div class="ncr-checks" id="ncrOptions"></div>
+  <div class="ncr-grid gap"><label>その他OP名<input id="ncrCustomOption"></label><label>その他OP手取り<input id="ncrCustomAmount" type="number" min="0"></label></div></section>
+  <section class="ncr-sec"><div class="ncr-grid"><label>チップ<input id="ncrTip" type="number" min="0" value="0"></label><label>調整分<input id="ncrAdjustment" type="number" value="0"></label></div></section>
+  <p id="nextCreateMsg" class="ncr-msg"></p>
+  <div class="ncr-actions"><button type="button" data-ncr-close>キャンセル</button><button id="ncrSave" type="submit">検証DBへ予約作成</button></div>
+  </form></section>`;
+  document.body.appendChild(el);
+}
+function customerUI(){
+  const a=document.getElementById("ncrCustomer"),s=document.getElementById("ncrStatus")?.value;customerId=null;if(!a)return;
+  if(s==="new"||s==="repeat_unknown_id"){a.innerHTML=`<b>${s==="new"?"新規顧客":"ID不明リピ顧客"}</b><div class="ncr-grid gap"><label>名前<input id="ncrNewName"></label><label>かしこい名<input id="ncrKashikoi"></label></div>`;return}
+  a.innerHTML=`<b>${s==="repeat"?"リピ顧客を検索・選択":"既存顧客検索（任意）"}</b><input id="ncrSearch" class="ncr-wide" type="search" placeholder="名前・特徴・日付など"><div id="ncrResults"></div>`;
+}
+function labelCourse(c){const m=Number(c.course_minutes||0),f=c.pricing_category==="foreign"?"外国人 ":"",n=String(c.course_name||"").trim(),norm=n.replace(/\s+/g,""),red=new Set([`${m}分`,String(m),`外${m}分`,`外国人${m}分`,`外国人${m}`]);return `${f}${m}分${n&&!red.has(norm)?` / ${n}`:""} / 手取り ${money(c.take_home)}`}
+async function loadMaster(){
+  const st=+document.getElementById("ncrStore")?.value,d=document.getElementById("ncrDate")?.value,t=document.getElementById("ncrTime")?.value;if(!st||!d||!t)return;
+  try{const q=new URLSearchParams({store_id:String(st),at:`${d} ${t}:00`});const x=await req(`${MASTER}?${q}`,{method:"GET"});master={courses:x.courses||[],options:x.options||[]};renderMaster()}catch(e){master=null;document.getElementById("ncrCourse").textContent=e.message;msg("料金マスタを取得できませんでした。",true)}
+}
+function renderMaster(){
+  const reg=[...(master.courses||[])].filter(c=>c.course_type==="regular").sort((a,b)=>(a.pricing_category==="foreign")-(b.pricing_category==="foreign")||a.course_minutes-b.course_minutes);
+  document.getElementById("ncrCourse").innerHTML=`<select id="ncrCourseSelect">${reg.map(c=>`<option value="${c.store_course_id}">${esc(labelCourse(c))}</option>`).join("")}<option value="custom">カスタム時間</option></select><label id="ncrCustomWrap" hidden>カスタム予約時間（分）<input id="ncrCustomMinutes" type="number" min="1" value="60"></label>`;
+  const ex=(master.courses||[]).filter(c=>c.course_type==="extension");
+  document.getElementById("ncrExtensions").innerHTML=ex.length?ex.map(c=>`<div class="ncr-ext"><label class="ncr-check"><input type="checkbox" data-ncr-ex value="${c.store_course_id}"><span>${esc(c.course_name||`延長 ${c.course_minutes}分`)}<small>手取り ${money(c.take_home)}</small></span></label><input type="number" min="1" value="1" disabled data-ncr-qty="${c.store_course_id}"></div>`).join(""):`<p class="ncr-msg">延長マスタなし</p>`;
+  document.getElementById("ncrOptions").innerHTML=(master.options||[]).map(o=>`<label class="ncr-check"><input type="checkbox" data-ncr-op value="${esc(o.name)}"><span>${esc(o.name)}<small>手取り ${money(o.take_home)}</small></span></label>`).join("");
+}
+async function search(k){
+  const r=document.getElementById("ncrResults");if(!r)return;if(!k.trim()){r.innerHTML="";return}r.innerHTML=`<p class="ncr-msg">検索中…</p>`;
+  try{const q=new URLSearchParams({keyword:k.trim()}),d=await req(`${SEARCH}?${q}`,{method:"GET"}),map=new Map();(d.visits||[]).forEach(v=>{const id=+v.customer_id;if(id&&!map.has(id))map.set(id,v)});const arr=[...map.values()].slice(0,12);r.innerHTML=arr.length?arr.map(v=>`<button type="button" class="ncr-customer" data-ncr-customer="${v.customer_id}"><strong>${esc(v.customer_name||v.customer_kashikoi_name||`顧客 #${v.customer_id}`)}</strong><small>#${v.customer_id} / ${esc(v.started_at||"")} / ${esc(v.store_name||"")}</small></button>`).join(""):`<p class="ncr-msg">該当顧客なし</p>`}catch(e){r.innerHTML=`<p class="ncr-msg is-error">${esc(e.message)}</p>`}
+}
+function intv(id,min=null,fb=0){const raw=document.getElementById(id)?.value?.trim()??"";if(raw==="")return fb;const v=Number(raw);if(!Number.isSafeInteger(v)||min!==null&&v<min)throw Error("金額・回数の入力を確認してね。");return v}
+async function save(){
+  if(!master)throw Error("料金マスタの読込が完了していません。");
+  const date=document.getElementById("ncrDate").value,time=document.getElementById("ncrTime").value,store=+document.getElementById("ncrStore").value,status=document.getElementById("ncrStatus").value;
+  if(status==="repeat"&&!customerId)throw Error("リピは既存顧客を選択してね。");
+  const bd=document.getElementById("ncrBookedDate").value,bt=document.getElementById("ncrBookedTime").value;if((bd&&!bt)||(!bd&&bt))throw Error("予約受付日は日付と時刻を両方入れてね。");
+  const sel=document.getElementById("ncrCourseSelect");let courseId=null,minutes=0;if(sel.value==="custom"){minutes=intv("ncrCustomMinutes",1,60)}else{courseId=+sel.value;const c=(master.courses||[]).find(x=>+x.store_course_id===courseId&&x.course_type==="regular");if(!c)throw Error("コースがマスタにありません。");minutes=+c.course_minutes}
+  const extensions=[...document.querySelectorAll("[data-ncr-ex]:checked")].map(i=>{const id=+i.value,q=+document.querySelector(`[data-ncr-qty="${id}"]`)?.value;if(!Number.isSafeInteger(q)||q<=0)throw Error("延長回数を確認してね。");return {store_course_id:id,quantity:q}});
+  const options=[...document.querySelectorAll("[data-ncr-op]:checked")].map(i=>i.value);
+  const cn=document.getElementById("ncrCustomOption").value.trim(),car=document.getElementById("ncrCustomAmount").value.trim(),ca=car===""?null:Number(car);if(ca!==null&&(!Number.isSafeInteger(ca)||ca<0))throw Error("その他OP手取りを確認してね。");if(!cn&&ca!==null)throw Error("その他OP名も入力してね。");
+  const p={store_id:store,started_at:`${date} ${time}`,booked_at:bd&&bt?`${bd} ${bt}`:null,course_minutes:minutes,store_course_id:courseId,customer_status:status,customer_id:(status==="repeat"||status==="other_store_repeat")?customerId:null,options,custom_option:cn,custom_option_amount:ca,extensions,tip_amount:intv("ncrTip",0,0),adjustment_amount:intv("ncrAdjustment",null,0)};
+  if(status==="new"||status==="repeat_unknown_id"){p.new_customer_name=document.getElementById("ncrNewName")?.value.trim()||"";p.new_customer_kashikoi_name=document.getElementById("ncrKashikoi")?.value.trim()||""}
+  const b=document.getElementById("ncrSave");b.disabled=true;b.textContent="作成中…";msg("検証DBへ新規予約を作成しています…");
+  try{const d=await req(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(p)});msg(`予約 #${d.visit?.id||""} を作成。再読込中…`);await S.load();close();const v=S.state.visits.find(x=>+x.id===+d.visit?.id)||d.visit;if(v)S.openDetail(v,null)}catch(e){msg(e.message,true)}finally{b.disabled=false;b.textContent="検証DBへ予約作成"}
+}
+function open(){modal();const n=nowParts(),m=document.getElementById("nextCreateModal");m.classList.add("is-open");document.body.style.overflow="hidden";["ncrDate","ncrBookedDate"].forEach(id=>document.getElementById(id).value=n.date);["ncrTime","ncrBookedTime"].forEach(id=>document.getElementById(id).value=n.time);document.getElementById("ncrStore").value="1";document.getElementById("ncrStatus").value="new";customerUI();loadMaster()}
+function close(){document.getElementById("nextCreateModal")?.classList.remove("is-open");document.body.style.overflow=""}
+function mount(){if(document.querySelector("[data-ncr-open]"))return;const h=V.querySelector(".work-next-heading");if(!h)return;const b=document.createElement("button");b.type="button";b.className="ncr-launch";b.dataset.ncrOpen="1";b.textContent="＋ 新規予約を作成";h.after(b)}
+document.addEventListener("click",e=>{if(e.target.closest("[data-ncr-open]"))return open();if(e.target.closest("[data-ncr-close]"))return close();const c=e.target.closest("[data-ncr-customer]");if(c){customerId=+c.dataset.ncrCustomer;document.querySelectorAll("[data-ncr-customer]").forEach(x=>x.classList.toggle("is-selected",x===c))}});
+document.addEventListener("change",e=>{if(!e.target.closest("#nextCreateModal"))return;if(e.target.matches("#ncrStatus"))return customerUI();if(e.target.matches("#ncrStore,#ncrDate,#ncrTime"))return void loadMaster();if(e.target.matches("#ncrCourseSelect")){document.getElementById("ncrCustomWrap").hidden=e.target.value!=="custom"}if(e.target.matches("[data-ncr-ex]")){const q=document.querySelector(`[data-ncr-qty="${e.target.value}"]`);if(q)q.disabled=!e.target.checked}});
+document.addEventListener("input",e=>{if(!e.target.matches("#ncrSearch"))return;clearTimeout(timer);timer=setTimeout(()=>search(e.target.value),300)});
+document.addEventListener("submit",e=>{if(e.target.id!=="nextCreateForm")return;e.preventDefault();void save()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("nextCreateModal")?.classList.contains("is-open"))close()});
+mount();
+window.KohakuWorkNextReservationCreate={open,close,verificationWriteEnabled:true,productionWriteEnabled:false};
+})();
