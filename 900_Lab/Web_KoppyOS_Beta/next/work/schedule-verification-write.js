@@ -728,7 +728,7 @@
         novalidate
       >
         <p class="next-schedule-detail-section-label">
-          VERIFICATION EDIT / V2
+          VERIFICATION EDIT
         </p>
 
         <div class="next-schedule-edit-warning">
@@ -893,7 +893,7 @@
         </label>
 
         <p class="next-schedule-edit-scope">
-          新規予約・削除・ドラッグ移動・顧客紐付け変更はまだ無効です。
+          日時・店舗・コース・延長・OP・顧客区分・来訪タイプ・チップ・調整分を編集できます。
         </p>
 
         <p
