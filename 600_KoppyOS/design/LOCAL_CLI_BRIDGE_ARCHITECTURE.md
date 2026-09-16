@@ -1,660 +1,248 @@
 # Koppy Local CLI Bridge Architecture
 
-Version: v0.2.0  
+Version: v0.2.0
 Status: ACTIVE
 
----
+## 1. Purpose
 
-# 1. Purpose
+Koppy Local CLI Bridgeは、通常のChatGPTチャットからMacローカル環境へ直接アクセスできない場合でも、短い標準CMDをユーザーが実行することで、Koppyがローカル状態を正確かつ一貫した形式で観測するためのBridgeである。
 
-Koppy Local CLI Bridgeは、
+主な目的：
 
-通常のChatGPTチャットから
-ユーザーのMacローカル環境へ直接アクセスできない場合でも、
-
-Koppy
-↓
-短い標準CMD
-↓
-ユーザーによるTerminal実行
-↓
-標準化された結果
-↓
-Koppy
-
-という経路によって、
-
-ローカルrepo・Git状態・GitHub同期状態・実ファイル・検索結果・diff・テスト結果等を
-一貫した形式でKoppyが観測できるようにするためのLocal Bridgeである。
-
-主な目的は、
-
-- ローカル状態確認の往復回数削減
+- ローカル状態確認の往復削減
 - ad-hoc CMDの再生成削減
 - チャットごとの操作差異削減
-- Koppyが古い会話や推測だけで判断することの防止
-- ユーザーが複雑なCLI操作を覚える必要の削減
-- チャット引き継ぎ時のContext圧縮
-- Codex / Writer / VS Code Agent実行後の検証標準化
+- 古い会話や推測だけを根拠にした判断の防止
+- ユーザーのCLI操作負担削減
+- Conversation Contextの圧縮
+- Executor実行後の検証標準化
 
-である。
+## 2. Position in KoppyOS
 
----
+Koppy Local CLI BridgeはExecutorではない。
 
-# 2. Position in KoppyOS
+役割は以下。
 
-Koppy Local CLI Bridgeは、
+- Local Observation
+- Inspection
+- Verification
+- Context Transfer
 
-Executorではない。
+基本フロー：
 
-役割は、
-
-Local Observation
-Inspection
-Verification
-Context Transfer
-
-である。
-
-基本構造：
-
-```text
 Koppy
-  ↓
-必要な観測内容を判断
-  ↓
-Koppy Local CLI Bridge
-  ↓
-しいちゃんがCMDを実行
-  ↓
-Terminal Output / Clipboard
-  ↓
-Koppy
-  ↓
-判断・設計
-  ↓
-Executor Selection
-  ↓
-WRITER / CODEX / VSCODE_AGENT
+→ 必要な観測内容を判断
+→ Koppy Local CLI Bridge用CMDを提示
+→ しいちゃんがTerminalで実行
+→ OutputをKoppyへ返却
+→ Koppyが判断・設計
+→ Executor Selection
+→ WRITER / CODEX / VSCODE_AGENT
 
-ファイル変更・削除・移動・commit・push等の実作業は、
-既存のExecutor Selection Protocolに従う。
+ファイル変更・削除・移動・commit・push等の実作業は、既存のExecutor Selectionに従う。
 
-Bridgeの存在を理由に、
-Koppy自身がExecutor Selectionを迂回してはならない。
+## 3. Source of Truth and Runtime
 
-3. Runtime Implementation
+Architecture正本：
 
-現在のLocal Runtime実装：
+`600_KoppyOS/design/LOCAL_CLI_BRIDGE_ARCHITECTURE.md`
 
-~/.koppy_cli.sh
+Mac側Runtime Implementation：
 
-Bash起動時に：
+`~/.koppy_cli.sh`
 
-~/.bashrc
+Bash起動時に `~/.bashrc` から読み込む。
 
-から読み込む。
+ArchitectureとRuntime Implementationに不整合がある場合、推測で補完せず確認する。
 
-GitHub上の本Architectureは、
+## 4. Command Namespace
 
-Bridgeの役割・公開Command Contract・運用原則
+統一Command：
 
-のSource of Truthとする。
+`koppy <command>`
 
-ローカルの
+Clipboard Bridge：
 
-~/.koppy_cli.sh
+`kclip <command>`
 
-はRuntime Implementationであり、
-Architectureの正本そのものではない。
+Current Runtime Version：
 
-将来、
-Runtime ImplementationのGitHub管理・Installer化を行う場合も、
-ArchitectureとRuntime実装の役割を区別する。
+`0.2.0`
 
-4. Current Command Contract
+## 5. Command Contract
 
-現在の正式Command Namespace：
+### preflight
+`koppy preflight` / `kclip preflight`
 
-koppy
+開発開始前の軽量診断。repository、branch、upstream、local HEAD、GitHub remote HEAD、staged、unstaged、untracked、Ready判定を確認する。
 
-Version確認：
+### doctor
+`koppy doctor` / `kclip doctor`
 
-koppy version
+CLI・GitHub認証・Runtimeを含む詳細診断。
 
-現在：
+### locate
+`koppy locate <filename-or-fragment> [path]`
 
-Koppy Local CLI Bridge 0.2.0
-5. Preflight / Environment Inspection
-5.1 preflight
-koppy preflight
-kclip preflight
+ファイル名から対象を探索する。
 
-主な確認：
-
-repository
-branch
-upstream
-local HEAD
-GitHub remote HEAD
-staged
-unstaged
-untracked
-edit開始前のReady判定
-
-通常の開発開始前は、
-
-kclip preflight
-
-を優先する。
-
-5.2 doctor
-koppy doctor
-kclip doctor
-
-preflightより詳細な環境診断を行う。
-
-主な確認：
-
-必須CLI
-optional CLI
-GitHub authentication
-repository
-branch
-upstream
-worktree
-live GitHub sync
-runtime versions
-
-環境異常調査時に使用する。
-
-6. File / Repository Inspection
-6.1 locate
-koppy locate <filename-or-fragment> [path]
-kclip locate <filename-or-fragment> [path]
-
-ファイル名またはその一部から対象ファイルを探索する。
-
-6.2 structure
-koppy structure [path] [depth]
-kclip structure [path] [depth]
+### structure
+`koppy structure [path] [depth]`
 
 ディレクトリ構造を取得する。
 
-6.3 file
-koppy file <file> [start_line] [end_line]
-kclip file <file> [start_line] [end_line]
+### file
+`koppy file <file> [start_line] [end_line]`
 
-以下をまとめて取得する。
+Git状態・行数・最新commit・行番号付き本文を取得する。
 
-absolute path
-line count
-byte count
-requested range
-Git状態
-latest commit
-line-numbered content
+### search
+`koppy search <text> [path]`
 
-巨大ファイルは必要範囲のみ読む。
+repository内の文字列を検索する。
 
-6.4 search
-koppy search <text> [path]
-kclip search <text> [path]
+### context
+`koppy context <file> [start_line] [end_line]`
 
-repository内の文字列検索を行う。
+basename参照箇所、Git history、current diff、file contentをまとめて取得する。特定実装を調査する際の標準Deep Inspection Commandとする。
 
-結果は、
+### diff
+`koppy diff [file]`
 
-file:line:column:content
+現在のGit差分を取得する。
 
-形式を基本とする。
+### test
+`koppy test [file]`
 
-大量結果はtruncateする。
+安全なsyntax / static checkを実行する。Current対応はPHP、JavaScript、JSON、YAML、Bash、Python。BashではShellCheckも使用する。
 
-6.5 context
-koppy context <file> [start_line] [end_line]
-kclip context <file> [start_line] [end_line]
+### review
+`koppy review` / `kclip review`
 
-特定ファイルについて、
+Executor編集後の標準Review Command。Git state → diff → automatic checks → review result をまとめて取得する。
 
-basename参照箇所
-Git history
-current diff
-requested file content
-
-をまとめて取得する。
-
-Koppyが特定実装を調査するときの
-標準的なDeep Inspection Commandとする。
-
-7. Change Inspection / Verification
-7.1 diff
-koppy diff [file]
-kclip diff [file]
-
-現在の
-
-status
-diff summary
-unstaged diff
-staged diff
-
-をKoppy向けに取得する。
-
-巨大diffはtruncateし、
-必要に応じてfile単位へ分割する。
-
-7.2 test
-koppy test [file]
-
-対象ファイルまたは変更ファイルへ、
-安全なsyntax / static checkを実行する。
-
-現在の主な対応：
-
-PHP
-JavaScript
-JSON
-YAML
-Bash
-Python
-
-Bashでは可能な場合ShellCheckも使用する。
-
-このCommandはRuntimeやApplication全体の完全な動作保証を意味しない。
-
-7.3 review
-koppy review
-kclip review
-
-編集後の標準Review Command。
-
-主に、
-
-git state
-↓
-diff
-↓
-automatic syntax checks
-↓
-review result
-
-をまとめて取得する。
-
-Codex / Writer / VS Code Agent等による編集後は、
-可能な場合、
-
-kclip review
-
-を優先する。
-
-自動テストがPASSしていても、
-Koppyによるdiff確認を省略してよいことを意味しない。
-
-8. History / Handoff
-8.1 history
-koppy history <file> [count]
+### history
+`koppy history <file> [count]`
 
 特定ファイルのGit履歴を取得する。
 
-8.2 changes
-koppy changes [count]
+### changes
+`koppy changes [count]`
 
 最近のcommitと変更ファイルを取得する。
 
-8.3 snapshot
-koppy snapshot
-kclip snapshot
+### snapshot
+`koppy snapshot` / `kclip snapshot`
 
-チャット引き継ぎ・作業再開用のContext Pack。
+チャット引き継ぎ・作業再開用Context Pack。主にpreflight、recent commits、local diffをまとめる。
 
-現在は主に、
-
-preflight
-recent commits
-local diff
-
-をまとめる。
-
-新しい開発チャットへ移動した場合や、
-現在状態を短時間で再取得したい場合は、
-
-kclip snapshot
-
-を優先する。
-
-9. HTTP Inspection
-9.1 api
-koppy api <url>
-kclip api <url>
+### api
+`koppy api <url>`
 
 HTTP GETによるread-only inspectionを行う。
 
-主な出力：
+## 6. Clipboard Bridge
 
-HTTP status
-content type
-final URL
-selected headers
-body preview
-JSON formatting
+`kclip` は `koppy` のOutputをTerminalへ表示しながらmacOS Clipboardへコピーする。
 
-BridgeのAPI Commandは、
-原則としてread-only observation用途とする。
+ユーザーが内部Commandを記憶する必要はない。Koppyが必要なCommandを提示する。
 
-POST / PUT / PATCH / DELETE等による変更操作を、
-このArchitectureのread-only Commandとして暗黙追加してはならない。
+## 7. Standard Workflow
 
-10. Clipboard Bridge
-kclip
+開発開始前：`kclip preflight`
 
-は、
+環境異常調査：`kclip doctor`
 
-koppy <command>
+対象場所が不明：`kclip locate "<name>"` または `kclip search "<text>"`
 
-のOutputを
+対象ファイル調査：`kclip context <file> <start> <end>`
 
-Terminalへ表示
-macOS clipboardへコピー
+Executor編集後：`kclip review`
 
-するためのBridgeである。
+チャット引き継ぎ：`kclip snapshot`
 
-基本形：
+## 8. Remote-first Write Sync Rule
 
-kclip <command> ...
+Writer・GitHub Connector・Web UI・別端末などがGitHub remoteへ直接commit / pushした場合、Macローカルは自動更新されない。
 
-これにより、
+標準Flow：
 
-Koppy
-↓
-CMD提示
-↓
-しいちゃん実行
-↓
-⌘V
-↓
-Koppy
+Remote Write完了
+→ `kclip preflight`
+→ Local worktreeがcleanか確認
+→ `git pull --ff-only`
+→ `kclip preflight`
+→ Local Context取得
 
-という最小往復でLocal Contextを渡す。
+`git pull --ff-only` を使用し、意図しないmerge commitを自動生成しない。
 
-ユーザーは各内部Commandの構造を記憶する必要はない。
+ローカルに未commit変更がある場合は、無条件でpullせずSTOPする。
 
-Koppyが必要なCommandを提示する。
+## 9. Ad-hoc Command Reduction Rule
 
-11. Standard Workflows
-11.1 開発開始前
-kclip preflight
+Bridgeで同等処理が可能な場合、Koppyは原則として毎回 `git status`、`git log`、`git diff`、`rg`、`fd`、`bat`、`gh api`、`curl`、`jq`、`tree` 等を複数組み合わせた長いCMDを再構築しない。
 
-必要に応じて：
+既存Bridge Commandを優先する。
 
-kclip doctor
-11.2 対象場所が不明
-kclip locate "<name>"
+例外：
 
-または：
+- Bridge自身のdebug
+- Bridgeでは取得できない情報
+- 一回限りの特殊調査
+- Executor内部で必要な処理
 
-kclip search "<text>"
-11.3 対象ファイル調査
-kclip context <file> <start> <end>
-11.4 Executor編集後
-kclip review
-11.5 チャット引き継ぎ
-kclip snapshot
-12. Ad-hoc Command Reduction Rule
+同種のad-hoc処理が繰り返される場合は、Bridgeへの正式Command追加を検討する。
 
-Koppy Local CLI Bridgeで同等処理を実行できる場合、
+## 10. Safety Boundary
 
-Koppyは原則として、
+Current v0.2はObservation、Inspection、Verification、Context Transferを中心とする。
 
-毎回独自に、
+Bridgeの存在だけを理由に、managed fileの書き換え、delete、rename / move、package展開による上書き、commit、push、force push、dependency install、macOS設定変更、secret変更、production変更を自動許可しない。
 
-git status
-git log
-git diff
-rg
-fd
-bat
-gh api
-curl
-jq
-tree
+これらは既存のExecutor Selection、FILE_EDIT_PROTOCOL、Project固有ルールに従う。
 
-等を複数組み合わせた長いCMDを再構築しない。
+## 11. ZIP / Package Handling
 
-Bridge Commandを優先する。
-
-目的：
-
-Conversation Context削減
-Command再設計削減
-操作ミス削減
-出力形式統一
-チャット間の挙動統一
-
-ただし、
-
-Bridge自身のdebug
-Bridgeでは取得できない情報
-一回限りの特殊調査
-Executor内部で必要な処理
-
-ではad-hoc CMDを使用できる。
-
-同一種類のad-hoc処理が繰り返し必要になった場合は、
-Bridgeの正式Command追加を検討する。
-
-13. Safety Boundary
-
-Current v0.2は、
-
-Observation / Inspection / Verification
-
-を中心とする。
-
-以下を、
-Bridgeの存在だけを理由に自動許可しない。
-
-managed fileの書き換え
-delete
-rename / move
-package展開による上書き
-commit
-push
-force push
-dependency install
-macOS設定変更
-secret変更
-production変更
-
-これらは、
-
-Executor Selection
-FILE_EDIT_PROTOCOL
-Project固有ルール
-
-等の既存正本に従う。
-
-14. ZIP / Package Handling
-
-ZIP download → Terminal展開 → repository反映
-
-のような処理は、
-Current v0.2の正式Command Contractには含めない。
-
-理由：
-
-直接repositoryへ展開した場合、
-
-意図しないoverwrite
-不要ファイル混入
-stale file混入
-path誤認
-未確認差分
-
-を発生させる可能性がある。
+ZIP download → 展開 → repository反映はCurrent v0.2の正式Command Contractには含めない。
 
 将来候補：
 
-kpackage inspect
-kpackage stage
-kpackage diff
-kpackage apply
+- `kpackage inspect`
+- `kpackage stage`
+- `kpackage diff`
+- `kpackage apply`
 
 想定Flow：
 
 Package
-↓
-Temporary / Staging Area
-↓
-Contents Inspection
-↓
-Repositoryとの差分確認
-↓
-Safety Check
-↓
-Explicit Apply
-↓
-Review
+→ Temporary / Staging Area
+→ Contents Inspection
+→ Repositoryとの差分確認
+→ Safety Check
+→ Explicit Apply
+→ Review
 
-原則として、
+ZIPを直接repositoryへ無検証展開するCommandは標準化しない。
 
-ZIPを直接repositoryへ無検証展開するCommandを
-標準Bridgeとして採用しない。
+## 12. Context Reduction Principle
 
-15. Context Reduction Principle
+Bridge仕様をConversation Memoryだけへ依存させない。
 
-Koppyは、
+新しいチャット・Executor・開発SessionではGitHub上の本Architectureを参照し、使用可能Command・Standard Workflow・Safety Boundary・運用思想を復元できる状態を維持する。
 
-Local CLI BridgeのCommand仕様を
-毎チャットのConversation Memoryだけへ依存させない。
+これにより同じCommand説明・Shell Script生成・操作設計を毎回繰り返す必要を減らす。
 
-新しいチャット・Executor・開発Sessionでは、
+## 13. Versioning
 
-GitHub上の本Architectureを参照することで、
+Command Contractまたは重要な挙動を変更した場合はVersionを更新する。
 
-使用可能Command
-標準Workflow
-Safety Boundary
-運用思想
+Current：`v0.2.0`
 
-を復元できる状態を維持する。
+実戦で不足が確認された機能のみ追加する。機能数を増やすこと自体を目的としない。
 
-これにより、
+## 14. Related Source of Truth
 
-同一Command群の説明・再設計・長いShell Script生成を
-毎回繰り返す必要を減らす。
-
-16. Versioning
-
-Bridge Command Contractまたは重要な挙動を変更した場合は、
-Architecture Versionを更新する。
-
-現在：
-
-v0.2.0
-
-実戦利用で不足を発見した場合、
-必要な機能のみv0.3以降へ追加する。
-
-機能数を増やすこと自体を目的としない。
-
-17. Source of Truth
-
-Architecture Source of Truth：
-
-600_KoppyOS/design/LOCAL_CLI_BRIDGE_ARCHITECTURE.md
-
-関連正本：
-
-AGENTS.md
-600_KoppyOS/protocols/EXECUTOR_SELECTION_PROTOCOL.md
-600_KoppyOS/protocols/FILE_EDIT_PROTOCOL.md
-600_KoppyOS/design/ARCHITECTURE.md
-
-Runtime Implementation：
-
-~/.koppy_cli.sh
-
-ArchitectureとRuntime Implementationに不整合が見つかった場合、
-推測で補完せず確認・修正する。
-
-━━━━━━━━━━━━━━━━━━
-■ 変更ファイル 2
-━━━━━━━━━━━━━━━━━━
-
-AGENTS.md
-
-操作:
-限定追記
-
-変更理由:
-新しいチャット・Codex・Executorが、
-Mac Terminal作業時にKoppy Local CLI Bridgeの存在を発見できるようにする。
-
-現在の「必ず参照する正本」一覧の後、
-「必要に応じて〜」の段落より前またはその直後に、
-以下を1回だけ追記する。
-
-追記内容:
-
-Local CLI Bridge
-
-MacローカルTerminal経由でrepo・ファイル・Git状態・diff・テスト結果等を
-調査・検証する場合は、
-
-600_KoppyOS/design/LOCAL_CLI_BRIDGE_ARCHITECTURE.md
-
-を確認し、既存のKoppy Local CLI Bridgeを優先して使用する。
-
-同等処理を実行できるBridge Commandが存在する場合は、
-複数のad-hoc CMDを毎回再構築しない。
-
-Bridgeは原則として観測・調査・検証レイヤーであり、
-ファイル変更等の実作業は既存のExecutor Selectionと
-FILE_EDIT_PROTOCOL.mdに従う。
-
-━━━━━━━━━━━━━━━━━━
-■ 変更禁止
-━━━━━━━━━━━━━━━━━━
-
-000_HOME/次にやること.md を変更しない
-CURRENT_STATUS.md を変更しない
-PROTOCOL_INDEX.md を変更しない
-EXECUTOR_SELECTION_PROTOCOL.md を変更しない
-FILE_EDIT_PROTOCOL.md を変更しない
-既存AGENTS.md内容を削除・再構成しない
-他ファイルを変更しない
-
-━━━━━━━━━━━━━━━━━━
-■ 確認
-━━━━━━━━━━━━━━━━━━
-
-作業前:
-
-現在のGitHub正本を確認
-git status確認
-
-作業後:
-
-新規Architectureが存在すること
-AGENTS.mdからArchitectureへ到達できること
-他ファイルに意図しない変更がないこと
-git diff確認
-
-commit message:
-
-KoppyOS: document local CLI bridge architecture
-
-commit:
-true
-
-push:
-true
-
-
-これをWriterに通したあと、こっちではもう長い確認CMDを作らなくていい。
-
-**pushが終わったら、この2本だけで検収できる。**
-
-```bash
-kclip preflight
+- `AGENTS.md`
+- `600_KoppyOS/protocols/EXECUTOR_SELECTION_PROTOCOL.md`
+- `600_KoppyOS/protocols/FILE_EDIT_PROTOCOL.md`
+- `600_KoppyOS/design/ARCHITECTURE.md`

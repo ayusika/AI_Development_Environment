@@ -25,3 +25,11 @@ CodexはKoppyOSにおけるIntelligent Code Executorである。設計判断の�
 - [`000_HOME/決定事項.md`](000_HOME/決定事項.md) — 確定済み判断
 
 必要に応じて、[`600_KoppyOS/README.md`](600_KoppyOS/README.md)と[`040_Koppy/性格/README.md`](040_Koppy/性格/README.md)も参照する。詳細仕様や現在地はこのファイルへ複製せず、各正本で確認する。
+
+## Local CLI Bridge
+
+MacローカルTerminal経由でrepo・ファイル・Git状態・diff・テスト結果等を調査・検証する場合は、`600_KoppyOS/design/LOCAL_CLI_BRIDGE_ARCHITECTURE.md` を確認し、既存のKoppy Local CLI Bridgeを優先して使用する。
+
+同等処理を実行できるBridge Commandが存在する場合は、複数のad-hoc CMDを毎回再構築しない。
+
+Bridgeは原則として観測・調査・検証レイヤーであり、ファイル変更等の実作業は既存のExecutor Selectionと `FILE_EDIT_PROTOCOL.md` に従う。
