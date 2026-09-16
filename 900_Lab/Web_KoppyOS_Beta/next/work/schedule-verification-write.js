@@ -2184,6 +2184,1056 @@
   );
 
 
+
+  /* WRITER:NEXT_WORK_SCHEDULE_PRESERVATION_GUARD:START */
+
+  const v2GuardOriginalMakeSession =
+    v2MakeSession;
+
+  const v2GuardOriginalCaptureMasterState =
+    v2CaptureMasterState;
+
+  const v2GuardOriginalChooseCourseForMaster =
+    v2ChooseCourseForMaster;
+
+  const v2GuardOriginalRenderMaster =
+    v2RenderMaster;
+
+  function v2GuardCustomRecords(visit) {
+    return Array.isArray(visit.options)
+      ? visit.options
+          .filter(option =>
+            option
+            && (
+              option.custom_name
+              || !option.option_id
+            )
+          )
+          .map(option => ({
+            name:
+              option.custom_name
+                ? String(option.custom_name)
+                : "",
+            amount:
+              option.income_amount === null
+              || option.income_amount === undefined
+              || option.income_amount === ""
+                ? null
+                : Number(option.income_amount),
+          }))
+      : [];
+  }
+
+  function v2GuardExtensionMeta(visit) {
+    const meta = {};
+
+    if (!Array.isArray(visit.extensions)) {
+      return meta;
+    }
+
+    visit.extensions.forEach(item => {
+      const id =
+        Number(item.store_course_id || 0);
+
+      if (!id) return;
+
+      meta[id] = {
+        name:
+          String(item.course_name || ""),
+        minutes:
+          Number(item.course_minutes || 0),
+      };
+    });
+
+    return meta;
+  }
+
+  v2MakeSession = function(visit) {
+    const session =
+      v2GuardOriginalMakeSession(visit);
+
+    session.originalStoreId =
+      Number(visit.store_id || 0);
+
+    session.dirty = {
+      store:false,
+      course:false,
+      extensions:false,
+      options:false,
+    };
+
+    session.courseLegacy = false;
+    session.legacyOptionNames = [];
+    session.legacyExtensions = [];
+    session.optionEditLocked = false;
+    session.extensionEditLocked = false;
+
+    session.protectedCustomOptions =
+      v2GuardCustomRecords(visit);
+
+    session.extensionMeta =
+      v2GuardExtensionMeta(visit);
+
+    return session;
+  };
+
+  v2CaptureMasterState = function() {
+    if (!v2Session) return;
+
+    const previousCourse = {
+      storeCourseId:
+        v2Session.storeCourseId,
+      courseMinutes:
+        v2Session.courseMinutes,
+      pricingCategory:
+        v2Session.pricingCategory,
+    };
+
+    const previousExtensions =
+      Array.isArray(v2Session.extensions)
+        ? v2Session.extensions.map(item => ({
+            ...item,
+          }))
+        : [];
+
+    const previousOptionNames =
+      Array.isArray(v2Session.optionNames)
+        ? [...v2Session.optionNames]
+        : [];
+
+    const previousCustomOption =
+      v2Session.customOption;
+
+    const previousCustomOptionAmount =
+      v2Session.customOptionAmount;
+
+    v2GuardOriginalCaptureMasterState();
+
+    const courseSelect =
+      document.getElementById(
+        "nextScheduleV2Course"
+      );
+
+    if (
+      v2Session.courseLegacy
+      && courseSelect?.value === "__legacy__"
+    ) {
+      v2Session.storeCourseId =
+        previousCourse.storeCourseId;
+
+      v2Session.courseMinutes =
+        previousCourse.courseMinutes;
+
+      v2Session.pricingCategory =
+        previousCourse.pricingCategory;
+    }
+
+    if (v2Session.extensionEditLocked) {
+      v2Session.extensions =
+        previousExtensions;
+    }
+
+    if (v2Session.optionEditLocked) {
+      v2Session.optionNames =
+        previousOptionNames;
+
+      v2Session.customOption =
+        previousCustomOption;
+
+      v2Session.customOptionAmount =
+        previousCustomOptionAmount;
+    }
+  };
+
+  v2ChooseCourseForMaster = function(
+    courses,
+    resetForStoreChange
+  ) {
+    if (!v2Session) {
+      return v2GuardOriginalChooseCourseForMaster(
+        courses,
+        resetForStoreChange
+      );
+    }
+
+    const regular =
+      Array.isArray(courses)
+        ? courses.filter(course =>
+            course.course_type === "regular"
+          )
+        : [];
+
+    if (!resetForStoreChange) {
+      if (!v2Session.storeCourseId) {
+        v2Session.courseLegacy = false;
+        return;
+      }
+
+      const exact =
+        regular.find(course =>
+          Number(course.store_course_id)
+          === Number(v2Session.storeCourseId)
+        )
+        || null;
+
+      if (!exact) {
+        v2Session.courseLegacy = true;
+        return;
+      }
+
+      v2Session.courseLegacy = false;
+    } else {
+      v2Session.courseLegacy = false;
+    }
+
+    return v2GuardOriginalChooseCourseForMaster(
+      courses,
+      resetForStoreChange
+    );
+  };
+
+  function v2GuardRefreshProtectionState() {
+    if (
+      !v2Session
+      || !v2Session.master
+    ) {
+      return;
+    }
+
+    const masterOptionNames =
+      new Set(
+        (
+          Array.isArray(
+            v2Session.master.options
+          )
+            ? v2Session.master.options
+            : []
+        )
+          .map(option =>
+            String(option.name || "")
+          )
+          .filter(Boolean)
+      );
+
+    v2Session.legacyOptionNames =
+      (
+        Array.isArray(v2Session.optionNames)
+          ? v2Session.optionNames
+          : []
+      )
+        .filter(name =>
+          !masterOptionNames.has(
+            String(name)
+          )
+        );
+
+    const masterExtensionIds =
+      new Set(
+        (
+          Array.isArray(
+            v2Session.master.courses
+          )
+            ? v2Session.master.courses
+            : []
+        )
+          .filter(course =>
+            course.course_type
+            === "extension"
+          )
+          .map(course =>
+            Number(course.store_course_id)
+          )
+      );
+
+    v2Session.legacyExtensions =
+      (
+        Array.isArray(v2Session.extensions)
+          ? v2Session.extensions
+          : []
+      )
+        .filter(item =>
+          !masterExtensionIds.has(
+            Number(item.store_course_id)
+          )
+        );
+
+    v2Session.optionEditLocked =
+      (
+        Array.isArray(
+          v2Session.protectedCustomOptions
+        )
+        && v2Session.protectedCustomOptions.length > 1
+      )
+      || v2Session.legacyOptionNames.length > 0;
+
+    v2Session.extensionEditLocked =
+      v2Session.legacyExtensions.length > 0;
+  }
+
+  function v2GuardAppendNotice(
+    target,
+    text
+  ) {
+    if (!target || !text) return;
+
+    const notice =
+      document.createElement("p");
+
+    notice.className =
+      "next-schedule-edit-lock-note";
+
+    notice.textContent = text;
+
+    target.appendChild(notice);
+  }
+
+  function v2GuardCustomSummary() {
+    const records =
+      Array.isArray(
+        v2Session?.protectedCustomOptions
+      )
+        ? v2Session.protectedCustomOptions
+        : [];
+
+    return records
+      .map(record => {
+        const name =
+          record.name || "名称なし";
+
+        const amount =
+          record.amount === null
+            ? ""
+            : ` ${v2Money(record.amount)}`;
+
+        return `${name}${amount}`;
+      })
+      .join(" / ");
+  }
+
+  function v2GuardExtensionSummary() {
+    const records =
+      Array.isArray(
+        v2Session?.legacyExtensions
+      )
+        ? v2Session.legacyExtensions
+        : [];
+
+    return records
+      .map(item => {
+        const id =
+          Number(item.store_course_id || 0);
+
+        const meta =
+          v2Session.extensionMeta?.[id]
+          || {};
+
+        const label =
+          meta.name
+          || (
+            meta.minutes
+              ? `延長 ${meta.minutes}分`
+              : `延長 #${id}`
+          );
+
+        const quantity =
+          Math.max(
+            1,
+            Number(item.quantity || 1)
+          );
+
+        return `${label} ×${quantity}`;
+      })
+      .join(" / ");
+  }
+
+  v2RenderMaster = function() {
+    v2GuardRefreshProtectionState();
+
+    v2GuardOriginalRenderMaster();
+
+    if (!v2Session) return;
+
+    const courseSelect =
+      document.getElementById(
+        "nextScheduleV2Course"
+      );
+
+    if (
+      v2Session.courseLegacy
+      && courseSelect
+    ) {
+      const option =
+        document.createElement("option");
+
+      option.value = "__legacy__";
+
+      const prefix =
+        v2Session.pricingCategory
+          === "foreign"
+          ? "外国人 "
+          : "";
+
+      option.textContent =
+        `既存 ${prefix}${Number(
+          v2Session.courseMinutes || 0
+        )}分 / 現行マスタ外（保持）`;
+
+      courseSelect.insertBefore(
+        option,
+        courseSelect.firstChild
+      );
+
+      courseSelect.value =
+        "__legacy__";
+
+      const customWrap =
+        document.getElementById(
+          "nextScheduleV2CustomCourseWrap"
+        );
+
+      if (customWrap) {
+        customWrap.hidden = true;
+      }
+
+      v2GuardAppendNotice(
+        courseSelect.closest(
+          ".next-schedule-v2-section"
+        ),
+        "既存コースは現在の料金マスタ外です。別コースを明示選択するまでDBの既存値をそのまま保持します。"
+      );
+    }
+
+    const extensionList =
+      document.querySelector(
+        ".next-schedule-v2-extension-list"
+      );
+
+    if (
+      v2Session.extensionEditLocked
+      && extensionList
+    ) {
+      extensionList
+        .querySelectorAll("input")
+        .forEach(input => {
+          input.disabled = true;
+        });
+
+      v2GuardAppendNotice(
+        extensionList.closest(
+          ".next-schedule-v2-section"
+        ),
+        `現行マスタ外の既存延長を保護中: ${v2GuardExtensionSummary()}。この予約では延長編集をロックし、既存DB値を維持します。`
+      );
+    }
+
+    const optionList =
+      document.querySelector(
+        ".next-schedule-v2-option-list"
+      );
+
+    const customGrid =
+      document.querySelector(
+        ".next-schedule-v2-custom-option-grid"
+      );
+
+    if (v2Session.optionEditLocked) {
+      optionList
+        ?.querySelectorAll("input")
+        .forEach(input => {
+          input.disabled = true;
+        });
+
+      customGrid
+        ?.querySelectorAll("input")
+        .forEach(input => {
+          input.disabled = true;
+        });
+
+      const reasons = [];
+
+      if (
+        v2Session.legacyOptionNames.length
+      ) {
+        reasons.push(
+          `現行マスタ外OP: ${
+            v2Session.legacyOptionNames.join(" / ")
+          }`
+        );
+      }
+
+      if (
+        v2Session.protectedCustomOptions.length > 1
+      ) {
+        reasons.push(
+          `その他OP複数件: ${
+            v2GuardCustomSummary()
+          }`
+        );
+      }
+
+      v2GuardAppendNotice(
+        optionList?.closest(
+          ".next-schedule-v2-section"
+        )
+        || customGrid?.closest(
+          ".next-schedule-v2-section"
+        ),
+        `${reasons.join("。")}。この予約ではOP編集をロックし、既存DB値を全件そのまま保持します。`
+      );
+    }
+  };
+
+  function v2GuardMarkDirty(
+    event
+  ) {
+    const target =
+      event.target;
+
+    if (
+      !target
+      || !target.closest(
+        "#nextScheduleEditFormV2"
+      )
+      || !v2Session
+    ) {
+      return;
+    }
+
+    if (
+      target.matches(
+        "#nextScheduleEditStore"
+      )
+    ) {
+      if (
+        v2Session.courseLegacy
+        || v2Session.optionEditLocked
+        || v2Session.extensionEditLocked
+      ) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+
+        target.value =
+          String(v2Session.storeId);
+
+        editMessage(
+          "現行マスタ外の既存データを保護中のため、この予約では店舗変更をロックしています。",
+          true
+        );
+
+        return;
+      }
+
+      v2Session.dirty.store = true;
+      v2Session.dirty.course = true;
+      v2Session.dirty.extensions = true;
+      v2Session.dirty.options = true;
+
+      return;
+    }
+
+    if (
+      target.matches(
+        "#nextScheduleV2Course, #nextScheduleV2CustomMinutes"
+      )
+    ) {
+      v2Session.dirty.course = true;
+      return;
+    }
+
+    if (
+      target.matches(
+        "[data-next-v2-extension], [data-next-v2-extension-qty]"
+      )
+    ) {
+      v2Session.dirty.extensions = true;
+      return;
+    }
+
+    if (
+      target.matches(
+        "[data-next-v2-option], #nextScheduleV2CustomOption, #nextScheduleV2CustomOptionAmount"
+      )
+    ) {
+      v2Session.dirty.options = true;
+    }
+  }
+
+  document.addEventListener(
+    "change",
+    v2GuardMarkDirty,
+    true
+  );
+
+  document.addEventListener(
+    "input",
+    event => {
+      const target =
+        event.target;
+
+      if (
+        !target
+        || !target.closest(
+          "#nextScheduleEditFormV2"
+        )
+        || !v2Session
+      ) {
+        return;
+      }
+
+      if (
+        target.matches(
+          "#nextScheduleV2CustomMinutes"
+        )
+      ) {
+        v2Session.dirty.course = true;
+      }
+
+      if (
+        target.matches(
+          "[data-next-v2-extension-qty]"
+        )
+      ) {
+        v2Session.dirty.extensions = true;
+      }
+
+      if (
+        target.matches(
+          "#nextScheduleV2CustomOption, #nextScheduleV2CustomOptionAmount"
+        )
+      ) {
+        v2Session.dirty.options = true;
+      }
+    },
+    true
+  );
+
+  async function v2GuardSaveEdit() {
+    const visit =
+      currentVisit();
+
+    if (
+      !visit
+      || !v2Session
+      || Number(v2Session.visitId)
+        !== Number(visit.id)
+    ) {
+      throw new Error(
+        "編集対象の予約が見つかりません。"
+      );
+    }
+
+    if (!v2Session.masterLoaded) {
+      throw new Error(
+        "料金マスタの読込が完了していません。"
+      );
+    }
+
+    v2CaptureMasterState();
+
+    const date =
+      document.getElementById(
+        "nextScheduleEditDate"
+      )?.value?.trim()
+      || "";
+
+    const time =
+      document.getElementById(
+        "nextScheduleEditTime"
+      )?.value?.trim()
+      || "";
+
+    if (!date || !time) {
+      throw new Error(
+        "予約日と開始時間を入れてね。"
+      );
+    }
+
+    const bookedDate =
+      document.getElementById(
+        "nextScheduleEditBookedDate"
+      )?.value?.trim()
+      || "";
+
+    const bookedTime =
+      document.getElementById(
+        "nextScheduleEditBookedTime"
+      )?.value?.trim()
+      || "";
+
+    if (
+      (bookedDate && !bookedTime)
+      || (!bookedDate && bookedTime)
+    ) {
+      throw new Error(
+        "予約受付日は日付と時刻を両方入れてね。"
+      );
+    }
+
+    const storeId =
+      Number(
+        document.getElementById(
+          "nextScheduleEditStore"
+        )?.value
+        || 0
+      );
+
+    if (!storeId) {
+      throw new Error(
+        "店舗を選んでね。"
+      );
+    }
+
+    const storeChanged =
+      storeId
+      !== Number(visit.store_id || 0);
+
+    const courseChanged =
+      Boolean(
+        v2Session.dirty.course
+        || storeChanged
+      );
+
+    const extensionsChanged =
+      Boolean(
+        v2Session.dirty.extensions
+        || storeChanged
+      );
+
+    const optionsChanged =
+      Boolean(
+        v2Session.dirty.options
+        || storeChanged
+      );
+
+    const payload = {
+      id:Number(visit.id),
+      started_at:`${date} ${time}`,
+      booked_at:
+        bookedDate && bookedTime
+          ? `${bookedDate} ${bookedTime}`
+          : null,
+      visitor_type:
+        document.getElementById(
+          "nextScheduleEditVisitorType"
+        )?.value
+        || null,
+      customer_requested_change:
+        Boolean(
+          document.getElementById(
+            "nextScheduleEditCustomerRequestedChange"
+          )?.checked
+        ),
+    };
+
+    if (storeChanged) {
+      payload.store_id =
+        storeId;
+    }
+
+    if (courseChanged) {
+      const courseSelect =
+        document.getElementById(
+          "nextScheduleV2Course"
+        );
+
+      if (!courseSelect) {
+        throw new Error(
+          "コースを読み込めませんでした。"
+        );
+      }
+
+      if (
+        courseSelect.value === "__legacy__"
+      ) {
+        throw new Error(
+          "現行マスタ外の既存コースは、そのまま保持できます。変更する場合は新しいコースを明示選択してね。"
+        );
+      }
+
+      if (
+        courseSelect.value === "custom"
+      ) {
+        payload.course_minutes =
+          v2ReadPositiveInteger(
+            "nextScheduleV2CustomMinutes",
+            "カスタム予約時間"
+          );
+
+        payload.store_course_id =
+          null;
+
+      } else {
+        const storeCourseId =
+          Number(courseSelect.value || 0);
+
+        const course =
+          v2Session.master.courses
+            .find(item =>
+              Number(item.store_course_id)
+                === storeCourseId
+              && item.course_type
+                === "regular"
+            )
+          || null;
+
+        if (!course) {
+          throw new Error(
+            "選択したコースが料金マスタにありません。"
+          );
+        }
+
+        payload.course_minutes =
+          Number(course.course_minutes);
+
+        payload.store_course_id =
+          storeCourseId;
+      }
+    }
+
+    if (extensionsChanged) {
+      if (v2Session.extensionEditLocked) {
+        throw new Error(
+          "現行マスタ外の既存延長を保護中です。延長を変更せず、他の項目だけ保存してね。"
+        );
+      }
+
+      payload.extensions =
+        Array.from(
+          document.querySelectorAll(
+            "[data-next-v2-extension]:checked"
+          )
+        )
+          .map(input => {
+            const id =
+              Number(input.value);
+
+            const quantity =
+              Number(
+                document.querySelector(
+                  `[data-next-v2-extension-qty="${id}"]`
+                )?.value
+                || 1
+              );
+
+            if (
+              !Number.isSafeInteger(quantity)
+              || quantity <= 0
+            ) {
+              throw new Error(
+                "延長回数は1以上の整数で入力してね。"
+              );
+            }
+
+            return {
+              store_course_id:id,
+              quantity,
+            };
+          });
+    }
+
+    if (optionsChanged) {
+      if (v2Session.optionEditLocked) {
+        throw new Error(
+          "既存OPの完全保持ガードが有効です。OPを変更せず、他の項目だけ保存してね。"
+        );
+      }
+
+      const options =
+        Array.from(
+          document.querySelectorAll(
+            "[data-next-v2-option]:checked"
+          )
+        )
+          .map(input =>
+            String(input.value).trim()
+          )
+          .filter(Boolean);
+
+      const customOption =
+        document.getElementById(
+          "nextScheduleV2CustomOption"
+        )?.value?.trim()
+        || "";
+
+      const customOptionAmount =
+        v2ReadNonNegativeInteger(
+          "nextScheduleV2CustomOptionAmount",
+          "その他OP手取り",
+          true
+        );
+
+      if (
+        customOption === ""
+        && customOptionAmount !== null
+      ) {
+        throw new Error(
+          "その他OP金額を入れる場合は、その他OP名も入力してね。"
+        );
+      }
+
+      payload.options =
+        options;
+
+      payload.custom_option =
+        customOption;
+
+      payload.custom_option_amount =
+        customOptionAmount;
+    }
+
+    const customerStatus =
+      document.getElementById(
+        "nextScheduleEditCustomerStatus"
+      )?.value
+      || "";
+
+    if (!customerStatus) {
+      throw new Error(
+        "顧客区分を選んでね。"
+      );
+    }
+
+    if (
+      customerStatus
+      !== String(
+        visit.customer_status || ""
+      )
+    ) {
+      payload.customer_status =
+        customerStatus;
+    }
+
+    if (!visit.sales_confirmed_at) {
+      payload.tip_amount =
+        readIntegerInput(
+          "nextScheduleEditTip",
+          { min:0 }
+        );
+
+      payload.adjustment_amount =
+        readIntegerInput(
+          "nextScheduleEditAdjustment"
+        );
+    }
+
+    const saveButton =
+      document.getElementById(
+        "nextScheduleEditSaveV2"
+      );
+
+    if (saveButton) {
+      saveButton.disabled = true;
+      saveButton.textContent =
+        "保存中…";
+    }
+
+    editMessage(
+      "検証DBへ予約内容を保存しています…"
+    );
+
+    setWriteStatus(
+      "VERIFICATION DB / WRITING V2",
+      "writing"
+    );
+
+    try {
+      const response =
+        await fetch(
+          SCHEDULE_API,
+          {
+            method:"PATCH",
+            credentials:"same-origin",
+            cache:"no-store",
+            headers:{
+              "Content-Type":"application/json",
+            },
+            body:JSON.stringify(payload),
+          }
+        );
+
+      let data;
+
+      try {
+        data =
+          await response.json();
+      } catch {
+        throw new Error(
+          "予約編集APIの応答を読めませんでした。"
+        );
+      }
+
+      if (
+        !response.ok
+        || !data
+        || data.success !== true
+        || !data.visit
+      ) {
+        throw new Error(
+          data?.error
+          || "予約を保存できませんでした。"
+        );
+      }
+
+      const scheduleApi =
+        api();
+
+      const updatedVisit =
+        data.visit;
+
+      const index =
+        scheduleApi.state.visits
+          .findIndex(item =>
+            Number(item.id)
+              === Number(updatedVisit.id)
+          );
+
+      if (index >= 0) {
+        scheduleApi.state.visits[index] =
+          updatedVisit;
+      }
+
+      scheduleApi.render({
+        preserveScroll:true,
+      });
+
+      v2Session = null;
+
+      scheduleApi.openDetail(
+        updatedVisit,
+        null
+      );
+
+      setWriteStatus(
+        "SAVED / VERIFICATION V2",
+        "saved"
+      );
+
+    } catch (error) {
+      editMessage(
+        error.message
+        || "予約の保存に失敗しました。",
+        true
+      );
+
+      setWriteStatus(
+        "WRITE ERROR / VERIFICATION",
+        "error"
+      );
+
+      if (saveButton) {
+        saveButton.disabled = false;
+        saveButton.textContent =
+          "検証DBへ保存";
+      }
+    }
+  }
+
+  v2SaveEdit =
+    v2GuardSaveEdit;
+
+  /* WRITER:NEXT_WORK_SCHEDULE_PRESERVATION_GUARD:END */
+
+
   const scheduleApi = api();
   scheduleApi.verificationWriteEnabled = true;
 
