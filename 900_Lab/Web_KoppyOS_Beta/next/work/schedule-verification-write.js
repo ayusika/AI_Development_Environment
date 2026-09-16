@@ -1436,7 +1436,9 @@
   }) {
     if (!v2Session) return;
 
-    v2CaptureMasterState();
+    if (v2Session.masterLoaded) {
+      v2CaptureMasterState();
+    }
 
     const storeId =
       Number(
