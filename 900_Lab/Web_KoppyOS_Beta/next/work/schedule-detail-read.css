@@ -1,0 +1,106 @@
+/* =========================================================
+   KOHaku WORK NEXT / COMPLETE DETAIL READ
+========================================================= */
+
+.next-schedule-complete-detail{
+  margin-top:18px;
+}
+
+.next-schedule-complete-notes,
+.next-schedule-complete-stack{
+  display:grid;
+  gap:8px;
+}
+
+.next-schedule-complete-note{
+  min-width:0;
+  padding:10px 11px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;
+  background:rgba(255,255,255,.026);
+}
+
+.next-schedule-complete-note > span{
+  display:block;
+  margin-bottom:5px;
+  color:var(--wf-text-dim);
+  font-size:9px;
+  font-weight:900;
+}
+
+.next-schedule-complete-note > p,
+.next-schedule-complete-details > p{
+  margin:0;
+  color:var(--wf-text-soft);
+  font-size:10px;
+  line-height:1.65;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+
+.next-schedule-complete-details{
+  min-width:0;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;
+  background:rgba(255,255,255,.026);
+  overflow:hidden;
+}
+
+.next-schedule-complete-details > summary{
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  padding:10px 11px;
+  color:var(--wf-text);
+  cursor:pointer;
+  list-style-position:inside;
+}
+
+.next-schedule-complete-details > summary strong{
+  font-size:10px;
+}
+
+.next-schedule-complete-details > summary small{
+  color:var(--wf-text-dim);
+  font-size:8px;
+  font-weight:700;
+}
+
+.next-schedule-complete-details > p{
+  padding:0 11px 11px;
+}
+
+.next-schedule-complete-empty{
+  margin:0;
+  padding:10px 11px;
+  border:1px dashed rgba(255,255,255,.07);
+  border-radius:11px;
+  color:var(--wf-text-dim);
+  font-size:9px;
+}
+
+.next-schedule-complete-detail.is-error{
+  padding:12px;
+  border:1px solid rgba(255,100,130,.2);
+  border-radius:14px;
+  background:rgba(255,80,110,.045);
+}
+
+.next-schedule-complete-error{
+  margin:0;
+  color:#ff9caf;
+  font-size:10px;
+  font-weight:900;
+}
+
+.next-schedule-complete-error-note{
+  margin:6px 0 0;
+  color:var(--wf-text-dim);
+  font-size:9px;
+  line-height:1.55;
+}
+
+.next-schedule-edit-open:disabled{
+  opacity:.48;
+  cursor:wait;
+}
