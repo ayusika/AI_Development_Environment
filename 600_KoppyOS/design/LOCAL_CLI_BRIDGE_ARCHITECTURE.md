@@ -1,6 +1,6 @@
 # Koppy Local CLI Bridge Architecture
 
-Version: v0.2.0
+Version: v0.2.1
 Status: ACTIVE
 
 ## 1. Purpose
@@ -246,3 +246,72 @@ Current：`v0.2.0`
 - `600_KoppyOS/protocols/EXECUTOR_SELECTION_PROTOCOL.md`
 - `600_KoppyOS/protocols/FILE_EDIT_PROTOCOL.md`
 - `600_KoppyOS/design/ARCHITECTURE.md`
+
+## 15. Safety Capability Levels
+
+Koppy Local CLI Bridgeの安全性は、
+「Runtimeへ実装済みの機能」
+「運用ルールとして確定している安全策」
+「将来候補」
+を明確に区別する。
+
+### 15.1 Runtimeで実装済み
+
+Current v0.2.xでRuntimeへ実装済みとして扱う主な安全・検証機能：
+
+- `preflight` によるrepository / branch / upstream / local HEAD / remote HEAD / staged / unstaged / untracked確認
+- `doctor` による環境・GitHub authentication・runtime診断
+- `diff` による変更内容の観測
+- `test` による対応ファイルのsyntax / static check
+- `review` によるGit state + diff + automatic checks
+- `api` のread-only HTTP GET inspection
+- `snapshot` による引き継ぎContext Pack
+
+これらはObservation / Inspection / Verificationを補助するものであり、
+Application全体の完全な安全性や動作保証を意味しない。
+
+### 15.2 Operational Safety Rules
+
+以下はKoppyOSの運用ルールとして扱う。
+
+- 書き込み系作業前にローカルGit状態を確認する
+- worktreeが想定外にdirtyな場合、勝手にrestore / reset / overwriteしない
+- Remote-first write後はclean確認後に `git pull --ff-only` を使用する
+- force pushしない
+- conflictを勝手に解決しない
+- secret / tokenをTerminal Outputやチャットへ不用意に出力しない
+- ZIP / packageをrepositoryへ直接無検証展開しない
+- copy-paste CMDへTerminal自体を終了させる `exit` を安易に含めない
+- 長大なheredocをTerminalへ貼り付ける必要がある場合、短いscript・package・Executor等のより安全な手段を優先する
+- 実装・編集後は可能な場合 `kclip review` を使用する
+
+### 15.3 Planned Only
+
+以下はArchitecture上の将来候補であり、
+Current Runtimeへ実装済みとは扱わない。
+
+- `kpackage inspect`
+- `kpackage stage`
+- `kpackage diff`
+- `kpackage apply`
+
+設計書に名前が存在することを理由に、
+未実装Commandをユーザーへ実行Commandとして提示してはならない。
+
+## 16. Chat Bootstrap
+
+新しいChatGPTチャット・Workチャット・開発チャット等で
+Local CLI Bridgeの前提を短く復元するための正本：
+
+`600_KoppyOS/design/LOCAL_CLI_BRIDGE_CHAT_BOOTSTRAP.md`
+
+他チャットへBridge利用前提を渡す場合、
+全文ArchitectureをConversationへ複製するより、
+BootstrapからGitHub正本を読ませる方法を優先する。
+
+GitHub正本へアクセスできない場合は、
+古いConversation Memoryだけで補完せず、
+ユーザーへ `kclip snapshot` または必要な `kclip context` の実行を依頼する。
+
+BootstrapはArchitectureの代替ではない。
+詳細仕様とSafety Boundaryの正本は本Architectureと関連Protocolである。

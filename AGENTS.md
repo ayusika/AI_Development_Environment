@@ -33,3 +33,7 @@ MacローカルTerminal経由でrepo・ファイル・Git状態・diff・テス�
 同等処理を実行できるBridge Commandが存在する場合は、複数のad-hoc CMDを毎回再構築しない。
 
 Bridgeは原則として観測・調査・検証レイヤーであり、ファイル変更等の実作業は既存のExecutor Selectionと `FILE_EDIT_PROTOCOL.md` に従う。
+
+新しいChatGPTチャット等でLocal CLI Bridgeの前提を復元する場合は、
+[`600_KoppyOS/design/LOCAL_CLI_BRIDGE_CHAT_BOOTSTRAP.md`](600_KoppyOS/design/LOCAL_CLI_BRIDGE_CHAT_BOOTSTRAP.md)
+も確認する。Architecture上の将来候補Commandは、Runtimeへ実装済みと確認できない限り実行可能として扱わない。
