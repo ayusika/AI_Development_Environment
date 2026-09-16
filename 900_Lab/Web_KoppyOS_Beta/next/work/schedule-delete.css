@@ -1,0 +1,41 @@
+/* =========================================================
+   KOHaku WORK NEXT / RESERVATION DELETE
+========================================================= */
+
+.next-schedule-detail-footer{
+  grid-template-columns:auto minmax(0,1fr) auto;
+  gap:8px;
+}
+
+.next-schedule-delete-button{
+  box-sizing:border-box;
+  min-height:42px;
+  padding:8px 12px;
+  border:1px solid rgba(255,100,130,.28);
+  border-radius:11px;
+  color:#ffb0c1;
+  background:rgba(255,70,105,.055);
+  font:inherit;
+  font-size:9px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.next-schedule-delete-button:hover{
+  background:rgba(255,70,105,.09);
+}
+
+.next-schedule-delete-button:disabled{
+  opacity:.48;
+  cursor:wait;
+}
+
+@media(max-width:520px){
+  .next-schedule-detail-footer{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .next-schedule-detail-footer #nextScheduleWriteStatus{
+    grid-column:1 / -1;
+  }
+}

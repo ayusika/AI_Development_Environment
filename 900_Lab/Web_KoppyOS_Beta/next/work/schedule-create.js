@@ -57,7 +57,7 @@ function renderMaster(){
 }
 async function search(k){
   const r=document.getElementById("ncrResults");if(!r)return;if(!k.trim()){r.innerHTML="";return}r.innerHTML=`<p class="ncr-msg">検索中…</p>`;
-  try{const q=new URLSearchParams({keyword:k.trim()}),d=await req(`${SEARCH}?${q}`,{method:"GET"}),map=new Map();(d.visits||[]).forEach(v=>{const id=+v.customer_id;if(id&&!map.has(id))map.set(id,v)});const arr=[...map.values()].slice(0,12);r.innerHTML=arr.length?arr.map(v=>`<button type="button" class="ncr-customer" data-ncr-customer="${v.customer_id}"><strong>${esc(v.customer_name||v.customer_kashikoi_name||`顧客 #${v.customer_id}`)}</strong><small>#${v.customer_id} / ${esc(v.started_at||"")} / ${esc(v.store_name||"")}</small></button>`).join(""):`<p class="ncr-msg">該当顧客なし</p>`}catch(e){r.innerHTML=`<p class="ncr-msg is-error">${esc(e.message)}</p>`}
+  try{const q=new URLSearchParams({keyword:k.trim()}),d=await req(`${SEARCH}?${q}`,{method:"GET"}),map=new Map();(d.data?.visits||[]).forEach(v=>{const id=+v.customer_id;if(id&&!map.has(id))map.set(id,v)});const arr=[...map.values()].slice(0,12);r.innerHTML=arr.length?arr.map(v=>`<button type="button" class="ncr-customer" data-ncr-customer="${v.customer_id}"><strong>${esc(v.customer_name||v.customer_kashikoi_name||`顧客 #${v.customer_id}`)}</strong><small>#${v.customer_id} / ${esc(v.started_at||"")} / ${esc(v.store_name||"")}</small></button>`).join(""):`<p class="ncr-msg">該当顧客なし</p>`}catch(e){r.innerHTML=`<p class="ncr-msg is-error">${esc(e.message)}</p>`}
 }
 function intv(id,min=null,fb=0){const raw=document.getElementById(id)?.value?.trim()??"";if(raw==="")return fb;const v=Number(raw);if(!Number.isSafeInteger(v)||min!==null&&v<min)throw Error("金額・回数の入力を確認してね。");return v}
 async function save(){
