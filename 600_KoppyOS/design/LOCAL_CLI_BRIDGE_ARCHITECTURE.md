@@ -1,6 +1,6 @@
 # Koppy Local CLI Bridge Architecture
 
-Version: v0.2.2
+Version: v0.2.3
 Status: ACTIVE
 
 ## 1. Purpose
@@ -215,23 +215,36 @@ Bridgeは引き続き、
 
 を担当する。
 
-Packageの展開・repositoryへの反映は書き込み処理を伴うため、
-Bridgeとは責務を分離した独立Utilityとして設計する。
+PackageのInspection・展開・repository反映は、
+Bridgeとは責務を分離した独立Utilityとして扱う。
 
 詳細な安全仕様の正本：
 
 `600_KoppyOS/protocols/PACKAGE_SAFETY_PROTOCOL.md`
 
-想定Command：
+Package Runtime Source of Truth：
 
-- `kpackage inspect`
+`600_KoppyOS/runtime/koppy_package.sh`
+
+Current Package Utility Runtime：
+
+`0.1.0`
+
+Current Runtimeで実装済み：
+
+- `kpackage inspect <package.zip>`
+
+Phase 1の`inspect`はread-onlyであり、
+ZIPを展開せずmetadataのみを検査する。
+
+未実装・将来候補：
+
 - `kpackage stage`
 - `kpackage diff`
 - `kpackage apply`
 - `kpackage rollback`
 
-ただし、これらはRuntimeへ実装されるまでは
-実行可能Commandとして扱わない。
+未実装Commandを実行可能として案内してはならない。
 
 基本Flow：
 
@@ -270,7 +283,7 @@ Bridge仕様をConversation Memoryだけへ依存させない。
 
 Command Contractまたは重要な挙動を変更した場合はVersionを更新する。
 
-Current：`v0.2.2`
+Current：`v0.2.3`
 
 実戦で不足が確認された機能のみ追加する。機能数を増やすこと自体を目的としない。
 
@@ -325,18 +338,36 @@ Application全体の完全な安全性や動作保証を意味しない。
 以下はArchitecture上の将来候補であり、
 Current Runtimeへ実装済みとは扱わない。
 
-- `kpackage inspect`
 - `kpackage stage`
 - `kpackage diff`
 - `kpackage apply`
 - `kpackage rollback`
 
+設計書に名前が存在することを理由に、
+未実装Commandをユーザーへ実行Commandとして提示してはならない。
+
+### 15.4 Package Utility Runtime
+
+Koppy Local CLI Bridgeとは別Runtimeとして、
+Package Utility Runtime v0.1.0に以下を実装済みとする。
+
+- `kpackage inspect <package.zip>`
+
+Runtime Source of Truth：
+
+`600_KoppyOS/runtime/koppy_package.sh`
+
+Mac Runtime：
+
+`~/.koppy_package.sh`
+
+Installer Source of Truth：
+
+`600_KoppyOS/runtime/install_kpackage.sh`
+
 Package Utilityの詳細な安全仕様は
 `600_KoppyOS/protocols/PACKAGE_SAFETY_PROTOCOL.md`
 を正本とする。
-
-設計書に名前が存在することを理由に、
-未実装Commandをユーザーへ実行Commandとして提示してはならない。
 
 ## 16. Chat Bootstrap
 

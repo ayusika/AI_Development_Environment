@@ -1,6 +1,6 @@
 # Koppy Local CLI Bridge Chat Bootstrap
 
-Version: v0.1.0
+Version: v0.1.1
 Status: ACTIVE
 
 ## Purpose
@@ -24,6 +24,7 @@ Koppy Local CLI Bridgeの前提を短く復元するためのBootstrapである�
 - 600_KoppyOS/design/LOCAL_CLI_BRIDGE_CHAT_BOOTSTRAP.md
 - 必要に応じて 600_KoppyOS/protocols/EXECUTOR_SELECTION_PROTOCOL.md
 - 必要に応じて 600_KoppyOS/protocols/FILE_EDIT_PROTOCOL.md
+- ZIP / Packageを扱う場合は 600_KoppyOS/protocols/PACKAGE_SAFETY_PROTOCOL.md
 
 ローカル状態の確認では、既存の koppy / kclip コマンドで取得できる情報を、
 毎回ad-hoc CMDで再構築しないでください。
@@ -38,7 +39,7 @@ Koppy Local CLI Bridgeの前提を短く復元するためのBootstrapである�
 - force pushしない
 - conflictを勝手に解決しない
 - ZIPやpackageをrepoへ直接無検証展開しない
-- package反映は staging → inspect → diff → explicit apply → review を基本にする
+- package反映は inspect → staging → diff → explicit apply → review を基本にする
 - secretやtokenを出力しない
 - 実装後は可能なら kclip review で差分とcheckを確認する
 - チャット引き継ぎ時は kclip snapshot を優先する
@@ -55,7 +56,9 @@ GitHub正本へアクセスできない場合は推測で進めず、
 重要:
 設計書に将来候補として書かれているだけのCommandを、
 Runtimeへ実装済みとして扱わないでください。
-特に kpackage inspect / stage / diff / apply は現時点では未実装候補です。
+Package Utility Runtime v0.1.0では
+`kpackage inspect <package.zip>` のみ実装済みです。
+`kpackage stage / diff / apply / rollback` は未実装候補です。
 ```
 
 ## Chat Behavior Contract
@@ -80,6 +83,7 @@ Runtimeへ実装済みとして扱わないでください。
 - 差分確認: `kclip diff [file]`
 - 編集後確認: `kclip review`
 - 引き継ぎ: `kclip snapshot`
+- Package検査: `kpackage inspect <package.zip>`
 
 ## Safety Status
 
@@ -92,6 +96,7 @@ Runtimeへ実装済みとして扱わないでください。
 - `review` によるdiff + check
 - `api` のread-only GET inspection
 - `snapshot` による引き継ぎContext Pack
+- Package Utility v0.1.0 の `kpackage inspect` によるread-only ZIP inspection
 
 ### 運用ルールとして確定済み
 
@@ -104,9 +109,9 @@ Runtimeへ実装済みとして扱わないでください。
 
 ### 未実装・将来候補
 
-- `kpackage inspect`
 - `kpackage stage`
 - `kpackage diff`
 - `kpackage apply`
+- `kpackage rollback`
 
 未実装候補は、存在するCommandとして案内してはならない。

@@ -1,7 +1,7 @@
 # KoppyOS Package Safety Protocol
 
-Version: v0.1.0
-Status: DESIGN
+Version: v0.1.1
+Status: ACTIVE
 
 ---
 
@@ -63,20 +63,26 @@ Koppy Local CLI Bridge自体をExecutorとして扱わない。
 
 ---
 
-# 3. Planned Command Contract
+# 3. Command Contract and Implementation Status
 
-初期候補：
+Package Utility Runtime v0.1.0で実装済み：
 
 ```text
-kpackage inspect <package>
+kpackage inspect <package.zip>
+```
+
+Phase 1ではZIPのみ対応する。
+
+未実装・将来候補：
+
+```text
 kpackage stage <package>
 kpackage diff <session>
 kpackage apply <session>
 kpackage rollback <session>
 ```
 
-Runtimeへ実装されるまでは
-これらを実行可能Commandとして案内しない。
+未実装Commandを実行可能として案内しない。
 
 ---
 
@@ -115,25 +121,69 @@ Koppy / ユーザーが明示的に判断する。
 
 `inspect` はrepositoryへ書き込まない。
 
+Phase 1 Runtime v0.1.0ではZIPのみ対応し、
+archiveを展開せずmetadataを検査する。
+
 確認対象：
 
 - package形式
 - package hash
 - file count
 - directory count
-- total size
+- total uncompressed size
 - entry paths
-- absolute path
+- control / format character in path
+- absolute / rooted path
 - `..` path traversal
 - symlink
 - `.git`
-- secret / credential候補
+- encrypted entry
+- secret / credential filename候補
 - 異常に巨大なentry
-- 重複path
+- 高compression ratio
+- 重複 / collision path
 - その他危険entry
 
+Phase 1のResult：
+
+```text
+PASS
+REVIEW
+BLOCK
+```
+
+`PASS` はPhase 1 metadata inspectionで
+blocking / review findingが検出されなかった状態。
+
+`REVIEW` はsecret / credential filename候補、
+大容量entry等、
+Koppy / ユーザーによる確認が必要な状態。
+
+`BLOCK` はcontrol / format character、absolute path、
+path traversal、symlink、`.git`、encrypted entry、
+duplicate / collision等、
+次工程へ進めてはならない状態。
+
+Phase 1 Runtimeの既定review threshold：
+
+- 1 entry: 100 MiB超
+- total uncompressed size: 500 MiB超
+- compression ratio: 1000x以上かつuncompressed 10 MiB以上
+- entry count: 10000超
+
+これらthresholdは危険性の完全判定ではなく、
+人間/Koppy reviewへ送るための保守的な基準とする。
+
 秘密情報候補を検出した場合、
-内容そのものをTerminalやConversationへ不用意に表示しない。
+entry path以外の内容そのものを
+TerminalやConversationへ不用意に表示しない。
+
+Inspectはfile contentを表示しない。
+
+Archive-controlled pathをTerminalへ表示する場合は、
+改行・TAB・ESCその他のnon-printable characterを
+そのままTerminal controlとして出力せず、
+安全なescaped representationで表示する。
 
 危険性を判定できない場合はFail Closedとする。
 
@@ -344,13 +394,7 @@ FILE_EDIT_PROTOCOLに従う。
 
 # 15. Runtime Source of Truth
 
-Package Runtimeを実装する場合、
-Home Directoryだけに実装正本を置かない。
-
-GitHub repository内に
-Runtime Source of Truthを保持する。
-
-候補：
+Package Runtimeの正本：
 
 ```text
 600_KoppyOS/runtime/koppy_package.sh
@@ -362,11 +406,39 @@ Mac Runtime：
 ~/.koppy_package.sh
 ```
 
-GitHub正本から
-明示的にinstall / updateする構造を基本とする。
+Installer正本：
 
-詳細なinstall方式は
-Runtime実装時に別途確定する。
+```text
+600_KoppyOS/runtime/install_kpackage.sh
+```
+
+Runtime test正本：
+
+```text
+600_KoppyOS/runtime/test_koppy_package.sh
+```
+
+Installerは明示的な`--apply`指定でのみ
+Mac RuntimeおよびBash起動設定を変更する。
+
+既存Mac Runtimeや`~/.bashrc`が存在する場合は、
+変更前にbackupを作成する。
+
+RuntimeはGitHub正本からMac Runtimeへcopyし、
+`~/.bashrc`から読み込む。
+
+Installerを子Shellで実行しても
+親Shellのfunction定義は更新されないため、
+install後はユーザーが明示的に
+
+```text
+source ~/.bashrc
+```
+
+を実行する。
+
+Runtime Source of TruthとMac Runtimeに不整合がある場合、
+推測して続行しない。
 
 ---
 
