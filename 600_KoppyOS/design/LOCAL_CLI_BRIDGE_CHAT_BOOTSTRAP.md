@@ -1,6 +1,6 @@
 # Koppy Local CLI Bridge Chat Bootstrap
 
-Version: v0.1.1
+Version: v0.1.2
 Status: ACTIVE
 
 ## Purpose
@@ -39,6 +39,10 @@ Koppy Local CLI Bridgeの前提を短く復元するためのBootstrapである�
 - force pushしない
 - conflictを勝手に解決しない
 - ZIPやpackageをrepoへ直接無検証展開しない
+- Macの既定Package Inboxは /Users/ayukawa/1.作業フォルダ/tempzip
+- Package InboxはStaging Areaではない
+- Package名が分かる場合はInbox直下のexact pathを使い、Home全体をfindしない
+- 複数候補から勝手に先頭ZIPを選ばない
 - package反映は inspect → staging → diff → explicit apply → review を基本にする
 - secretやtokenを出力しない
 - 実装後は可能なら kclip review で差分とcheckを確認する
@@ -84,6 +88,7 @@ Package Utility Runtime v0.1.0では
 - 編集後確認: `kclip review`
 - 引き継ぎ: `kclip snapshot`
 - Package検査: `kpackage inspect <package.zip>`
+- 既定Package Inbox: `/Users/ayukawa/1.作業フォルダ/tempzip`
 
 ## Safety Status
 
@@ -106,6 +111,8 @@ Package Utility Runtime v0.1.0では
 - conflictの勝手な解決禁止
 - secret / tokenを出力しない
 - ZIP / packageをrepoへ直接無検証展開しない
+- Package Inbox `/Users/ayukawa/1.作業フォルダ/tempzip` とStaging Areaを分離する
+- Packageの場所が既知ならHome Directory全体を探索しない
 
 ### 未実装・将来候補
 

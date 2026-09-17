@@ -1,6 +1,6 @@
 # KoppyOS Package Safety Protocol
 
-Version: v0.1.1
+Version: v0.1.2
 Status: ACTIVE
 
 ---
@@ -115,6 +115,51 @@ Koppy / ユーザーが明示的に判断する。
 
 推測によるPath normalizationを禁止する。
 
+## 4.1 Local Package Inbox
+
+Current Macの既定Package Inbox：
+
+```text
+/Users/ayukawa/1.作業フォルダ/tempzip
+```
+
+Package Inboxは、
+ユーザーがKoppy生成ZIPや確認対象Packageを置く
+ローカル受け渡し場所とする。
+
+Package Inboxはtrusted directoryではない。
+Inbox内に存在することを理由にPackageを安全とみなさない。
+
+Package Inboxは以下とは分離する。
+
+- repository
+- Staging Area
+- Session Backup
+- Runtime Source of Truth
+
+Package関連のcopy-paste CMDでは、
+ユーザーから別指定がない限り
+このInboxを既定参照先とする。
+
+Package filenameが既知の場合は、
+Inbox直下のexact pathを使用する。
+
+例：
+
+```text
+/Users/ayukawa/1.作業フォルダ/tempzip/example.zip
+```
+
+標準手順として、
+`find "$HOME"` 等でHome Directory全体を探索しない。
+
+対象Packageを一意に決められない場合や
+同名・類似候補が複数存在する場合は、
+先頭候補を自動採用せずSTOP / 確認する。
+
+InboxからPackageを取得した場合も、
+Stage前に`inspect`による安全確認を行う。
+
 ---
 
 # 5. Inspect
@@ -193,6 +238,9 @@ Archive-controlled pathをTerminalへ表示する場合は、
 
 `stage` はpackageを
 repository外の専用Staging Areaへ展開する。
+
+Package Inboxそのものへ展開せず、
+Inboxとは分離したSession固有Staging Areaを使用する。
 
 repository直下へ直接展開してはならない。
 
@@ -447,6 +495,9 @@ Runtime Source of TruthとMac Runtimeに不整合がある場合、
 Package処理では以下を禁止する。
 
 - repositoryへの直接ZIP展開
+- Package InboxをStaging Areaとして再利用
+- 複数候補から無確認で先頭Packageを採用
+- Home Directory全体の不要なPackage探索を標準化
 - absolute path entry
 - `..` によるrepository外参照
 - `.git` 上書き

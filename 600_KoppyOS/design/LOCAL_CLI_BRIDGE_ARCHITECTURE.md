@@ -1,6 +1,6 @@
 # Koppy Local CLI Bridge Architecture
 
-Version: v0.2.3
+Version: v0.2.4
 Status: ACTIVE
 
 ## 1. Purpose
@@ -226,6 +226,22 @@ Package Runtime Source of Truth：
 
 `600_KoppyOS/runtime/koppy_package.sh`
 
+Current Mac Package Inbox：
+
+`/Users/ayukawa/1.作業フォルダ/tempzip`
+
+Package Inboxは、ユーザーがKoppy生成ZIPや確認対象Packageを置く
+ローカル受け渡し場所であり、Staging Areaではない。
+
+Package関連のcopy-paste CMDでは、
+ユーザーから別指定がない限り上記Inboxを既定参照先とする。
+
+Package名が既知の場合はInbox直下のexact pathを使用し、
+`find "$HOME"` 等によるHome Directory全体の探索を標準手順にしない。
+
+同名候補が複数ある場合や対象Packageを一意に決められない場合は、
+勝手に先頭候補を採用せずSTOP / 確認する。
+
 Current Package Utility Runtime：
 
 `0.1.0`
@@ -259,7 +275,9 @@ Package
 基本原則：
 
 - ZIP / Packageをrepositoryへ直接展開しない
-- stagingはrepository外に作成する
+- Package Inboxは `/Users/ayukawa/1.作業フォルダ/tempzip` を既定とする
+- Package InboxをStaging Areaとして扱わない
+- stagingはrepository外の専用領域に作成する
 - package pathを推測変換しない
 - apply前にGit / HEAD / worktree / package状態を再確認する
 - applyはcommit / pushを行わない
@@ -283,7 +301,7 @@ Bridge仕様をConversation Memoryだけへ依存させない。
 
 Command Contractまたは重要な挙動を変更した場合はVersionを更新する。
 
-Current：`v0.2.3`
+Current：`v0.2.4`
 
 実戦で不足が確認された機能のみ追加する。機能数を増やすこと自体を目的としない。
 
