@@ -66,6 +66,10 @@ with zipfile.ZipFile(d / "diff-valid.zip", "w", zipfile.ZIP_DEFLATED) as z:
     z.writestr("new.txt", "new-from-package\n")
     z.writestr("same.txt", "same-content\n")
     z.writestr("replace.txt", "replacement-content\n")
+
+with zipfile.ZipFile(d / "apply-failure.zip", "w", zipfile.ZIP_DEFLATED) as z:
+    z.writestr("a-replace.txt", "replacement-after-failure-test\n")
+    z.writestr("z-new.txt", "new-before-injected-failure\n")
 PY
 
 fail=0
@@ -500,6 +504,348 @@ if [ -n "$DIFF_SESSION_A" ]; then
     fail=1
   else
     echo "PASS: staged file tamper blocks Diff"
+  fi
+fi
+
+# ------------------------------------------------------------
+# Apply tests
+# ------------------------------------------------------------
+APPLY_REPO="$TMP/apply-repo"
+APPLY_SESSION_ROOT="$TMP/apply-sessions"
+
+mkdir -p "$APPLY_REPO"
+git -C "$APPLY_REPO" init -q
+git -C "$APPLY_REPO" checkout -q -b main
+git -C "$APPLY_REPO" config user.email "kpackage-test@example.invalid"
+git -C "$APPLY_REPO" config user.name "KPackage Test"
+printf 'baseline\n' > "$APPLY_REPO/README.md"
+printf 'same-content\n' > "$APPLY_REPO/same.txt"
+printf 'old-content\n' > "$APPLY_REPO/replace.txt"
+printf 'repo-only\n' > "$APPLY_REPO/repo-only.txt"
+git -C "$APPLY_REPO" add README.md same.txt replace.txt repo-only.txt
+git -C "$APPLY_REPO" commit -q -m "apply baseline"
+
+APPLY_BASE_HEAD="$(git -C "$APPLY_REPO" rev-parse HEAD)"
+
+stage_apply_session() {
+  local out="$1"
+  (
+    cd "$APPLY_REPO" || return 1
+    KPACKAGE_SESSION_ROOT="$APPLY_SESSION_ROOT" bash "$RUNTIME" stage "$TMP/diff-valid.zip"
+  ) >"$out" 2>&1
+}
+
+session_from_output() {
+  sed -n "s/^Session path: '\\(.*\\)'$/\\1/p" "$1"
+}
+
+APPLY_STAGE_OUT="$TMP/apply-stage.out"
+stage_apply_session "$APPLY_STAGE_OUT"
+apply_stage_rc=$?
+
+if [ "$apply_stage_rc" -ne 0 ]; then
+  echo "FAIL: Apply fixture Stage rc=$apply_stage_rc"
+  cat "$APPLY_STAGE_OUT"
+  fail=1
+fi
+
+APPLY_SESSION="$(session_from_output "$APPLY_STAGE_OUT")"
+
+if [ -z "$APPLY_SESSION" ]; then
+  echo "FAIL: Apply fixture Session not found"
+  fail=1
+else
+  APPLY_OUT="$TMP/apply-success.out"
+  (
+    cd "$APPLY_REPO" || exit 1
+    KPACKAGE_SESSION_ROOT="$APPLY_SESSION_ROOT" bash "$RUNTIME" apply "$APPLY_SESSION"
+  ) >"$APPLY_OUT" 2>&1
+  apply_rc=$?
+
+  if [ "$apply_rc" -ne 0 ] ||
+     ! grep -Fq "Result: APPLIED" "$APPLY_OUT"; then
+    echo "FAIL: Apply success rc=$apply_rc"
+    cat "$APPLY_OUT"
+    fail=1
+  elif [ "$(cat "$APPLY_REPO/new.txt")" != "new-from-package" ] ||
+       [ "$(cat "$APPLY_REPO/replace.txt")" != "replacement-content" ] ||
+       [ "$(cat "$APPLY_REPO/same.txt")" != "same-content" ] ||
+       [ "$(cat "$APPLY_REPO/repo-only.txt")" != "repo-only" ]; then
+    echo "FAIL: Apply repository contents incorrect"
+    fail=1
+  elif [ "$(git -C "$APPLY_REPO" rev-parse HEAD)" != "$APPLY_BASE_HEAD" ]; then
+    echo "FAIL: Apply changed repository HEAD"
+    fail=1
+  else
+    echo "PASS: Apply handled NEW / REPLACE / IDENTICAL without commit"
+  fi
+
+  if ! python3 - "$APPLY_SESSION" <<'PY'
+from pathlib import Path
+import hashlib
+import json
+import sys
+
+session = Path(sys.argv[1])
+manifest = json.loads((session / "session.json").read_text(encoding="utf-8"))
+apply = json.loads((session / "apply.json").read_text(encoding="utf-8"))
+
+if manifest["status"] != "APPLIED":
+    raise SystemExit("FAIL: Session status not APPLIED")
+if apply["status"] != "APPLIED":
+    raise SystemExit("FAIL: apply.json status")
+if apply["new_files"] != ["new.txt"]:
+    raise SystemExit(f"FAIL: new_files {apply['new_files']!r}")
+if apply["replaced_files"] != ["replace.txt"]:
+    raise SystemExit(f"FAIL: replaced_files {apply['replaced_files']!r}")
+if apply["identical_files"] != ["same.txt"]:
+    raise SystemExit(f"FAIL: identical_files {apply['identical_files']!r}")
+
+backup = session / "backup" / "replaced" / "replace.txt"
+if backup.read_bytes() != b"old-content\n":
+    raise SystemExit("FAIL: replaced backup content")
+if hashlib.sha256(backup.read_bytes()).hexdigest() != next(
+    row["pre_apply_sha256"] for row in apply["targets"] if row["path"] == "replace.txt"
+):
+    raise SystemExit("FAIL: backup hash metadata")
+
+print("PASS: Apply Session metadata and backup verified")
+PY
+  then
+    fail=1
+  fi
+
+  REAPPLY_OUT="$TMP/apply-reapply.out"
+  (
+    cd "$APPLY_REPO" || exit 1
+    KPACKAGE_SESSION_ROOT="$APPLY_SESSION_ROOT" bash "$RUNTIME" apply "$APPLY_SESSION"
+  ) >"$REAPPLY_OUT" 2>&1
+  reapply_rc=$?
+
+  if [ "$reapply_rc" -ne 1 ] ||
+     ! grep -Fq "Session backup already exists" "$REAPPLY_OUT"; then
+    echo "FAIL: repeated Apply was not blocked"
+    cat "$REAPPLY_OUT"
+    fail=1
+  else
+    echo "PASS: repeated Apply blocks"
+  fi
+fi
+
+git -C "$APPLY_REPO" reset -q --hard "$APPLY_BASE_HEAD"
+git -C "$APPLY_REPO" clean -fdq
+
+APPLY_DIRTY_STAGE="$TMP/apply-dirty-stage.out"
+stage_apply_session "$APPLY_DIRTY_STAGE"
+APPLY_DIRTY_SESSION="$(session_from_output "$APPLY_DIRTY_STAGE")"
+printf 'dirty\n' >> "$APPLY_REPO/README.md"
+
+APPLY_DIRTY_OUT="$TMP/apply-dirty.out"
+(
+  cd "$APPLY_REPO" || exit 1
+  KPACKAGE_SESSION_ROOT="$APPLY_SESSION_ROOT" bash "$RUNTIME" apply "$APPLY_DIRTY_SESSION"
+) >"$APPLY_DIRTY_OUT" 2>&1
+apply_dirty_rc=$?
+git -C "$APPLY_REPO" checkout -q -- README.md
+
+if [ "$apply_dirty_rc" -ne 1 ] ||
+   ! grep -Fq "Worktree must be clean" "$APPLY_DIRTY_OUT"; then
+  echo "FAIL: dirty worktree did not block Apply"
+  cat "$APPLY_DIRTY_OUT"
+  fail=1
+else
+  echo "PASS: dirty worktree blocks Apply"
+fi
+
+APPLY_STALE_STAGE="$TMP/apply-stale-stage.out"
+stage_apply_session "$APPLY_STALE_STAGE"
+APPLY_STALE_SESSION="$(session_from_output "$APPLY_STALE_STAGE")"
+printf 'later\n' > "$APPLY_REPO/later.txt"
+git -C "$APPLY_REPO" add later.txt
+git -C "$APPLY_REPO" commit -q -m "advance apply head"
+
+APPLY_STALE_OUT="$TMP/apply-stale.out"
+(
+  cd "$APPLY_REPO" || exit 1
+  KPACKAGE_SESSION_ROOT="$APPLY_SESSION_ROOT" bash "$RUNTIME" apply "$APPLY_STALE_SESSION"
+) >"$APPLY_STALE_OUT" 2>&1
+apply_stale_rc=$?
+
+if [ "$apply_stale_rc" -ne 1 ] ||
+   ! grep -Fq "Current HEAD does not match" "$APPLY_STALE_OUT"; then
+  echo "FAIL: stale HEAD did not block Apply"
+  cat "$APPLY_STALE_OUT"
+  fail=1
+else
+  echo "PASS: stale HEAD blocks Apply"
+fi
+
+git -C "$APPLY_REPO" reset -q --hard "$APPLY_BASE_HEAD"
+git -C "$APPLY_REPO" clean -fdq
+
+APPLY_TAMPER_STAGE="$TMP/apply-tamper-stage.out"
+stage_apply_session "$APPLY_TAMPER_STAGE"
+APPLY_TAMPER_SESSION="$(session_from_output "$APPLY_TAMPER_STAGE")"
+printf 'tampered\n' >> "$APPLY_TAMPER_SESSION/staging/same.txt"
+
+APPLY_TAMPER_OUT="$TMP/apply-tamper.out"
+(
+  cd "$APPLY_REPO" || exit 1
+  KPACKAGE_SESSION_ROOT="$APPLY_SESSION_ROOT" bash "$RUNTIME" apply "$APPLY_TAMPER_SESSION"
+) >"$APPLY_TAMPER_OUT" 2>&1
+apply_tamper_rc=$?
+
+if [ "$apply_tamper_rc" -ne 1 ] ||
+   ! grep -Fq "Staged file size no longer matches" "$APPLY_TAMPER_OUT"; then
+  echo "FAIL: staged tamper did not block Apply"
+  cat "$APPLY_TAMPER_OUT"
+  fail=1
+else
+  echo "PASS: staged tamper blocks Apply"
+fi
+
+APPLY_EXTRA_STAGE="$TMP/apply-extra-stage.out"
+stage_apply_session "$APPLY_EXTRA_STAGE"
+APPLY_EXTRA_SESSION="$(session_from_output "$APPLY_EXTRA_STAGE")"
+printf 'rogue\n' > "$APPLY_EXTRA_SESSION/staging/rogue.txt"
+
+APPLY_EXTRA_OUT="$TMP/apply-extra.out"
+(
+  cd "$APPLY_REPO" || exit 1
+  KPACKAGE_SESSION_ROOT="$APPLY_SESSION_ROOT" bash "$RUNTIME" apply "$APPLY_EXTRA_SESSION"
+) >"$APPLY_EXTRA_OUT" 2>&1
+apply_extra_rc=$?
+
+if [ "$apply_extra_rc" -ne 1 ] ||
+   ! grep -Fq "Staging file list no longer matches" "$APPLY_EXTRA_OUT"; then
+  echo "FAIL: unexpected staging file did not block Apply"
+  cat "$APPLY_EXTRA_OUT"
+  fail=1
+else
+  echo "PASS: unexpected staging file blocks Apply"
+fi
+
+FAIL_REPO="$TMP/apply-failure-repo"
+FAIL_SESSION_ROOT="$TMP/apply-failure-sessions"
+
+mkdir -p "$FAIL_REPO"
+git -C "$FAIL_REPO" init -q
+git -C "$FAIL_REPO" checkout -q -b main
+git -C "$FAIL_REPO" config user.email "kpackage-test@example.invalid"
+git -C "$FAIL_REPO" config user.name "KPackage Test"
+printf 'before-failure\n' > "$FAIL_REPO/a-replace.txt"
+printf 'baseline\n' > "$FAIL_REPO/README.md"
+git -C "$FAIL_REPO" add a-replace.txt README.md
+git -C "$FAIL_REPO" commit -q -m "failure baseline"
+FAIL_BASE_HEAD="$(git -C "$FAIL_REPO" rev-parse HEAD)"
+
+FAIL_STAGE_OUT="$TMP/apply-failure-stage.out"
+(
+  cd "$FAIL_REPO" || exit 1
+  KPACKAGE_SESSION_ROOT="$FAIL_SESSION_ROOT" bash "$RUNTIME" stage "$TMP/apply-failure.zip"
+) >"$FAIL_STAGE_OUT" 2>&1
+FAIL_SESSION="$(session_from_output "$FAIL_STAGE_OUT")"
+
+FAIL_APPLY_OUT="$TMP/apply-failure.out"
+(
+  cd "$FAIL_REPO" || exit 1
+  KPACKAGE_TEST_MODE=1 \
+  KPACKAGE_TEST_INJECT_APPLY_FAILURE_AFTER=1 \
+  KPACKAGE_SESSION_ROOT="$FAIL_SESSION_ROOT" \
+  bash "$RUNTIME" apply "$FAIL_SESSION"
+) >"$FAIL_APPLY_OUT" 2>&1
+failure_rc=$?
+
+if [ "$failure_rc" -ne 1 ] ||
+   ! grep -Fq "Result: APPLY_FAILED_RESTORED" "$FAIL_APPLY_OUT"; then
+  echo "FAIL: injected Apply failure did not report restored"
+  cat "$FAIL_APPLY_OUT"
+  fail=1
+elif [ "$(cat "$FAIL_REPO/a-replace.txt")" != "before-failure" ] ||
+     [ -e "$FAIL_REPO/z-new.txt" ] ||
+     [ "$(git -C "$FAIL_REPO" rev-parse HEAD)" != "$FAIL_BASE_HEAD" ] ||
+     [ -n "$(git -C "$FAIL_REPO" status --porcelain=v1 --untracked-files=all)" ]; then
+  echo "FAIL: injected Apply failure did not restore repository exactly"
+  git -C "$FAIL_REPO" status --short
+  fail=1
+else
+  echo "PASS: mid-Apply failure restores repository"
+fi
+
+if [ -n "$FAIL_SESSION" ]; then
+  if [ -e "$FAIL_SESSION/apply.json" ] ||
+     [ -e "$FAIL_SESSION/backup" ] ||
+     find "$FAIL_SESSION" -maxdepth 1 -name '.apply-backup-partial-*' | grep -q .; then
+    echo "FAIL: restored Apply left finalized/partial backup metadata"
+    fail=1
+  elif ! grep -Fq '"status": "STAGED"' "$FAIL_SESSION/session.json"; then
+    echo "FAIL: restored Apply did not keep Session STAGED"
+    fail=1
+  else
+    echo "PASS: restored Apply keeps Session reusable as STAGED"
+  fi
+fi
+
+# Failure exactly after the repository atomic replace must also restore.
+POST_REPLACE_REPO="$TMP/apply-post-replace-repo"
+POST_REPLACE_SESSION_ROOT="$TMP/apply-post-replace-sessions"
+
+mkdir -p "$POST_REPLACE_REPO"
+git -C "$POST_REPLACE_REPO" init -q
+git -C "$POST_REPLACE_REPO" checkout -q -b main
+git -C "$POST_REPLACE_REPO" config user.email "kpackage-test@example.invalid"
+git -C "$POST_REPLACE_REPO" config user.name "KPackage Test"
+printf 'before-failure\n' > "$POST_REPLACE_REPO/a-replace.txt"
+printf 'baseline\n' > "$POST_REPLACE_REPO/README.md"
+git -C "$POST_REPLACE_REPO" add a-replace.txt README.md
+git -C "$POST_REPLACE_REPO" commit -q -m "post-replace baseline"
+POST_REPLACE_HEAD="$(git -C "$POST_REPLACE_REPO" rev-parse HEAD)"
+
+POST_REPLACE_STAGE_OUT="$TMP/apply-post-replace-stage.out"
+(
+  cd "$POST_REPLACE_REPO" || exit 1
+  KPACKAGE_SESSION_ROOT="$POST_REPLACE_SESSION_ROOT" \
+  bash "$RUNTIME" stage "$TMP/apply-failure.zip"
+) >"$POST_REPLACE_STAGE_OUT" 2>&1
+POST_REPLACE_SESSION="$(session_from_output "$POST_REPLACE_STAGE_OUT")"
+
+POST_REPLACE_APPLY_OUT="$TMP/apply-post-replace.out"
+(
+  cd "$POST_REPLACE_REPO" || exit 1
+  KPACKAGE_TEST_MODE=1 \
+  KPACKAGE_TEST_INJECT_POST_REPLACE_FAILURE=1 \
+  KPACKAGE_SESSION_ROOT="$POST_REPLACE_SESSION_ROOT" \
+  bash "$RUNTIME" apply "$POST_REPLACE_SESSION"
+) >"$POST_REPLACE_APPLY_OUT" 2>&1
+post_replace_rc=$?
+
+if [ "$post_replace_rc" -ne 1 ] ||
+   ! grep -Fq "Result: APPLY_FAILED_RESTORED" "$POST_REPLACE_APPLY_OUT"; then
+  echo "FAIL: post-replace Apply failure did not report restored"
+  cat "$POST_REPLACE_APPLY_OUT"
+  fail=1
+elif [ "$(cat "$POST_REPLACE_REPO/a-replace.txt")" != "before-failure" ] ||
+     [ -e "$POST_REPLACE_REPO/z-new.txt" ] ||
+     [ "$(git -C "$POST_REPLACE_REPO" rev-parse HEAD)" != "$POST_REPLACE_HEAD" ] ||
+     [ -n "$(git -C "$POST_REPLACE_REPO" status --porcelain=v1 --untracked-files=all)" ]; then
+  echo "FAIL: post-replace Apply failure did not restore repository exactly"
+  git -C "$POST_REPLACE_REPO" status --short
+  fail=1
+else
+  echo "PASS: post-replace failure restores repository"
+fi
+
+if [ -n "$POST_REPLACE_SESSION" ]; then
+  if [ -e "$POST_REPLACE_SESSION/apply.json" ] ||
+     [ -e "$POST_REPLACE_SESSION/backup" ] ||
+     find "$POST_REPLACE_SESSION" -maxdepth 1 -name '.apply-backup-partial-*' | grep -q .; then
+    echo "FAIL: post-replace restore left finalized/partial backup metadata"
+    fail=1
+  elif ! grep -Fq '"status": "STAGED"' "$POST_REPLACE_SESSION/session.json"; then
+    echo "FAIL: post-replace restore did not keep Session STAGED"
+    fail=1
+  else
+    echo "PASS: post-replace restore keeps Session STAGED"
   fi
 fi
 

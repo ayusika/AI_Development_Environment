@@ -1,6 +1,6 @@
 # KoppyOS Package Safety Protocol
 
-Version: v0.3.0
+Version: v0.4.0
 Status: ACTIVE
 
 ---
@@ -65,21 +65,21 @@ Koppy Local CLI Bridge自体をExecutorとして扱わない。
 
 # 3. Command Contract and Implementation Status
 
-Package Utility Runtime v0.3.0で実装済み：
+Package Utility Runtime v0.4.0で実装済み：
 
 ```text
 kpackage inspect <package.zip>
 kpackage stage <package.zip>
 kpackage diff <session>
+kpackage apply <session>
 ```
 
 Phase 1 / Phase 2ではZIPのみ対応する。
-Phase 3のDiffはStage Sessionを入力とする。
+Phase 3のDiffとPhase 4のApplyはStage Sessionを入力とする。
 
 未実装・将来候補：
 
 ```text
-kpackage apply <session>
 kpackage rollback <session>
 ```
 
@@ -409,6 +409,18 @@ FILE_EDIT_PROTOCOLおよびExecutor Selectionに従う。
 
 # 8. Apply Safety Gate
 
+Phase 4 Runtime v0.4.0では：
+
+```text
+kpackage apply <session>
+```
+
+を実装する。
+
+`apply` は明示的に指定された`STAGED` Sessionのみを対象とする。
+Session IDまたはSession Root直下のexact pathを使用し、
+fuzzy selectionは行わない。
+
 `apply` の直前に
 最低限以下を再確認する。
 
@@ -452,7 +464,42 @@ Backupはrepository外に保持する。
 # 10. Apply
 
 `apply` は
-明示的に確認されたSessionのみをrepositoryへ反映する。
+明示的に確認された`STAGED` Sessionのみをrepositoryへ反映する。
+
+Phase 4 Runtime v0.4.0では、
+Diffと同等のSession / repository / package / staged file再検証後に、
+対象を`NEW / REPLACE / IDENTICAL`へ再分類する。
+
+反映前にrepository外のSession Backupを完成させる。
+
+Session内の主要構造：
+
+```text
+<session>/
+├── session.json
+├── staging/
+├── backup/
+│   └── replaced/
+└── apply.json
+```
+
+反映規則：
+
+- `NEW`: staged fileを新規作成する
+- `REPLACE`: 置換前fileをbackupした後に置換する
+- `IDENTICAL`: repository fileを書き換えない
+- repository-only fileをDELETEしない
+- target / parentにsymlinkやtype conflictがあればBLOCKする
+- file copyはtemporary fileへ書き込み、hash確認後にatomic replaceする
+- REPLACEでは既存file modeを維持する
+- NEWでは通常`0644`、Package metadataで実行属性がある場合のみ`0755`を使用する
+
+成功時：
+
+- `apply.json`へapply対象、classification、pre/post hash、backup情報を保存する
+- `session.json` statusを`APPLIED`へ更新する
+- repository HEADは変更しない
+- commit / pushは行わない
 
 初期Versionでは、
 
@@ -481,8 +528,29 @@ koppy review
 # 11. Apply Failure
 
 ファイルcopy途中等でApply処理自体が失敗した場合、
-Package Utilityは可能な範囲で
+Package UtilityはApply前Backupとnewly-created file listを使用し、
 Apply開始前状態への復旧を試みる。
+
+Phase 4 Runtimeでは復旧後に、
+REPLACE対象がpre-apply hashへ戻ったこと、
+NEW対象が存在しないことを再確認する。
+
+復旧確認成功時：
+
+```text
+APPLY_FAILED_RESTORED
+```
+
+としてSTOPし、Sessionは`STAGED`のまま維持する。
+
+復旧確認できない場合：
+
+```text
+APPLY_FAILED_RESTORE_INCOMPLETE
+```
+
+としてSTOPし、利用可能なBackup evidenceを保持して
+manual reviewを要求する。
 
 復旧結果を必ず報告する。
 

@@ -1,6 +1,6 @@
 # Koppy Local CLI Bridge Architecture
 
-Version: v0.2.6
+Version: v0.2.7
 Status: ACTIVE
 
 ## 1. Purpose
@@ -244,13 +244,14 @@ Package名が既知の場合はInbox直下のexact pathを使用し、
 
 Current Package Utility Runtime：
 
-`0.3.0`
+`0.4.0`
 
 Current Runtimeで実装済み：
 
 - `kpackage inspect <package.zip>`
 - `kpackage stage <package.zip>`
 - `kpackage diff <session>`
+- `kpackage apply <session>`
 
 Phase 1の`inspect`はread-onlyであり、
 ZIPを展開せずmetadataのみを検査する。
@@ -263,13 +264,18 @@ Phase 3の`diff`はSessionとStage時repository状態を再検証し、
 staged fileを`NEW / REPLACE / IDENTICAL`へ分類するread-only Commandとする。
 repository-only fileからDELETEを推測しない。
 
+Phase 4の`apply`はSTAGED Sessionを再検証し、
+repository外Backupを作成してからNEW / REPLACEを反映する。
+IDENTICALは書き換えず、commit / pushは行わない。
+Apply処理自体の途中失敗時はApply前状態への復旧を試み、
+復旧確認できない場合はSTOPする。
+
 Current Stage Session Root：
 
 `~/.koppy/package_sessions`
 
 未実装・将来候補：
 
-- `kpackage apply`
 - `kpackage rollback`
 
 未実装Commandを実行可能として案内してはならない。
@@ -313,7 +319,7 @@ Bridge仕様をConversation Memoryだけへ依存させない。
 
 Command Contractまたは重要な挙動を変更した場合はVersionを更新する。
 
-Current：`v0.2.6`
+Current：`v0.2.7`
 
 実戦で不足が確認された機能のみ追加する。機能数を増やすこと自体を目的としない。
 
@@ -368,7 +374,6 @@ Application全体の完全な安全性や動作保証を意味しない。
 以下はArchitecture上の将来候補であり、
 Current Runtimeへ実装済みとは扱わない。
 
-- `kpackage apply`
 - `kpackage rollback`
 
 設計書に名前が存在することを理由に、
@@ -377,11 +382,12 @@ Current Runtimeへ実装済みとは扱わない。
 ### 15.4 Package Utility Runtime
 
 Koppy Local CLI Bridgeとは別Runtimeとして、
-Package Utility Runtime v0.3.0に以下を実装済みとする。
+Package Utility Runtime v0.4.0に以下を実装済みとする。
 
 - `kpackage inspect <package.zip>`
 - `kpackage stage <package.zip>`
 - `kpackage diff <session>`
+- `kpackage apply <session>`
 
 Runtime Source of Truth：
 
