@@ -2,16 +2,16 @@
 
 # Koppy Package Utility
 # Runtime Source of Truth
-# Version: 0.2.0
+# Version: 0.3.0
 #
 # Safe to source from ~/.bashrc:
 # this file intentionally does not change caller shell options.
 
-KPACKAGE_RUNTIME_VERSION="0.2.0"
+KPACKAGE_RUNTIME_VERSION="0.3.0"
 
 _kpackage_help() {
   cat <<'EOF'
-Koppy Package Utility 0.2.0
+Koppy Package Utility 0.3.0
 
 Implemented:
   kpackage inspect <package.zip>
@@ -20,6 +20,10 @@ Implemented:
   kpackage stage <package.zip>
       Safely extracts a PASS package to a repository-external session.
       Does not modify repository files.
+
+  kpackage diff <session>
+      Read-only comparison of a validated Stage session against its repository.
+      Classifies staged files as NEW, REPLACE, or IDENTICAL.
 
 Other package commands are not implemented yet.
 
@@ -514,8 +518,9 @@ try:
 except OSError as exc:
     raise SystemExit(block(f"Package path could not be resolved: {safe_display(exc)}"))
 
+repo = pathlib.Path(os.path.abspath(os.path.expanduser(repo_arg)))
 try:
-    repo = pathlib.Path(repo_arg).resolve(strict=True)
+    repo_real = repo.resolve(strict=True)
 except OSError as exc:
     raise SystemExit(block(f"Repository path could not be resolved: {safe_display(exc)}"))
 
@@ -531,10 +536,10 @@ if not package.is_file():
 if package.suffix.lower() != ".zip":
     raise SystemExit(block("Phase 2 Stage supports ZIP packages only."))
 
-if is_within(package, repo):
+if is_within(package, repo_real):
     raise SystemExit(block("Package must be outside the repository."))
 
-if is_within(session_root_resolved, repo) or is_within(repo, session_root_resolved):
+if is_within(session_root_resolved, repo_real) or is_within(repo_real, session_root_resolved):
     raise SystemExit(block("Session root must be separate from the repository."))
 
 if is_within(package, session_root_resolved):
@@ -804,9 +809,412 @@ print(f"Repository HEAD: {head}")
 print(f"Staged files: {len(staged_files)}")
 print("Repository files modified: NO")
 print()
-print("Next planned step: kpackage diff <session> (not implemented yet)")
+print("Next: kpackage diff <session>")
 print()
 print("===== END KPACKAGE STAGE =====")
+PY
+}
+
+
+_kpackage_diff() {
+  local session="${1:-}"
+  local session_root current_repo current_branch current_head status_output worktree_dirty
+
+  if [ -z "$session" ]; then
+    echo "Usage: kpackage diff <session>"
+    return 1
+  fi
+
+  if ! command -v python3 >/dev/null 2>&1; then
+    echo "===== KPACKAGE DIFF ====="
+    echo
+    echo "Result: BLOCK"
+    echo "Reason: python3 is required but was not found."
+    echo
+    echo "===== END KPACKAGE DIFF ====="
+    return 1
+  fi
+
+  session_root="${KPACKAGE_SESSION_ROOT:-$HOME/.koppy/package_sessions}"
+
+  current_repo="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+  if [ -z "$current_repo" ]; then
+    echo "===== KPACKAGE DIFF ====="
+    echo
+    echo "Result: BLOCK"
+    echo "Reason: current directory is not inside a Git repository."
+    echo "No repository files were modified."
+    echo "No Session files were modified."
+    echo
+    echo "===== END KPACKAGE DIFF ====="
+    return 1
+  fi
+
+  current_branch="$(git -C "$current_repo" branch --show-current 2>/dev/null || true)"
+  current_head="$(git -C "$current_repo" rev-parse HEAD 2>/dev/null || true)"
+  status_output="$(git -C "$current_repo" status --porcelain=v1 --untracked-files=all 2>/dev/null || true)"
+
+  worktree_dirty="0"
+  if [ -n "$status_output" ]; then
+    worktree_dirty="1"
+  fi
+
+  python3 -     "$session"     "$session_root"     "$KPACKAGE_RUNTIME_VERSION"     "$current_repo"     "$current_branch"     "$current_head"     "$worktree_dirty" <<'PY'
+from __future__ import annotations
+
+import hashlib
+import json
+import os
+import pathlib
+import sys
+import unicodedata
+
+(
+    session_arg,
+    session_root_arg,
+    runtime_version,
+    current_repo_arg,
+    current_branch,
+    current_head,
+    worktree_dirty,
+) = sys.argv[1:]
+
+def safe_display(value: object) -> str:
+    return repr(str(value))
+
+def sha256_file(path: pathlib.Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as fh:
+        for chunk in iter(lambda: fh.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+def is_within(path: pathlib.Path, root: pathlib.Path) -> bool:
+    try:
+        return os.path.commonpath([str(path), str(root)]) == str(root)
+    except ValueError:
+        return False
+
+def has_control_or_format(value: str) -> bool:
+    return any(unicodedata.category(ch) in {"Cc", "Cf"} for ch in value)
+
+def block(reason: str) -> int:
+    print("===== KPACKAGE DIFF =====")
+    print()
+    print("Result: BLOCK")
+    print(f"Reason: {reason}")
+    print("No repository files were modified.")
+    print("No Session files were modified.")
+    print()
+    print("===== END KPACKAGE DIFF =====")
+    return 1
+
+session_root = pathlib.Path(session_root_arg).expanduser()
+try:
+    session_root = session_root.resolve(strict=True)
+except OSError as exc:
+    raise SystemExit(block(f"Session root could not be resolved: {safe_display(exc)}"))
+
+if not session_root.is_dir() or session_root.is_symlink():
+    raise SystemExit(block("Session root must be a real directory."))
+
+raw_arg = pathlib.Path(session_arg).expanduser()
+if "/" in session_arg or session_arg.startswith(".") or raw_arg.is_absolute():
+    candidate = raw_arg
+else:
+    candidate = session_root / session_arg
+
+if candidate.is_symlink():
+    raise SystemExit(block("Session path must not be a symlink."))
+
+try:
+    session_path = candidate.resolve(strict=True)
+except OSError as exc:
+    raise SystemExit(block(f"Session path could not be resolved: {safe_display(exc)}"))
+
+if not session_path.is_dir():
+    raise SystemExit(block("Session path is not a directory."))
+
+if session_path.parent != session_root:
+    raise SystemExit(block("Session must be a direct child of the configured Session root."))
+
+session_json = session_path / "session.json"
+staging = session_path / "staging"
+
+if session_json.is_symlink() or not session_json.is_file():
+    raise SystemExit(block("session.json is missing or is not a regular file."))
+
+if staging.is_symlink() or not staging.is_dir():
+    raise SystemExit(block("staging directory is missing or is not a real directory."))
+
+try:
+    manifest = json.loads(session_json.read_text(encoding="utf-8"))
+except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+    raise SystemExit(block(f"session.json could not be read: {safe_display(exc)}"))
+
+if not isinstance(manifest, dict):
+    raise SystemExit(block("session.json root must be an object."))
+
+required = {
+    "schema_version",
+    "status",
+    "session_id",
+    "runtime_version",
+    "package_path",
+    "package_sha256",
+    "repository_root",
+    "branch",
+    "repository_head",
+    "session_path",
+    "staging_path",
+    "staged_file_count",
+    "staged_files",
+    "staged_directories",
+    "created_at_utc",
+}
+missing = sorted(required.difference(manifest))
+if missing:
+    raise SystemExit(block(f"session.json missing required fields: {missing!r}"))
+
+if manifest["schema_version"] != 1:
+    raise SystemExit(block("Unsupported Session schema version."))
+
+if manifest["status"] != "STAGED":
+    raise SystemExit(block("Session status is not STAGED."))
+
+if manifest["session_id"] != session_path.name:
+    raise SystemExit(block("Session ID does not match Session directory name."))
+
+try:
+    manifest_session = pathlib.Path(manifest["session_path"]).expanduser().resolve(strict=True)
+    manifest_staging = pathlib.Path(manifest["staging_path"]).expanduser().resolve(strict=True)
+except (TypeError, OSError) as exc:
+    raise SystemExit(block(f"Session path metadata is invalid: {safe_display(exc)}"))
+
+if manifest_session != session_path:
+    raise SystemExit(block("Session path metadata does not match the selected Session."))
+
+if manifest_staging != staging:
+    raise SystemExit(block("Staging path metadata does not match the selected Session."))
+
+try:
+    repo = pathlib.Path(os.path.abspath(os.path.expanduser(manifest["repository_root"])))
+    repo_real = repo.resolve(strict=True)
+    current_repo = pathlib.Path(os.path.abspath(os.path.expanduser(current_repo_arg)))
+    current_repo_real = current_repo.resolve(strict=True)
+except (TypeError, OSError) as exc:
+    raise SystemExit(block(f"Repository root metadata is invalid: {safe_display(exc)}"))
+
+if not repo.is_dir():
+    raise SystemExit(block("Repository root is not a directory."))
+
+if is_within(session_path, repo_real) or is_within(repo_real, session_path):
+    raise SystemExit(block("Session and repository must remain separated."))
+
+try:
+    if not os.path.samefile(repo_real, current_repo_real):
+        raise SystemExit(block("Current Git repository does not match the Session repository."))
+except OSError as exc:
+    raise SystemExit(block(f"Repository identity could not be verified: {safe_display(exc)}"))
+
+if not current_branch:
+    raise SystemExit(block("Detached HEAD is not supported for Package Diff."))
+
+if not current_head:
+    raise SystemExit(block("Current repository HEAD could not be resolved."))
+
+if current_branch != manifest["branch"]:
+    raise SystemExit(block("Current branch does not match the Stage-time branch."))
+
+if current_head != manifest["repository_head"]:
+    raise SystemExit(block("Current HEAD does not match the Stage-time repository HEAD."))
+
+if worktree_dirty != "0":
+    raise SystemExit(block("Worktree must be clean for Package Diff."))
+
+try:
+    package = pathlib.Path(manifest["package_path"]).expanduser().resolve(strict=True)
+except (TypeError, OSError) as exc:
+    raise SystemExit(block(f"Package path could not be resolved: {safe_display(exc)}"))
+
+if not package.is_file():
+    raise SystemExit(block("Package is no longer a regular file."))
+
+package_sha = manifest["package_sha256"]
+if not isinstance(package_sha, str) or len(package_sha) != 64:
+    raise SystemExit(block("Package SHA256 metadata is invalid."))
+
+if sha256_file(package) != package_sha:
+    raise SystemExit(block("Package hash no longer matches the Stage Session."))
+
+rows = manifest["staged_files"]
+if not isinstance(rows, list):
+    raise SystemExit(block("staged_files must be an array."))
+
+if manifest["staged_file_count"] != len(rows):
+    raise SystemExit(block("staged_file_count does not match staged_files."))
+
+seen: dict[str, str] = {}
+expected_paths: list[str] = []
+validated_rows: list[tuple[str, pathlib.Path, str, int]] = []
+
+for row in rows:
+    if not isinstance(row, dict):
+        raise SystemExit(block("Each staged_files entry must be an object."))
+
+    rel = row.get("path")
+    expected_sha = row.get("sha256")
+    expected_size = row.get("size")
+
+    if not isinstance(rel, str) or not rel:
+        raise SystemExit(block("Staged file path metadata is invalid."))
+
+    if (
+        rel.startswith("/")
+        or "\\" in rel
+        or has_control_or_format(rel)
+    ):
+        raise SystemExit(block(f"Unsafe staged path metadata: {safe_display(rel)}"))
+
+    parts = rel.split("/")
+    if any(part in {"", ".", ".."} for part in parts):
+        raise SystemExit(block(f"Unsafe staged path component: {safe_display(rel)}"))
+
+    if any(part.casefold() == ".git" for part in parts):
+        raise SystemExit(block(f"Git metadata path in Session: {safe_display(rel)}"))
+
+    canonical = unicodedata.normalize("NFC", rel).casefold()
+    previous = seen.get(canonical)
+    if previous is not None:
+        raise SystemExit(block(
+            f"Duplicate/colliding staged path metadata: {safe_display(previous)} <-> {safe_display(rel)}"
+        ))
+    seen[canonical] = rel
+
+    if not isinstance(expected_sha, str) or len(expected_sha) != 64:
+        raise SystemExit(block(f"Invalid staged SHA256 metadata: {safe_display(rel)}"))
+
+    if not isinstance(expected_size, int) or expected_size < 0:
+        raise SystemExit(block(f"Invalid staged size metadata: {safe_display(rel)}"))
+
+    staged_path = staging.joinpath(*parts)
+    if staged_path.is_symlink() or not staged_path.is_file():
+        raise SystemExit(block(f"Staged file missing or unsafe: {safe_display(rel)}"))
+
+    try:
+        staged_resolved = staged_path.resolve(strict=True)
+    except OSError as exc:
+        raise SystemExit(block(f"Staged file could not be resolved: {safe_display(exc)}"))
+
+    if not is_within(staged_resolved, staging):
+        raise SystemExit(block(f"Staged file escaped the Staging Area: {safe_display(rel)}"))
+
+    if staged_path.stat().st_size != expected_size:
+        raise SystemExit(block(f"Staged file size no longer matches Session metadata: {safe_display(rel)}"))
+
+    actual_sha = sha256_file(staged_path)
+    if actual_sha != expected_sha:
+        raise SystemExit(block(f"Staged file hash no longer matches Session metadata: {safe_display(rel)}"))
+
+    expected_paths.append(rel)
+    validated_rows.append((rel, staged_path, expected_sha, expected_size))
+
+actual_paths: list[str] = []
+for path in staging.rglob("*"):
+    if path.is_symlink():
+        raise SystemExit(block(f"Symlink appeared in Staging Area: {safe_display(path)}"))
+    if path.is_file():
+        actual_paths.append(path.relative_to(staging).as_posix())
+    elif not path.is_dir():
+        raise SystemExit(block(f"Special filesystem entry appeared in Staging Area: {safe_display(path)}"))
+
+if sorted(actual_paths) != sorted(expected_paths):
+    raise SystemExit(block("Staging file list no longer matches Session metadata."))
+
+classifications: list[tuple[str, str, str, str | None]] = []
+counts = {"NEW": 0, "REPLACE": 0, "IDENTICAL": 0}
+
+for rel, staged_path, staged_sha, staged_size in sorted(validated_rows, key=lambda item: item[0]):
+    parts = rel.split("/")
+    current = repo
+    target_exists = True
+
+    for index, part in enumerate(parts):
+        candidate_path = current / part
+        last = index == len(parts) - 1
+
+        if candidate_path.is_symlink():
+            raise SystemExit(block(f"Repository target path contains a symlink: {safe_display(rel)}"))
+
+        if candidate_path.exists():
+            if last:
+                current = candidate_path
+                break
+            if not candidate_path.is_dir():
+                raise SystemExit(block(f"Repository parent path is not a directory: {safe_display(rel)}"))
+            current = candidate_path
+        else:
+            target_exists = False
+            current = candidate_path
+            for remaining in parts[index + 1:]:
+                current = current / remaining
+            break
+
+    target = current
+    target_resolved = target.resolve(strict=False)
+    if not is_within(target_resolved, repo_real):
+        raise SystemExit(block(f"Repository target escaped repository root: {safe_display(rel)}"))
+
+    if not target_exists or not target.exists():
+        classification = "NEW"
+        repo_sha = None
+    else:
+        if target.is_symlink():
+            raise SystemExit(block(f"Repository target is a symlink: {safe_display(rel)}"))
+        if not target.is_file():
+            raise SystemExit(block(f"Repository target is not a regular file: {safe_display(rel)}"))
+        repo_sha = sha256_file(target)
+        classification = "IDENTICAL" if repo_sha == staged_sha else "REPLACE"
+
+    counts[classification] += 1
+    classifications.append((classification, rel, staged_sha, repo_sha))
+
+print("===== KPACKAGE DIFF =====")
+print()
+print("■ SESSION")
+print(f"Session ID: {safe_display(manifest['session_id'])}")
+print(f"Session path: {safe_display(session_path)}")
+print(f"Runtime: {runtime_version}")
+print()
+print("■ REPOSITORY")
+print(f"Repository: {safe_display(repo)}")
+print(f"Branch: {current_branch}")
+print(f"HEAD: {current_head}")
+print()
+print("■ CLASSIFICATION")
+for classification, rel, staged_sha, repo_sha in classifications:
+    print(f"{classification:<9} {safe_display(rel)}")
+    print(f"  staged_sha256: {staged_sha}")
+    if repo_sha is not None:
+        print(f"  repo_sha256:   {repo_sha}")
+
+print()
+print("■ SUMMARY")
+print(f"NEW: {counts['NEW']}")
+print(f"REPLACE: {counts['REPLACE']}")
+print(f"IDENTICAL: {counts['IDENTICAL']}")
+print(f"TOTAL: {len(classifications)}")
+print("DELETE: unsupported / not inferred")
+print()
+print("■ RESULT")
+print("Result: DIFF_READY")
+print("Repository files modified: NO")
+print("Session files modified: NO")
+print("File contents were not printed.")
+print()
+print("===== END KPACKAGE DIFF =====")
+
+raise SystemExit(0)
 PY
 }
 
@@ -823,6 +1231,9 @@ kpackage() {
       ;;
     stage)
       _kpackage_stage "$@"
+      ;;
+    diff)
+      _kpackage_diff "$@"
       ;;
     version)
       echo "Koppy Package Utility ${KPACKAGE_RUNTIME_VERSION}"

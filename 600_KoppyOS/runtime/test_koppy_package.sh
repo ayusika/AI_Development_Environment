@@ -61,6 +61,11 @@ with zipfile.ZipFile(d / "stage-valid.zip", "w", zipfile.ZIP_DEFLATED) as z:
 
 with zipfile.ZipFile(d / "stage-wrapper.zip", "w", zipfile.ZIP_DEFLATED) as z:
     z.writestr("wrapper/600_KoppyOS/exact-path.txt", "do-not-strip-wrapper\n")
+
+with zipfile.ZipFile(d / "diff-valid.zip", "w", zipfile.ZIP_DEFLATED) as z:
+    z.writestr("new.txt", "new-from-package\n")
+    z.writestr("same.txt", "same-content\n")
+    z.writestr("replace.txt", "replacement-content\n")
 PY
 
 fail=0
@@ -321,6 +326,181 @@ if find "$SESSION_ROOT" "$WRAPPER_ROOT" -maxdepth 1 -type d -name '.partial-*' |
   fail=1
 else
   echo "PASS: no partial Stage sessions remain"
+fi
+
+# ------------------------------------------------------------
+# Diff tests
+# ------------------------------------------------------------
+DIFF_REPO="$TMP/diff-repo"
+DIFF_SESSION_ROOT="$TMP/diff-sessions"
+
+mkdir -p "$DIFF_REPO"
+git -C "$DIFF_REPO" init -q
+git -C "$DIFF_REPO" checkout -q -b main
+git -C "$DIFF_REPO" config user.email "kpackage-test@example.invalid"
+git -C "$DIFF_REPO" config user.name "KPackage Test"
+printf 'baseline\n' > "$DIFF_REPO/README.md"
+printf 'same-content\n' > "$DIFF_REPO/same.txt"
+printf 'old-content\n' > "$DIFF_REPO/replace.txt"
+printf 'repo-only\n' > "$DIFF_REPO/repo-only.txt"
+git -C "$DIFF_REPO" add README.md same.txt replace.txt repo-only.txt
+git -C "$DIFF_REPO" commit -q -m "diff baseline"
+
+DIFF_BASE_HEAD="$(git -C "$DIFF_REPO" rev-parse HEAD)"
+
+DIFF_STAGE_A="$TMP/diff-stage-a.out"
+(
+  cd "$DIFF_REPO" || exit 1
+  KPACKAGE_SESSION_ROOT="$DIFF_SESSION_ROOT" bash "$RUNTIME" stage "$TMP/diff-valid.zip"
+) >"$DIFF_STAGE_A" 2>&1
+diff_stage_a_rc=$?
+
+if [ "$diff_stage_a_rc" -ne 0 ]; then
+  echo "FAIL: diff fixture Stage A rc=$diff_stage_a_rc"
+  cat "$DIFF_STAGE_A"
+  fail=1
+fi
+
+DIFF_SESSION_A="$(find "$DIFF_SESSION_ROOT" -mindepth 1 -maxdepth 1 -type d ! -name '.partial-*' | head -1)"
+
+if [ -z "$DIFF_SESSION_A" ]; then
+  echo "FAIL: diff fixture Session A not found"
+  fail=1
+else
+  DIFF_OUT="$TMP/diff-valid.out"
+  (
+    cd "$DIFF_REPO" || exit 1
+    KPACKAGE_SESSION_ROOT="$DIFF_SESSION_ROOT" bash "$RUNTIME" diff "$DIFF_SESSION_A"
+  ) >"$DIFF_OUT" 2>&1
+  diff_rc=$?
+
+  if [ "$diff_rc" -ne 0 ]; then
+    echo "FAIL: diff-valid rc=$diff_rc expected=0"
+    cat "$DIFF_OUT"
+    fail=1
+  elif ! grep -Fq "Result: DIFF_READY" "$DIFF_OUT"; then
+    echo "FAIL: diff-valid result missing"
+    cat "$DIFF_OUT"
+    fail=1
+  elif ! grep -Fq "NEW       'new.txt'" "$DIFF_OUT"; then
+    echo "FAIL: NEW classification missing"
+    cat "$DIFF_OUT"
+    fail=1
+  elif ! grep -Fq "IDENTICAL 'same.txt'" "$DIFF_OUT"; then
+    echo "FAIL: IDENTICAL classification missing"
+    cat "$DIFF_OUT"
+    fail=1
+  elif ! grep -Fq "REPLACE   'replace.txt'" "$DIFF_OUT"; then
+    echo "FAIL: REPLACE classification missing"
+    cat "$DIFF_OUT"
+    fail=1
+  elif ! grep -Fq "NEW: 1" "$DIFF_OUT" ||
+       ! grep -Fq "REPLACE: 1" "$DIFF_OUT" ||
+       ! grep -Fq "IDENTICAL: 1" "$DIFF_OUT"; then
+    echo "FAIL: diff summary counts incorrect"
+    cat "$DIFF_OUT"
+    fail=1
+  elif grep -Fq "repo-only.txt" "$DIFF_OUT"; then
+    echo "FAIL: repository-only file was inferred into Package Diff"
+    cat "$DIFF_OUT"
+    fail=1
+  else
+    echo "PASS: Diff classified NEW / REPLACE / IDENTICAL correctly"
+  fi
+
+  if [ -n "$(git -C "$DIFF_REPO" status --porcelain=v1 --untracked-files=all)" ] ||
+     [ "$(git -C "$DIFF_REPO" rev-parse HEAD)" != "$DIFF_BASE_HEAD" ]; then
+    echo "FAIL: Diff modified repository state"
+    fail=1
+  else
+    echo "PASS: Diff left repository unchanged"
+  fi
+
+  printf 'dirty\n' >> "$DIFF_REPO/README.md"
+  DIFF_DIRTY_OUT="$TMP/diff-dirty.out"
+  (
+    cd "$DIFF_REPO" || exit 1
+    KPACKAGE_SESSION_ROOT="$DIFF_SESSION_ROOT" bash "$RUNTIME" diff "$DIFF_SESSION_A"
+  ) >"$DIFF_DIRTY_OUT" 2>&1
+  diff_dirty_rc=$?
+  git -C "$DIFF_REPO" checkout -q -- README.md
+
+  if [ "$diff_dirty_rc" -ne 1 ] ||
+     ! grep -Fq "Worktree must be clean" "$DIFF_DIRTY_OUT"; then
+    echo "FAIL: dirty worktree did not block Diff"
+    cat "$DIFF_DIRTY_OUT"
+    fail=1
+  else
+    echo "PASS: dirty worktree blocks Diff"
+  fi
+fi
+
+# Create Session B under the same HEAD for stale-HEAD validation.
+DIFF_STAGE_B="$TMP/diff-stage-b.out"
+(
+  cd "$DIFF_REPO" || exit 1
+  KPACKAGE_SESSION_ROOT="$DIFF_SESSION_ROOT" bash "$RUNTIME" stage "$TMP/diff-valid.zip"
+) >"$DIFF_STAGE_B" 2>&1
+diff_stage_b_rc=$?
+
+if [ "$diff_stage_b_rc" -ne 0 ]; then
+  echo "FAIL: diff fixture Stage B rc=$diff_stage_b_rc"
+  cat "$DIFF_STAGE_B"
+  fail=1
+fi
+
+DIFF_SESSION_B="$(
+  find "$DIFF_SESSION_ROOT" -mindepth 1 -maxdepth 1 -type d ! -name '.partial-*' |
+  grep -Fvx "$DIFF_SESSION_A" |
+  head -1
+)"
+
+if [ -z "$DIFF_SESSION_B" ]; then
+  echo "FAIL: diff fixture Session B not found"
+  fail=1
+else
+  printf 'later\n' > "$DIFF_REPO/later.txt"
+  git -C "$DIFF_REPO" add later.txt
+  git -C "$DIFF_REPO" commit -q -m "advance head"
+
+  DIFF_STALE_OUT="$TMP/diff-stale.out"
+  (
+    cd "$DIFF_REPO" || exit 1
+    KPACKAGE_SESSION_ROOT="$DIFF_SESSION_ROOT" bash "$RUNTIME" diff "$DIFF_SESSION_B"
+  ) >"$DIFF_STALE_OUT" 2>&1
+  diff_stale_rc=$?
+
+  if [ "$diff_stale_rc" -ne 1 ] ||
+     ! grep -Fq "Current HEAD does not match" "$DIFF_STALE_OUT"; then
+    echo "FAIL: stale HEAD did not block Diff"
+    cat "$DIFF_STALE_OUT"
+    fail=1
+  else
+    echo "PASS: stale HEAD blocks Diff"
+  fi
+fi
+
+# Tamper Session A after restoring the Stage-time HEAD in the disposable test repo.
+# Keep branch=main so the tamper check is the first failing safety gate.
+if [ -n "$DIFF_SESSION_A" ]; then
+  git -C "$DIFF_REPO" reset -q --hard "$DIFF_BASE_HEAD"
+
+  printf 'tampered\n' >> "$DIFF_SESSION_A/staging/same.txt"
+  DIFF_TAMPER_OUT="$TMP/diff-tamper.out"
+  (
+    cd "$DIFF_REPO" || exit 1
+    KPACKAGE_SESSION_ROOT="$DIFF_SESSION_ROOT" bash "$RUNTIME" diff "$DIFF_SESSION_A"
+  ) >"$DIFF_TAMPER_OUT" 2>&1
+  diff_tamper_rc=$?
+
+  if [ "$diff_tamper_rc" -ne 1 ] ||
+     ! grep -Fq "Staged file size no longer matches" "$DIFF_TAMPER_OUT"; then
+    echo "FAIL: staged file tamper did not block Diff"
+    cat "$DIFF_TAMPER_OUT"
+    fail=1
+  else
+    echo "PASS: staged file tamper blocks Diff"
+  fi
 fi
 
 if [ "$fail" -ne 0 ]; then

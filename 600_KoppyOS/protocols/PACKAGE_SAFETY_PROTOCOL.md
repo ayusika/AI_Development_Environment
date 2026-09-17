@@ -1,6 +1,6 @@
 # KoppyOS Package Safety Protocol
 
-Version: v0.2.0
+Version: v0.3.0
 Status: ACTIVE
 
 ---
@@ -65,19 +65,20 @@ Koppy Local CLI Bridge自体をExecutorとして扱わない。
 
 # 3. Command Contract and Implementation Status
 
-Package Utility Runtime v0.2.0で実装済み：
+Package Utility Runtime v0.3.0で実装済み：
 
 ```text
 kpackage inspect <package.zip>
 kpackage stage <package.zip>
+kpackage diff <session>
 ```
 
 Phase 1 / Phase 2ではZIPのみ対応する。
+Phase 3のDiffはStage Sessionを入力とする。
 
 未実装・将来候補：
 
 ```text
-kpackage diff <session>
 kpackage apply <session>
 kpackage rollback <session>
 ```
@@ -338,7 +339,39 @@ Stage完了後もrepository worktree / HEADは変更しない。
 
 # 7. Package Diff
 
-`diff` はStagingとrepositoryを比較する。
+`diff` はStagingとrepositoryを比較するread-only Commandとする。
+
+Phase 3 Runtime v0.3.0では：
+
+```text
+kpackage diff <session>
+```
+
+を実装する。
+
+`<session>` は、
+既定Session Root直下のSession ID、
+または同Root直下Sessionへのexact pathを指定する。
+fuzzy searchや先頭一致によるSession自動選択は行わない。
+
+Diff開始前に最低限以下を再確認する。
+
+- Session schema / status / Session ID
+- Session path / staging path
+- repository root
+- branch
+- current HEADがStage時HEADと一致する
+- worktreeがclean
+- package fileが存在しStage時hashと一致する
+- staged file list / count
+- staged file size / hash
+- staging内にunexpected fileがない
+- staging内にsymlink / special fileがない
+- staged pathが安全なrepository-relative pathである
+- repository target pathにsymlinkやtype conflictがない
+
+不一致時は`BLOCK`としてSTOPし、
+最新repositoryへ勝手にSessionを追従させない。
 
 初期Classification：
 
@@ -348,10 +381,25 @@ REPLACE
 IDENTICAL
 ```
 
+定義：
+
+- `NEW`: repository targetが存在しない
+- `REPLACE`: repository targetはregular fileだがhashが異なる
+- `IDENTICAL`: repository targetとstaged fileのhashが一致する
+
+repository側のtarget pathがdirectory / symlink / special file、
+またはparent pathにtype conflict / symlinkが存在する場合、
+3分類へ無理に落とさず`BLOCK`する。
+
+Diffはfile contentをTerminalへ表示しない。
+hashと安全にescapeされたpath metadataのみ表示可能とする。
+
+Diff実行ではrepository fileとSession fileを変更しない。
+
 Packageに存在しないrepository fileを
 自動削除対象として扱わない。
 
-初期Versionでは、
+Phase 3では、
 PackageによるDELETE操作を標準機能に含めない。
 
 必要な削除は別Taskとして
