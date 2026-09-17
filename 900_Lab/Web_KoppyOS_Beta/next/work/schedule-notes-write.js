@@ -376,7 +376,7 @@
             </span>
 
             <strong>
-              顧客共通メモ・特徴
+              顧客共通情報
             </strong>
 
             <small class="next-notes-write-scope">

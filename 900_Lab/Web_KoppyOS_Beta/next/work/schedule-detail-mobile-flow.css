@@ -1,0 +1,232 @@
+/* =========================================================
+   KOHaku WORK NEXT / MOBILE DETAIL FLOW V1
+   Collapsed reservation + batch customer input + save all.
+========================================================= */
+
+.next-detail-reservation-toggle{
+  cursor:pointer;
+  user-select:none;
+}
+
+.next-detail-reservation-toggle::after{
+  content:"予約情報を見る ▾" !important;
+}
+
+.next-detail-reservation-toggle.is-expanded::after{
+  content:"予約情報を閉じる ▴" !important;
+}
+
+.next-detail-reservation-toggle:focus-visible{
+  outline:1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 58%,
+      transparent
+    );
+  outline-offset:4px;
+  border-radius:6px;
+}
+
+.next-detail-reservation-card[hidden]{
+  display:none !important;
+}
+
+.next-detail-save-all{
+  flex:0 0 auto;
+  min-height:38px;
+  margin-left:auto;
+  margin-right:8px;
+  padding:7px 11px;
+  border:1px solid
+    color-mix(
+      in srgb,
+      #79e6ba 48%,
+      transparent
+    );
+  border-radius:11px;
+  color:#a4ffd0;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(121,230,186,.13),
+      rgba(255,255,255,.025)
+    );
+  font:inherit;
+  font-size:9px;
+  font-weight:900;
+  white-space:nowrap;
+  cursor:pointer;
+}
+
+.next-detail-save-all:disabled{
+  opacity:.5;
+  cursor:wait;
+}
+
+.next-detail-area-note{
+  display:grid;
+  gap:5px;
+  padding-top:10px;
+  border-top:1px solid
+    rgba(255,255,255,.06);
+}
+
+.next-detail-area-note > span{
+  color:#73e3d3;
+  font-size:8px;
+  font-weight:900;
+  letter-spacing:.08em;
+}
+
+.next-detail-area-note > input{
+  box-sizing:border-box;
+  width:100%;
+  min-height:38px;
+  padding:8px 10px;
+  border:1px solid
+    color-mix(
+      in srgb,
+      #73e3d3 24%,
+      transparent
+    );
+  border-radius:10px;
+  color:var(--wf-text);
+  background:
+    rgba(255,255,255,.035);
+  font:inherit;
+  font-size:10px;
+  outline:none;
+}
+
+.next-detail-area-note > input:focus{
+  border-color:
+    color-mix(
+      in srgb,
+      #73e3d3 62%,
+      transparent
+    );
+}
+
+.next-detail-area-note > input:disabled{
+  opacity:.5;
+}
+
+.next-detail-area-note > small{
+  color:var(--wf-text-dim);
+  font-size:7px;
+  line-height:1.45;
+}
+
+.next-customer-feature-form[
+  data-next-feature-batch-ready
+]{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+}
+
+.next-feature-batch-head{
+  display:grid;
+  gap:2px;
+}
+
+.next-feature-batch-head > strong{
+  color:var(--wf-text);
+  font-size:11px;
+}
+
+.next-feature-batch-head > small,
+.next-feature-batch-help{
+  color:var(--wf-text-dim);
+  font-size:8px;
+  line-height:1.5;
+}
+
+.next-feature-batch-grid{
+  display:grid;
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+  gap:8px;
+}
+
+.next-feature-batch-field{
+  display:grid;
+  gap:5px;
+  min-width:0;
+}
+
+.next-feature-batch-field > span{
+  color:var(--wf-text-dim);
+  font-size:8px;
+  font-weight:900;
+}
+
+.next-feature-batch-field > input{
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  min-height:38px;
+  padding:8px 9px;
+  border:1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 18%,
+      transparent
+    );
+  border-radius:10px;
+  color:var(--wf-text);
+  background:
+    rgba(255,255,255,.035);
+  font:inherit;
+  font-size:9px;
+  outline:none;
+}
+
+.next-feature-batch-field > input:focus{
+  border-color:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 58%,
+      transparent
+    );
+}
+
+#nextCustomerProfileEditor
+[data-next-feature-save]{
+  display:none !important;
+}
+
+.next-customer-feature-actions{
+  display:none !important;
+}
+
+@media(max-width:430px){
+  .next-schedule-detail-header{
+    gap:6px;
+  }
+
+  .next-detail-save-all{
+    min-height:34px;
+    margin-right:4px;
+    padding:6px 8px;
+    border-radius:9px;
+    font-size:8px;
+  }
+
+  .next-feature-batch-grid{
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+    gap:7px;
+  }
+}
+
+@media(max-width:350px){
+  .next-feature-batch-grid{
+    grid-template-columns:1fr;
+  }
+
+  .next-detail-save-all{
+    padding-left:6px;
+    padding-right:6px;
+  }
+}
