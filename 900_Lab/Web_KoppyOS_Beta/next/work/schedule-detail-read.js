@@ -328,31 +328,41 @@
         >
           ${cancellation}
 
-          <p
-            class="next-schedule-detail-section-label"
-            data-next-detail-section="memos"
+          <section
+            class="next-detail-work-group next-detail-work-group-memos"
+            data-next-detail-work-group="memos"
           >
-            MEMOS
-          </p>
+            <p
+              class="next-schedule-detail-section-label"
+              data-next-detail-section="memos"
+            >
+              MEMOS
+            </p>
 
-          <div class="next-schedule-complete-notes">
-            ${memoBlock("特徴メモ", visit.customer_features)}
-            ${memoBlock("会話メモ", visit.conversation_notes)}
-            ${memoBlock("来店メモ", visit.visit_notes)}
-          </div>
+            <div class="next-schedule-complete-notes">
+              ${memoBlock("今回の特徴メモ", visit.customer_features)}
+              ${memoBlock("今回の会話メモ", visit.conversation_notes)}
+              ${memoBlock("今回の来店メモ", visit.visit_notes)}
+            </div>
+          </section>
 
-          <p
-            class="next-schedule-detail-section-label"
-            data-next-detail-section="diary"
+          <section
+            class="next-detail-work-group next-detail-work-group-diary"
+            data-next-detail-work-group="diary"
           >
-            DIARY
-          </p>
+            <p
+              class="next-schedule-detail-section-label"
+              data-next-detail-section="diary"
+            >
+              DIARY
+            </p>
 
-          <div class="next-schedule-complete-stack">
-            ${memoBlock("日記素材", diary.note?.body)}
-            ${diaryItems}
-            ${heavenHtml(diary.heaven)}
-          </div>
+            <div class="next-schedule-complete-stack">
+              ${memoBlock("日記素材", diary.note?.body)}
+              ${diaryItems}
+              ${heavenHtml(diary.heaven)}
+            </div>
+          </section>
 
           <p
             class="next-schedule-detail-section-label"

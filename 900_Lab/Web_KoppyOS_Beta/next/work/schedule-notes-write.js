@@ -198,7 +198,7 @@
       <p class="next-customer-profile-general">
         ${escapeHtml(
           customerProfile.general_notes
-          || "顧客メモなし"
+          || "顧客共通メモなし"
         )}
       </p>
 
@@ -238,23 +238,15 @@
       return;
     }
 
-    const labels =
-      Array.from(
-        complete.querySelectorAll(
-          ".next-schedule-detail-section-label"
-        )
+    const memosGroup =
+      complete.querySelector(
+        '[data-next-detail-work-group="memos"]'
       );
 
-    const memosLabel =
-      labels.find(
-        node =>
-          node.textContent.trim()
-          === "MEMOS"
-      )
-      || null;
-
     const memosContainer =
-      memosLabel?.nextElementSibling
+      memosGroup?.querySelector(
+        ".next-schedule-complete-notes"
+      )
       || null;
 
     if (!memosContainer) {
@@ -276,16 +268,20 @@
       "true";
 
     tools.innerHTML = `
-      <section class="next-notes-write-card">
+      <section class="next-notes-write-card is-visit-scope">
         <div class="next-notes-write-head">
           <div>
             <span class="next-notes-write-kicker">
-              VISIT NOTES / VERIFICATION
+              THIS RESERVATION / VERIFICATION
             </span>
 
             <strong>
-              この来店のメモを書く
+              今回の予約メモ
             </strong>
+
+            <small class="next-notes-write-scope">
+              この予約だけに保存します。別の予約には引き継ぎません。
+            </small>
           </div>
 
           <button
@@ -319,7 +315,7 @@
 
           <label class="next-notes-write-field">
             <span>
-              会話メモ
+              今回の会話メモ
             </span>
 
             <textarea
@@ -334,7 +330,7 @@
 
           <label class="next-notes-write-field">
             <span>
-              来店メモ
+              今回の来店メモ
             </span>
 
             <textarea
@@ -372,16 +368,20 @@
         </div>
       </section>
 
-      <section class="next-notes-write-card">
+      <section class="next-notes-write-card is-customer-scope">
         <div class="next-notes-write-head">
           <div>
             <span class="next-notes-write-kicker">
-              CUSTOMER PROFILE / VERIFICATION
+              CUSTOMER COMMON / VERIFICATION
             </span>
 
             <strong>
-              顧客メモ・顧客特徴
+              顧客共通メモ・特徴
             </strong>
+
+            <small class="next-notes-write-scope">
+              このお客さん全体に保存します。次回以降の予約でも共通です。
+            </small>
           </div>
 
           <button
@@ -406,7 +406,7 @@
             ${
               linkedCustomerId
                 ? "顧客プロフィールを読み込み中…"
-                : "顧客を紐付けると顧客メモ・顧客特徴を登録できます。"
+                : "顧客を紐付けると、顧客共通メモ・特徴を登録できます。"
             }
           </p>
         </div>
@@ -418,13 +418,13 @@
         >
           <label class="next-notes-write-field">
             <span>
-              顧客メモ
+              顧客共通メモ
             </span>
 
             <textarea
               id="nextCustomerGeneralNotes"
               rows="5"
-              placeholder="このお客様について継続して覚えておきたいこと"
+              placeholder="次回以降も覚えておきたいこと"
             ></textarea>
           </label>
 
@@ -433,7 +433,7 @@
             class="next-notes-write-save"
             data-next-customer-notes-save
           >
-            顧客メモを保存
+            顧客共通メモを保存
           </button>
 
           <div class="next-customer-feature-form">
@@ -680,11 +680,11 @@
         );
 
       const values = {
-        "特徴メモ":
+        "今回の特徴メモ":
           visit.customer_features,
-        "会話メモ":
+        "今回の会話メモ":
           visit.conversation_notes,
-        "来店メモ":
+        "今回の来店メモ":
           visit.visit_notes,
       };
 
@@ -749,7 +749,7 @@
 
     setMessage(
       "nextCustomerProfileMessage",
-      "顧客メモを保存しています…"
+      "顧客共通メモを保存しています…"
     );
 
     try {
@@ -779,14 +779,14 @@
 
       setMessage(
         "nextCustomerProfileMessage",
-        "顧客メモを保存しました。"
+        "顧客共通メモを保存しました。"
       );
 
     } catch (error) {
       setMessage(
         "nextCustomerProfileMessage",
         error.message
-        || "顧客メモを保存できませんでした。",
+        || "顧客共通メモを保存できませんでした。",
         true
       );
     }

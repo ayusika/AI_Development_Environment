@@ -1036,3 +1036,116 @@
     grid-template-columns:repeat(2,minmax(0,1fr));
   }
 }
+
+
+/* =========================================================
+   KOHaku WORK NEXT / MEMO + DIARY SCOPE V1
+   Reservation-scoped notes vs customer-common notes.
+========================================================= */
+
+.next-detail-work-group{
+  display:grid;
+  gap:10px;
+  margin:22px 0 0;
+  padding:12px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:16px;
+  background:rgba(255,255,255,.018);
+}
+
+.next-detail-work-group
+> .next-schedule-detail-section-label{
+  margin:0;
+}
+
+.next-detail-work-group-memos{
+  border-color:color-mix(
+    in srgb,
+    var(--wf-accent) 24%,
+    transparent
+  );
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(
+        in srgb,
+        var(--wf-accent) 5%,
+        transparent
+      ),
+      rgba(255,255,255,.016)
+    );
+}
+
+.next-detail-work-group-diary{
+  border-color:rgba(200,157,255,.22);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(200,157,255,.05),
+      rgba(255,255,255,.016)
+    );
+}
+
+.next-detail-work-group-memos
+.next-schedule-detail-section-label[
+  data-next-detail-section="memos"
+]::after{
+  content:"予約メモ / 顧客共通";
+}
+
+.next-detail-work-group-diary
+.next-schedule-detail-section-label[
+  data-next-detail-section="diary"
+]::after{
+  content:"この予約の日記・投稿";
+  color:#d7b6ff;
+}
+
+.next-detail-work-group
+.next-notes-write-tools{
+  margin:2px 0 0;
+}
+
+.next-notes-write-card.is-visit-scope{
+  border-color:color-mix(
+    in srgb,
+    var(--wf-accent) 27%,
+    transparent
+  );
+  background:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 4%,
+      rgba(255,255,255,.018)
+    );
+}
+
+.next-notes-write-card.is-customer-scope{
+  border-color:rgba(112,216,255,.25);
+  background:
+    linear-gradient(
+      145deg,
+      rgba(112,216,255,.045),
+      rgba(255,255,255,.018)
+    );
+}
+
+.next-notes-write-card.is-customer-scope
+.next-notes-write-kicker{
+  color:#70d8ff;
+}
+
+.next-notes-write-scope{
+  display:block;
+  margin-top:5px;
+  color:var(--wf-text-dim);
+  font-size:8px;
+  font-weight:700;
+  line-height:1.55;
+}
+
+@media(max-width:420px){
+  .next-detail-work-group{
+    padding:10px;
+  }
+}
