@@ -1,6 +1,6 @@
 # Koppy Local CLI Bridge Architecture
 
-Version: v0.2.4
+Version: v0.2.5
 Status: ACTIVE
 
 ## 1. Purpose
@@ -244,18 +244,26 @@ Package名が既知の場合はInbox直下のexact pathを使用し、
 
 Current Package Utility Runtime：
 
-`0.1.0`
+`0.2.0`
 
 Current Runtimeで実装済み：
 
 - `kpackage inspect <package.zip>`
+- `kpackage stage <package.zip>`
 
 Phase 1の`inspect`はread-onlyであり、
 ZIPを展開せずmetadataのみを検査する。
 
+Phase 2の`stage`はPASS Packageのみを受け付け、
+repository外のSession固有Staging Areaへ安全展開する。
+Stageはrepository fileを変更しない。
+
+Current Stage Session Root：
+
+`~/.koppy/package_sessions`
+
 未実装・将来候補：
 
-- `kpackage stage`
 - `kpackage diff`
 - `kpackage apply`
 - `kpackage rollback`
@@ -301,7 +309,7 @@ Bridge仕様をConversation Memoryだけへ依存させない。
 
 Command Contractまたは重要な挙動を変更した場合はVersionを更新する。
 
-Current：`v0.2.4`
+Current：`v0.2.5`
 
 実戦で不足が確認された機能のみ追加する。機能数を増やすこと自体を目的としない。
 
@@ -356,7 +364,6 @@ Application全体の完全な安全性や動作保証を意味しない。
 以下はArchitecture上の将来候補であり、
 Current Runtimeへ実装済みとは扱わない。
 
-- `kpackage stage`
 - `kpackage diff`
 - `kpackage apply`
 - `kpackage rollback`
@@ -367,9 +374,10 @@ Current Runtimeへ実装済みとは扱わない。
 ### 15.4 Package Utility Runtime
 
 Koppy Local CLI Bridgeとは別Runtimeとして、
-Package Utility Runtime v0.1.0に以下を実装済みとする。
+Package Utility Runtime v0.2.0に以下を実装済みとする。
 
 - `kpackage inspect <package.zip>`
+- `kpackage stage <package.zip>`
 
 Runtime Source of Truth：
 

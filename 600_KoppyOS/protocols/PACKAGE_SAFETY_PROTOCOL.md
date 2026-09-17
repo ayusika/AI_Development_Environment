@@ -1,6 +1,6 @@
 # KoppyOS Package Safety Protocol
 
-Version: v0.1.2
+Version: v0.2.0
 Status: ACTIVE
 
 ---
@@ -65,18 +65,18 @@ Koppy Local CLI Bridge自体をExecutorとして扱わない。
 
 # 3. Command Contract and Implementation Status
 
-Package Utility Runtime v0.1.0で実装済み：
+Package Utility Runtime v0.2.0で実装済み：
 
 ```text
 kpackage inspect <package.zip>
+kpackage stage <package.zip>
 ```
 
-Phase 1ではZIPのみ対応する。
+Phase 1 / Phase 2ではZIPのみ対応する。
 
 未実装・将来候補：
 
 ```text
-kpackage stage <package>
 kpackage diff <session>
 kpackage apply <session>
 kpackage rollback <session>
@@ -239,26 +239,100 @@ Archive-controlled pathをTerminalへ表示する場合は、
 `stage` はpackageを
 repository外の専用Staging Areaへ展開する。
 
+Phase 2 Runtime v0.2.0では、
+`inspect` Resultが`PASS`のPackageのみStage可能とする。
+
+`REVIEW` / `BLOCK` Packageは
+Stage Sessionを作成しない。
+
 Package Inboxそのものへ展開せず、
 Inboxとは分離したSession固有Staging Areaを使用する。
 
+Current Macの既定Session Root：
+
+```text
+~/.koppy/package_sessions
+```
+
+Session構造：
+
+```text
+~/.koppy/package_sessions/<session-id>/
+├── session.json
+└── staging/
+```
+
 repository直下へ直接展開してはならない。
 
-Stage時にSessionを作成し、
-最低限以下を保存する。
+Stage開始条件：
 
+- Git repository内から実行する
+- detached HEADではない
+- repository HEADを取得できる
+- worktreeがclean
+- Packageがrepository外に存在する
+- Session Rootがrepositoryと分離している
+- Package hashがInspect前後で一致する
+
+StageではInspect後にもPackageを再検証する。
+Stage安全検証では最低限、
+
+- absolute / rooted path
+- `..`
+- `.` path component
+- empty path component
+- backslash path
+- `.git`
+- control / format character
+- symlink
+- encrypted entry
+- special file
+- duplicate / case-fold collision
+- Unicode normalization collision
+- path length
+- secret / credential filename候補
+- size / compression review threshold
+
+を確認する。
+
+Stage revalidationでReview findingが存在する場合も
+Sessionを作成せずSTOP / REVIEWとする。
+
+展開中は`.partial-<session-id>`を使用し、
+完全なSession metadataとstaged filesを検証した後に
+完成Sessionへatomic renameする。
+
+Stage途中失敗時はpartial Sessionを削除し、
+不完全Sessionを完成Sessionとして残さない。
+
+Staging fileはSession Area内で保持し、
+repository fileへは書き込まない。
+
+Stage時にSessionへ最低限以下を保存する。
+
+- Session schema version
+- Session status
 - Session ID
+- Runtime version
 - package path
 - package hash
 - repository root
 - branch
 - repository HEAD
+- Session path
 - staging path
+- staged file count
 - staged file list
 - staged file hashes
+- staged file size
+- archive mode metadata
+- staged directory list
 - created timestamp
 
-Stage時点ではrepositoryを変更しない。
+Phase 2 Runtimeではstaged file contentを
+Terminalへ表示しない。
+
+Stage完了後もrepository worktree / HEADは変更しない。
 
 ---
 
