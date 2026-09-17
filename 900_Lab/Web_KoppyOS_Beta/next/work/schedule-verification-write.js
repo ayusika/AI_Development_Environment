@@ -89,6 +89,298 @@
     );
   }
 
+  const DETAIL_VISITOR_TYPES = [
+    { value:"", label:"不明" },
+    { value:"local", label:"地元" },
+    { value:"travel", label:"旅行" },
+    { value:"business", label:"出張" },
+  ];
+
+  function detailFooterEditButton() {
+    return document.querySelector(
+      ".next-schedule-detail-footer [data-next-schedule-edit-open]"
+    );
+  }
+
+  function syncDetailQuickEditButton() {
+    const quickButton =
+      document.querySelector(
+        "[data-next-detail-quick-edit]"
+      );
+
+    const footerButton =
+      detailFooterEditButton();
+
+    if (!quickButton || !footerButton) return;
+
+    const disabled =
+      Boolean(footerButton.disabled);
+
+    if (quickButton.disabled !== disabled) {
+      quickButton.disabled = disabled;
+    }
+
+    const text =
+      footerButton.textContent?.trim()
+      || "✎ 予約を編集";
+
+    if (quickButton.textContent?.trim() !== text) {
+      quickButton.textContent = text;
+    }
+  }
+
+  function mountDetailQuickActions() {
+    const body =
+      document.getElementById("nextScheduleDetailBody");
+
+    if (!body) return;
+
+    if (
+      body.querySelector(
+        "#nextScheduleEditForm, #nextScheduleEditFormV2"
+      )
+    ) {
+      return;
+    }
+
+    const visit = currentVisit();
+    const reservationCard =
+      body.querySelector(
+        ".next-detail-reservation-card"
+      );
+
+    if (!visit || !reservationCard) return;
+
+    const visitId =
+      String(Number(visit.id));
+
+    const current =
+      String(visit.visitor_type || "");
+
+    let host =
+      body.querySelector(
+        "[data-next-detail-quick-actions]"
+      );
+
+    let needsRender = false;
+
+    if (!host) {
+      host = document.createElement("section");
+      host.className =
+        "next-detail-quick-actions";
+      host.dataset.nextDetailQuickActions = "true";
+
+      reservationCard.insertAdjacentElement(
+        "afterend",
+        host
+      );
+
+      needsRender = true;
+    }
+
+    if (
+      host.dataset.visitId !== visitId
+      || host.dataset.visitorType !== current
+    ) {
+      needsRender = true;
+    }
+
+    if (needsRender) {
+      host.dataset.visitId = visitId;
+      host.dataset.visitorType = current;
+
+      host.innerHTML = `
+        <button
+          type="button"
+          class="next-schedule-edit-open next-detail-quick-edit"
+          data-next-schedule-edit-open
+          data-next-detail-quick-edit
+        >
+          ✎ 予約を編集
+        </button>
+
+        <div class="next-detail-visitor-quick">
+          <div class="next-detail-visitor-quick-head">
+            <div>
+              <span>VISITOR TYPE</span>
+              <strong>来訪タイプ</strong>
+            </div>
+            <small>タップで保存</small>
+          </div>
+
+          <div
+            class="next-detail-visitor-options"
+            role="group"
+            aria-label="来訪タイプ"
+          >
+            ${
+              DETAIL_VISITOR_TYPES
+                .map(item => `
+                  <button
+                    type="button"
+                    class="next-detail-visitor-option${item.value === current ? " is-selected" : ""}"
+                    data-next-detail-visitor-type="${escapeHtml(item.value)}"
+                    aria-pressed="${item.value === current ? "true" : "false"}"
+                  >
+                    ${escapeHtml(item.label)}
+                  </button>
+                `)
+                .join("")
+            }
+          </div>
+
+          <p
+            class="next-detail-visitor-status"
+            data-next-detail-visitor-status
+            aria-live="polite"
+          ></p>
+        </div>
+      `;
+    }
+
+    syncDetailQuickEditButton();
+  }
+
+  async function saveDetailVisitorType(value) {
+    const visit = currentVisit();
+
+    if (!visit) {
+      throw new Error(
+        "更新対象の予約が見つかりません。"
+      );
+    }
+
+    const normalized =
+      String(value || "");
+
+    const current =
+      String(visit.visitor_type || "");
+
+    if (normalized === current) {
+      return;
+    }
+
+    const host =
+      document.querySelector(
+        "[data-next-detail-quick-actions]"
+      );
+
+    const buttons =
+      Array.from(
+        host?.querySelectorAll(
+          "[data-next-detail-visitor-type]"
+        )
+        || []
+      );
+
+    const status =
+      host?.querySelector(
+        "[data-next-detail-visitor-status]"
+      );
+
+    buttons.forEach(button => {
+      button.disabled = true;
+    });
+
+    if (status) {
+      status.textContent = "保存中…";
+      status.dataset.state = "writing";
+    }
+
+    setWriteStatus(
+      "VERIFICATION DB / WRITING",
+      "writing"
+    );
+
+    try {
+      const response = await fetch(
+        SCHEDULE_API,
+        {
+          method:"PATCH",
+          credentials:"same-origin",
+          cache:"no-store",
+          headers:{
+            "Content-Type":"application/json",
+          },
+          body:JSON.stringify({
+            id:Number(visit.id),
+            visitor_type:
+              normalized || null,
+          }),
+        }
+      );
+
+      let data;
+
+      try {
+        data = await response.json();
+      } catch {
+        throw new Error(
+          "来訪タイプ更新APIの応答を読めませんでした。"
+        );
+      }
+
+      if (
+        !response.ok
+        || !data
+        || data.success !== true
+        || !data.visit
+      ) {
+        throw new Error(
+          data?.error
+          || "来訪タイプを保存できませんでした。"
+        );
+      }
+
+      const scheduleApi = api();
+      const updatedVisit = data.visit;
+      const index =
+        scheduleApi.state.visits.findIndex(
+          item =>
+            Number(item.id)
+            === Number(updatedVisit.id)
+        );
+
+      if (index >= 0) {
+        scheduleApi.state.visits[index] =
+          updatedVisit;
+      }
+
+      scheduleApi.render({
+        preserveScroll:true,
+      });
+
+      scheduleApi.openDetail(
+        updatedVisit,
+        null
+      );
+
+      setWriteStatus(
+        "SAVED / VERIFICATION ONLY",
+        "saved"
+      );
+
+    } catch (error) {
+      buttons.forEach(button => {
+        button.disabled = false;
+      });
+
+      if (status) {
+        status.textContent =
+          error.message
+          || "来訪タイプを保存できませんでした。";
+        status.dataset.state = "error";
+      }
+
+      setWriteStatus(
+        "WRITE ERROR / VERIFICATION",
+        "error"
+      );
+
+      throw error;
+    }
+  }
+
   function renderEditForm(visit) {
     const body =
       document.getElementById("nextScheduleDetailBody");
@@ -158,15 +450,7 @@
             >
           </label>
 
-          <label class="is-wide">
-            <span>来訪タイプ</span>
-            <select id="nextScheduleEditVisitorType">
-              <option value="" ${!visit.visitor_type ? "selected" : ""}>不明</option>
-              <option value="local" ${visit.visitor_type === "local" ? "selected" : ""}>地元</option>
-              <option value="travel" ${visit.visitor_type === "travel" ? "selected" : ""}>旅行</option>
-              <option value="business" ${visit.visitor_type === "business" ? "selected" : ""}>出張</option>
-            </select>
-          </label>
+
 
           <label>
             <span>チップ</span>
@@ -215,7 +499,7 @@
         </label>
 
         <p class="next-schedule-edit-scope">
-          日時・店舗・コース・延長・OP・顧客区分・来訪タイプ・チップ・調整分を編集できます。
+          日時・店舗・コース・延長・OP・顧客区分・チップ・調整分を編集できます。
         </p>
 
         <p
@@ -319,11 +603,6 @@
       );
     }
 
-    const visitorType =
-      document.getElementById("nextScheduleEditVisitorType")
-        ?.value
-      || "";
-
     const payload = {
       id: Number(visit.id),
       started_at: `${date} ${time}`,
@@ -331,8 +610,6 @@
         bookedDate && bookedTime
           ? `${bookedDate} ${bookedTime}`
           : null,
-      visitor_type:
-        visitorType || null,
       customer_requested_change:
         Boolean(
           document.getElementById(
@@ -1040,15 +1317,7 @@
             </select>
           </label>
 
-          <label class="is-wide">
-            <span>来訪タイプ</span>
-            <select id="nextScheduleEditVisitorType">
-              <option value="" ${!visit.visitor_type ? "selected" : ""}>不明</option>
-              <option value="local" ${visit.visitor_type === "local" ? "selected" : ""}>地元</option>
-              <option value="travel" ${visit.visitor_type === "travel" ? "selected" : ""}>旅行</option>
-              <option value="business" ${visit.visitor_type === "business" ? "selected" : ""}>出張</option>
-            </select>
-          </label>
+
         </div>
 
         <p class="next-schedule-v2-identity-note">
@@ -1130,7 +1399,7 @@
         </label>
 
         <p class="next-schedule-edit-scope">
-          日時・店舗・コース・延長・OP・顧客区分・来訪タイプ・チップ・調整分を編集できます。
+          日時・店舗・コース・延長・OP・顧客区分・チップ・調整分を編集できます。
         </p>
 
         <p
@@ -2106,12 +2375,6 @@
       );
     }
 
-    const visitorType =
-      document.getElementById(
-        "nextScheduleEditVisitorType"
-      )?.value
-      || "";
-
     const payload = {
       id:Number(visit.id),
       store_id:storeId,
@@ -2127,8 +2390,6 @@
       custom_option:customOption,
       custom_option_amount:
         customOptionAmount,
-      visitor_type:
-        visitorType || null,
       customer_requested_change:
         Boolean(
           document.getElementById(
@@ -2270,6 +2531,28 @@
       }
     }
   }
+
+  document.addEventListener(
+    "click",
+    event => {
+      const visitorButton =
+        event.target.closest(
+          "[data-next-detail-visitor-type]"
+        );
+
+      if (!visitorButton) return;
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+
+      void saveDetailVisitorType(
+        visitorButton.dataset
+          .nextDetailVisitorType
+        || ""
+      ).catch(() => {});
+    },
+    true
+  );
 
   document.addEventListener(
     "click",
@@ -3188,11 +3471,6 @@
         bookedDate && bookedTime
           ? `${bookedDate} ${bookedTime}`
           : null,
-      visitor_type:
-        document.getElementById(
-          "nextScheduleEditVisitorType"
-        )?.value
-        || null,
       customer_requested_change:
         Boolean(
           document.getElementById(
@@ -3509,6 +3787,49 @@
 
   /* WRITER:NEXT_WORK_SCHEDULE_PRESERVATION_GUARD:END */
 
+
+  const detailBody =
+    document.getElementById(
+      "nextScheduleDetailBody"
+    );
+
+  if (detailBody) {
+    const detailQuickObserver =
+      new MutationObserver(() => {
+        mountDetailQuickActions();
+      });
+
+    detailQuickObserver.observe(
+      detailBody,
+      {
+        childList:true,
+      }
+    );
+
+    queueMicrotask(
+      mountDetailQuickActions
+    );
+  }
+
+  const footerEditButton =
+    detailFooterEditButton();
+
+  if (footerEditButton) {
+    const footerEditObserver =
+      new MutationObserver(() => {
+        syncDetailQuickEditButton();
+      });
+
+    footerEditObserver.observe(
+      footerEditButton,
+      {
+        attributes:true,
+        childList:true,
+        characterData:true,
+        subtree:true,
+      }
+    );
+  }
 
   const scheduleApi = api();
   scheduleApi.verificationWriteEnabled = true;
