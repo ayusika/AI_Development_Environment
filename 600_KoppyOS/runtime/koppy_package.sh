@@ -2,16 +2,16 @@
 
 # Koppy Package Utility
 # Runtime Source of Truth
-# Version: 0.4.0
+# Version: 0.5.0
 #
 # Safe to source from ~/.bashrc:
 # this file intentionally does not change caller shell options.
 
-KPACKAGE_RUNTIME_VERSION="0.4.0"
+KPACKAGE_RUNTIME_VERSION="0.5.0"
 
 _kpackage_help() {
   cat <<'EOF'
-Koppy Package Utility 0.4.0
+Koppy Package Utility 0.5.0
 
 Implemented:
   kpackage inspect <package.zip>
@@ -30,7 +30,10 @@ Implemented:
       Creates repository-external backup metadata first.
       Does not commit or push.
 
-Other package commands are not implemented yet.
+  kpackage rollback <session>
+      Explicitly restores a validated APPLIED session to its pre-Apply state.
+      Refuses rollback when later repository changes are detected.
+      Does not commit or push.
 
   kpackage version
   kpackage help
@@ -1859,6 +1862,10 @@ try:
         "repository_head": current_head,
         "package_sha256": package_sha,
         "backup_path": str(backup_dir),
+        "created_directories": [
+            path.relative_to(repo).as_posix()
+            for path in sorted(created_dirs, key=lambda p: (len(p.parts), p.as_posix()))
+        ],
         "new_files": [item["rel"] for item in targets if item["classification"] == "NEW"],
         "replaced_files": [item["rel"] for item in targets if item["classification"] == "REPLACE"],
         "identical_files": [item["rel"] for item in targets if item["classification"] == "IDENTICAL"],
@@ -1939,6 +1946,505 @@ raise SystemExit(0)
 PY
 }
 
+
+_kpackage_rollback() {
+  local session="${1:-}"
+  local session_root current_repo current_branch current_head status_file rc
+
+  if [ -z "$session" ]; then
+    echo "Usage: kpackage rollback <session>"
+    return 1
+  fi
+
+  if ! command -v python3 >/dev/null 2>&1; then
+    echo "===== KPACKAGE ROLLBACK ====="
+    echo
+    echo "Result: BLOCK"
+    echo "Reason: python3 is required but was not found."
+    echo
+    echo "===== END KPACKAGE ROLLBACK ====="
+    return 1
+  fi
+
+  session_root="${KPACKAGE_SESSION_ROOT:-$HOME/.koppy/package_sessions}"
+  current_repo="$(git rev-parse --show-toplevel 2>/dev/null || true)"
+  if [ -z "$current_repo" ]; then
+    echo "===== KPACKAGE ROLLBACK ====="
+    echo
+    echo "Result: BLOCK"
+    echo "Reason: current directory is not inside a Git repository."
+    echo "No repository files were modified."
+    echo
+    echo "===== END KPACKAGE ROLLBACK ====="
+    return 1
+  fi
+
+  current_branch="$(git -C "$current_repo" branch --show-current 2>/dev/null || true)"
+  current_head="$(git -C "$current_repo" rev-parse HEAD 2>/dev/null || true)"
+  status_file="$(mktemp "${TMPDIR:-/tmp}/kpackage-rollback-status.XXXXXX")" || {
+    echo "===== KPACKAGE ROLLBACK ====="
+    echo
+    echo "Result: BLOCK"
+    echo "Reason: could not create repository status snapshot."
+    echo "No repository files were modified."
+    echo
+    echo "===== END KPACKAGE ROLLBACK ====="
+    return 1
+  }
+
+  if ! git -C "$current_repo" status --porcelain=v1 -z --untracked-files=all > "$status_file" 2>/dev/null; then
+    rm -f "$status_file"
+    echo "===== KPACKAGE ROLLBACK ====="
+    echo
+    echo "Result: BLOCK"
+    echo "Reason: repository worktree status could not be resolved."
+    echo "No repository files were modified."
+    echo
+    echo "===== END KPACKAGE ROLLBACK ====="
+    return 1
+  fi
+
+  python3 - \
+    "$session" \
+    "$session_root" \
+    "$KPACKAGE_RUNTIME_VERSION" \
+    "$current_repo" \
+    "$current_branch" \
+    "$current_head" \
+    "$status_file" <<'PY'
+from __future__ import annotations
+import datetime as dt
+import hashlib
+import json
+import os
+import pathlib
+import secrets
+import shutil
+import stat
+import sys
+import unicodedata
+
+(session_arg, session_root_arg, runtime_version, current_repo_arg,
+ current_branch, current_head, status_file_arg) = sys.argv[1:]
+
+def safe_display(value: object) -> str:
+    return repr(str(value))
+
+def sha256_file(path: pathlib.Path) -> str:
+    digest = hashlib.sha256()
+    with path.open('rb') as fh:
+        for chunk in iter(lambda: fh.read(1024 * 1024), b''):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+def is_within(path: pathlib.Path, root: pathlib.Path) -> bool:
+    try:
+        return os.path.commonpath([str(path), str(root)]) == str(root)
+    except ValueError:
+        return False
+
+def has_control_or_format(value: str) -> bool:
+    return any(unicodedata.category(ch) in {'Cc', 'Cf'} for ch in value)
+
+def block(reason: str) -> int:
+    print('===== KPACKAGE ROLLBACK =====')
+    print()
+    print('Result: BLOCK')
+    print(f'Reason: {reason}')
+    print('No repository files were modified.')
+    print('Session status was not changed.')
+    print()
+    print('===== END KPACKAGE ROLLBACK =====')
+    return 1
+
+def write_json_atomic(path: pathlib.Path, data: dict) -> None:
+    tmp = path.with_name(path.name + f'.tmp-{secrets.token_hex(4)}')
+    try:
+        tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+        os.chmod(tmp, 0o600)
+        os.replace(tmp, path)
+    finally:
+        if tmp.exists():
+            tmp.unlink()
+
+def expected_new_mode(archive_mode: object) -> int:
+    if isinstance(archive_mode, str):
+        try:
+            parsed = int(archive_mode, 8)
+            if parsed & 0o111:
+                return 0o755
+        except ValueError:
+            pass
+    return 0o644
+
+session_root = pathlib.Path(session_root_arg).expanduser()
+try:
+    session_root = session_root.resolve(strict=True)
+except OSError as exc:
+    raise SystemExit(block(f'Session root could not be resolved: {safe_display(exc)}'))
+if not session_root.is_dir() or session_root.is_symlink():
+    raise SystemExit(block('Session root must be a real directory.'))
+
+raw_arg = pathlib.Path(session_arg).expanduser()
+if '/' in session_arg or session_arg.startswith('.') or raw_arg.is_absolute():
+    candidate = raw_arg
+else:
+    candidate = session_root / session_arg
+if candidate.is_symlink():
+    raise SystemExit(block('Session path must not be a symlink.'))
+try:
+    session_path = candidate.resolve(strict=True)
+except OSError as exc:
+    raise SystemExit(block(f'Session path could not be resolved: {safe_display(exc)}'))
+if not session_path.is_dir() or session_path.parent != session_root:
+    raise SystemExit(block('Session must be a real direct child of the configured Session root.'))
+
+session_json = session_path / 'session.json'
+staging = session_path / 'staging'
+backup_dir = session_path / 'backup'
+apply_json = session_path / 'apply.json'
+rollback_json = session_path / 'rollback.json'
+
+for path, label, kind in ((session_json,'session.json','file'),(apply_json,'apply.json','file'),(staging,'staging','dir'),(backup_dir,'backup','dir')):
+    if path.is_symlink():
+        raise SystemExit(block(f'{label} must not be a symlink.'))
+    if kind == 'file' and not path.is_file():
+        raise SystemExit(block(f'{label} is missing or is not a regular file.'))
+    if kind == 'dir' and not path.is_dir():
+        raise SystemExit(block(f'{label} is missing or is not a real directory.'))
+
+if rollback_json.exists() or rollback_json.is_symlink():
+    raise SystemExit(block('Session rollback metadata already exists. Refusing repeated rollback.'))
+if any(session_path.glob('.rollback-partial-*')):
+    raise SystemExit(block('Incomplete Rollback state exists in Session. Review is required.'))
+
+try:
+    manifest = json.loads(session_json.read_text(encoding='utf-8'))
+    apply = json.loads(apply_json.read_text(encoding='utf-8'))
+except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+    raise SystemExit(block(f'Session metadata could not be read: {safe_display(exc)}'))
+if not isinstance(manifest, dict) or not isinstance(apply, dict):
+    raise SystemExit(block('Session metadata roots must be objects.'))
+if manifest.get('schema_version') != 1 or apply.get('schema_version') != 1:
+    raise SystemExit(block('Unsupported Session metadata schema version.'))
+if manifest.get('status') != 'APPLIED' or apply.get('status') != 'APPLIED':
+    raise SystemExit(block('Session is not in APPLIED state.'))
+if manifest.get('session_id') != session_path.name or apply.get('session_id') != session_path.name:
+    raise SystemExit(block('Session ID metadata does not match Session directory name.'))
+
+try:
+    manifest_session = pathlib.Path(manifest['session_path']).expanduser().resolve(strict=True)
+    manifest_staging = pathlib.Path(manifest['staging_path']).expanduser().resolve(strict=True)
+    manifest_apply = pathlib.Path(manifest['apply_manifest_path']).expanduser().resolve(strict=True)
+    manifest_backup = pathlib.Path(manifest['backup_path']).expanduser().resolve(strict=True)
+    apply_backup = pathlib.Path(apply['backup_path']).expanduser().resolve(strict=True)
+except (KeyError, TypeError, OSError) as exc:
+    raise SystemExit(block(f'Apply Session path metadata is invalid: {safe_display(exc)}'))
+if manifest_session != session_path or manifest_staging != staging:
+    raise SystemExit(block('Session/staging path metadata does not match selected Session.'))
+if manifest_apply != apply_json or manifest_backup != backup_dir or apply_backup != backup_dir:
+    raise SystemExit(block('Apply/backup path metadata does not match selected Session.'))
+
+try:
+    repo = pathlib.Path(os.path.abspath(os.path.expanduser(apply['repository_root'])))
+    repo_real = repo.resolve(strict=True)
+    current_repo = pathlib.Path(os.path.abspath(os.path.expanduser(current_repo_arg)))
+    current_repo_real = current_repo.resolve(strict=True)
+except (KeyError, TypeError, OSError) as exc:
+    raise SystemExit(block(f'Repository metadata is invalid: {safe_display(exc)}'))
+if not repo.is_dir():
+    raise SystemExit(block('Repository root is not a directory.'))
+try:
+    if not os.path.samefile(repo_real, current_repo_real):
+        raise SystemExit(block('Current Git repository does not match the Apply repository.'))
+except OSError as exc:
+    raise SystemExit(block(f'Repository identity could not be verified: {safe_display(exc)}'))
+if not current_branch:
+    raise SystemExit(block('Detached HEAD is not supported for Package Rollback.'))
+if current_branch != apply.get('branch'):
+    raise SystemExit(block('Current branch does not match the Apply-time branch.'))
+if not current_head or current_head != apply.get('repository_head') or current_head != manifest.get('apply_repository_head'):
+    raise SystemExit(block('Current HEAD does not match the Apply-time repository HEAD.'))
+
+created_dirs_raw = apply.get('created_directories')
+if not isinstance(created_dirs_raw, list):
+    raise SystemExit(block('Apply metadata predates safe Rollback directory tracking. Restage and re-Apply with Runtime 0.5+.'))
+rows = apply.get('targets')
+if not isinstance(rows, list) or not rows:
+    raise SystemExit(block('Apply target metadata is missing or invalid.'))
+staged_rows = manifest.get('staged_files')
+if not isinstance(staged_rows, list):
+    raise SystemExit(block('Staged file metadata is missing.'))
+staged_by_path = {row.get('path'): row for row in staged_rows if isinstance(row, dict)}
+
+seen = set()
+targets = []
+for row in rows:
+    if not isinstance(row, dict):
+        raise SystemExit(block('Each Apply target entry must be an object.'))
+    rel = row.get('path')
+    classification = row.get('classification')
+    post_sha = row.get('post_apply_sha256')
+    pre_sha = row.get('pre_apply_sha256')
+    pre_mode_raw = row.get('pre_apply_mode')
+    if not isinstance(rel, str) or not rel or rel.startswith('/') or '\\' in rel or has_control_or_format(rel):
+        raise SystemExit(block(f'Unsafe Apply target path metadata: {safe_display(rel)}'))
+    parts = rel.split('/')
+    if any(part in {'', '.', '..'} for part in parts) or any(part.casefold() == '.git' for part in parts):
+        raise SystemExit(block(f'Unsafe Apply target path component: {safe_display(rel)}'))
+    canonical = unicodedata.normalize('NFC', rel).casefold()
+    if canonical in seen:
+        raise SystemExit(block(f'Duplicate/colliding Apply target path: {safe_display(rel)}'))
+    seen.add(canonical)
+    if classification not in {'NEW','REPLACE','IDENTICAL'}:
+        raise SystemExit(block(f'Unknown Apply classification: {safe_display(rel)}'))
+    if not isinstance(post_sha, str) or len(post_sha) != 64:
+        raise SystemExit(block(f'Invalid post-Apply hash metadata: {safe_display(rel)}'))
+    if classification in {'REPLACE','IDENTICAL'} and (not isinstance(pre_sha, str) or len(pre_sha) != 64):
+        raise SystemExit(block(f'Invalid pre-Apply hash metadata: {safe_display(rel)}'))
+    if classification == 'NEW' and pre_sha is not None:
+        raise SystemExit(block(f'NEW target unexpectedly has pre-Apply hash: {safe_display(rel)}'))
+    staged = staged_by_path.get(rel)
+    if not isinstance(staged, dict) or staged.get('sha256') != post_sha:
+        raise SystemExit(block(f'Staged/apply metadata mismatch: {safe_display(rel)}'))
+    staged_path = staging.joinpath(*parts)
+    if staged_path.is_symlink() or not staged_path.is_file() or sha256_file(staged_path) != post_sha:
+        raise SystemExit(block(f'Staged rollback source is missing or changed: {safe_display(rel)}'))
+    target = repo.joinpath(*parts)
+    if not is_within(target.resolve(strict=False), repo_real):
+        raise SystemExit(block(f'Rollback target escaped repository root: {safe_display(rel)}'))
+    if target.is_symlink() or not target.is_file() or sha256_file(target) != post_sha:
+        raise SystemExit(block(f'Applied target changed after Apply: {safe_display(rel)}'))
+    if classification in {'REPLACE','IDENTICAL'}:
+        try:
+            expected_mode = int(pre_mode_raw, 8)
+        except (TypeError, ValueError):
+            raise SystemExit(block(f'Invalid pre-Apply mode metadata: {safe_display(rel)}'))
+    else:
+        expected_mode = expected_new_mode(staged.get('archive_mode'))
+    if stat.S_IMODE(target.stat().st_mode) != expected_mode:
+        raise SystemExit(block(f'Applied target mode changed after Apply: {safe_display(rel)}'))
+    backup_path = None
+    if classification == 'REPLACE':
+        backup_raw = row.get('backup_path')
+        if not isinstance(backup_raw, str):
+            raise SystemExit(block(f'Replace backup path metadata missing: {safe_display(rel)}'))
+        try:
+            backup_path = pathlib.Path(backup_raw).expanduser().resolve(strict=True)
+            expected_backup = (backup_dir / 'replaced').joinpath(*parts).resolve(strict=True)
+        except OSError as exc:
+            raise SystemExit(block(f'Replace backup could not be resolved: {safe_display(exc)}'))
+        if backup_path != expected_backup or backup_path.is_symlink() or not backup_path.is_file() or sha256_file(backup_path) != pre_sha:
+            raise SystemExit(block(f'Replace backup validation failed: {safe_display(rel)}'))
+    targets.append({'rel':rel,'parts':parts,'classification':classification,'pre_sha':pre_sha,'post_sha':post_sha,'pre_mode':(int(pre_mode_raw,8) if pre_mode_raw is not None else None),'post_mode':expected_mode,'target':target,'staged':staged_path,'backup':backup_path})
+
+target_paths = {item['rel'] for item in targets}
+try:
+    status_data = pathlib.Path(status_file_arg).read_bytes()
+except OSError as exc:
+    raise SystemExit(block(f'Git status snapshot could not be read: {safe_display(exc)}'))
+entries = status_data.split(b'\0')
+i = 0
+while i < len(entries):
+    token = entries[i]
+    if not token:
+        i += 1
+        continue
+    if len(token) < 4 or token[2:3] != b' ':
+        raise SystemExit(block('Git status snapshot has an unsupported format.'))
+    try:
+        xy = token[:2].decode('ascii')
+        path = token[3:].decode('utf-8')
+    except UnicodeError:
+        raise SystemExit(block('Git status contains an undecodable path.'))
+    status_paths = [path]
+    if 'R' in xy or 'C' in xy:
+        i += 1
+        if i >= len(entries) or not entries[i]:
+            raise SystemExit(block('Git rename/copy status is incomplete.'))
+        status_paths.append(entries[i].decode('utf-8'))
+    if xy[0] not in {' ', '?'}:
+        raise SystemExit(block('Index/staged changes exist after Apply. Rollback will not proceed.'))
+    for status_path in status_paths:
+        if status_path not in target_paths:
+            raise SystemExit(block(f'Unrelated worktree change exists after Apply: {safe_display(status_path)}'))
+    i += 1
+
+created_dirs = []
+created_rel_set = set()
+for rel in created_dirs_raw:
+    if not isinstance(rel, str) or not rel or rel.startswith('/') or '\\' in rel or has_control_or_format(rel):
+        raise SystemExit(block(f'Unsafe created directory metadata: {safe_display(rel)}'))
+    parts = rel.split('/')
+    if any(part in {'', '.', '..'} for part in parts) or any(part.casefold() == '.git' for part in parts):
+        raise SystemExit(block(f'Unsafe created directory path: {safe_display(rel)}'))
+    path = repo.joinpath(*parts)
+    if path.is_symlink() or not path.is_dir() or not is_within(path.resolve(strict=True), repo_real):
+        raise SystemExit(block(f'Apply-created directory is missing or unsafe: {safe_display(rel)}'))
+    created_dirs.append(path)
+    created_rel_set.add(rel)
+allowed_fs = target_paths | created_rel_set
+for directory in created_dirs:
+    for child in directory.iterdir():
+        rel = child.relative_to(repo).as_posix()
+        if rel not in allowed_fs:
+            raise SystemExit(block(f'Unexpected entry exists in Apply-created directory: {safe_display(rel)}'))
+
+partial = session_path / f'.rollback-partial-{secrets.token_hex(6)}'
+try:
+    partial.mkdir(mode=0o700)
+except OSError as exc:
+    raise SystemExit(block(f'Rollback partial state could not be created: {safe_display(exc)}'))
+mutated = []
+
+def atomic_copy(source, target, mode, expected_sha):
+    target.parent.mkdir(parents=True, exist_ok=True)
+    temp = target.parent / f'.kpackage-rollback-{manifest["session_id"]}-{secrets.token_hex(4)}.tmp'
+    try:
+        shutil.copy2(source, temp)
+        os.chmod(temp, mode)
+        if sha256_file(temp) != expected_sha:
+            raise RuntimeError('Rollback temporary copy hash mismatch')
+        os.replace(temp, target)
+    finally:
+        if temp.exists():
+            temp.unlink()
+
+def restore_applied_state():
+    errors = []
+    for item in reversed(mutated):
+        try:
+            if item['target'].is_symlink():
+                raise RuntimeError('target became symlink during failure recovery')
+            atomic_copy(item['staged'], item['target'], item['post_mode'], item['post_sha'])
+        except BaseException as exc:
+            errors.append(f"{item['rel']}: {exc!r}")
+    for item in targets:
+        try:
+            target = item['target']
+            if target.is_symlink() or not target.is_file() or sha256_file(target) != item['post_sha'] or stat.S_IMODE(target.stat().st_mode) != item['post_mode']:
+                raise RuntimeError('applied target state not restored')
+        except BaseException as exc:
+            errors.append(f"{item['rel']}: {exc!r}")
+    return (not errors, errors)
+
+try:
+    fail_after = 0
+    if os.environ.get('KPACKAGE_TEST_MODE') == '1':
+        raw_fail = os.environ.get('KPACKAGE_TEST_INJECT_ROLLBACK_FAILURE_AFTER', '')
+        if raw_fail:
+            fail_after = int(raw_fail)
+    mutation_count = 0
+    for item in sorted(targets, key=lambda x: x['rel']):
+        if item['classification'] == 'IDENTICAL':
+            continue
+        mutated.append(item)
+        if item['classification'] == 'NEW':
+            item['target'].unlink()
+        else:
+            atomic_copy(item['backup'], item['target'], int(item['pre_mode']), item['pre_sha'])
+        mutation_count += 1
+        if fail_after and mutation_count >= fail_after:
+            raise RuntimeError('Injected Rollback failure for integration test')
+    for directory in sorted(created_dirs, key=lambda p: (-len(p.parts), p.as_posix())):
+        directory.rmdir()
+    for item in targets:
+        target = item['target']
+        if item['classification'] == 'NEW':
+            if target.exists() or target.is_symlink():
+                raise RuntimeError(f"NEW target still exists after Rollback: {item['rel']!r}")
+        else:
+            if target.is_symlink() or not target.is_file() or sha256_file(target) != item['pre_sha'] or stat.S_IMODE(target.stat().st_mode) != int(item['pre_mode']):
+                raise RuntimeError(f"Original target state not restored: {item['rel']!r}")
+    for directory in created_dirs:
+        if directory.exists() or directory.is_symlink():
+            raise RuntimeError(f'Apply-created directory still exists: {directory!r}')
+    rolled_at = dt.datetime.now(dt.timezone.utc).isoformat().replace('+00:00','Z')
+    rollback_metadata = {
+        'schema_version':1,'status':'ROLLED_BACK','session_id':manifest['session_id'],'runtime_version':runtime_version,
+        'rolled_back_at_utc':rolled_at,'repository_root':str(repo),'branch':current_branch,'repository_head':current_head,
+        'apply_manifest_path':str(apply_json),'backup_path':str(backup_dir),
+        'removed_new_files':[item['rel'] for item in targets if item['classification']=='NEW'],
+        'restored_replaced_files':[item['rel'] for item in targets if item['classification']=='REPLACE'],
+        'untouched_identical_files':[item['rel'] for item in targets if item['classification']=='IDENTICAL'],
+        'removed_created_directories':created_dirs_raw,
+    }
+    # Remove the transient marker before committing Session metadata.
+    # After session.json becomes ROLLED_BACK there must be no later fallible
+    # filesystem operation that can send execution into APPLIED-state recovery.
+    shutil.rmtree(partial)
+
+    write_json_atomic(rollback_json, rollback_metadata)
+
+    if (
+        os.environ.get('KPACKAGE_TEST_MODE') == '1'
+        and os.environ.get('KPACKAGE_TEST_INJECT_ROLLBACK_METADATA_FAILURE') == '1'
+    ):
+        raise RuntimeError('Injected Rollback metadata failure for integration test')
+
+    updated_manifest = dict(manifest)
+    updated_manifest['status'] = 'ROLLED_BACK'
+    updated_manifest['rolled_back_at_utc'] = rolled_at
+    updated_manifest['rollback_manifest_path'] = str(rollback_json)
+    write_json_atomic(session_json, updated_manifest)
+except BaseException as exc:
+    restored, errors = restore_applied_state()
+    if restored:
+        try:
+            if rollback_json.exists(): rollback_json.unlink()
+            if partial.exists(): shutil.rmtree(partial)
+        except OSError:
+            pass
+        print('===== KPACKAGE ROLLBACK =====')
+        print()
+        print('Result: ROLLBACK_FAILED_RESTORED')
+        print(f'Reason: {safe_display(exc)}')
+        print('Applied repository state restoration verified: YES')
+        print('Session status remains: APPLIED')
+        print('Commit performed: NO')
+        print('Push performed: NO')
+        print()
+        print('===== END KPACKAGE ROLLBACK =====')
+        raise SystemExit(1)
+    print('===== KPACKAGE ROLLBACK =====')
+    print()
+    print('Result: ROLLBACK_FAILED_RESTORE_INCOMPLETE')
+    print(f'Reason: {safe_display(exc)}')
+    print('Applied repository state restoration verified: NO')
+    for message in errors[:10]: print(f'- {safe_display(message)}')
+    print(f'Rollback evidence preserved at: {safe_display(partial)}')
+    print('STOP: manual review required.')
+    print('Commit performed: NO')
+    print('Push performed: NO')
+    print()
+    print('===== END KPACKAGE ROLLBACK =====')
+    raise SystemExit(1)
+
+print('===== KPACKAGE ROLLBACK =====')
+print()
+print('Result: ROLLED_BACK')
+print(f"Session ID: {safe_display(manifest['session_id'])}")
+print(f'Repository: {safe_display(repo)}')
+print(f'Branch: {current_branch}')
+print(f'Repository HEAD: {current_head}')
+print(f"NEW removed: {sum(1 for item in targets if item['classification']=='NEW')}")
+print(f"REPLACE restored: {sum(1 for item in targets if item['classification']=='REPLACE')}")
+print(f"IDENTICAL untouched: {sum(1 for item in targets if item['classification']=='IDENTICAL')}")
+print(f'Rollback metadata: {safe_display(rollback_json)}')
+print('Backup retained: YES')
+print('Commit performed: NO')
+print('Push performed: NO')
+print()
+print('Next: kclip review')
+print()
+print('===== END KPACKAGE ROLLBACK =====')
+raise SystemExit(0)
+PY
+  rc=$?
+  rm -f "$status_file"
+  return "$rc"
+}
+
 kpackage() {
   local command="${1:-help}"
 
@@ -1958,6 +2464,9 @@ kpackage() {
       ;;
     apply)
       _kpackage_apply "$@"
+      ;;
+    rollback)
+      _kpackage_rollback "$@"
       ;;
     version)
       echo "Koppy Package Utility ${KPACKAGE_RUNTIME_VERSION}"

@@ -70,6 +70,11 @@ with zipfile.ZipFile(d / "diff-valid.zip", "w", zipfile.ZIP_DEFLATED) as z:
 with zipfile.ZipFile(d / "apply-failure.zip", "w", zipfile.ZIP_DEFLATED) as z:
     z.writestr("a-replace.txt", "replacement-after-failure-test\n")
     z.writestr("z-new.txt", "new-before-injected-failure\n")
+
+with zipfile.ZipFile(d / "rollback-valid.zip", "w", zipfile.ZIP_DEFLATED) as z:
+    z.writestr("nested/new.txt", "new-from-package\n")
+    z.writestr("same.txt", "same-content\n")
+    z.writestr("replace.txt", "replacement-content\n")
 PY
 
 fail=0
@@ -847,6 +852,195 @@ if [ -n "$POST_REPLACE_SESSION" ]; then
   else
     echo "PASS: post-replace restore keeps Session STAGED"
   fi
+fi
+
+# ------------------------------------------------------------
+# Rollback tests
+# ------------------------------------------------------------
+rollback_make_repo() {
+  local repo="$1"
+  mkdir -p "$repo"
+  git -C "$repo" init -q
+  git -C "$repo" checkout -q -b main
+  git -C "$repo" config user.email "kpackage-test@example.invalid"
+  git -C "$repo" config user.name "KPackage Test"
+  printf 'baseline\n' > "$repo/README.md"
+  printf 'same-content\n' > "$repo/same.txt"
+  printf 'old-content\n' > "$repo/replace.txt"
+  printf 'repo-only\n' > "$repo/repo-only.txt"
+  git -C "$repo" add README.md same.txt replace.txt repo-only.txt
+  git -C "$repo" commit -q -m "rollback baseline"
+}
+
+rollback_stage_apply() {
+  local repo="$1" sessions="$2" stage_out="$3"
+  (
+    cd "$repo" || return 1
+    KPACKAGE_SESSION_ROOT="$sessions" bash "$RUNTIME" stage "$TMP/rollback-valid.zip"
+  ) >"$stage_out" 2>&1 || return 1
+  local session
+  session="$(session_from_output "$stage_out")"
+  [ -n "$session" ] || return 1
+  (
+    cd "$repo" || return 1
+    KPACKAGE_SESSION_ROOT="$sessions" bash "$RUNTIME" apply "$session"
+  ) >"$stage_out.apply" 2>&1 || return 1
+  printf '%s\n' "$session"
+}
+
+ROLLBACK_REPO="$TMP/rollback-repo"
+ROLLBACK_SESSIONS="$TMP/rollback-sessions"
+rollback_make_repo "$ROLLBACK_REPO"
+ROLLBACK_HEAD="$(git -C "$ROLLBACK_REPO" rev-parse HEAD)"
+ROLLBACK_STAGE_OUT="$TMP/rollback-stage.out"
+ROLLBACK_SESSION="$(rollback_stage_apply "$ROLLBACK_REPO" "$ROLLBACK_SESSIONS" "$ROLLBACK_STAGE_OUT")"
+
+if [ -z "$ROLLBACK_SESSION" ]; then
+  echo "FAIL: rollback fixture Stage/Apply failed"
+  cat "$ROLLBACK_STAGE_OUT" 2>/dev/null || true
+  cat "$ROLLBACK_STAGE_OUT.apply" 2>/dev/null || true
+  fail=1
+else
+  if ! python3 - "$ROLLBACK_SESSION" <<'PY'
+from pathlib import Path
+import json, sys
+session = Path(sys.argv[1])
+apply = json.loads((session / "apply.json").read_text(encoding="utf-8"))
+if apply.get("created_directories") != ["nested"]:
+    raise SystemExit(f"FAIL: created_directories {apply.get('created_directories')!r}")
+print("PASS: Apply records created directories for Rollback")
+PY
+  then fail=1; fi
+
+  ROLLBACK_OUT="$TMP/rollback-success.out"
+  (
+    cd "$ROLLBACK_REPO" || exit 1
+    KPACKAGE_SESSION_ROOT="$ROLLBACK_SESSIONS" bash "$RUNTIME" rollback "$ROLLBACK_SESSION"
+  ) >"$ROLLBACK_OUT" 2>&1
+  rollback_rc=$?
+  if [ "$rollback_rc" -ne 0 ] || ! grep -Fq "Result: ROLLED_BACK" "$ROLLBACK_OUT"; then
+    echo "FAIL: Rollback success rc=$rollback_rc"; cat "$ROLLBACK_OUT"; fail=1
+  elif [ -e "$ROLLBACK_REPO/nested/new.txt" ] || [ -d "$ROLLBACK_REPO/nested" ] ||
+       [ "$(cat "$ROLLBACK_REPO/replace.txt")" != "old-content" ] ||
+       [ "$(cat "$ROLLBACK_REPO/same.txt")" != "same-content" ] ||
+       [ "$(cat "$ROLLBACK_REPO/repo-only.txt")" != "repo-only" ] ||
+       [ "$(git -C "$ROLLBACK_REPO" rev-parse HEAD)" != "$ROLLBACK_HEAD" ] ||
+       [ -n "$(git -C "$ROLLBACK_REPO" status --porcelain=v1 --untracked-files=all)" ]; then
+    echo "FAIL: Rollback did not restore exact pre-Apply repository state"; git -C "$ROLLBACK_REPO" status --short; fail=1
+  else
+    echo "PASS: Rollback restores exact pre-Apply repository state"
+  fi
+
+  if ! python3 - "$ROLLBACK_SESSION" <<'PY'
+from pathlib import Path
+import json, sys
+session = Path(sys.argv[1])
+manifest = json.loads((session / "session.json").read_text(encoding="utf-8"))
+rollback = json.loads((session / "rollback.json").read_text(encoding="utf-8"))
+apply = json.loads((session / "apply.json").read_text(encoding="utf-8"))
+if manifest.get("status") != "ROLLED_BACK" or rollback.get("status") != "ROLLED_BACK": raise SystemExit("FAIL: rollback status")
+if rollback.get("removed_new_files") != ["nested/new.txt"]: raise SystemExit("FAIL: removed_new_files")
+if rollback.get("restored_replaced_files") != ["replace.txt"]: raise SystemExit("FAIL: restored_replaced_files")
+if rollback.get("untouched_identical_files") != ["same.txt"]: raise SystemExit("FAIL: untouched_identical_files")
+if rollback.get("removed_created_directories") != ["nested"]: raise SystemExit("FAIL: removed_created_directories")
+if not (session / "backup" / "replaced" / "replace.txt").is_file(): raise SystemExit("FAIL: backup not retained")
+if apply.get("status") != "APPLIED": raise SystemExit("FAIL: apply audit changed")
+print("PASS: Rollback metadata and retained backup verified")
+PY
+  then fail=1; fi
+
+  REROLLBACK_OUT="$TMP/rollback-repeat.out"
+  (cd "$ROLLBACK_REPO" || exit 1; KPACKAGE_SESSION_ROOT="$ROLLBACK_SESSIONS" bash "$RUNTIME" rollback "$ROLLBACK_SESSION") >"$REROLLBACK_OUT" 2>&1
+  rerollback_rc=$?
+  if [ "$rerollback_rc" -ne 1 ] || ! grep -Fq "rollback metadata already exists" "$REROLLBACK_OUT"; then
+    echo "FAIL: repeated Rollback was not blocked"; cat "$REROLLBACK_OUT"; fail=1
+  else echo "PASS: repeated Rollback blocks"; fi
+fi
+
+CHANGED_REPO="$TMP/rollback-changed-repo"; CHANGED_SESS="$TMP/rollback-changed-sessions"; rollback_make_repo "$CHANGED_REPO"
+CHANGED_STAGE="$TMP/rollback-changed-stage.out"; CHANGED_SESSION="$(rollback_stage_apply "$CHANGED_REPO" "$CHANGED_SESS" "$CHANGED_STAGE")"
+printf 'later-user-change\n' > "$CHANGED_REPO/replace.txt"
+CHANGED_OUT="$TMP/rollback-changed.out"
+(cd "$CHANGED_REPO" || exit 1; KPACKAGE_SESSION_ROOT="$CHANGED_SESS" bash "$RUNTIME" rollback "$CHANGED_SESSION") >"$CHANGED_OUT" 2>&1
+changed_rc=$?
+if [ "$changed_rc" -ne 1 ] || ! grep -Fq "Applied target changed after Apply" "$CHANGED_OUT"; then echo "FAIL: changed target did not block Rollback"; cat "$CHANGED_OUT"; fail=1; else echo "PASS: changed target blocks Rollback"; fi
+
+UNRELATED_REPO="$TMP/rollback-unrelated-repo"; UNRELATED_SESS="$TMP/rollback-unrelated-sessions"; rollback_make_repo "$UNRELATED_REPO"
+UNRELATED_STAGE="$TMP/rollback-unrelated-stage.out"; UNRELATED_SESSION="$(rollback_stage_apply "$UNRELATED_REPO" "$UNRELATED_SESS" "$UNRELATED_STAGE")"
+printf 'unrelated\n' > "$UNRELATED_REPO/unrelated.txt"
+UNRELATED_OUT="$TMP/rollback-unrelated.out"
+(cd "$UNRELATED_REPO" || exit 1; KPACKAGE_SESSION_ROOT="$UNRELATED_SESS" bash "$RUNTIME" rollback "$UNRELATED_SESSION") >"$UNRELATED_OUT" 2>&1
+unrelated_rc=$?
+if [ "$unrelated_rc" -ne 1 ] || ! grep -Fq "Unrelated worktree change exists" "$UNRELATED_OUT"; then echo "FAIL: unrelated worktree change did not block Rollback"; cat "$UNRELATED_OUT"; fail=1; else echo "PASS: unrelated worktree change blocks Rollback"; fi
+
+INDEX_REPO="$TMP/rollback-index-repo"; INDEX_SESS="$TMP/rollback-index-sessions"; rollback_make_repo "$INDEX_REPO"
+INDEX_STAGE="$TMP/rollback-index-stage.out"; INDEX_SESSION="$(rollback_stage_apply "$INDEX_REPO" "$INDEX_SESS" "$INDEX_STAGE")"
+git -C "$INDEX_REPO" add replace.txt
+INDEX_OUT="$TMP/rollback-index.out"
+(cd "$INDEX_REPO" || exit 1; KPACKAGE_SESSION_ROOT="$INDEX_SESS" bash "$RUNTIME" rollback "$INDEX_SESSION") >"$INDEX_OUT" 2>&1
+index_rc=$?
+if [ "$index_rc" -ne 1 ] || ! grep -Fq "Index/staged changes exist" "$INDEX_OUT"; then echo "FAIL: staged/index change did not block Rollback"; cat "$INDEX_OUT"; fail=1; else echo "PASS: staged/index change blocks Rollback"; fi
+
+HEAD_REPO="$TMP/rollback-head-repo"; HEAD_SESS="$TMP/rollback-head-sessions"; rollback_make_repo "$HEAD_REPO"
+HEAD_STAGE="$TMP/rollback-head-stage.out"; HEAD_SESSION="$(rollback_stage_apply "$HEAD_REPO" "$HEAD_SESS" "$HEAD_STAGE")"
+git -C "$HEAD_REPO" add -A; git -C "$HEAD_REPO" commit -q -m "commit applied state"
+HEAD_OUT="$TMP/rollback-head.out"
+(cd "$HEAD_REPO" || exit 1; KPACKAGE_SESSION_ROOT="$HEAD_SESS" bash "$RUNTIME" rollback "$HEAD_SESSION") >"$HEAD_OUT" 2>&1
+head_rc=$?
+if [ "$head_rc" -ne 1 ] || ! grep -Fq "Current HEAD does not match" "$HEAD_OUT"; then echo "FAIL: advanced HEAD did not block Rollback"; cat "$HEAD_OUT"; fail=1; else echo "PASS: advanced HEAD blocks Rollback"; fi
+
+FAIL_RB_REPO="$TMP/rollback-failure-repo"; FAIL_RB_SESS="$TMP/rollback-failure-sessions"; rollback_make_repo "$FAIL_RB_REPO"
+FAIL_RB_STAGE="$TMP/rollback-failure-stage.out"; FAIL_RB_SESSION="$(rollback_stage_apply "$FAIL_RB_REPO" "$FAIL_RB_SESS" "$FAIL_RB_STAGE")"
+FAIL_RB_HEAD="$(git -C "$FAIL_RB_REPO" rev-parse HEAD)"
+FAIL_RB_OUT="$TMP/rollback-failure.out"
+(
+  cd "$FAIL_RB_REPO" || exit 1
+  KPACKAGE_TEST_MODE=1 KPACKAGE_TEST_INJECT_ROLLBACK_FAILURE_AFTER=2 KPACKAGE_SESSION_ROOT="$FAIL_RB_SESS" bash "$RUNTIME" rollback "$FAIL_RB_SESSION"
+) >"$FAIL_RB_OUT" 2>&1
+fail_rb_rc=$?
+if [ "$fail_rb_rc" -ne 1 ] || ! grep -Fq "Result: ROLLBACK_FAILED_RESTORED" "$FAIL_RB_OUT"; then
+  echo "FAIL: injected Rollback failure did not report restored"; cat "$FAIL_RB_OUT"; fail=1
+elif [ "$(cat "$FAIL_RB_REPO/nested/new.txt")" != "new-from-package" ] || [ "$(cat "$FAIL_RB_REPO/replace.txt")" != "replacement-content" ] || [ "$(cat "$FAIL_RB_REPO/same.txt")" != "same-content" ] || [ "$(git -C "$FAIL_RB_REPO" rev-parse HEAD)" != "$FAIL_RB_HEAD" ]; then
+  echo "FAIL: Rollback failure did not restore APPLIED file state"; fail=1
+else echo "PASS: mid-Rollback failure restores APPLIED repository state"; fi
+if [ -n "$FAIL_RB_SESSION" ]; then
+  if [ -e "$FAIL_RB_SESSION/rollback.json" ] || find "$FAIL_RB_SESSION" -maxdepth 1 -name '.rollback-partial-*' | grep -q .; then echo "FAIL: restored Rollback left rollback metadata/partial state"; fail=1
+  elif ! grep -Fq '"status": "APPLIED"' "$FAIL_RB_SESSION/session.json"; then echo "FAIL: restored Rollback did not keep Session APPLIED"; fail=1
+  else echo "PASS: restored Rollback keeps Session APPLIED"; fi
+fi
+
+# Metadata-commit failure must restore APPLIED repository + Session state.
+META_RB_REPO="$TMP/rollback-metadata-failure-repo"
+META_RB_SESS="$TMP/rollback-metadata-failure-sessions"
+rollback_make_repo "$META_RB_REPO"
+META_RB_STAGE="$TMP/rollback-metadata-failure-stage.out"
+META_RB_SESSION="$(rollback_stage_apply "$META_RB_REPO" "$META_RB_SESS" "$META_RB_STAGE")"
+META_RB_OUT="$TMP/rollback-metadata-failure.out"
+(
+  cd "$META_RB_REPO" || exit 1
+  KPACKAGE_TEST_MODE=1 \
+  KPACKAGE_TEST_INJECT_ROLLBACK_METADATA_FAILURE=1 \
+  KPACKAGE_SESSION_ROOT="$META_RB_SESS" \
+  bash "$RUNTIME" rollback "$META_RB_SESSION"
+) >"$META_RB_OUT" 2>&1
+meta_rb_rc=$?
+
+if [ "$meta_rb_rc" -ne 1 ] || ! grep -Fq "Result: ROLLBACK_FAILED_RESTORED" "$META_RB_OUT"; then
+  echo "FAIL: rollback metadata failure did not report restored"
+  cat "$META_RB_OUT"
+  fail=1
+elif [ "$(cat "$META_RB_REPO/nested/new.txt")" != "new-from-package" ] || \
+     [ "$(cat "$META_RB_REPO/replace.txt")" != "replacement-content" ] || \
+     [ "$(cat "$META_RB_REPO/same.txt")" != "same-content" ]; then
+  echo "FAIL: rollback metadata failure did not restore APPLIED repository state"
+  fail=1
+elif [ -e "$META_RB_SESSION/rollback.json" ] || \
+     find "$META_RB_SESSION" -maxdepth 1 -name '.rollback-partial-*' | grep -q . || \
+     ! grep -Fq '"status": "APPLIED"' "$META_RB_SESSION/session.json"; then
+  echo "FAIL: rollback metadata failure left inconsistent Session state"
+  fail=1
+else
+  echo "PASS: rollback metadata failure restores APPLIED state atomically"
 fi
 
 if [ "$fail" -ne 0 ]; then

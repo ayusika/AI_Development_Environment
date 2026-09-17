@@ -1,6 +1,6 @@
 # Koppy Local CLI Bridge Chat Bootstrap
 
-Version: v0.1.5
+Version: v0.1.6
 Status: ACTIVE
 
 ## Purpose
@@ -60,12 +60,12 @@ GitHub正本へアクセスできない場合は推測で進めず、
 重要:
 設計書に将来候補として書かれているだけのCommandを、
 Runtimeへ実装済みとして扱わないでください。
-Package Utility Runtime v0.4.0では
+Package Utility Runtime v0.5.0では
 `kpackage inspect <package.zip>`、
 `kpackage stage <package.zip>`、
 `kpackage diff <session>`、
-`kpackage apply <session>` が実装済みです。
-`kpackage rollback` は未実装候補です。
+`kpackage apply <session>`、
+`kpackage rollback <session>` が実装済みです。
 ```
 
 ## Chat Behavior Contract
@@ -94,6 +94,7 @@ Package Utility Runtime v0.4.0では
 - Package安全展開: `kpackage stage <package.zip>`
 - Package差分分類: `kpackage diff <session>`
 - Package明示反映: `kpackage apply <session>`
+- Package明示復旧: `kpackage rollback <session>`
 - 既定Package Inbox: `/Users/ayukawa/1.作業フォルダ/tempzip`
 - Stage Session Root: `~/.koppy/package_sessions`
 
@@ -108,10 +109,11 @@ Package Utility Runtime v0.4.0では
 - `review` によるdiff + check
 - `api` のread-only GET inspection
 - `snapshot` による引き継ぎContext Pack
-- Package Utility v0.4.0 の `kpackage inspect` によるread-only ZIP inspection
-- Package Utility v0.4.0 の `kpackage stage` によるrepository外Session staging
-- Package Utility v0.4.0 の `kpackage diff` によるread-only NEW / REPLACE / IDENTICAL分類
-- Package Utility v0.4.0 の `kpackage apply` によるBackup付きexplicit repository反映
+- Package Utility v0.5.0 の `kpackage inspect` によるread-only ZIP inspection
+- Package Utility v0.5.0 の `kpackage stage` によるrepository外Session staging
+- Package Utility v0.5.0 の `kpackage diff` によるread-only NEW / REPLACE / IDENTICAL分類
+- Package Utility v0.5.0 の `kpackage apply` によるBackup付きexplicit repository反映
+- Package Utility v0.5.0 の `kpackage rollback` による明示的pre-Apply復旧
 
 ### 運用ルールとして確定済み
 
@@ -126,6 +128,6 @@ Package Utility Runtime v0.4.0では
 
 ### 未実装・将来候補
 
-- `kpackage rollback`
+- 現時点ではなし
 
 未実装候補は、存在するCommandとして案内してはならない。

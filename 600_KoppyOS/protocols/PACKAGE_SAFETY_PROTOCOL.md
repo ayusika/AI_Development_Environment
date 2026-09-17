@@ -1,6 +1,6 @@
 # KoppyOS Package Safety Protocol
 
-Version: v0.4.0
+Version: v0.5.0
 Status: ACTIVE
 
 ---
@@ -65,22 +65,24 @@ Koppy Local CLI Bridge自体をExecutorとして扱わない。
 
 # 3. Command Contract and Implementation Status
 
-Package Utility Runtime v0.4.0で実装済み：
+Package Utility Runtime v0.5.0で実装済み：
 
 ```text
 kpackage inspect <package.zip>
 kpackage stage <package.zip>
 kpackage diff <session>
 kpackage apply <session>
+kpackage rollback <session>
 ```
 
 Phase 1 / Phase 2ではZIPのみ対応する。
 Phase 3のDiffとPhase 4のApplyはStage Sessionを入力とする。
+Phase 5のRollbackはAPPLIED Sessionを入力とする。
 
 未実装・将来候補：
 
 ```text
-kpackage rollback <session>
+現時点ではなし
 ```
 
 未実装Commandを実行可能として案内しない。
@@ -454,6 +456,7 @@ packageを再解釈して続行しない。
 
 - replaced file backup
 - newly created file list
+- Applyが新規作成したdirectory list
 - pre-apply hash
 - apply対象一覧
 
@@ -590,16 +593,39 @@ STOP
 
 # 13. Rollback
 
-`rollback <session>` は
-明示的なRollback操作とする。
+Phase 5 Runtime v0.5.0では：
 
-Rollback前にも現在状態を確認する。
+```text
+kpackage rollback <session>
+```
 
-Apply後に対象ファイルへ
-別変更が加えられている場合、
+を実装する。
+
+Rollbackは明示的に指定された`APPLIED` Sessionのみを対象とする。
+主目的はPackage Applyをcommitする前にpre-Apply stateへ安全に戻すことであり、
+current HEADがApply時HEADから進んでいる場合はBLOCKする。
+
+Rollback前に、repository / branch / HEAD、Apply targetのpost-Apply hash / mode、
+REPLACE Backup、staging source、Git index、unrelated worktree change、
+Apply-created directory内のunexpected entryを再確認する。
+
+Apply後に対象ファイルへ別変更が加えられている場合、
 勝手に上書きRollbackしない。
-
 安全にRollback可能と確認できない場合はSTOPする。
+
+Rollback規則：
+
+- `NEW`: Applyで作成したfileを削除する
+- `REPLACE`: Session Backupからpre-Apply content / modeを復元する
+- `IDENTICAL`: 書き換えない
+- Applyが新規作成したdirectoryのみ、空になったことを確認して削除する
+- Backup / apply.jsonは監査情報として保持する
+- commit / pushは行わない
+
+成功時は`rollback.json`を保存し、Session statusを`ROLLED_BACK`へ更新する。
+Rollback途中失敗時はstagingのpost-Apply contentからAPPLIED状態への復旧を試みる。
+復旧成功時は`ROLLBACK_FAILED_RESTORED`としてSTOPしSessionは`APPLIED`のままとする。
+復旧確認できない場合は`ROLLBACK_FAILED_RESTORE_INCOMPLETE`としてSTOPしmanual reviewを要求する。
 
 Rollback後も、
 
