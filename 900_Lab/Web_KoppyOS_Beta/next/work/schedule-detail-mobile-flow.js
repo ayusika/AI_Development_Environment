@@ -327,6 +327,81 @@
     );
   }
 
+  function mountHeaderEditButton() {
+    const header =
+      drawer.querySelector(
+        ".next-schedule-detail-header"
+      );
+
+    if (
+      !header
+      || header.querySelector(
+        "[data-next-header-edit]"
+      )
+    ) {
+      return;
+    }
+
+    const save =
+      header.querySelector(
+        "[data-next-save-all]"
+      );
+
+    const close =
+      header.querySelector(
+        "[data-next-schedule-detail-close]"
+      );
+
+    const anchor =
+      save || close;
+
+    if (!anchor) return;
+
+    const button =
+      document.createElement("button");
+
+    button.type = "button";
+    button.className =
+      "next-detail-header-edit";
+
+    button.dataset.nextHeaderEdit =
+      "true";
+
+    button.textContent =
+      "✎ 編集";
+
+    button.title =
+      "この予約を編集";
+
+    anchor.insertAdjacentElement(
+      "beforebegin",
+      button
+    );
+  }
+
+  function syncHeaderEditButton() {
+    const button =
+      drawer.querySelector(
+        "[data-next-header-edit]"
+      );
+
+    if (!button) return;
+
+    const source =
+      drawer.querySelector(
+        ".next-schedule-detail-footer [data-next-schedule-edit-open]"
+      );
+
+    button.disabled =
+      !source
+      || Boolean(source.disabled);
+
+    button.textContent =
+      source?.disabled
+        ? "読込中…"
+        : "✎ 編集";
+  }
+
   function syncSaveAllButton() {
     const button =
       drawer.querySelector(
@@ -1218,6 +1293,7 @@
     resetProfileIfNeeded();
 
     mountSaveAllButton();
+    mountHeaderEditButton();
     mountReservationToggle();
     mountAreaInput();
     hideLegacyAreaSummary();
@@ -1249,6 +1325,7 @@
     }
 
     syncSaveAllButton();
+    syncHeaderEditButton();
   }
 
   function queueMount() {
@@ -1275,6 +1352,30 @@
         toggleReservation(
           reservation
         );
+        return;
+      }
+
+      const headerEdit =
+        event.target.closest(
+          "[data-next-header-edit]"
+        );
+
+      if (headerEdit) {
+        event.preventDefault();
+
+        const source =
+          drawer.querySelector(
+            ".next-schedule-detail-footer [data-next-schedule-edit-open]"
+          );
+
+        if (
+          !source
+          || source.disabled
+        ) {
+          return;
+        }
+
+        source.click();
         return;
       }
 

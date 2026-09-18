@@ -230,3 +230,102 @@
     padding-right:6px;
   }
 }
+
+
+/* =========================================================
+   KOHaku WORK NEXT / MOBILE DETAIL HEADER TUNE V1
+   Header actions + full drawer scroll.
+========================================================= */
+
+.next-schedule-detail-drawer{
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior:contain;
+}
+
+.next-schedule-detail-header{
+  position:sticky;
+  top:0;
+  z-index:40;
+  flex-wrap:nowrap;
+  align-items:center;
+  gap:6px;
+}
+
+.next-schedule-detail-header
+> div:first-child{
+  order:1;
+  flex:1 1 auto;
+  min-width:0;
+}
+
+.next-detail-header-edit,
+.next-detail-save-all{
+  flex:0 0 auto;
+  min-height:44px;
+  margin:0;
+  padding:9px 10px;
+  border-radius:11px;
+  font:inherit;
+  font-size:9px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.next-detail-header-edit{
+  order:2;
+  min-width:62px;
+  border:1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 46%,
+      transparent
+    );
+  color:var(--wf-text);
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(
+        in srgb,
+        var(--wf-accent) 15%,
+        transparent
+      ),
+      rgba(255,255,255,.025)
+    );
+  cursor:pointer;
+}
+
+.next-detail-save-all{
+  order:3;
+  min-width:82px;
+}
+
+.next-schedule-detail-close{
+  order:4;
+}
+
+.next-detail-header-edit:disabled{
+  opacity:.5;
+  cursor:wait;
+}
+
+.next-detail-quick-edit{
+  display:none !important;
+}
+
+.next-schedule-detail-footer
+[data-next-schedule-edit-open]{
+  display:none !important;
+}
+
+.next-schedule-detail-body{
+  flex:0 0 auto;
+  min-height:auto;
+  overflow:visible;
+}
+
+.next-schedule-detail-footer{
+  position:static;
+  flex:0 0 auto;
+  box-shadow:none;
+}
