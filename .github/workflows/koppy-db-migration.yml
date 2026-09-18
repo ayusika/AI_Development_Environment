@@ -24,6 +24,7 @@ on:
           - migrate-home-load-metrics.php
           - migrate-home-physical-connections.php
           - migrate-home-desk-supports.php
+          - migrate-home-desk-layout.php
           - migrate-heaven-diaries.php
           - migrate-heaven-diary-drafts.php
           - migrate-heaven-diary-settings.php
