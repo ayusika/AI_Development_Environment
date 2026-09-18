@@ -50,6 +50,20 @@
   const metaCache =
     new Map();
 
+  function setHeaderSaveIndicator(
+    state,
+    detail = ""
+  ) {
+    window
+      .KohakuWorkNextSaveIndicator
+      ?.setState
+      ?.(
+        "meta",
+        state,
+        detail
+      );
+  }
+
   function escapeHtml(value) {
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -500,6 +514,10 @@
         cached
       ) === draftKey(draft)
     ) {
+      setHeaderSaveIndicator(
+        "idle"
+      );
+
       return false;
     }
 
@@ -522,6 +540,10 @@
         "is-error"
       );
     }
+
+    setHeaderSaveIndicator(
+      "saving"
+    );
 
     const data =
       await requestJson(
@@ -549,6 +571,10 @@
     const next =
       data.customer
       || null;
+
+    setHeaderSaveIndicator(
+      "saved"
+    );
 
     if (next) {
       metaCache.set(
@@ -598,6 +624,10 @@
     pendingMetaDraft =
       draft;
 
+    setHeaderSaveIndicator(
+      "pending"
+    );
+
     if (metaAutosaveTimer) {
       window.clearTimeout(
         metaAutosaveTimer
@@ -646,6 +676,12 @@
           console.error(
             "Customer meta autosave failed:",
             error
+          );
+
+          setHeaderSaveIndicator(
+            "error",
+            error.message
+            || "自動保存できませんでした。"
           );
 
           if (

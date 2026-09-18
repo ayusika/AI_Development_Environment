@@ -75,6 +75,288 @@
   let autosaveChain =
     Promise.resolve();
 
+  const saveIndicatorSources =
+    new Map([
+      ["mobile", { state:"idle", detail:"" }],
+      ["meta", { state:"idle", detail:"" }],
+      ["schedule", { state:"idle", detail:"" }],
+    ]);
+
+  const saveIndicatorTimers =
+    new Map();
+
+  const SAVE_INDICATOR_VIEW = {
+    idle:{ icon:"○", label:"保存待機" },
+    pending:{ icon:"•", label:"保存待ち" },
+    saving:{ icon:"↻", label:"DB保存中" },
+    saved:{ icon:"✓", label:"DB保存" },
+    error:{ icon:"!", label:"保存失敗" },
+    offline:{ icon:"×", label:"回線なし" },
+  };
+
+  function aggregateSaveIndicatorState() {
+    if (!navigator.onLine) {
+      return {
+        state:"offline",
+        detail:"ネットワーク接続がありません。保存できていない可能性があります。",
+      };
+    }
+
+    const entries =
+      Array.from(
+        saveIndicatorSources.values()
+      );
+
+    for (
+      const state
+      of [
+        "error",
+        "saving",
+        "pending",
+        "saved",
+      ]
+    ) {
+      const match =
+        entries.find(
+          item =>
+            item.state === state
+        );
+
+      if (match) {
+        return {
+          state,
+          detail:
+            match.detail
+            || "",
+        };
+      }
+    }
+
+    return {
+      state:"idle",
+      detail:"",
+    };
+  }
+
+  function mountHeaderSaveIndicator() {
+    const header =
+      drawer.querySelector(
+        ".next-schedule-detail-header"
+      );
+
+    if (!header) return null;
+
+    let indicator =
+      header.querySelector(
+        "[data-next-save-indicator]"
+      );
+
+    if (indicator) {
+      return indicator;
+    }
+
+    indicator =
+      document.createElement("div");
+
+    indicator.className =
+      "next-save-indicator";
+
+    indicator.dataset.nextSaveIndicator =
+      "true";
+
+    indicator.setAttribute(
+      "role",
+      "status"
+    );
+
+    indicator.setAttribute(
+      "aria-live",
+      "polite"
+    );
+
+    indicator.innerHTML = `
+      <span
+        class="next-save-indicator-icon"
+        data-next-save-indicator-icon
+        aria-hidden="true"
+      ></span>
+      <span
+        class="next-save-indicator-label"
+        data-next-save-indicator-label
+      ></span>
+    `;
+
+    header.append(indicator);
+
+    return indicator;
+  }
+
+  function renderHeaderSaveIndicator() {
+    const indicator =
+      mountHeaderSaveIndicator();
+
+    if (!indicator) return;
+
+    const aggregate =
+      aggregateSaveIndicatorState();
+
+    const view =
+      SAVE_INDICATOR_VIEW[
+        aggregate.state
+      ]
+      || SAVE_INDICATOR_VIEW.idle;
+
+    if (
+      indicator.dataset.state
+      !== aggregate.state
+    ) {
+      indicator.dataset.state =
+        aggregate.state;
+    }
+
+    const icon =
+      indicator.querySelector(
+        "[data-next-save-indicator-icon]"
+      );
+
+    const label =
+      indicator.querySelector(
+        "[data-next-save-indicator-label]"
+      );
+
+    if (
+      icon
+      && icon.textContent
+        !== view.icon
+    ) {
+      icon.textContent =
+        view.icon;
+    }
+
+    if (
+      label
+      && label.textContent
+        !== view.label
+    ) {
+      label.textContent =
+        view.label;
+    }
+
+    const title =
+      aggregate.detail
+      || view.label;
+
+    if (
+      indicator.title
+      !== title
+    ) {
+      indicator.title =
+        title;
+    }
+
+    indicator.setAttribute(
+      "aria-label",
+      title
+    );
+  }
+
+  function setHeaderSaveIndicator(
+    source,
+    state,
+    detail = ""
+  ) {
+    if (
+      !saveIndicatorSources.has(source)
+    ) {
+      return;
+    }
+
+    const oldTimer =
+      saveIndicatorTimers.get(
+        source
+      );
+
+    if (oldTimer) {
+      window.clearTimeout(
+        oldTimer
+      );
+
+      saveIndicatorTimers.delete(
+        source
+      );
+    }
+
+    saveIndicatorSources.set(
+      source,
+      {
+        state,
+        detail,
+      }
+    );
+
+    renderHeaderSaveIndicator();
+
+    if (state === "saved") {
+      const timer =
+        window.setTimeout(
+          () => {
+            const current =
+              saveIndicatorSources.get(
+                source
+              );
+
+            if (
+              current?.state
+              !== "saved"
+            ) {
+              return;
+            }
+
+            saveIndicatorSources.set(
+              source,
+              {
+                state:"idle",
+                detail:"",
+              }
+            );
+
+            saveIndicatorTimers.delete(
+              source
+            );
+
+            renderHeaderSaveIndicator();
+          },
+          1800
+        );
+
+      saveIndicatorTimers.set(
+        source,
+        timer
+      );
+    }
+  }
+
+  window.KohakuWorkNextSaveIndicator = {
+    setState:
+      setHeaderSaveIndicator,
+    render:
+      renderHeaderSaveIndicator,
+  };
+
+  window.addEventListener(
+    "offline",
+    () => {
+      renderHeaderSaveIndicator();
+    }
+  );
+
+  window.addEventListener(
+    "online",
+    () => {
+      renderHeaderSaveIndicator();
+    }
+  );
+
   function escapeHtml(value) {
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -122,6 +404,29 @@
 
     target.textContent = text;
     target.dataset.state = state;
+
+    if (state === "writing") {
+      setHeaderSaveIndicator(
+        "mobile",
+        "saving"
+      );
+    } else if (state === "saved") {
+      setHeaderSaveIndicator(
+        "mobile",
+        "saved"
+      );
+    } else if (state === "error") {
+      setHeaderSaveIndicator(
+        "mobile",
+        "error",
+        text
+      );
+    } else if (!state) {
+      setHeaderSaveIndicator(
+        "mobile",
+        "idle"
+      );
+    }
   }
 
   async function requestJson(
@@ -2571,6 +2876,11 @@
           },
           1600
         );
+      } else if (relevant) {
+        setWriteStatus(
+          "VERIFICATION DB / EDIT READY",
+          ""
+        );
       }
 
     } catch (error) {
@@ -2605,6 +2915,11 @@
     pendingAutosaves.set(
       task.key,
       task
+    );
+
+    setHeaderSaveIndicator(
+      "mobile",
+      "pending"
     );
 
     if (autosaveTimer) {
@@ -2661,6 +2976,9 @@
 
   function mountEnhancements() {
     resetProfileIfNeeded();
+
+    mountHeaderSaveIndicator();
+    renderHeaderSaveIndicator();
 
     mountHeaderEditButton();
     mountHeaderVisitNotesButton();

@@ -65,6 +65,33 @@
     element.textContent = text;
     element.dataset.state = state;
 
+    const indicator =
+      window.KohakuWorkNextSaveIndicator;
+
+    if (state === "writing") {
+      indicator
+        ?.setState
+        ?.(
+          "schedule",
+          "saving"
+        );
+    } else if (state === "saved") {
+      indicator
+        ?.setState
+        ?.(
+          "schedule",
+          "saved"
+        );
+    } else if (state === "error") {
+      indicator
+        ?.setState
+        ?.(
+          "schedule",
+          "error",
+          text
+        );
+    }
+
     if (state === "saved") {
       window.setTimeout(() => {
         if (element.dataset.state === "saved") {
