@@ -1162,23 +1162,41 @@
     }
 
     if (metaEditor) {
-      metaEditor.insertAdjacentElement(
-        "afterend",
-        actions
-      );
-    } else {
+      if (
+        metaEditor.nextElementSibling
+        !== actions
+      ) {
+        metaEditor.insertAdjacentElement(
+          "afterend",
+          actions
+        );
+      }
+    } else if (
+      editor.firstElementChild
+      !== actions
+    ) {
       editor.prepend(actions);
     }
 
-    actions.insertAdjacentElement(
-      "afterend",
-      featuresPanel
-    );
+    if (
+      actions.nextElementSibling
+      !== notesPanel
+    ) {
+      actions.insertAdjacentElement(
+        "afterend",
+        notesPanel
+      );
+    }
 
-    actions.insertAdjacentElement(
-      "afterend",
-      notesPanel
-    );
+    if (
+      notesPanel.nextElementSibling
+      !== featuresPanel
+    ) {
+      notesPanel.insertAdjacentElement(
+        "afterend",
+        featuresPanel
+      );
+    }
 
     syncCustomerPanelButtons(
       editor
@@ -1283,7 +1301,23 @@
       .nextCustomerPastVisits =
       "true";
 
-    history.innerHTML = `
+    const renderKey =
+      JSON.stringify(
+        visits.map(visit => [
+          visit.id,
+          visit.started_at,
+          visit.store_name,
+          visit.course_minutes,
+          visit.heaven_diary_body,
+          visit.diary_body,
+          visit.diary_note_body,
+          visit.customer_features,
+          visit.conversation_notes,
+          visit.visit_notes,
+        ])
+      );
+
+    const historyHtml = `
       <div class="next-past-visits-head">
         <span>PAST VISITS</span>
         <strong>過去の予約</strong>
@@ -1387,6 +1421,19 @@
         }
       </div>
     `;
+
+    if (
+      history.dataset
+        .nextPastVisitsRenderKey
+      !== renderKey
+    ) {
+      history.innerHTML =
+        historyHtml;
+
+      history.dataset
+        .nextPastVisitsRenderKey =
+        renderKey;
+    }
 
     const customerCard =
       tools.querySelector(
