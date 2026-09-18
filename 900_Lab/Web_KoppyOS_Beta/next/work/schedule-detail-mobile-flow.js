@@ -379,6 +379,89 @@
     );
   }
 
+  function mountHeaderFeaturesButton() {
+    const header =
+      drawer.querySelector(
+        ".next-schedule-detail-header"
+      );
+
+    if (
+      !header
+      || header.querySelector(
+        "[data-next-header-features]"
+      )
+    ) {
+      return;
+    }
+
+    const edit =
+      header.querySelector(
+        "[data-next-header-edit]"
+      );
+
+    const save =
+      header.querySelector(
+        "[data-next-save-all]"
+      );
+
+    const close =
+      header.querySelector(
+        "[data-next-schedule-detail-close]"
+      );
+
+    const anchor =
+      edit || save || close;
+
+    if (!anchor) return;
+
+    const button =
+      document.createElement("button");
+
+    button.type = "button";
+    button.className =
+      "next-detail-header-features";
+
+    button.dataset.nextHeaderFeatures =
+      "true";
+
+    button.textContent =
+      "特徴";
+
+    button.title =
+      "顧客の身長・見た目などの特徴を編集";
+
+    button.setAttribute(
+      "aria-label",
+      "顧客特徴を編集"
+    );
+
+    button.disabled = true;
+
+    anchor.insertAdjacentElement(
+      "beforebegin",
+      button
+    );
+  }
+
+  function syncHeaderFeaturesButton() {
+    const button =
+      drawer.querySelector(
+        "[data-next-header-features]"
+      );
+
+    if (!button) return;
+
+    const source =
+      body.querySelector(
+        "[data-next-customer-profile-open]"
+      );
+
+    button.disabled =
+      !currentCustomerId()
+      || !source
+      || Boolean(source.disabled);
+  }
+
   function syncHeaderEditButton() {
     const button =
       drawer.querySelector(
@@ -1294,6 +1377,7 @@
 
     mountSaveAllButton();
     mountHeaderEditButton();
+    mountHeaderFeaturesButton();
     mountReservationToggle();
     mountAreaInput();
     hideLegacyAreaSummary();
@@ -1326,6 +1410,7 @@
 
     syncSaveAllButton();
     syncHeaderEditButton();
+    syncHeaderFeaturesButton();
   }
 
   function queueMount() {
@@ -1352,6 +1437,68 @@
         toggleReservation(
           reservation
         );
+        return;
+      }
+
+      const headerFeatures =
+        event.target.closest(
+          "[data-next-header-features]"
+        );
+
+      if (headerFeatures) {
+        event.preventDefault();
+
+        const source =
+          body.querySelector(
+            "[data-next-customer-profile-open]"
+          );
+
+        const editor =
+          document.getElementById(
+            "nextCustomerProfileEditor"
+          );
+
+        if (
+          !source
+          || source.disabled
+          || !editor
+        ) {
+          return;
+        }
+
+        if (editor.hidden) {
+          source.click();
+        }
+
+        void ensureProfile()
+          .then(() => {
+            mountBatchFeatureEditor();
+
+            window.setTimeout(() => {
+              const target =
+                editor.querySelector(
+                  ".next-customer-feature-form"
+                )
+                || editor;
+
+              target.scrollIntoView({
+                behavior:"smooth",
+                block:"center",
+              });
+            }, 30);
+          })
+          .catch(error => {
+            console.error(
+              "Customer feature shortcut load failed:",
+              error
+            );
+
+            editor.scrollIntoView({
+              behavior:"smooth",
+              block:"center",
+            });
+          });
+
         return;
       }
 
