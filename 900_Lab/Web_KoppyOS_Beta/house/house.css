@@ -387,6 +387,55 @@
     1.35;
 }
 
+.house .device-load-summary{
+  margin-top:
+    12px;
+
+  padding:
+    12px 13px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 32%,
+      transparent
+    );
+
+  border-radius:
+    14px;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 10%,
+      transparent
+    );
+}
+
+.house .device-load-summary strong{
+  color:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 82%,
+      white
+    );
+
+  font-family:
+    var(--wf-font-mono);
+
+  font-size:
+    .86rem;
+}
+
+.house .device-load-summary p{
+  margin:
+    6px 0 0;
+
+  font-size:
+    .78rem;
+}
+
 /* ---------------------------------------------------------
    CONNECTION MAP
 --------------------------------------------------------- */

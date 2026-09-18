@@ -19,7 +19,10 @@
     return String(Number(number.toFixed(3)));
   }
 
-  function deviceList(devices) {
+  function deviceList(
+    devices,
+    loadByTargetId = new Map()
+  ) {
     const list = node('ul', null, 'devices');
 
     for (const device of devices) {
@@ -75,6 +78,80 @@
         );
       }
 
+      const loadSummary =
+        loadByTargetId.get(
+          String(device.id)
+        );
+
+      if (
+        loadSummary
+        && Number(
+          loadSummary.registered_device_count
+        ) > 0
+      ) {
+        const registeredLoad = formatKg(
+          loadSummary.registered_load_kg
+        );
+
+        const loadCapacity = formatKg(
+          loadSummary.load_capacity_kg
+        );
+
+        const remaining = formatKg(
+          loadSummary.remaining_capacity_kg
+        );
+
+        const estimatedCount = Number(
+          loadSummary.estimated_weight_count
+        );
+
+        const unknownCount = Number(
+          loadSummary.unknown_weight_count
+        );
+
+        const summary = node(
+          'div',
+          null,
+          'device-load-summary'
+        );
+
+        summary.append(
+          node(
+            'strong',
+            `登録済み荷重 ${
+              estimatedCount > 0 ? '約' : ''
+            }${registeredLoad}kg / ${loadCapacity}kg`
+          )
+        );
+
+        const details = [];
+
+        if (unknownCount === 0) {
+          details.push(
+            `残り目安 ${
+              estimatedCount > 0 ? '約' : ''
+            }${remaining}kg`
+          );
+        } else {
+          details.push(
+            `重量未登録 ${unknownCount}件`
+          );
+        }
+
+        if (estimatedCount > 0) {
+          details.push('参考重量を含む');
+        }
+
+        summary.append(
+          node(
+            'p',
+            details.join(' / ')
+          )
+        );
+
+        item.append(summary);
+      }
+
       if (device.notes) {
         item.append(
           node('p', device.notes)
@@ -93,7 +170,27 @@
   }
   function render(data) {
     const fragment = document.createDocumentFragment();
-    const byId = new Map(data.devices.map(device => [String(device.id), device]));
+    const byId = new Map(
+      data.devices.map(
+        device => [
+          String(device.id),
+          device
+        ]
+      )
+    );
+
+    const loadByTargetId = new Map(
+      (
+        Array.isArray(data.load_summaries)
+          ? data.load_summaries
+          : []
+      ).map(
+        summary => [
+          String(summary.target_device_id),
+          summary
+        ]
+      )
+    );
     for (const room of data.rooms) {
       const section = node('section', null, 'panel');
       section.dataset.wfPanel = '';
@@ -105,7 +202,16 @@
           'wf-panel-title'
         )
       );
-      section.append(deviceList(data.devices.filter(device => String(device.room_id) === String(room.id))));
+      section.append(
+        deviceList(
+          data.devices.filter(
+            device =>
+              String(device.room_id)
+              === String(room.id)
+          ),
+          loadByTargetId
+        )
+      );
       if (room.code === 'gaming') {
         const map = node('div', null, 'connections');
         map.append(node('h3', 'デスク周り接続マップ'));
@@ -138,7 +244,8 @@
         data.devices.filter(
           device =>
             Number(device.portable) === 1
-        )
+        ),
+        loadByTargetId
       )
     );
     fragment.append(portable);
