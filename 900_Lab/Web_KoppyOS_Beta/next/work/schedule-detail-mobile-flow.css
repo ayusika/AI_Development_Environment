@@ -191,13 +191,90 @@
     );
 }
 
+#nextVisitNotesEditor
+[data-next-visit-notes-save],
+#nextCustomerProfileEditor
+[data-next-customer-notes-save],
 #nextCustomerProfileEditor
 [data-next-feature-save]{
   display:none !important;
 }
 
+#nextVisitNotesEditor
+.next-notes-write-actions,
+#nextCustomerProfileEditor
+> .next-notes-write-actions{
+  grid-template-columns:1fr;
+}
+
 .next-customer-feature-actions{
   display:none !important;
+}
+
+.next-customer-disclosure{
+  margin:0 0 8px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.075);
+  border-radius:12px;
+  background:rgba(255,255,255,.018);
+}
+
+.next-customer-disclosure > summary{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  min-height:40px;
+  padding:8px 10px;
+  list-style:none;
+  cursor:pointer;
+  user-select:none;
+}
+
+.next-customer-disclosure > summary::-webkit-details-marker{
+  display:none;
+}
+
+.next-customer-disclosure > summary > span{
+  color:var(--wf-text);
+  font-size:9px;
+  font-weight:900;
+}
+
+.next-customer-disclosure > summary > small{
+  margin-left:auto;
+  color:var(--wf-text-dim);
+  font-size:7px;
+  font-weight:800;
+}
+
+.next-customer-disclosure > summary::after{
+  content:"▾";
+  color:var(--wf-accent);
+  font-size:9px;
+  font-weight:900;
+}
+
+.next-customer-disclosure[open] > summary{
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.next-customer-disclosure[open] > summary::after{
+  content:"▴";
+}
+
+.next-customer-disclosure > .ncpf-editor{
+  margin:0;
+  padding:10px;
+  border-bottom:0;
+}
+
+.next-customer-disclosure > .next-notes-write-field{
+  margin:0;
+  padding:10px;
+}
+
+.next-customer-disclosure > .next-customer-feature-form{
+  padding:10px;
 }
 
 @media(max-width:430px){

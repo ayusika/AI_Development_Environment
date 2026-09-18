@@ -798,6 +798,104 @@
     }
   }
 
+  function wrapCustomerDisclosure(
+    node,
+    key,
+    title,
+    note
+  ) {
+    if (!node) return null;
+
+    const existing =
+      node.closest(
+        `[data-next-customer-disclosure="${key}"]`
+      );
+
+    if (existing) {
+      return existing;
+    }
+
+    const details =
+      document.createElement(
+        "details"
+      );
+
+    details.className =
+      "next-customer-disclosure";
+
+    details.dataset.nextCustomerDisclosure =
+      key;
+
+    const summary =
+      document.createElement(
+        "summary"
+      );
+
+    summary.innerHTML = `
+      <span>${escapeHtml(title)}</span>
+      <small>${escapeHtml(note)}</small>
+    `;
+
+    node.insertAdjacentElement(
+      "beforebegin",
+      details
+    );
+
+    details.append(
+      summary,
+      node
+    );
+
+    return details;
+  }
+
+  function mountCustomerDisclosures() {
+    const editor =
+      document.getElementById(
+        "nextCustomerProfileEditor"
+      );
+
+    if (!editor) return;
+
+    const metaEditor =
+      editor.querySelector(
+        "[data-next-profile-meta-editor]"
+      );
+
+    wrapCustomerDisclosure(
+      metaEditor,
+      "identity",
+      "名義・流入元",
+      "個別保存"
+    );
+
+    const generalNotes =
+      document.getElementById(
+        "nextCustomerGeneralNotes"
+      );
+
+    wrapCustomerDisclosure(
+      generalNotes?.closest(
+        ".next-notes-write-field"
+      ),
+      "notes",
+      "共通メモ",
+      "全部保存"
+    );
+
+    const featureForm =
+      editor.querySelector(
+        ".next-customer-feature-form"
+      );
+
+    wrapCustomerDisclosure(
+      featureForm,
+      "features",
+      "顧客特徴",
+      "全部保存"
+    );
+  }
+
   function seedGeneralNotes() {
     const textarea =
       document.getElementById(
@@ -1381,6 +1479,7 @@
     mountReservationToggle();
     mountAreaInput();
     hideLegacyAreaSummary();
+    mountCustomerDisclosures();
 
     const customerId =
       currentCustomerId();
@@ -1398,6 +1497,7 @@
           mountAreaInput();
           seedGeneralNotes();
           mountBatchFeatureEditor();
+          mountCustomerDisclosures();
           hideLegacyAreaSummary();
         })
         .catch(error => {
@@ -1473,10 +1573,26 @@
         void ensureProfile()
           .then(() => {
             mountBatchFeatureEditor();
+            mountCustomerDisclosures();
+
+            const disclosure =
+              editor.querySelector(
+                '[data-next-customer-disclosure="features"]'
+              );
+
+            editor
+              .querySelectorAll(
+                "[data-next-customer-disclosure]"
+              )
+              .forEach(item => {
+                item.open =
+                  item === disclosure;
+              });
 
             window.setTimeout(() => {
               const target =
-                editor.querySelector(
+                disclosure
+                || editor.querySelector(
                   ".next-customer-feature-form"
                 )
                 || editor;
