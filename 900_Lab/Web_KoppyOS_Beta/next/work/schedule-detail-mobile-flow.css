@@ -247,16 +247,47 @@
   position:sticky;
   top:0;
   z-index:40;
-  flex-wrap:nowrap;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto auto auto auto;
+  grid-template-rows:auto auto auto;
   align-items:center;
-  gap:6px;
+  gap:7px 6px;
 }
 
 .next-schedule-detail-header
 > div:first-child{
-  order:1;
-  flex:1 1 auto;
+  display:contents;
+}
+
+.next-schedule-detail-header
+.wf-eyebrow{
+  grid-column:1 / -1;
+  grid-row:1;
+  margin:0;
+  white-space:nowrap;
+}
+
+#nextScheduleDetailTitle{
+  grid-column:1;
+  grid-row:2;
   min-width:0;
+  margin:0;
+}
+
+.next-schedule-detail-meta{
+  grid-column:1 / -1;
+  grid-row:3;
+  display:flex;
+  flex-wrap:nowrap;
+  align-items:center;
+  gap:6px;
+  margin-top:0;
+  min-width:0;
+}
+
+.next-schedule-detail-meta span{
+  flex:0 0 auto;
+  white-space:nowrap;
 }
 
 .next-detail-header-features,
@@ -274,7 +305,8 @@
 }
 
 .next-detail-header-features{
-  order:2;
+  grid-column:2;
+  grid-row:2;
   min-width:46px;
   padding-left:7px;
   padding-right:7px;
@@ -290,7 +322,8 @@
 }
 
 .next-detail-header-edit{
-  order:3;
+  grid-column:3;
+  grid-row:2;
   min-width:62px;
   border:1px solid
     color-mix(
@@ -313,12 +346,14 @@
 }
 
 .next-detail-save-all{
-  order:4;
+  grid-column:4;
+  grid-row:2;
   min-width:82px;
 }
 
 .next-schedule-detail-close{
-  order:5;
+  grid-column:5;
+  grid-row:2;
 }
 
 .next-detail-header-features:disabled,
