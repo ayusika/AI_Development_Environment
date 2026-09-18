@@ -42,6 +42,7 @@
     ["appearance", "外見"],
     ["lookalike", "似ている人"],
     ["occupation", "職業"],
+    ["days_off", "休日"],
     ["voice_speech", "声・話し方"],
     ["hobby_topic", "趣味・話題"],
     ["other", "その他"],
@@ -443,6 +444,155 @@
     );
   }
 
+  function mountHeaderVisitNotesButton() {
+    const header =
+      drawer.querySelector(
+        ".next-schedule-detail-header"
+      );
+
+    if (
+      !header
+      || header.querySelector(
+        "[data-next-header-visit-notes]"
+      )
+    ) {
+      return;
+    }
+
+    const features =
+      header.querySelector(
+        "[data-next-header-features]"
+      );
+
+    const edit =
+      header.querySelector(
+        "[data-next-header-edit]"
+      );
+
+    const save =
+      header.querySelector(
+        "[data-next-save-all]"
+      );
+
+    const close =
+      header.querySelector(
+        "[data-next-schedule-detail-close]"
+      );
+
+    const anchor =
+      features
+      || edit
+      || save
+      || close;
+
+    if (!anchor) return;
+
+    const button =
+      document.createElement("button");
+
+    button.type = "button";
+    button.className =
+      "next-detail-header-notes";
+
+    button.dataset.nextHeaderVisitNotes =
+      "true";
+
+    button.textContent =
+      "メモ";
+
+    button.title =
+      "今回の予約メモを入力";
+
+    button.disabled = true;
+
+    anchor.insertAdjacentElement(
+      "beforebegin",
+      button
+    );
+  }
+
+  function mountHeaderDeleteButton() {
+    const header =
+      drawer.querySelector(
+        ".next-schedule-detail-header"
+      );
+
+    if (
+      !header
+      || header.querySelector(
+        "[data-next-header-delete]"
+      )
+    ) {
+      return;
+    }
+
+    const close =
+      header.querySelector(
+        "[data-next-schedule-detail-close]"
+      );
+
+    if (!close) return;
+
+    const button =
+      document.createElement("button");
+
+    button.type = "button";
+    button.className =
+      "next-detail-header-delete";
+
+    button.dataset.nextHeaderDelete =
+      "true";
+
+    button.textContent =
+      "削除";
+
+    button.title =
+      "この予約を削除";
+
+    button.disabled = true;
+
+    close.insertAdjacentElement(
+      "beforebegin",
+      button
+    );
+  }
+
+  function syncHeaderVisitNotesButton() {
+    const button =
+      drawer.querySelector(
+        "[data-next-header-visit-notes]"
+      );
+
+    if (!button) return;
+
+    const source =
+      body.querySelector(
+        "[data-next-visit-notes-open]"
+      );
+
+    button.disabled =
+      !source
+      || Boolean(source.disabled);
+  }
+
+  function syncHeaderDeleteButton() {
+    const button =
+      drawer.querySelector(
+        "[data-next-header-delete]"
+      );
+
+    if (!button) return;
+
+    const source =
+      drawer.querySelector(
+        ".next-schedule-detail-footer [data-next-schedule-delete]"
+      );
+
+    button.disabled =
+      !source
+      || Boolean(source.disabled);
+  }
+
   function syncHeaderFeaturesButton() {
     const button =
       drawer.querySelector(
@@ -798,58 +948,139 @@
     }
   }
 
-  function wrapCustomerDisclosure(
+  function wrapCustomerPanel(
     node,
-    key,
-    title,
-    note
+    key
   ) {
     if (!node) return null;
 
     const existing =
       node.closest(
-        `[data-next-customer-disclosure="${key}"]`
+        `[data-next-customer-panel="${key}"]`
       );
 
     if (existing) {
       return existing;
     }
 
-    const details =
+    const panel =
       document.createElement(
-        "details"
+        "div"
       );
 
-    details.className =
-      "next-customer-disclosure";
+    panel.className =
+      "next-customer-panel";
 
-    details.dataset.nextCustomerDisclosure =
+    panel.dataset.nextCustomerPanel =
       key;
 
-    const summary =
-      document.createElement(
-        "summary"
-      );
-
-    summary.innerHTML = `
-      <span>${escapeHtml(title)}</span>
-      <small>${escapeHtml(note)}</small>
-    `;
+    panel.hidden = true;
 
     node.insertAdjacentElement(
       "beforebegin",
-      details
+      panel
     );
 
-    details.append(
-      summary,
-      node
-    );
+    panel.append(node);
 
-    return details;
+    return panel;
   }
 
-  function mountCustomerDisclosures() {
+  function syncCustomerPanelButtons(
+    editor
+  ) {
+    if (!editor) return;
+
+    const openPanel =
+      Array.from(
+        editor.querySelectorAll(
+          "[data-next-customer-panel]"
+        )
+      )
+      .find(panel => !panel.hidden)
+      || null;
+
+    const openKey =
+      openPanel
+        ?.dataset
+        ?.nextCustomerPanel
+      || "";
+
+    editor
+      .querySelectorAll(
+        "[data-next-customer-panel-toggle]"
+      )
+      .forEach(button => {
+        const active =
+          button.dataset
+            .nextCustomerPanelToggle
+          === openKey;
+
+        button.classList.toggle(
+          "is-active",
+          active
+        );
+
+        button.setAttribute(
+          "aria-expanded",
+          active
+            ? "true"
+            : "false"
+        );
+      });
+  }
+
+  function toggleCustomerPanel(
+    key,
+    forceOpen = false,
+    scroll = false
+  ) {
+    const editor =
+      document.getElementById(
+        "nextCustomerProfileEditor"
+      );
+
+    if (!editor) return;
+
+    const target =
+      editor.querySelector(
+        `[data-next-customer-panel="${key}"]`
+      );
+
+    if (!target) return;
+
+    const opening =
+      forceOpen
+      || target.hidden;
+
+    editor
+      .querySelectorAll(
+        "[data-next-customer-panel]"
+      )
+      .forEach(panel => {
+        panel.hidden =
+          panel !== target
+          || !opening;
+      });
+
+    syncCustomerPanelButtons(
+      editor
+    );
+
+    if (
+      opening
+      && scroll
+    ) {
+      window.setTimeout(() => {
+        target.scrollIntoView({
+          behavior:"smooth",
+          block:"center",
+        });
+      }, 30);
+    }
+  }
+
+  function mountCustomerPanels() {
     const editor =
       document.getElementById(
         "nextCustomerProfileEditor"
@@ -862,38 +1093,315 @@
         "[data-next-profile-meta-editor]"
       );
 
-    wrapCustomerDisclosure(
-      metaEditor,
-      "identity",
-      "名義・流入元",
-      "個別保存"
-    );
-
     const generalNotes =
       document.getElementById(
         "nextCustomerGeneralNotes"
       );
 
-    wrapCustomerDisclosure(
-      generalNotes?.closest(
-        ".next-notes-write-field"
-      ),
-      "notes",
-      "共通メモ",
-      "全部保存"
-    );
+    const notesPanel =
+      wrapCustomerPanel(
+        generalNotes?.closest(
+          ".next-notes-write-field"
+        ),
+        "notes"
+      );
 
     const featureForm =
       editor.querySelector(
         ".next-customer-feature-form"
       );
 
-    wrapCustomerDisclosure(
-      featureForm,
-      "features",
-      "顧客特徴",
-      "全部保存"
+    const featuresPanel =
+      wrapCustomerPanel(
+        featureForm,
+        "features"
+      );
+
+    if (
+      !notesPanel
+      || !featuresPanel
+    ) {
+      return;
+    }
+
+    let actions =
+      editor.querySelector(
+        "[data-next-customer-panel-actions]"
+      );
+
+    if (!actions) {
+      actions =
+        document.createElement(
+          "div"
+        );
+
+      actions.className =
+        "next-customer-panel-actions";
+
+      actions.dataset
+        .nextCustomerPanelActions =
+        "true";
+
+      actions.innerHTML = `
+        <button
+          type="button"
+          data-next-customer-panel-toggle="notes"
+          aria-expanded="false"
+        >
+          共通メモ
+        </button>
+
+        <button
+          type="button"
+          data-next-customer-panel-toggle="features"
+          aria-expanded="false"
+        >
+          顧客特徴
+        </button>
+      `;
+    }
+
+    if (metaEditor) {
+      metaEditor.insertAdjacentElement(
+        "afterend",
+        actions
+      );
+    } else {
+      editor.prepend(actions);
+    }
+
+    actions.insertAdjacentElement(
+      "afterend",
+      featuresPanel
     );
+
+    actions.insertAdjacentElement(
+      "afterend",
+      notesPanel
+    );
+
+    syncCustomerPanelButtons(
+      editor
+    );
+  }
+
+  function formatPastVisitDate(value) {
+    const text =
+      String(value || "");
+
+    const date =
+      text.slice(0, 10)
+        .split("-");
+
+    const time =
+      text.slice(11, 16);
+
+    if (
+      date.length === 3
+      && date[1]
+      && date[2]
+    ) {
+      return `${Number(date[1])}/${Number(date[2])} ${time}`;
+    }
+
+    return text || "日時不明";
+  }
+
+  function renderPastVisitHistory() {
+    const tools =
+      body.querySelector(
+        "[data-next-notes-write-tools]"
+      );
+
+    const current =
+      currentVisit();
+
+    const old =
+      tools?.querySelector(
+        "[data-next-customer-past-visits]"
+      );
+
+    if (
+      !tools
+      || !current
+      || !profile
+      || profileCustomerId
+        !== currentCustomerId()
+    ) {
+      old?.remove();
+      return;
+    }
+
+    const currentStarted =
+      String(
+        current.started_at
+        || ""
+      );
+
+    const visits =
+      (
+        Array.isArray(profile.visits)
+          ? profile.visits
+          : []
+      )
+      .filter(visit => {
+        if (
+          Number(visit.id)
+          === Number(current.id)
+        ) {
+          return false;
+        }
+
+        if (
+          currentStarted
+          && String(
+            visit.started_at || ""
+          ) >= currentStarted
+        ) {
+          return false;
+        }
+
+        return true;
+      })
+      .slice(0, 5);
+
+    if (!visits.length) {
+      old?.remove();
+      return;
+    }
+
+    const history =
+      old
+      || document.createElement(
+        "section"
+      );
+
+    history.className =
+      "next-customer-past-visits";
+
+    history.dataset
+      .nextCustomerPastVisits =
+      "true";
+
+    history.innerHTML = `
+      <div class="next-past-visits-head">
+        <span>PAST VISITS</span>
+        <strong>過去の予約</strong>
+      </div>
+
+      <div class="next-past-visits-list">
+        ${
+          visits
+            .map(visit => {
+              const diary =
+                String(
+                  visit.heaven_diary_body
+                  || visit.diary_body
+                  || visit.diary_note_body
+                  || ""
+                ).trim();
+
+              const memos = [
+                [
+                  "特徴メモ",
+                  visit.customer_features,
+                ],
+                [
+                  "会話メモ",
+                  visit.conversation_notes,
+                ],
+                [
+                  "来店メモ",
+                  visit.visit_notes,
+                ],
+              ]
+                .filter(
+                  ([, value]) =>
+                    String(
+                      value || ""
+                    ).trim()
+                );
+
+              const memoHtml =
+                memos.length
+                  ? memos
+                      .map(
+                        ([label, value]) => `
+                          <p>
+                            <strong>${escapeHtml(label)}</strong>
+                            <span>${escapeHtml(value)}</span>
+                          </p>
+                        `
+                      )
+                      .join("")
+                  : `
+                    <p class="next-past-visit-empty">
+                      予約メモなし
+                    </p>
+                  `;
+
+              return `
+                <details class="next-past-visit">
+                  <summary>
+                    <span>
+                      ${escapeHtml(
+                        formatPastVisitDate(
+                          visit.started_at
+                        )
+                      )}
+                    </span>
+
+                    <small>
+                      ${escapeHtml(
+                        visit.store_name
+                        || ""
+                      )}
+                      ${
+                        visit.course_minutes
+                          ? ` / ${Number(visit.course_minutes)}分`
+                          : ""
+                      }
+                    </small>
+                  </summary>
+
+                  <div class="next-past-visit-grid">
+                    <article>
+                      <span>日記</span>
+                      <p>
+                        ${escapeHtml(
+                          diary
+                          || "日記なし"
+                        )}
+                      </p>
+                    </article>
+
+                    <article>
+                      <span>予約メモ</span>
+                      ${memoHtml}
+                    </article>
+                  </div>
+                </details>
+              `;
+            })
+            .join("")
+        }
+      </div>
+    `;
+
+    const customerCard =
+      tools.querySelector(
+        ".next-notes-write-card.is-customer-scope"
+      );
+
+    if (
+      !old
+      && customerCard
+    ) {
+      customerCard.insertAdjacentElement(
+        "afterend",
+        history
+      );
+    }
   }
 
   function seedGeneralNotes() {
@@ -1465,6 +1973,7 @@
         .then(() => {
           renderProfileSummary();
           mountAreaInput();
+          renderPastVisitHistory();
         })
         .catch(() => {});
     }
@@ -1476,10 +1985,13 @@
     mountSaveAllButton();
     mountHeaderEditButton();
     mountHeaderFeaturesButton();
+    mountHeaderVisitNotesButton();
+    mountHeaderDeleteButton();
     mountReservationToggle();
     mountAreaInput();
     hideLegacyAreaSummary();
-    mountCustomerDisclosures();
+    mountCustomerPanels();
+    renderPastVisitHistory();
 
     const customerId =
       currentCustomerId();
@@ -1497,7 +2009,8 @@
           mountAreaInput();
           seedGeneralNotes();
           mountBatchFeatureEditor();
-          mountCustomerDisclosures();
+          mountCustomerPanels();
+          renderPastVisitHistory();
           hideLegacyAreaSummary();
         })
         .catch(error => {
@@ -1511,6 +2024,8 @@
     syncSaveAllButton();
     syncHeaderEditButton();
     syncHeaderFeaturesButton();
+    syncHeaderVisitNotesButton();
+    syncHeaderDeleteButton();
   }
 
   function queueMount() {
@@ -1537,6 +2052,87 @@
         toggleReservation(
           reservation
         );
+        return;
+      }
+
+      const headerVisitNotes =
+        event.target.closest(
+          "[data-next-header-visit-notes]"
+        );
+
+      if (headerVisitNotes) {
+        event.preventDefault();
+
+        const source =
+          body.querySelector(
+            "[data-next-visit-notes-open]"
+          );
+
+        const editor =
+          document.getElementById(
+            "nextVisitNotesEditor"
+          );
+
+        if (
+          !source
+          || source.disabled
+          || !editor
+        ) {
+          return;
+        }
+
+        if (editor.hidden) {
+          source.click();
+        }
+
+        window.setTimeout(() => {
+          editor.scrollIntoView({
+            behavior:"smooth",
+            block:"center",
+          });
+        }, 30);
+
+        return;
+      }
+
+      const customerPanelToggle =
+        event.target.closest(
+          "[data-next-customer-panel-toggle]"
+        );
+
+      if (customerPanelToggle) {
+        event.preventDefault();
+
+        toggleCustomerPanel(
+          customerPanelToggle.dataset
+            .nextCustomerPanelToggle
+          || ""
+        );
+
+        return;
+      }
+
+      const headerDelete =
+        event.target.closest(
+          "[data-next-header-delete]"
+        );
+
+      if (headerDelete) {
+        event.preventDefault();
+
+        const source =
+          drawer.querySelector(
+            ".next-schedule-detail-footer [data-next-schedule-delete]"
+          );
+
+        if (
+          !source
+          || source.disabled
+        ) {
+          return;
+        }
+
+        source.click();
         return;
       }
 
@@ -1573,35 +2169,13 @@
         void ensureProfile()
           .then(() => {
             mountBatchFeatureEditor();
-            mountCustomerDisclosures();
+            mountCustomerPanels();
 
-            const disclosure =
-              editor.querySelector(
-                '[data-next-customer-disclosure="features"]'
-              );
-
-            editor
-              .querySelectorAll(
-                "[data-next-customer-disclosure]"
-              )
-              .forEach(item => {
-                item.open =
-                  item === disclosure;
-              });
-
-            window.setTimeout(() => {
-              const target =
-                disclosure
-                || editor.querySelector(
-                  ".next-customer-feature-form"
-                )
-                || editor;
-
-              target.scrollIntoView({
-                behavior:"smooth",
-                block:"center",
-              });
-            }, 30);
+            toggleCustomerPanel(
+              "features",
+              true,
+              true
+            );
           })
           .catch(error => {
             console.error(

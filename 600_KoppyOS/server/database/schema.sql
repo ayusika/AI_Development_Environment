@@ -162,6 +162,7 @@ CREATE TABLE customer_identity_features (
             'appearance',
             'lookalike',
             'occupation',
+            'days_off',
             'voice_speech',
             'area',
             'hobby_topic',

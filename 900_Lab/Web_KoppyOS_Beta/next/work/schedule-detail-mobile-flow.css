@@ -459,3 +459,343 @@
   flex:0 0 auto;
   box-shadow:none;
 }
+
+
+/* =========================================================
+   KOHaku WORK NEXT / COMPACT HEADER + CUSTOMER PANELS V2
+========================================================= */
+
+/* 今回メモの読み取り表示だけ通常画面から外す。
+   同じMEMOS group内にある入力UI・顧客共通UIは残す。 */
+.next-detail-work-group-memos
+> [data-next-detail-section="memos"],
+.next-detail-work-group-memos
+> .next-schedule-complete-notes{
+  display:none !important;
+}
+
+/* 入力欄もヘッダーボタンから開いた時だけ表示 */
+.next-notes-write-card.is-visit-scope
+.next-notes-write-head{
+  display:none !important;
+}
+
+.next-notes-write-card.is-visit-scope:has(
+  #nextVisitNotesEditor[hidden]
+){
+  display:none !important;
+}
+
+/* footerの削除はヘッダーへ移動 */
+.next-schedule-detail-footer
+[data-next-schedule-delete]{
+  display:none !important;
+}
+
+/* Header
+   row1 eyebrow
+   row2 title + close
+   row3 memo / feature / edit / save / delete
+   row4 reservation meta
+*/
+.next-schedule-detail-header{
+  grid-template-columns:
+    repeat(5,minmax(0,1fr));
+  grid-template-rows:
+    auto auto auto auto;
+}
+
+.next-schedule-detail-header
+.wf-eyebrow{
+  grid-column:1 / -1;
+  grid-row:1;
+}
+
+#nextScheduleDetailTitle{
+  grid-column:1 / 5;
+  grid-row:2;
+}
+
+.next-schedule-detail-close{
+  grid-column:5;
+  grid-row:2;
+  justify-self:end;
+}
+
+.next-detail-header-notes,
+.next-detail-header-features,
+.next-detail-header-edit,
+.next-detail-save-all,
+.next-detail-header-delete{
+  box-sizing:border-box;
+  min-width:0;
+  width:100%;
+  min-height:40px;
+  margin:0;
+  padding:7px 5px;
+  border-radius:10px;
+  font:inherit;
+  font-size:8px;
+  font-weight:900;
+  white-space:nowrap;
+}
+
+.next-detail-header-notes{
+  grid-column:1;
+  grid-row:3;
+  border:1px solid
+    color-mix(
+      in srgb,
+      #78cfff 38%,
+      transparent
+    );
+  color:#bfe8ff;
+  background:rgba(120,207,255,.065);
+  cursor:pointer;
+}
+
+.next-detail-header-features{
+  grid-column:2;
+  grid-row:3;
+}
+
+.next-detail-header-edit{
+  grid-column:3;
+  grid-row:3;
+}
+
+.next-detail-save-all{
+  grid-column:4;
+  grid-row:3;
+  min-width:0;
+}
+
+.next-detail-header-delete{
+  grid-column:5;
+  grid-row:3;
+  border:1px solid rgba(255,116,143,.34);
+  color:#ffc4d0;
+  background:rgba(255,116,143,.065);
+  cursor:pointer;
+}
+
+.next-detail-header-notes:disabled,
+.next-detail-header-delete:disabled{
+  opacity:.45;
+  cursor:wait;
+}
+
+.next-schedule-detail-meta{
+  grid-column:1 / -1;
+  grid-row:4;
+}
+
+/* 顧客共通: 名義・流入元の下に2ボタン */
+.next-customer-panel-actions{
+  display:grid;
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin:8px 0;
+}
+
+.next-customer-panel-actions button{
+  min-height:42px;
+  padding:8px 10px;
+  border:1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 24%,
+      transparent
+    );
+  border-radius:11px;
+  color:var(--wf-text-soft);
+  background:rgba(255,255,255,.03);
+  font:inherit;
+  font-size:9px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.next-customer-panel-actions button.is-active{
+  border-color:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 58%,
+      transparent
+    );
+  color:var(--wf-text);
+  background:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 10%,
+      transparent
+    );
+}
+
+.next-customer-panel{
+  margin:0 0 8px;
+  padding:10px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:12px;
+  background:rgba(255,255,255,.018);
+}
+
+.next-customer-panel[hidden]{
+  display:none !important;
+}
+
+.next-customer-panel
+.next-notes-write-field{
+  margin:0;
+}
+
+/* 過去予約 + 日記 + その回のメモ */
+.next-customer-past-visits{
+  margin-top:2px;
+  padding:12px;
+  border:1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 15%,
+      transparent
+    );
+  border-radius:14px;
+  background:rgba(255,255,255,.018);
+}
+
+.next-past-visits-head{
+  display:grid;
+  gap:2px;
+  margin-bottom:8px;
+}
+
+.next-past-visits-head span{
+  color:var(--wf-accent);
+  font-size:7px;
+  font-weight:900;
+  letter-spacing:.1em;
+}
+
+.next-past-visits-head strong{
+  color:var(--wf-text);
+  font-size:11px;
+}
+
+.next-past-visits-list{
+  display:grid;
+  gap:7px;
+}
+
+.next-past-visit{
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.065);
+  border-radius:11px;
+  background:rgba(255,255,255,.018);
+}
+
+.next-past-visit > summary{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  min-height:40px;
+  padding:8px 10px;
+  list-style:none;
+  cursor:pointer;
+}
+
+.next-past-visit > summary::-webkit-details-marker{
+  display:none;
+}
+
+.next-past-visit > summary span{
+  color:var(--wf-text);
+  font-size:9px;
+  font-weight:900;
+}
+
+.next-past-visit > summary small{
+  color:var(--wf-text-dim);
+  font-size:7px;
+  text-align:right;
+}
+
+.next-past-visit > summary::after{
+  content:"▾";
+  color:var(--wf-accent);
+  font-size:8px;
+}
+
+.next-past-visit[open] > summary::after{
+  content:"▴";
+}
+
+.next-past-visit-grid{
+  display:grid;
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+  gap:8px;
+  padding:0 9px 9px;
+}
+
+.next-past-visit-grid article{
+  min-width:0;
+  padding:9px;
+  border:1px solid rgba(255,255,255,.055);
+  border-radius:9px;
+  background:rgba(255,255,255,.02);
+}
+
+.next-past-visit-grid article > span{
+  display:block;
+  margin-bottom:5px;
+  color:var(--wf-accent);
+  font-size:7px;
+  font-weight:900;
+}
+
+.next-past-visit-grid article > p{
+  margin:5px 0 0;
+  color:var(--wf-text-soft);
+  font-size:8px;
+  line-height:1.55;
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+}
+
+.next-past-visit-grid article > p strong,
+.next-past-visit-grid article > p span{
+  display:block;
+}
+
+.next-past-visit-grid article > p strong{
+  margin-bottom:2px;
+  color:var(--wf-text-dim);
+  font-size:7px;
+}
+
+.next-past-visit-empty{
+  color:var(--wf-text-dim) !important;
+}
+
+@media(max-width:520px){
+  .next-past-visit-grid{
+    grid-template-columns:1fr;
+  }
+
+  .next-schedule-detail-header{
+    gap:6px 5px;
+  }
+
+  .next-detail-header-notes,
+  .next-detail-header-features,
+  .next-detail-header-edit,
+  .next-detail-save-all,
+  .next-detail-header-delete{
+    min-height:38px;
+    padding-left:3px;
+    padding-right:3px;
+    font-size:7.5px;
+  }
+}

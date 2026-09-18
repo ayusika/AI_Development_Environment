@@ -125,6 +125,87 @@ function nextCustomerProfileFetch(
     $customer['identity_features'] =
         $featureStatement->fetchAll();
 
+    $visitStatement =
+        $pdo->prepare(
+            "
+            SELECT
+                v.id,
+                v.store_id,
+                s.name AS store_name,
+                v.started_at,
+                v.course_minutes,
+                v.customer_status,
+                v.status,
+                v.customer_features,
+                v.conversation_notes,
+                v.visit_notes,
+
+                (
+                    SELECT
+                        vdn.body
+
+                    FROM visit_diary_notes vdn
+
+                    WHERE
+                        vdn.visit_id = v.id
+
+                    LIMIT 1
+                ) AS diary_note_body,
+
+                (
+                    SELECT
+                        d.body
+
+                    FROM diary_visits dv
+
+                    JOIN diaries d
+                        ON d.id = dv.diary_id
+
+                    WHERE
+                        dv.visit_id = v.id
+
+                    ORDER BY
+                        dv.sort_order ASC,
+                        d.id ASC
+
+                    LIMIT 1
+                ) AS diary_body,
+
+                (
+                    SELECT
+                        hd.body
+
+                    FROM heaven_diaries hd
+
+                    WHERE
+                        hd.visit_id = v.id
+
+                    LIMIT 1
+                ) AS heaven_diary_body
+
+            FROM visits v
+
+            JOIN stores s
+                ON s.id = v.store_id
+
+            WHERE
+                v.customer_id = ?
+
+            ORDER BY
+                v.started_at DESC,
+                v.id DESC
+
+            LIMIT 12
+            "
+        );
+
+    $visitStatement->execute([
+        $customerId,
+    ]);
+
+    $customer['visits'] =
+        $visitStatement->fetchAll();
+
     return $customer;
 }
 
@@ -205,6 +286,7 @@ try {
         'appearance',
         'lookalike',
         'occupation',
+        'days_off',
         'voice_speech',
         'area',
         'hobby_topic',

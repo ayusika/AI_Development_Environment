@@ -42,6 +42,7 @@
     appearance:"外見",
     lookalike:"似ている人",
     occupation:"職業",
+    days_off:"休日",
     voice_speech:"声・話し方",
     area:"エリア",
     hobby_topic:"趣味・話題",

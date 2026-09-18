@@ -726,6 +726,7 @@ try {
                 'appearance',
                 'lookalike',
                 'occupation',
+                'days_off',
                 'voice_speech',
                 'area',
                 'hobby_topic',

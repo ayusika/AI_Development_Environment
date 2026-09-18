@@ -30,12 +30,21 @@ on:
           - migrate-heaven-diary-drafts.php
           - migrate-heaven-diary-settings.php
           - migrate-customer-name-kashikoi.php
+          - migrate-customer-identity-days-off.php
           - migrate-sales-v2.php
           - migrate-sapporo-rates-v2.php
           - migrate-chiba-rates-v2.php
           - migrate-nomination-fee.php
           - migrate-nomination-fee-rules.php
           - migrate-nomination-fee-backfill.php
+
+      database:
+        description: "Database target"
+        required: true
+        type: choice
+        options:
+          - verification
+          - production
 
 permissions:
   contents: read
@@ -85,6 +94,7 @@ jobs:
           SSH_PASSWORD: ${{ secrets.LOLIPOP_SSH_PASSWORD }}
           SSH_PORT: ${{ secrets.LOLIPOP_SSH_PORT }}
           MIGRATION_FILE: ${{ inputs.migration }}
+          DATABASE_TARGET: ${{ inputs.database }}
 
         run: |
           set -euo pipefail
@@ -165,7 +175,21 @@ jobs:
 
           REMOTE_FILE="$REMOTE_DIR/$MIGRATION_FILE"
 
-          DATABASE_FILE="/home/users/2/her.jp-mikipiano/.koppy-private/database/kohaku-work.sqlite"
+          case "$DATABASE_TARGET" in
+            verification)
+              DATABASE_FILE="/home/users/2/her.jp-mikipiano/.koppy-private/database/kohaku-work-verification.sqlite"
+              ;;
+            production)
+              DATABASE_FILE="/home/users/2/her.jp-mikipiano/.koppy-private/database/kohaku-work.sqlite"
+              ;;
+            *)
+              echo "Invalid database target: $DATABASE_TARGET"
+              exit 1
+              ;;
+          esac
+
+          echo "Migration target: $DATABASE_TARGET"
+          echo "Database file: $DATABASE_FILE"
 
           test -f "$LOCAL_FILE"
 
