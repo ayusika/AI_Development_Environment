@@ -4,6 +4,95 @@
   const views = [...document.querySelectorAll("[data-view]")];
   const navs = [...document.querySelectorAll("[data-nav]")];
 
+  let multiTouchActive = false;
+  let suppressNavigationUntil = 0;
+
+  const noteMultiTouch = event => {
+    if (
+      event.touches
+      && event.touches.length > 1
+    ) {
+      multiTouchActive = true;
+      suppressNavigationUntil =
+        Date.now() + 700;
+    }
+  };
+
+  const finishMultiTouch = event => {
+    if (
+      multiTouchActive
+      && (
+        !event.touches
+        || event.touches.length < 2
+      )
+    ) {
+      multiTouchActive = false;
+      suppressNavigationUntil =
+        Date.now() + 700;
+    }
+  };
+
+  document.addEventListener(
+    "touchstart",
+    noteMultiTouch,
+    {
+      capture:true,
+      passive:true,
+    }
+  );
+
+  document.addEventListener(
+    "touchmove",
+    noteMultiTouch,
+    {
+      capture:true,
+      passive:true,
+    }
+  );
+
+  document.addEventListener(
+    "touchend",
+    finishMultiTouch,
+    {
+      capture:true,
+      passive:true,
+    }
+  );
+
+  document.addEventListener(
+    "touchcancel",
+    finishMultiTouch,
+    {
+      capture:true,
+      passive:true,
+    }
+  );
+
+  document.addEventListener(
+    "click",
+    event => {
+      if (
+        Date.now()
+        >= suppressNavigationUntil
+      ) {
+        return;
+      }
+
+      const navigation =
+        event.target.closest(
+          "[data-nav], [data-next-view], a[href]"
+        );
+
+      if (!navigation) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    },
+    true
+  );
+
   const navForView = {
     home: "home",
     diary: "diary",

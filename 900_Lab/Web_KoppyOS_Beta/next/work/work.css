@@ -795,3 +795,15 @@
       left;
   }
 }
+
+
+/* KOPPY MOBILE FORM ZOOM GUARD
+   iPhone Safari zooms focused form controls below 16px.
+   Keep browser pinch zoom enabled and raise only input text. */
+@media(max-width:820px){
+  .next-app input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="color"]),
+  .next-app textarea,
+  .next-app select{
+    font-size:16px !important;
+  }
+}
