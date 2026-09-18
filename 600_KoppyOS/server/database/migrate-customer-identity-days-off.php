@@ -61,6 +61,10 @@ $pdo =
         ]
     );
 
+$pdo->exec(
+    'PRAGMA busy_timeout = 5000'
+);
+
 try {
     $tableSqlStatement =
         $pdo->prepare(
@@ -78,6 +82,9 @@ try {
 
     $tableSql =
         $tableSqlStatement->fetchColumn();
+
+    $tableSqlStatement->closeCursor();
+    unset($tableSqlStatement);
 
     if (
         $tableSql === false
@@ -122,8 +129,14 @@ try {
         $tempTable,
     ]);
 
+    $tempExists =
+        $tempExistsStatement->fetchColumn();
+
+    $tempExistsStatement->closeCursor();
+    unset($tempExistsStatement);
+
     if (
-        $tempExistsStatement->fetchColumn()
+        $tempExists
         !== false
     ) {
         throw new RuntimeException(
