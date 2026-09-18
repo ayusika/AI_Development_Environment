@@ -17,7 +17,7 @@ try {
     $pdo = koppyDatabase();
     $pdo->beginTransaction();
     $rooms = $pdo->query('SELECT id, code, name, sort_order FROM home_rooms ORDER BY sort_order, id')->fetchAll();
-    $devices = $pdo->query('SELECT id, room_id, code, name, category, manufacturer, model, status, role, portable, notes, sort_order FROM home_devices ORDER BY sort_order, id')->fetchAll();
+    $devices = $pdo->query('SELECT id, room_id, code, name, category, manufacturer, model, status, role, portable, notes, weight_kg, weight_is_estimate, load_capacity_kg, sort_order FROM home_devices ORDER BY sort_order, id')->fetchAll();
     $connections = $pdo->query('SELECT id, source_device_id, target_device_id, connection_type, source_port, target_port, label, notes, sort_order FROM home_connections ORDER BY sort_order, id')->fetchAll();
     $pdo->commit();
 } catch (Throwable $error) {
