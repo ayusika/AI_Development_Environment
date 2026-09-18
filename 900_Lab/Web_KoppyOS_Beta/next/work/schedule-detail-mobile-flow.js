@@ -61,6 +61,20 @@
   let activeVisitId = 0;
   let mountQueued = false;
 
+  const AUTOSAVE_DELAY = 800;
+
+  let autosaveTimer = 0;
+  let autosaveStatusVersion = 0;
+
+  const pendingAutosaves =
+    new Map();
+
+  const autosaveProfileCache =
+    new Map();
+
+  let autosaveChain =
+    Promise.resolve();
+
   function escapeHtml(value) {
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -214,7 +228,7 @@
             );
 
         throw new Error(
-          `${label}に複数の登録があります。安全のため一括保存を停止しました。`
+          `${label}に複数の登録があります。安全のため自動保存を停止しました。`
         );
       }
     }
@@ -272,6 +286,13 @@
 
         profileCustomerId =
           customerId;
+
+        if (profile) {
+          autosaveProfileCache.set(
+            customerId,
+            profile
+          );
+        }
 
         return profile;
       })
@@ -369,7 +390,7 @@
       "true";
 
     button.textContent =
-      "✎ 編集";
+      "予約を編集";
 
     button.title =
       "この予約を編集";
@@ -498,7 +519,7 @@
       "true";
 
     button.textContent =
-      "メモ";
+      "個別予約メモ";
 
     button.title =
       "今回の予約メモを入力";
@@ -632,7 +653,7 @@
     button.textContent =
       source?.disabled
         ? "読込中…"
-        : "✎ 編集";
+        : "予約を編集";
   }
 
   function syncSaveAllButton() {
@@ -787,7 +808,7 @@
           placeholder="例：すすきの周辺、札幌駅によく来る"
         >
         <small>
-          このお客さん共通の情報です。「全部保存」で保存します。
+          このお客さん共通の情報です。入力内容は自動保存されます。
         </small>
       `;
 
@@ -825,17 +846,20 @@
       return;
     }
 
-    input.disabled = false;
-    input.placeholder =
-      "例：すすきの周辺、札幌駅によく来る";
-
     if (
       !profile
       || profileCustomerId
         !== customerId
     ) {
+      input.disabled = true;
+      input.placeholder =
+        "顧客情報を読み込み中…";
       return;
     }
+
+    input.disabled = false;
+    input.placeholder =
+      "例：すすきの周辺、札幌駅によく来る";
 
     if (
       input.dataset.seededCustomer
@@ -934,7 +958,7 @@
       </div>
 
       <small class="next-feature-batch-help">
-        入力後は画面上部の「全部保存」でまとめて保存できます。
+        入力内容は自動保存されます。
       </small>
     `;
 
@@ -1006,7 +1030,13 @@
         ?.nextCustomerPanel
       || "";
 
-    editor
+    const buttonRoot =
+      editor.closest(
+        ".next-notes-write-card.is-customer-scope"
+      )
+      || editor;
+
+    buttonRoot
       .querySelectorAll(
         "[data-next-customer-panel-toggle]"
       )
@@ -1088,9 +1118,34 @@
 
     if (!editor) return;
 
+    const card =
+      editor.closest(
+        ".next-notes-write-card.is-customer-scope"
+      );
+
+    const head =
+      card?.querySelector(
+        ".next-notes-write-head"
+      );
+
+    const source =
+      head?.querySelector(
+        "[data-next-customer-profile-open]"
+      );
+
+    if (source) {
+      source.hidden = true;
+    }
+
     const metaEditor =
       editor.querySelector(
         "[data-next-profile-meta-editor]"
+      );
+
+    const namesPanel =
+      wrapCustomerPanel(
+        metaEditor,
+        "names"
       );
 
     const generalNotes =
@@ -1117,19 +1172,15 @@
         "features"
       );
 
-    if (
-      !notesPanel
-      || !featuresPanel
-    ) {
-      return;
-    }
-
     let actions =
-      editor.querySelector(
+      card?.querySelector(
         "[data-next-customer-panel-actions]"
       );
 
-    if (!actions) {
+    if (
+      !actions
+      && head
+    ) {
       actions =
         document.createElement(
           "div"
@@ -1145,10 +1196,18 @@
       actions.innerHTML = `
         <button
           type="button"
+          data-next-customer-panel-toggle="names"
+          aria-expanded="false"
+        >
+          名前を編集
+        </button>
+
+        <button
+          type="button"
           data-next-customer-panel-toggle="notes"
           aria-expanded="false"
         >
-          共通メモ
+          共通メモを編集
         </button>
 
         <button
@@ -1156,46 +1215,86 @@
           data-next-customer-panel-toggle="features"
           aria-expanded="false"
         >
-          顧客特徴
+          顧客特徴を編集
         </button>
       `;
     }
 
-    if (metaEditor) {
-      if (
-        metaEditor.nextElementSibling
+    if (
+      actions
+      && head
+      && head.nextElementSibling
         !== actions
+    ) {
+      head.insertAdjacentElement(
+        "afterend",
+        actions
+      );
+    }
+
+    if (namesPanel) {
+      if (
+        editor.firstElementChild
+        !== namesPanel
       ) {
-        metaEditor.insertAdjacentElement(
+        editor.prepend(
+          namesPanel
+        );
+      }
+
+      if (
+        notesPanel
+        && namesPanel.nextElementSibling
+          !== notesPanel
+      ) {
+        namesPanel.insertAdjacentElement(
           "afterend",
-          actions
+          notesPanel
         );
       }
     } else if (
-      editor.firstElementChild
-      !== actions
+      notesPanel
+      && editor.firstElementChild
+        !== notesPanel
     ) {
-      editor.prepend(actions);
-    }
-
-    if (
-      actions.nextElementSibling
-      !== notesPanel
-    ) {
-      actions.insertAdjacentElement(
-        "afterend",
+      editor.prepend(
         notesPanel
       );
     }
 
     if (
-      notesPanel.nextElementSibling
-      !== featuresPanel
+      notesPanel
+      && featuresPanel
+      && notesPanel.nextElementSibling
+        !== featuresPanel
     ) {
       notesPanel.insertAdjacentElement(
         "afterend",
         featuresPanel
       );
+    }
+
+    const requested =
+      editor.dataset
+        .nextRequestedCustomerPanel
+      || "";
+
+    if (
+      requested
+      && editor.querySelector(
+        `[data-next-customer-panel="${requested}"]`
+      )
+    ) {
+      editor.hidden = false;
+
+      toggleCustomerPanel(
+        requested,
+        true,
+        true
+      );
+
+      delete editor.dataset
+        .nextRequestedCustomerPanel;
     }
 
     syncCustomerPanelButtons(
@@ -1463,12 +1562,28 @@
     if (
       !textarea
       || !customerId
-      || !profile
-      || profileCustomerId
-        !== customerId
     ) {
       return;
     }
+
+    const ready =
+      Boolean(
+        profile
+        && profileCustomerId
+          === customerId
+      );
+
+    textarea.disabled =
+      !ready;
+
+    if (!ready) {
+      textarea.placeholder =
+        "顧客情報を読み込み中…";
+      return;
+    }
+
+    textarea.placeholder =
+      "次回以降も覚えておきたいこと";
 
     if (
       textarea.dataset
@@ -1892,146 +2007,662 @@
     return true;
   }
 
-  async function saveAll() {
+  function storeAutosaveProfile(
+    customerId,
+    nextProfile
+  ) {
+    if (!nextProfile) return;
+
+    autosaveProfileCache.set(
+      customerId,
+      nextProfile
+    );
+
+    if (
+      currentCustomerId()
+      === customerId
+    ) {
+      profile =
+        nextProfile;
+
+      profileCustomerId =
+        customerId;
+    }
+  }
+
+  async function profileForAutosave(
+    customerId
+  ) {
+    if (
+      profile
+      && profileCustomerId
+        === customerId
+    ) {
+      return profile;
+    }
+
+    if (
+      autosaveProfileCache.has(
+        customerId
+      )
+    ) {
+      return autosaveProfileCache.get(
+        customerId
+      );
+    }
+
+    const data =
+      await requestJson(
+        `${PROFILE_API}?id=${encodeURIComponent(
+          String(customerId)
+        )}`,
+        {
+          method:"GET",
+        }
+      );
+
+    const value =
+      data.customer
+      || null;
+
+    if (value) {
+      autosaveProfileCache.set(
+        customerId,
+        value
+      );
+    }
+
+    return value;
+  }
+
+  function captureAutosaveTask(
+    target
+  ) {
+    if (
+      !(target instanceof Element)
+    ) {
+      return null;
+    }
+
     const visit =
       currentVisit();
 
-    const button =
-      drawer.querySelector(
-        "[data-next-save-all]"
+    if (!visit) {
+      return null;
+    }
+
+    const visitId =
+      Number(
+        visit.id
+        || 0
       );
 
     if (
-      !visit
-      || !button
-      || button.dataset.saving
-        === "true"
+      target.matches(
+        "#nextVisitCustomerFeatures,"
+        + "#nextVisitConversationNotes,"
+        + "#nextVisitNotes"
+      )
     ) {
+      const feature =
+        document.getElementById(
+          "nextVisitCustomerFeatures"
+        );
+
+      const conversation =
+        document.getElementById(
+          "nextVisitConversationNotes"
+        );
+
+      const notes =
+        document.getElementById(
+          "nextVisitNotes"
+        );
+
+      if (
+        !feature
+        || !conversation
+        || !notes
+      ) {
+        return null;
+      }
+
+      return {
+        key:`visit:${visitId}`,
+        kind:"visit",
+        visit,
+        visitId,
+        values:{
+          customer_features:
+            feature.value,
+          conversation_notes:
+            conversation.value,
+          visit_notes:
+            notes.value,
+        },
+      };
+    }
+
+    const customerId =
+      Number(
+        visit.customer_id
+        || 0
+      );
+
+    if (!customerId) {
+      return null;
+    }
+
+    if (
+      target.matches(
+        "#nextCustomerGeneralNotes"
+      )
+    ) {
+      return {
+        key:
+          `customer:${customerId}:general`,
+        kind:"general",
+        customerId,
+        value:
+          target.value.trim(),
+      };
+    }
+
+    if (
+      target.matches(
+        "[data-next-customer-area-input]"
+      )
+    ) {
+      return {
+        key:
+          `customer:${customerId}:feature:area`,
+        kind:"feature",
+        customerId,
+        type:"area",
+        value:
+          target.value.trim(),
+      };
+    }
+
+    if (
+      target.matches(
+        "[data-next-batch-feature-type]"
+      )
+    ) {
+      const type =
+        target.dataset
+          .nextBatchFeatureType
+        || "";
+
+      if (!type) return null;
+
+      return {
+        key:
+          `customer:${customerId}:feature:${type}`,
+        kind:"feature",
+        customerId,
+        type,
+        value:
+          target.value.trim(),
+      };
+    }
+
+    return null;
+  }
+
+  async function saveVisitAutosaveTask(
+    task
+  ) {
+    const next =
+      task.values;
+
+    const same =
+      String(
+        task.visit.customer_features
+        || ""
+      ) === next.customer_features
+      && String(
+        task.visit.conversation_notes
+        || ""
+      ) === next.conversation_notes
+      && String(
+        task.visit.visit_notes
+        || ""
+      ) === next.visit_notes;
+
+    if (same) {
+      return false;
+    }
+
+    const data =
+      await requestJson(
+        VISIT_NOTES_API,
+        {
+          method:"PATCH",
+          headers:{
+            "Content-Type":
+              "application/json",
+          },
+          body:JSON.stringify({
+            id:task.visitId,
+            ...next,
+          }),
+        }
+      );
+
+    const updated =
+      data.visit
+      || {};
+
+    Object.assign(
+      task.visit,
+      {
+        customer_features:
+          updated.customer_features
+          ?? null,
+        conversation_notes:
+          updated.conversation_notes
+          ?? null,
+        visit_notes:
+          updated.visit_notes
+          ?? null,
+        updated_at:
+          updated.updated_at
+          || task.visit.updated_at,
+      }
+    );
+
+    if (
+      Number(
+        currentVisit()?.id
+        || 0
+      ) === task.visitId
+    ) {
+      const values = {
+        "今回の特徴メモ":
+          task.visit.customer_features,
+        "今回の会話メモ":
+          task.visit.conversation_notes,
+        "今回の来店メモ":
+          task.visit.visit_notes,
+      };
+
+      body
+        .querySelectorAll(
+          ".next-schedule-complete-note"
+        )
+        .forEach(card => {
+          const label =
+            card.querySelector("span")
+              ?.textContent
+              ?.trim()
+            || "";
+
+          if (
+            !Object.prototype
+              .hasOwnProperty.call(
+                values,
+                label
+              )
+          ) {
+            return;
+          }
+
+          const target =
+            card.querySelector("p");
+
+          if (target) {
+            target.textContent =
+              values[label]
+              || "なし";
+          }
+        });
+    }
+
+    return true;
+  }
+
+  async function saveGeneralAutosaveTask(
+    task
+  ) {
+    const source =
+      await profileForAutosave(
+        task.customerId
+      );
+
+    const current =
+      String(
+        source?.general_notes
+        || ""
+      ).trim();
+
+    if (
+      current === task.value
+    ) {
+      return false;
+    }
+
+    const data =
+      await requestJson(
+        PROFILE_API,
+        {
+          method:"PATCH",
+          headers:{
+            "Content-Type":
+              "application/json",
+          },
+          body:JSON.stringify({
+            id:task.customerId,
+            general_notes:
+              task.value,
+          }),
+        }
+      );
+
+    storeAutosaveProfile(
+      task.customerId,
+      data.customer
+      || source
+    );
+
+    return true;
+  }
+
+  async function saveFeatureAutosaveTask(
+    task
+  ) {
+    const source =
+      await profileForAutosave(
+        task.customerId
+      );
+
+    const records =
+      recordsForType(
+        task.type,
+        source
+      );
+
+    if (
+      records.length > 1
+    ) {
+      throw new Error(
+        "同じ特徴カテゴリに複数の登録があるため自動保存を停止しました。"
+      );
+    }
+
+    const record =
+      records[0]
+      || null;
+
+    const current =
+      String(
+        record?.feature_value
+        || ""
+      ).trim();
+
+    if (
+      current === task.value
+    ) {
+      return false;
+    }
+
+    let payload;
+
+    if (
+      task.value === ""
+      && record
+    ) {
+      payload = {
+        id:task.customerId,
+        feature_id:
+          Number(record.id),
+        delete_feature:true,
+      };
+
+    } else if (
+      task.value !== ""
+    ) {
+      payload = {
+        id:task.customerId,
+        feature_type:
+          task.type,
+        feature_value:
+          task.value,
+        feature_note:
+          record?.note
+          || "",
+      };
+
+      if (record?.id) {
+        payload.feature_id =
+          Number(record.id);
+      }
+
+    } else {
+      return false;
+    }
+
+    const data =
+      await requestJson(
+        PROFILE_API,
+        {
+          method:"PATCH",
+          headers:{
+            "Content-Type":
+              "application/json",
+          },
+          body:JSON.stringify(
+            payload
+          ),
+        }
+      );
+
+    storeAutosaveProfile(
+      task.customerId,
+      data.customer
+      || source
+    );
+
+    return true;
+  }
+
+  async function saveAutosaveBatch(
+    tasks
+  ) {
+    if (!tasks.length) {
       return;
     }
 
-    button.dataset.saving =
-      "true";
+    const currentVisitId =
+      Number(
+        currentVisit()?.id
+        || 0
+      );
 
-    button.disabled = true;
-    button.textContent =
-      "保存中…";
+    const currentCustomer =
+      currentCustomerId();
 
-    setWriteStatus(
-      "VERIFICATION DB / SAVING ALL",
-      "writing"
-    );
+    const relevant =
+      tasks.some(task =>
+        (
+          task.visitId
+          && task.visitId
+            === currentVisitId
+        )
+        || (
+          task.customerId
+          && task.customerId
+            === currentCustomer
+        )
+      );
+
+    const statusVersion =
+      ++autosaveStatusVersion;
+
+    if (relevant) {
+      setWriteStatus(
+        "AUTO SAVE / WRITING",
+        "writing"
+      );
+    }
 
     let changed = 0;
 
     try {
-      const customerId =
-        Number(
-          visit.customer_id
-          || 0
-        );
-
-      if (customerId) {
-        await ensureProfile();
-        assertUniqueManagedFeatures();
-      }
-
-      if (
-        await saveVisitNotes(
-          visit
-        )
+      for (
+        const task
+        of tasks
       ) {
-        changed += 1;
-      }
+        let didChange = false;
 
-      if (
-        customerId
-        && profile
-      ) {
         if (
-          await saveGeneralNotes(
-            customerId
-          )
+          task.kind === "visit"
         ) {
+          didChange =
+            await saveVisitAutosaveTask(
+              task
+            );
+
+        } else if (
+          task.kind === "general"
+        ) {
+          didChange =
+            await saveGeneralAutosaveTask(
+              task
+            );
+
+        } else if (
+          task.kind === "feature"
+        ) {
+          didChange =
+            await saveFeatureAutosaveTask(
+              task
+            );
+        }
+
+        if (didChange) {
           changed += 1;
         }
-
-        for (
-          const type
-          of MANAGED_TYPES
-        ) {
-          if (
-            await saveFeatureType(
-              customerId,
-              type
-            )
-          ) {
-            changed += 1;
-          }
-        }
-
-        renderProfileSummary();
       }
 
-      button.textContent =
-        changed
-          ? "✓ 保存済み"
-          : "✓ 変更なし";
+      if (
+        relevant
+        && changed
+      ) {
+        renderProfileSummary();
+        mountAreaInput();
 
-      setWriteStatus(
-        changed
-          ? "SAVED / ALL INPUTS"
-          : "NO CHANGES / EDIT READY",
-        "saved"
-      );
+        setWriteStatus(
+          "✓ AUTO SAVED / VERIFICATION",
+          "saved"
+        );
 
-      window.setTimeout(
-        () => {
-          if (
-            button.dataset.saving
-            === "false"
-          ) {
-            button.textContent =
-              "✓ 全部保存";
-          }
-        },
-        1800
-      );
+        window.setTimeout(
+          () => {
+            if (
+              autosaveStatusVersion
+                === statusVersion
+            ) {
+              setWriteStatus(
+                "VERIFICATION DB / EDIT READY",
+                ""
+              );
+            }
+          },
+          1600
+        );
+      }
 
     } catch (error) {
-      console.error(error);
-
-      button.textContent =
-        "保存エラー";
-
-      setWriteStatus(
-        error.message
-        || "一括保存できませんでした。",
-        "error"
+      console.error(
+        "Kohaku autosave failed:",
+        error
       );
 
-    } finally {
-      button.dataset.saving =
-        "false";
-
-      button.disabled = false;
-
-      void ensureProfile(true)
-        .then(() => {
-          renderProfileSummary();
-          mountAreaInput();
-          renderPastVisitHistory();
-        })
-        .catch(() => {});
+      if (relevant) {
+        setWriteStatus(
+          error.message
+          || "自動保存できませんでした。",
+          "error"
+        );
+      }
     }
+  }
+
+  function queueAutosaveForTarget(
+    target,
+    delay = AUTOSAVE_DELAY
+  ) {
+    const task =
+      captureAutosaveTask(
+        target
+      );
+
+    if (!task) {
+      return;
+    }
+
+    pendingAutosaves.set(
+      task.key,
+      task
+    );
+
+    if (autosaveTimer) {
+      window.clearTimeout(
+        autosaveTimer
+      );
+    }
+
+    autosaveTimer =
+      window.setTimeout(
+        () => {
+          autosaveTimer = 0;
+          void flushAutosaves();
+        },
+        delay
+      );
+  }
+
+  function flushAutosaves() {
+    if (autosaveTimer) {
+      window.clearTimeout(
+        autosaveTimer
+      );
+
+      autosaveTimer = 0;
+    }
+
+    if (
+      pendingAutosaves.size
+      === 0
+    ) {
+      return autosaveChain;
+    }
+
+    const tasks =
+      Array.from(
+        pendingAutosaves.values()
+      );
+
+    pendingAutosaves.clear();
+
+    autosaveChain =
+      autosaveChain
+        .catch(() => {})
+        .then(
+          () =>
+            saveAutosaveBatch(
+              tasks
+            )
+        );
+
+    return autosaveChain;
   }
 
   function mountEnhancements() {
     resetProfileIfNeeded();
 
-    mountSaveAllButton();
     mountHeaderEditButton();
-    mountHeaderFeaturesButton();
     mountHeaderVisitNotesButton();
     mountHeaderDeleteButton();
     mountReservationToggle();
@@ -2068,9 +2699,7 @@
         });
     }
 
-    syncSaveAllButton();
     syncHeaderEditButton();
-    syncHeaderFeaturesButton();
     syncHeaderVisitNotesButton();
     syncHeaderDeleteButton();
   }
@@ -2150,11 +2779,52 @@
       if (customerPanelToggle) {
         event.preventDefault();
 
-        toggleCustomerPanel(
+        const key =
           customerPanelToggle.dataset
             .nextCustomerPanelToggle
-          || ""
-        );
+          || "";
+
+        const source =
+          body.querySelector(
+            "[data-next-customer-profile-open]"
+          );
+
+        const editor =
+          document.getElementById(
+            "nextCustomerProfileEditor"
+          );
+
+        if (
+          !key
+          || !source
+          || source.disabled
+          || !editor
+        ) {
+          return;
+        }
+
+        editor.dataset
+          .nextRequestedCustomerPanel =
+          key;
+
+        if (editor.hidden) {
+          source.click();
+        }
+
+        mountCustomerPanels();
+
+        void ensureProfile()
+          .then(() => {
+            seedGeneralNotes();
+            mountBatchFeatureEditor();
+            mountCustomerPanels();
+          })
+          .catch(error => {
+            console.error(
+              "Customer editor load failed:",
+              error
+            );
+          });
 
         return;
       }
@@ -2263,20 +2933,111 @@
         return;
       }
 
+      // Customer/memo fields use autosave.
+    }
+  );
+
+  document.addEventListener(
+    "input",
+    event => {
+      if (event.isComposing) {
+        return;
+      }
+
+      queueAutosaveForTarget(
+        event.target,
+        AUTOSAVE_DELAY
+      );
+    }
+  );
+
+  document.addEventListener(
+    "compositionend",
+    event => {
+      queueAutosaveForTarget(
+        event.target,
+        AUTOSAVE_DELAY
+      );
+    }
+  );
+
+  document.addEventListener(
+    "change",
+    event => {
+      queueAutosaveForTarget(
+        event.target,
+        0
+      );
+    }
+  );
+
+  document.addEventListener(
+    "focusout",
+    event => {
+      queueAutosaveForTarget(
+        event.target,
+        0
+      );
+
+      void flushAutosaves();
+    }
+  );
+
+  document.addEventListener(
+    "pointerdown",
+    event => {
       if (
-        event.target.closest(
-          "[data-next-save-all]"
+        !drawer.classList.contains(
+          "is-open"
         )
       ) {
-        event.preventDefault();
-        void saveAll();
+        return;
       }
-    }
+
+      const target =
+        event.target;
+
+      const closeRequest =
+        target instanceof Element
+        && Boolean(
+          target.closest(
+            "[data-next-schedule-detail-close]"
+          )
+          || target.id
+            === "nextScheduleDetailBackdrop"
+        );
+
+      const outsideDrawer =
+        target instanceof Node
+        && !drawer.contains(target);
+
+      if (
+        closeRequest
+        || outsideDrawer
+      ) {
+        void flushAutosaves();
+
+        void window
+          .KohakuWorkNextCustomerProfileFull
+          ?.flushAutosave
+          ?.();
+      }
+    },
+    true
   );
 
   document.addEventListener(
     "keydown",
     event => {
+      if (event.key === "Escape") {
+        void flushAutosaves();
+
+        void window
+          .KohakuWorkNextCustomerProfileFull
+          ?.flushAutosave
+          ?.();
+      }
+
       const reservation =
         event.target.closest(
           '[data-next-detail-heading="reservation"]'
@@ -2336,6 +3097,7 @@
     verificationReadEnabled:true,
     verificationWriteEnabled:true,
     productionWriteEnabled:false,
-    saveAll,
+    autosaveEnabled:true,
+    flushAutosaves,
   };
 })();

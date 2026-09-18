@@ -799,3 +799,124 @@
     font-size:7.5px;
   }
 }
+
+
+/* =========================================================
+   KOHaku WORK NEXT / REALTIME AUTOSAVE V3
+========================================================= */
+
+/* 保存操作は自動化 */
+.next-detail-save-all,
+.next-detail-header-features,
+[data-next-customer-profile-open],
+[data-next-visit-notes-save],
+[data-next-customer-notes-save],
+[data-next-feature-save],
+[data-next-profile-meta-save],
+.ncpf-save{
+  display:none !important;
+}
+
+/* Header:
+   個別予約メモ / 予約を編集 / 削除
+*/
+.next-schedule-detail-header{
+  grid-template-columns:
+    minmax(0,1.35fr)
+    minmax(0,1fr)
+    minmax(0,.65fr);
+  grid-template-rows:
+    auto auto auto auto;
+}
+
+.next-schedule-detail-header
+.wf-eyebrow{
+  grid-column:1 / -1;
+  grid-row:1;
+}
+
+#nextScheduleDetailTitle{
+  grid-column:1 / 3;
+  grid-row:2;
+}
+
+.next-schedule-detail-close{
+  grid-column:3;
+  grid-row:2;
+  justify-self:end;
+}
+
+.next-detail-header-notes{
+  grid-column:1;
+  grid-row:3;
+}
+
+.next-detail-header-edit{
+  grid-column:2;
+  grid-row:3;
+}
+
+.next-detail-header-delete{
+  grid-column:3;
+  grid-row:3;
+}
+
+.next-schedule-detail-meta{
+  grid-column:1 / -1;
+  grid-row:4;
+}
+
+/* 顧客共通の3編集ボタン */
+.next-customer-panel-actions{
+  display:grid;
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+  gap:7px;
+  width:100%;
+  margin:8px 0 10px;
+}
+
+.next-customer-panel-actions button{
+  min-width:0;
+  min-height:40px;
+  padding:7px 5px;
+  font-size:8px;
+  line-height:1.3;
+  white-space:normal;
+}
+
+.next-customer-panel
+> .ncpf-editor{
+  margin:0;
+  padding:0;
+  border:0;
+}
+
+.ncpf-autosave-note{
+  display:block;
+  margin-top:7px;
+  color:var(--wf-text-dim);
+  font-size:7px;
+  line-height:1.45;
+}
+
+@media(max-width:520px){
+  .next-detail-header-notes,
+  .next-detail-header-edit,
+  .next-detail-header-delete{
+    min-height:38px;
+    padding-left:4px;
+    padding-right:4px;
+    font-size:7.5px;
+  }
+
+  .next-customer-panel-actions{
+    gap:5px;
+  }
+
+  .next-customer-panel-actions button{
+    padding-left:3px;
+    padding-right:3px;
+    font-size:7.5px;
+  }
+}

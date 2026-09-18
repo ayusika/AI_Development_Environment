@@ -39,6 +39,17 @@
   let failedCustomerId = 0;
   let loadToken = 0;
 
+  const AUTOSAVE_DELAY = 800;
+
+  let metaAutosaveTimer = 0;
+  let pendingMetaDraft = null;
+
+  let metaSaveChain =
+    Promise.resolve();
+
+  const metaCache =
+    new Map();
+
   function escapeHtml(value) {
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -246,9 +257,9 @@
       </div>
 
       <p class="ncpf-message" id="nextCustomerProfileMetaMessage" aria-live="polite"></p>
-      <button type="button" class="ncpf-save" data-next-profile-meta-save>
-        名義・初回流入元を保存
-      </button>
+      <small class="ncpf-autosave-note">
+        入力内容は自動保存されます。
+      </small>
     `;
   }
 
@@ -345,6 +356,14 @@
 
       meta = data.customer || null;
       metaCustomerId = customerId;
+
+      if (meta) {
+        metaCache.set(
+          customerId,
+          meta
+        );
+      }
+
       renderSummary();
       renderEditor();
 
@@ -367,69 +386,290 @@
     }
   }
 
-  async function saveMeta() {
-    const customerId = currentCustomerId();
-    if (!customerId) return;
+  function captureMetaDraft() {
+    const customerId =
+      currentCustomerId();
 
-    const button = document.querySelector("[data-next-profile-meta-save]");
-    const message = document.getElementById("nextCustomerProfileMetaMessage");
+    if (!customerId) {
+      return null;
+    }
+
+    const host =
+      document.querySelector(
+        "[data-next-profile-meta-editor]"
+      );
+
+    if (!host) {
+      return null;
+    }
+
     const names = {};
 
-    NAME_TYPES.forEach(([type]) => {
-      names[type] = document.querySelector(`[data-ncpf-name="${type}"]`)?.value?.trim() || "";
-    });
+    NAME_TYPES.forEach(
+      ([type]) => {
+        names[type] =
+          host.querySelector(
+            `[data-ncpf-name="${type}"]`
+          )?.value?.trim()
+          || "";
+      }
+    );
 
-    const sourceType = document.getElementById("nextCustomerAcquisitionSource")?.value || "unknown";
-    const sourceDetail = document.getElementById("nextCustomerAcquisitionDetail")?.value?.trim() || "";
+    return {
+      customerId,
+      names,
+      sourceType:
+        host.querySelector(
+          "#nextCustomerAcquisitionSource"
+        )?.value
+        || "unknown",
+      sourceDetail:
+        host.querySelector(
+          "#nextCustomerAcquisitionDetail"
+        )?.value?.trim()
+        || "",
+    };
+  }
 
-    if (button) {
-      button.disabled = true;
-      button.textContent = "保存中…";
+  function draftKey(draft) {
+    if (!draft) return "";
+
+    return JSON.stringify([
+      draft.customerId,
+      ...NAME_TYPES.map(
+        ([type]) =>
+          draft.names[type]
+          || ""
+      ),
+      draft.sourceType,
+      draft.sourceDetail,
+    ]);
+  }
+
+  function metaKey(
+    customerId,
+    data
+  ) {
+    if (!data) return "";
+
+    return JSON.stringify([
+      customerId,
+      ...NAME_TYPES.map(
+        ([type]) =>
+          nameValue(
+            data,
+            type
+          )
+      ),
+      String(
+        data.acquisition_source
+          ?.source_type
+        || "unknown"
+      ),
+      String(
+        data.acquisition_source
+          ?.source_detail
+        || ""
+      ).trim(),
+    ]);
+  }
+
+  async function saveMetaDraft(
+    draft
+  ) {
+    if (!draft) return false;
+
+    const cached =
+      (
+        metaCustomerId
+          === draft.customerId
+        && meta
+      )
+        ? meta
+        : (
+          metaCache.get(
+            draft.customerId
+          )
+          || null
+        );
+
+    if (
+      cached
+      && metaKey(
+        draft.customerId,
+        cached
+      ) === draftKey(draft)
+    ) {
+      return false;
     }
+
+    const current =
+      currentCustomerId()
+      === draft.customerId;
+
+    const message =
+      current
+        ? document.getElementById(
+            "nextCustomerProfileMetaMessage"
+          )
+        : null;
 
     if (message) {
-      message.textContent = "検証DBへ保存しています…";
-      message.classList.remove("is-error");
+      message.textContent =
+        "自動保存中…";
+
+      message.classList.remove(
+        "is-error"
+      );
     }
 
-    try {
-      const data = await requestJson(META_API, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          id: customerId,
-          names,
-          acquisition_source: {
-            source_type: sourceType,
-            source_detail: sourceDetail,
+    const data =
+      await requestJson(
+        META_API,
+        {
+          method:"PATCH",
+          headers:{
+            "Content-Type":
+              "application/json",
           },
-        }),
-      });
+          body:JSON.stringify({
+            id:draft.customerId,
+            names:
+              draft.names,
+            acquisition_source:{
+              source_type:
+                draft.sourceType,
+              source_detail:
+                draft.sourceDetail,
+            },
+          }),
+        }
+      );
 
-      meta = data.customer || null;
-      metaCustomerId = customerId;
+    const next =
+      data.customer
+      || null;
+
+    if (next) {
+      metaCache.set(
+        draft.customerId,
+        next
+      );
+    }
+
+    if (
+      currentCustomerId()
+      === draft.customerId
+    ) {
+      meta =
+        next;
+
+      metaCustomerId =
+        draft.customerId;
+
       renderSummary();
-      renderEditor();
-      updateVisitNames(meta);
 
-      const editorHost = document.querySelector("[data-next-profile-meta-editor]");
-      if (editorHost) editorHost.dataset.renderedCustomerId = String(customerId);
+      updateVisitNames(
+        meta
+      );
 
-      const nextMessage = document.getElementById("nextCustomerProfileMetaMessage");
-      if (nextMessage) nextMessage.textContent = "名義・初回流入元を保存しました。";
+      const nextMessage =
+        document.getElementById(
+          "nextCustomerProfileMetaMessage"
+        );
 
-    } catch (error) {
-      if (message) {
-        message.textContent = error.message || "名義・初回流入元を保存できませんでした。";
-        message.classList.add("is-error");
-      }
-    } finally {
-      const nextButton = document.querySelector("[data-next-profile-meta-save]");
-      if (nextButton) {
-        nextButton.disabled = false;
-        nextButton.textContent = "名義・初回流入元を保存";
+      if (nextMessage) {
+        nextMessage.textContent =
+          "✓ 保存済み";
       }
     }
+
+    return true;
+  }
+
+  function queueMetaAutosave(
+    delay = AUTOSAVE_DELAY
+  ) {
+    const draft =
+      captureMetaDraft();
+
+    if (!draft) return;
+
+    pendingMetaDraft =
+      draft;
+
+    if (metaAutosaveTimer) {
+      window.clearTimeout(
+        metaAutosaveTimer
+      );
+    }
+
+    metaAutosaveTimer =
+      window.setTimeout(
+        () => {
+          metaAutosaveTimer = 0;
+          void flushMetaAutosave();
+        },
+        delay
+      );
+  }
+
+  function flushMetaAutosave() {
+    if (metaAutosaveTimer) {
+      window.clearTimeout(
+        metaAutosaveTimer
+      );
+
+      metaAutosaveTimer = 0;
+    }
+
+    const draft =
+      pendingMetaDraft;
+
+    pendingMetaDraft =
+      null;
+
+    if (!draft) {
+      return metaSaveChain;
+    }
+
+    metaSaveChain =
+      metaSaveChain
+        .catch(() => {})
+        .then(
+          () =>
+            saveMetaDraft(
+              draft
+            )
+        )
+        .catch(error => {
+          console.error(
+            "Customer meta autosave failed:",
+            error
+          );
+
+          if (
+            currentCustomerId()
+            === draft.customerId
+          ) {
+            const message =
+              document.getElementById(
+                "nextCustomerProfileMetaMessage"
+              );
+
+            if (message) {
+              message.textContent =
+                error.message
+                || "自動保存できませんでした。";
+
+              message.classList.add(
+                "is-error"
+              );
+            }
+          }
+        });
+
+    return metaSaveChain;
   }
 
   document.addEventListener("click", event => {
@@ -456,16 +696,134 @@
       return;
     }
 
-    if (event.target.closest("[data-next-profile-meta-save]")) {
-      event.preventDefault();
-      void saveMeta();
-    }
   });
+
+  function isMetaAutosaveTarget(
+    target
+  ) {
+    return Boolean(
+      target instanceof Element
+      && target.matches(
+        "[data-ncpf-name],"
+        + "#nextCustomerAcquisitionSource,"
+        + "#nextCustomerAcquisitionDetail"
+      )
+    );
+  }
+
+  document.addEventListener(
+    "input",
+    event => {
+      if (
+        event.isComposing
+        || !isMetaAutosaveTarget(
+          event.target
+        )
+      ) {
+        return;
+      }
+
+      queueMetaAutosave(
+        AUTOSAVE_DELAY
+      );
+    }
+  );
+
+  document.addEventListener(
+    "compositionend",
+    event => {
+      if (
+        isMetaAutosaveTarget(
+          event.target
+        )
+      ) {
+        queueMetaAutosave(
+          AUTOSAVE_DELAY
+        );
+      }
+    }
+  );
+
+  document.addEventListener(
+    "change",
+    event => {
+      if (
+        isMetaAutosaveTarget(
+          event.target
+        )
+      ) {
+        queueMetaAutosave(0);
+      }
+    }
+  );
+
+  document.addEventListener(
+    "focusout",
+    event => {
+      if (
+        isMetaAutosaveTarget(
+          event.target
+        )
+      ) {
+        queueMetaAutosave(0);
+        void flushMetaAutosave();
+      }
+    }
+  );
+
+  document.addEventListener(
+    "pointerdown",
+    event => {
+      if (
+        !drawer.classList.contains(
+          "is-open"
+        )
+      ) {
+        return;
+      }
+
+      const target =
+        event.target;
+
+      const closeRequest =
+        target instanceof Element
+        && Boolean(
+          target.closest(
+            "[data-next-schedule-detail-close]"
+          )
+          || target.id
+            === "nextScheduleDetailBackdrop"
+        );
+
+      const outsideDrawer =
+        target instanceof Node
+        && !drawer.contains(target);
+
+      if (
+        closeRequest
+        || outsideDrawer
+      ) {
+        void flushMetaAutosave();
+      }
+    },
+    true
+  );
+
+  document.addEventListener(
+    "keydown",
+    event => {
+      if (event.key === "Escape") {
+        void flushMetaAutosave();
+      }
+    }
+  );
 
   window.KohakuWorkNextCustomerProfileFull = {
     verificationReadEnabled: true,
     verificationWriteEnabled: true,
     productionWriteEnabled: false,
     lazyMountEnabled: true,
+    autosaveEnabled: true,
+    flushAutosave: flushMetaAutosave,
   };
 })();
