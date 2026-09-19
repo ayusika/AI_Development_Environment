@@ -831,3 +831,61 @@ body.next-schedule-detail-open{overflow:hidden;}
     cursor:zoom-out;
   }
 }
+
+/* =========================================================
+   KOHaku WORK NEXT / MOBILE HORIZONTAL GAP FIX V2
+
+   iOS Safari can keep a transformed fixed 100vw drawer in
+   the horizontal visual-overflow area even after it closes.
+   On mobile, remove the closed drawer from layout entirely.
+========================================================= */
+
+@media(max-width:760px){
+  html:has(
+    #view-schedule:not([hidden])
+  ),
+  body:has(
+    #view-schedule:not([hidden])
+  ){
+    width:100%;
+    max-width:100%;
+    overflow-x:clip;
+  }
+
+  body:has(
+    #view-schedule:not([hidden])
+  )
+  .next-app,
+  body:has(
+    #view-schedule:not([hidden])
+  )
+  .next-app-main,
+  body:has(
+    #view-schedule:not([hidden])
+  )
+  #view-schedule{
+    min-width:0;
+    max-width:100%;
+  }
+
+  body:has(
+    #view-schedule:not([hidden])
+  )
+  .next-schedule-calendar-shell{
+    box-sizing:border-box;
+    width:100%;
+    max-width:100%;
+  }
+}
+
+@media(max-width:560px){
+  .next-schedule-detail-drawer:not(.is-open){
+    display:none;
+    transform:none;
+  }
+
+  .next-schedule-detail-drawer.is-open{
+    display:flex;
+    transform:none;
+  }
+}

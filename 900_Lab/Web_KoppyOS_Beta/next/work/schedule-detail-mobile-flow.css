@@ -1130,23 +1130,42 @@
    KOHaku WORK NEXT / CUSTOMER PANEL INSTANT TOGGLE V1
 ========================================================= */
 
-.next-customer-panel-close{
+.next-customer-panel-actions{
+  position:relative;
+}
+
+.next-customer-panel-actions:has(
+  > .next-customer-panel-close:not([hidden])
+){
+  padding-top:28px;
+}
+
+.next-customer-panel-actions
+> .next-customer-panel-close{
+  position:absolute;
+  top:0;
+  right:0;
+
   box-sizing:border-box;
-  width:100%;
-  min-height:38px;
-  margin-top:10px;
-  padding:7px 10px;
+  width:calc((100% - 14px) / 3);
+  min-height:24px;
+  padding:4px 6px;
+
   border:1px solid rgba(255,255,255,.09);
-  border-radius:10px;
+  border-radius:8px;
+
   color:var(--wf-text-soft);
   background:rgba(255,255,255,.035);
+
   font:inherit;
-  font-size:8px;
+  font-size:7px;
   font-weight:900;
+
   cursor:pointer;
   touch-action:manipulation;
 }
 
-.next-customer-panel-close:active{
+.next-customer-panel-actions
+> .next-customer-panel-close:active{
   background:rgba(255,255,255,.065);
 }

@@ -1402,8 +1402,18 @@
   ) {
     if (!panel) return;
 
+    panel.querySelector(
+      ":scope > [data-next-customer-panel-close]"
+    )?.remove();
+  }
+
+  function ensureCustomerActionsClose(
+    actions
+  ) {
+    if (!actions) return null;
+
     let close =
-      panel.querySelector(
+      actions.querySelector(
         ":scope > [data-next-customer-panel-close]"
       );
 
@@ -1425,14 +1435,15 @@
 
       close.textContent =
         "閉じる";
+
+      close.hidden = true;
+
+      actions.prepend(
+        close
+      );
     }
 
-    if (
-      panel.lastElementChild
-      !== close
-    ) {
-      panel.append(close);
-    }
+    return close;
   }
 
   function wrapCustomerPanel(
@@ -1529,6 +1540,16 @@
             : "false"
         );
       });
+
+    const close =
+      buttonRoot.querySelector(
+        "[data-next-customer-panel-close]"
+      );
+
+    if (close) {
+      close.hidden =
+        !openKey;
+    }
   }
 
   function toggleCustomerPanel(
@@ -1677,6 +1698,10 @@
         </button>
       `;
     }
+
+    ensureCustomerActionsClose(
+      actions
+    );
 
     if (
       actions
@@ -3249,24 +3274,27 @@
       if (customerPanelClose) {
         event.preventDefault();
 
-        const panel =
+        const card =
           customerPanelClose.closest(
-            "[data-next-customer-panel]"
+            ".next-notes-write-card.is-customer-scope"
           );
 
         const editor =
-          panel?.closest(
+          card?.querySelector(
             "#nextCustomerProfileEditor"
           );
 
-        if (
-          !panel
-          || !editor
-        ) {
+        if (!editor) {
           return;
         }
 
-        panel.hidden = true;
+        editor
+          .querySelectorAll(
+            "[data-next-customer-panel]"
+          )
+          .forEach(panel => {
+            panel.hidden = true;
+          });
 
         syncCustomerPanelButtons(
           editor
