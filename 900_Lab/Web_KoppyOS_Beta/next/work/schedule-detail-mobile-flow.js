@@ -1784,6 +1784,102 @@
     );
   }
 
+  const SERVICE_PLACE_HISTORY_START =
+    "2026-09-19";
+
+  const DIARY_HISTORY_START =
+    "2026-08-24";
+
+  function pastVisitBusinessDate(value) {
+    return String(value || "")
+      .slice(0, 10);
+  }
+
+  function pastVisitServicePlace(visit) {
+    const value =
+      String(
+        visit?.service_place
+        || ""
+      ).trim();
+
+    const label = ({
+      hotel:"ホテル",
+      room:"ルーム",
+      home:"自宅",
+    })[value];
+
+    if (label) {
+      return {
+        label,
+        shortLabel:label,
+        isHistoricalGap:false,
+      };
+    }
+
+    const businessDate =
+      pastVisitBusinessDate(
+        visit?.started_at
+      );
+
+    if (
+      businessDate
+      && businessDate
+        < SERVICE_PLACE_HISTORY_START
+    ) {
+      return {
+        label:
+          "26.9.19より過去の予約のため履歴なし",
+        shortLabel:"履歴なし",
+        isHistoricalGap:true,
+      };
+    }
+
+    return {
+      label:"未登録",
+      shortLabel:"未登録",
+      isHistoricalGap:false,
+    };
+  }
+
+  function pastVisitDiaryText(visit) {
+    const diary =
+      String(
+        visit?.heaven_diary_body
+        || visit?.diary_body
+        || visit?.diary_note_body
+        || ""
+      ).trim();
+
+    if (diary) {
+      return {
+        text:diary,
+        isHistoricalGap:false,
+      };
+    }
+
+    const businessDate =
+      pastVisitBusinessDate(
+        visit?.started_at
+      );
+
+    if (
+      businessDate
+      && businessDate
+        < DIARY_HISTORY_START
+    ) {
+      return {
+        text:
+          "26.8.24より過去の予約のため履歴なし",
+        isHistoricalGap:true,
+      };
+    }
+
+    return {
+      text:"日記なし",
+      isHistoricalGap:false,
+    };
+  }
+
   function formatPastVisitDate(value) {
     const text =
       String(value || "");
@@ -1889,6 +1985,7 @@
           visit.started_at,
           visit.store_name,
           visit.course_minutes,
+          visit.service_place,
           visit.heaven_diary_body,
           visit.diary_body,
           visit.diary_note_body,
@@ -1909,12 +2006,14 @@
           visits
             .map(visit => {
               const diary =
-                String(
-                  visit.heaven_diary_body
-                  || visit.diary_body
-                  || visit.diary_note_body
-                  || ""
-                ).trim();
+                pastVisitDiaryText(
+                  visit
+                );
+
+              const servicePlace =
+                pastVisitServicePlace(
+                  visit
+                );
 
               const memos = [
                 [
@@ -1976,16 +2075,35 @@
                           ? ` / ${Number(visit.course_minutes)}分`
                           : ""
                       }
+                      / ${escapeHtml(
+                        servicePlace.shortLabel
+                      )}
                     </small>
                   </summary>
 
                   <div class="next-past-visit-grid">
+                    <article class="next-past-visit-place">
+                      <span>接客場所</span>
+                      <p class="${
+                        servicePlace.isHistoricalGap
+                          ? "next-past-visit-empty"
+                          : ""
+                      }">
+                        ${escapeHtml(
+                          servicePlace.label
+                        )}
+                      </p>
+                    </article>
+
                     <article>
                       <span>日記</span>
-                      <p>
+                      <p class="${
+                        diary.isHistoricalGap
+                          ? "next-past-visit-empty"
+                          : ""
+                      }">
                         ${escapeHtml(
-                          diary
-                          || "日記なし"
+                          diary.text
                         )}
                       </p>
                     </article>

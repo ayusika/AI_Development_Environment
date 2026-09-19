@@ -135,6 +135,7 @@ function nextCustomerProfileFetch(
                 v.started_at,
                 v.course_minutes,
                 v.customer_status,
+                v.service_place,
                 v.status,
                 v.customer_features,
                 v.conversation_notes,

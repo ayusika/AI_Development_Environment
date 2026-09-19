@@ -747,6 +747,10 @@
   background:rgba(255,255,255,.02);
 }
 
+.next-past-visit-place{
+  grid-column:1 / -1;
+}
+
 .next-past-visit-grid article > span{
   display:block;
   margin-bottom:5px;
