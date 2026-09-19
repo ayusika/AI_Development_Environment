@@ -20,6 +20,9 @@
 
   let loadToken = 0;
 
+  let schedulePinch =
+    null;
+
   function escapeHtml(value) {
     return String(value ?? "")
       .replaceAll("&", "&amp;")
@@ -700,6 +703,164 @@
       updateControls();
     }
   }
+
+  function pinchDistance(touches) {
+    if (!touches || touches.length < 2) return 0;
+
+    const dx =
+      touches[1].clientX
+      - touches[0].clientX;
+
+    const dy =
+      touches[1].clientY
+      - touches[0].clientY;
+
+    return Math.hypot(dx, dy);
+  }
+
+  document.addEventListener(
+    "touchstart",
+    event => {
+      if (event.touches.length !== 2) {
+        return;
+      }
+
+      const target =
+        event.target instanceof Element
+          ? event.target.closest(
+              "#nextScheduleShell"
+            )
+          : null;
+
+      if (!target) return;
+
+      const distance =
+        pinchDistance(
+          event.touches
+        );
+
+      if (!distance) return;
+
+      schedulePinch = {
+        startDistance:
+          distance,
+        startHeight:
+          state.hourHeight,
+      };
+
+      target.classList.add(
+        "is-pinching"
+      );
+    },
+    {
+      passive:true,
+    }
+  );
+
+  document.addEventListener(
+    "touchmove",
+    event => {
+      if (
+        !schedulePinch
+        || event.touches.length !== 2
+      ) {
+        return;
+      }
+
+      const distance =
+        pinchDistance(
+          event.touches
+        );
+
+      if (!distance) return;
+
+      event.preventDefault();
+
+      const scale =
+        distance
+        / schedulePinch.startDistance;
+
+      const raw =
+        schedulePinch.startHeight
+        * scale;
+
+      const stepped =
+        Math.round(
+          raw / ZOOM.step
+        ) * ZOOM.step;
+
+      const next =
+        Math.min(
+          ZOOM.max,
+          Math.max(
+            ZOOM.min,
+            stepped
+          )
+        );
+
+      if (
+        next === state.hourHeight
+      ) {
+        return;
+      }
+
+      state.hourHeight =
+        next;
+
+      if (state.loaded) {
+        render({
+          preserveScroll:true,
+        });
+      } else {
+        updateControls();
+      }
+    },
+    {
+      passive:false,
+    }
+  );
+
+  const finishSchedulePinch =
+    event => {
+      if (!schedulePinch) {
+        return;
+      }
+
+      if (
+        event.touches
+        && event.touches.length >= 2
+      ) {
+        return;
+      }
+
+      schedulePinch =
+        null;
+
+      document
+        .getElementById(
+          "nextScheduleShell"
+        )
+        ?.classList
+        .remove(
+          "is-pinching"
+        );
+    };
+
+  document.addEventListener(
+    "touchend",
+    finishSchedulePinch,
+    {
+      passive:true,
+    }
+  );
+
+  document.addEventListener(
+    "touchcancel",
+    finishSchedulePinch,
+    {
+      passive:true,
+    }
+  );
 
   document.addEventListener("click", event => {
     const move = event.target.closest("[data-next-timeline-move]");

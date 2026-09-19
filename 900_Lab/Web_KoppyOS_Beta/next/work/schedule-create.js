@@ -368,7 +368,18 @@ function openAt(date,time,storeId=null){
   open({date,time,storeId});
 }
 function close(){document.getElementById("nextCreateModal")?.classList.remove("is-open");document.body.style.overflow=""}
-function mount(){if(document.querySelector("[data-ncr-open]"))return;const h=V.querySelector(".work-next-heading");if(!h)return;const b=document.createElement("button");b.type="button";b.className="ncr-launch";b.dataset.ncrOpen="1";b.textContent="＋ 新規予約を作成";h.after(b)}
+function mount(){
+  if(document.querySelector("[data-ncr-open]"))return;
+  const h=V.querySelector(".work-next-heading");
+  if(!h)return;
+  const b=document.createElement("button");
+  b.type="button";
+  b.className="ncr-launch";
+  b.dataset.ncrOpen="1";
+  b.textContent="＋ 新規";
+  const status=h.querySelector(".next-schedule-read-status");
+  h.insertBefore(b,status||null);
+}
 document.addEventListener("click",e=>{if(e.target.closest("[data-ncr-open]"))return open();if(e.target.closest("[data-ncr-close]"))return close();const c=e.target.closest("[data-ncr-customer]");if(c){customerId=+c.dataset.ncrCustomer;document.querySelectorAll("[data-ncr-customer]").forEach(x=>x.classList.toggle("is-selected",x===c))}});
 document.addEventListener("change",e=>{if(!e.target.closest("#nextCreateModal"))return;if(e.target.matches("#ncrStatus"))return customerUI();if(e.target.matches("#ncrStore,#ncrDate,#ncrTime"))return void loadMaster();if(e.target.matches("#ncrCourseSelect")){document.getElementById("ncrCustomWrap").hidden=e.target.value!=="custom"}if(e.target.matches("[data-ncr-ex]")){const q=document.querySelector(`[data-ncr-qty="${e.target.value}"]`);if(q)q.disabled=!e.target.checked}});
 document.addEventListener("input",e=>{if(!e.target.matches("#ncrSearch"))return;clearTimeout(timer);timer=setTimeout(()=>search(e.target.value),120)});

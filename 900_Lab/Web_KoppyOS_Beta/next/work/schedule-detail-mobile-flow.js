@@ -1397,6 +1397,44 @@
     }
   }
 
+  function ensureCustomerPanelClose(
+    panel
+  ) {
+    if (!panel) return;
+
+    let close =
+      panel.querySelector(
+        ":scope > [data-next-customer-panel-close]"
+      );
+
+    if (!close) {
+      close =
+        document.createElement(
+          "button"
+        );
+
+      close.type =
+        "button";
+
+      close.className =
+        "next-customer-panel-close";
+
+      close.dataset
+        .nextCustomerPanelClose =
+        "true";
+
+      close.textContent =
+        "閉じる";
+    }
+
+    if (
+      panel.lastElementChild
+      !== close
+    ) {
+      panel.append(close);
+    }
+  }
+
   function wrapCustomerPanel(
     node,
     key
@@ -1409,6 +1447,10 @@
       );
 
     if (existing) {
+      ensureCustomerPanelClose(
+        existing
+      );
+
       return existing;
     }
 
@@ -1431,6 +1473,10 @@
     );
 
     panel.append(node);
+
+    ensureCustomerPanelClose(
+      panel
+    );
 
     return panel;
   }
@@ -1487,8 +1533,7 @@
 
   function toggleCustomerPanel(
     key,
-    forceOpen = false,
-    scroll = false
+    forceOpen = false
   ) {
     const editor =
       document.getElementById(
@@ -1521,18 +1566,6 @@
     syncCustomerPanelButtons(
       editor
     );
-
-    if (
-      opening
-      && scroll
-    ) {
-      window.setTimeout(() => {
-        target.scrollIntoView({
-          behavior:"smooth",
-          block:"center",
-        });
-      }, 30);
-    }
   }
 
   function mountCustomerPanels() {
@@ -1714,7 +1747,6 @@
 
       toggleCustomerPanel(
         requested,
-        true,
         true
       );
 
@@ -3209,6 +3241,40 @@
         return;
       }
 
+      const customerPanelClose =
+        event.target.closest(
+          "[data-next-customer-panel-close]"
+        );
+
+      if (customerPanelClose) {
+        event.preventDefault();
+
+        const panel =
+          customerPanelClose.closest(
+            "[data-next-customer-panel]"
+          );
+
+        const editor =
+          panel?.closest(
+            "#nextCustomerProfileEditor"
+          );
+
+        if (
+          !panel
+          || !editor
+        ) {
+          return;
+        }
+
+        panel.hidden = true;
+
+        syncCustomerPanelButtons(
+          editor
+        );
+
+        return;
+      }
+
       const customerPanelToggle =
         event.target.closest(
           "[data-next-customer-panel-toggle]"
@@ -3328,7 +3394,6 @@
 
             toggleCustomerPanel(
               "features",
-              true,
               true
             );
           })
@@ -3337,11 +3402,6 @@
               "Customer feature shortcut load failed:",
               error
             );
-
-            editor.scrollIntoView({
-              behavior:"smooth",
-              block:"center",
-            });
           });
 
         return;

@@ -1125,3 +1125,28 @@
     font-size:7px;
   }
 }
+
+/* =========================================================
+   KOHaku WORK NEXT / CUSTOMER PANEL INSTANT TOGGLE V1
+========================================================= */
+
+.next-customer-panel-close{
+  box-sizing:border-box;
+  width:100%;
+  min-height:38px;
+  margin-top:10px;
+  padding:7px 10px;
+  border:1px solid rgba(255,255,255,.09);
+  border-radius:10px;
+  color:var(--wf-text-soft);
+  background:rgba(255,255,255,.035);
+  font:inherit;
+  font-size:8px;
+  font-weight:900;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+
+.next-customer-panel-close:active{
+  background:rgba(255,255,255,.065);
+}
