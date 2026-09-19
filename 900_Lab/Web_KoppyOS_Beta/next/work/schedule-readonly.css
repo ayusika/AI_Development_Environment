@@ -889,3 +889,80 @@ body.next-schedule-detail-open{overflow:hidden;}
     transform:none;
   }
 }
+
+/* =========================================================
+   KOHaku WORK NEXT / MOBILE SCHEDULE DENSITY V3
+========================================================= */
+
+@media(max-width:760px){
+  .next-schedule-grid[data-view="week"]{
+    min-width:620px;
+  }
+
+  .next-schedule-grid[data-view="two-weeks"]{
+    min-width:1200px;
+  }
+
+  .next-schedule-grid-header{
+    min-height:36px;
+  }
+
+  .next-schedule-day-header{
+    padding:3px 2px;
+    font-size:9px;
+  }
+
+  .next-schedule-day-header.is-today::before{
+    top:2px;
+    right:2px;
+    font-size:5px;
+  }
+
+  .next-schedule-event{
+    min-height:24px;
+    padding:9px 4px 5px;
+    border-radius:8px;
+  }
+
+  .next-schedule-event-time{
+    font-size:9px;
+  }
+
+  .next-schedule-event-course,
+  .next-schedule-event-kind{
+    padding:1px 3px;
+    font-size:7px;
+  }
+
+  .next-schedule-event-main{
+    margin-top:3px;
+    font-size:8.5px;
+    line-height:1.25;
+  }
+
+  .next-schedule-event-options{
+    margin-top:2px;
+    font-size:7px;
+  }
+
+  .next-schedule-event-progress{
+    gap:3px;
+    margin-top:3px;
+    font-size:8px;
+  }
+
+  .next-schedule-shift-band{
+    left:2px;
+    right:2px;
+    padding:4px;
+    border-radius:7px;
+  }
+
+  .next-schedule-shift-band span{
+    font-size:7px;
+  }
+
+  .next-schedule-shift-band strong{
+    font-size:8px;
+  }
+}

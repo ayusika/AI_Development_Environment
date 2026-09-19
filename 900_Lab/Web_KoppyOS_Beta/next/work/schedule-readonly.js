@@ -5,8 +5,18 @@
   const SHIFTS_API = "/api/next/v1/shifts.php";
   const START_HOUR = 11;
   const END_HOUR = 27;
-  const BASE_HOUR_HEIGHT = 96;
-  const ZOOM = { min: 54, max: 150, step: 6 };
+  const BASE_HOUR_HEIGHT =
+    window.matchMedia(
+      "(max-width: 760px)"
+    ).matches
+      ? 72
+      : 96;
+
+  const ZOOM = {
+    min:54,
+    max:150,
+    step:6,
+  };
 
   const state = {
     view: "two-weeks",
