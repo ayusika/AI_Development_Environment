@@ -11,10 +11,25 @@
   const DRAG_THRESHOLD = 6;
   const RESTORE_MAX_AGE = 15000;
 
+  const CONNECTIVITY_CHECK_INTERVAL =
+    30000;
+
+  const CONNECTIVITY_CHECK_TIMEOUT =
+    3500;
+
   let button = null;
   let drag = null;
   let suppressClick = false;
   let busy = false;
+
+  let connectivityState =
+    "checking";
+
+  let connectivityTimer =
+    null;
+
+  let connectivityController =
+    null;
 
   const stateProviders =
     new Map();
@@ -499,6 +514,257 @@
   };
 
   /* -------------------------------------------------------
+     CONNECTIVITY STATUS
+
+     This is more useful than navigator.onLine alone:
+     - browser online/offline events update immediately
+     - active HEAD probe confirms this Koppy World server
+     - visible pages re-check every 30 seconds
+     - returning to the tab triggers an immediate check
+  ------------------------------------------------------- */
+
+  const connectivityLabels = {
+    checking: {
+      title:
+        "通信確認中… / 強制更新 / ドラッグで移動",
+
+      aria:
+        "通信確認中。この画面を強制更新"
+    },
+
+    online: {
+      title:
+        "通信OK / 強制更新 / ドラッグで移動",
+
+      aria:
+        "通信OK。この画面を強制更新"
+    },
+
+    offline: {
+      title:
+        "通信できません / 強制更新 / ドラッグで移動",
+
+      aria:
+        "通信できません。この画面を強制更新"
+    }
+  };
+
+  const setConnectivityState = (
+    state
+  ) => {
+    const normalized =
+      Object.prototype
+        .hasOwnProperty.call(
+          connectivityLabels,
+          state
+        )
+        ? state
+        : "checking";
+
+    connectivityState =
+      normalized;
+
+    if (!button) {
+      return;
+    }
+
+    button.dataset.connection =
+      normalized;
+
+    if (busy) {
+      return;
+    }
+
+    const label =
+      connectivityLabels[
+        normalized
+      ];
+
+    button.setAttribute(
+      "title",
+      label.title
+    );
+
+    button.setAttribute(
+      "aria-label",
+      label.aria
+    );
+  };
+
+  const connectivityProbeUrl =
+    () => {
+      const url =
+        new URL(
+          "/assets/js/world-frame-utility.js",
+          window.location.origin
+        );
+
+      url.searchParams.set(
+        "_wf_connection_check",
+        String(Date.now())
+      );
+
+      return url.href;
+    };
+
+  const checkConnectivity =
+    async () => {
+      if (busy) {
+        return connectivityState;
+      }
+
+      if (!navigator.onLine) {
+        connectivityController
+          ?.abort();
+
+        setConnectivityState(
+          "offline"
+        );
+
+        return "offline";
+      }
+
+      connectivityController
+        ?.abort();
+
+      const controller =
+        new AbortController();
+
+      connectivityController =
+        controller;
+
+      setConnectivityState(
+        "checking"
+      );
+
+      const timeout =
+        window.setTimeout(
+          () => {
+            controller.abort();
+          },
+          CONNECTIVITY_CHECK_TIMEOUT
+        );
+
+      try {
+        const response =
+          await fetch(
+            connectivityProbeUrl(),
+            {
+              method:"HEAD",
+              cache:"no-store",
+              credentials:"same-origin",
+              redirect:"follow",
+              signal:
+                controller.signal
+            }
+          );
+
+        if (!response.ok) {
+          throw new Error(
+            `Connectivity probe failed: ${response.status}`
+          );
+        }
+
+        if (
+          connectivityController
+          === controller
+        ) {
+          setConnectivityState(
+            "online"
+          );
+        }
+
+        return "online";
+      } catch {
+        if (
+          connectivityController
+          === controller
+        ) {
+          setConnectivityState(
+            "offline"
+          );
+        }
+
+        return "offline";
+      } finally {
+        window.clearTimeout(
+          timeout
+        );
+
+        if (
+          connectivityController
+          === controller
+        ) {
+          connectivityController =
+            null;
+        }
+      }
+    };
+
+  const startConnectivityMonitor =
+    () => {
+      window.clearInterval(
+        connectivityTimer
+      );
+
+      connectivityTimer =
+        window.setInterval(
+          () => {
+            if (
+              document.hidden
+              || busy
+            ) {
+              return;
+            }
+
+            void checkConnectivity();
+          },
+          CONNECTIVITY_CHECK_INTERVAL
+        );
+
+      window.addEventListener(
+        "online",
+        () => {
+          void checkConnectivity();
+        }
+      );
+
+      window.addEventListener(
+        "offline",
+        () => {
+          connectivityController
+            ?.abort();
+
+          setConnectivityState(
+            "offline"
+          );
+        }
+      );
+
+      document.addEventListener(
+        "visibilitychange",
+        () => {
+          if (
+            !document.hidden
+            && !busy
+          ) {
+            void checkConnectivity();
+          }
+        }
+      );
+
+      void checkConnectivity();
+    };
+
+  window.KoppyWorldConnectivity = {
+    check:
+      checkConnectivity,
+
+    getState:
+      () => connectivityState
+  };
+
+  /* -------------------------------------------------------
      HARD-RELOAD-LIKE REFRESH
 
      Browser JavaScript cannot invoke the browser's native
@@ -912,6 +1178,12 @@
     document.body.appendChild(
       button
     );
+
+    setConnectivityState(
+      "checking"
+    );
+
+    startConnectivityMonitor();
 
     button.addEventListener(
       "pointerdown",
