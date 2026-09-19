@@ -734,7 +734,7 @@ body.next-schedule-detail-open{overflow:hidden;}
   }
 
   .work-next-schedule-view{
-    --next-schedule-time-width:42px;
+    --next-schedule-time-width:30px;
     width:100%;
     margin-left:0;
     transform:none;
@@ -819,8 +819,8 @@ body.next-schedule-detail-open{overflow:hidden;}
   }
 
   .next-schedule-time-label{
-    padding-right:4px;
-    font-size:8px;
+    padding-right:2px;
+    font-size:7px;
   }
 
   #nextScheduleShell{
