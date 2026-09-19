@@ -3153,7 +3153,7 @@
         mountAreaInput();
 
         setWriteStatus(
-          "✓ AUTO SAVED / VERIFICATION",
+          "✓ AUTO SAVED / PRODUCTION",
           "saved"
         );
 
@@ -3164,7 +3164,7 @@
                 === statusVersion
             ) {
               setWriteStatus(
-                "VERIFICATION DB / EDIT READY",
+                "PRODUCTION DB / EDIT READY",
                 ""
               );
             }
@@ -3173,7 +3173,7 @@
         );
       } else if (relevant) {
         setWriteStatus(
-          "VERIFICATION DB / EDIT READY",
+          "PRODUCTION DB / EDIT READY",
           ""
         );
       }
@@ -3738,9 +3738,9 @@
   queueMount();
 
   window.KohakuWorkNextMobileFlow = {
-    verificationReadEnabled:true,
-    verificationWriteEnabled:true,
-    productionWriteEnabled:false,
+    verificationReadEnabled:false,
+    verificationWriteEnabled:false,
+    productionWriteEnabled:true,
     autosaveEnabled:true,
     flushAutosaves,
   };

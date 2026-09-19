@@ -173,6 +173,6 @@
 
   window.KohakuWorkNextScheduleProgressJump = {
     enabled: true,
-    productionWriteEnabled: false,
+    productionWriteEnabled: true,
   };
 })();

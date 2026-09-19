@@ -273,7 +273,7 @@
         <div class="next-notes-write-head">
           <div>
             <span class="next-notes-write-kicker">
-              THIS RESERVATION / VERIFICATION
+              THIS RESERVATION / PRODUCTION
             </span>
 
             <strong>
@@ -363,7 +363,7 @@
               class="next-notes-write-save"
               data-next-visit-notes-save
             >
-              検証DBへ保存
+              本番DBへ保存
             </button>
           </div>
         </div>
@@ -373,7 +373,7 @@
         <div class="next-notes-write-head">
           <div>
             <span class="next-notes-write-kicker">
-              CUSTOMER COMMON / VERIFICATION
+              CUSTOMER COMMON / PRODUCTION
             </span>
 
             <strong>
@@ -619,7 +619,7 @@
 
     setMessage(
       "nextVisitNotesMessage",
-      "検証DBへ保存しています…"
+      "本番DBへ保存しています…"
     );
 
     try {
@@ -730,7 +730,7 @@
       if (button) {
         button.disabled = false;
         button.textContent =
-          "検証DBへ保存";
+          "本番DBへ保存";
       }
     }
   }

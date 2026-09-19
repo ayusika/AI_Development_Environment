@@ -38,7 +38,7 @@
       || `予約 #${visitId}`;
 
     const confirmed = window.confirm(
-      `${label} を検証DBから削除する？\n\nこの操作は予約そのものを削除します。`
+      `${label} を本番DBから削除する？\n\nこの操作は予約そのものを削除します。`
     );
 
     if (!confirmed) return;
@@ -98,7 +98,7 @@
       });
 
       window.alert(
-        `予約 #${visitId} を検証DBから削除しました。`
+        `予約 #${visitId} を本番DBから削除しました。`
       );
 
     } catch (error) {
@@ -124,7 +124,7 @@
   mountDeleteButton();
 
   window.KohakuWorkNextReservationDelete = {
-    verificationWriteEnabled:true,
-    productionWriteEnabled:false,
+    verificationWriteEnabled:false,
+    productionWriteEnabled:true,
   };
 })();

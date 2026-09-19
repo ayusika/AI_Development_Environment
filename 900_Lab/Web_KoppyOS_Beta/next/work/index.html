@@ -104,7 +104,7 @@
 
             <div class="work-next-safety">
               <strong>SAFE BUILD</strong>
-              <span>PRODUCTION READ ON / WRITE OFF</span>
+              <span>PRODUCTION READ / WRITE</span>
             </div>
           </header>
 
@@ -683,8 +683,8 @@
           </div>
 
           <p class="next-schedule-read-note">
-            検証DB /api/next/v1 を使用。
-            予約作成・編集・削除・時間軸操作・変更履歴・キャンセル・顧客照合・顧客プロフィールを検証DBで有効化。
+            本番DB /api/next/v1 を使用。
+            予約作成・編集・削除・時間軸操作・変更履歴・キャンセル・顧客照合・顧客プロフィールを本番DBで有効化。
           </p>
         </section>
         <!-- WRITER:NEXT_WORK_SCHEDULE_TIME_AXIS:END -->
@@ -704,7 +704,7 @@
         >
           <header class="next-schedule-detail-header">
             <div>
-              <p class="wf-eyebrow">RESERVATION DETAIL / VERIFICATION</p>
+              <p class="wf-eyebrow">RESERVATION DETAIL / PRODUCTION</p>
               <h2 id="nextScheduleDetailTitle">予約詳細</h2>
             </div>
 
@@ -726,10 +726,10 @@
           <footer class="next-schedule-detail-footer">
             <div class="next-schedule-detail-footer-copy">
               <span id="nextScheduleWriteStatus">
-                VERIFICATION DB / EDIT READY
+                PRODUCTION DB / EDIT READY
               </span>
               <small>
-                編集内容は検証DBだけに保存。本番DBは変更しません。
+                編集内容は本番DBへ保存されます。内容を確認して操作してください。
               </small>
             </div>
 

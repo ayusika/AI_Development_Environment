@@ -45,7 +45,7 @@ try {
 
     if ($integrity !== 'ok') {
         throw new RuntimeException(
-            'Verification database integrity check failed.'
+            'Production database integrity check failed.'
         );
     }
 
@@ -79,8 +79,8 @@ try {
             'success' => true,
             'database_context' =>
                 koppyDatabaseContext(),
-            'production' => false,
-            'verification' => true,
+            'production' => true,
+            'verification' => false,
             'integrity' => $integrity,
             'visit_count' => $visitCount,
             'store_count' => $storeCount,
@@ -98,9 +98,9 @@ try {
         [
             'success' => false,
             'database_context' =>
-                'verification',
-            'production' => false,
-            'verification' => true,
+                'production',
+            'production' => true,
+            'verification' => false,
             'error' => $error->getMessage(),
         ],
         JSON_UNESCAPED_UNICODE

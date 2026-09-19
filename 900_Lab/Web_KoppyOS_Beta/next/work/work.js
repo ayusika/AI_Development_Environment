@@ -1654,7 +1654,7 @@
     apiConnected: false,
     productionReadEnabled: true,
     verificationDatabase: false,
-    productionWriteEnabled: false,
+    productionWriteEnabled: true,
   };
 
   void loadHomeReadOnly();

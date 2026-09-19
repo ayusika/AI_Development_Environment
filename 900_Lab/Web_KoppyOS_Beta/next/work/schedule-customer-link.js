@@ -254,7 +254,7 @@ async function link(){
   const button=document.querySelector("[data-ncil-link]");
   const message=document.getElementById("ncilMessage");
   if(button){button.disabled=true;button.textContent=beforeId?"付け替え中…":"紐付け中…";}
-  if(message)message.textContent="検証DBへ保存しています…";
+  if(message)message.textContent="本番DBへ保存しています…";
 
   try{
     const res=await fetch(SCHEDULE,{
@@ -399,8 +399,8 @@ new MutationObserver(()=>{
 mount();
 
 window.KohakuWorkNextCustomerIdentityLink={
-  verificationReadEnabled:true,
-  verificationWriteEnabled:true,
-  productionWriteEnabled:false,
+  verificationReadEnabled:false,
+  verificationWriteEnabled:false,
+  productionWriteEnabled:true,
 };
 })();

@@ -28,7 +28,7 @@
       <section class="next-sales-panel" data-next-sales-panel>
         <div class="next-sales-panel-head">
           <div>
-            <p class="next-sales-kicker">SALES PREVIEW / VERIFICATION DB</p>
+            <p class="next-sales-kicker">SALES / PRODUCTION DB</p>
             <h3>売上確認</h3>
           </div>
           <span class="next-sales-state" data-next-sales-state>READING</span>
@@ -85,7 +85,7 @@
         </div>
 
         <p class="next-sales-message" data-next-sales-message hidden></p>
-        <p class="next-sales-safety">この売上操作は検証DBだけに保存します。本番DB WRITEは無効です。</p>
+        <p class="next-sales-safety">この売上操作は本番DBへ保存します。確定内容を確認してから操作してください。</p>
       </section>
     `;
   }
@@ -417,8 +417,8 @@
 
   window.KohakuWorkNextScheduleSalesPanel = {
     open,
-    verificationReadEnabled: true,
-    verificationWriteEnabled: true,
-    productionWriteEnabled: false,
+    verificationReadEnabled: false,
+    verificationWriteEnabled: false,
+    productionWriteEnabled: true,
   };
 })();

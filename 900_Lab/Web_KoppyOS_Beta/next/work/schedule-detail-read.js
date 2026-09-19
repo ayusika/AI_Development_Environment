@@ -548,7 +548,7 @@
         )
       ) {
         status.textContent =
-          "VERIFICATION DB / EDIT READY";
+          "PRODUCTION DB / EDIT READY";
         status.dataset.state = "";
       }
 

@@ -855,9 +855,9 @@
   );
 
   window.KohakuWorkNextCustomerProfileFull = {
-    verificationReadEnabled: true,
-    verificationWriteEnabled: true,
-    productionWriteEnabled: false,
+    verificationReadEnabled: false,
+    verificationWriteEnabled: false,
+    productionWriteEnabled: true,
     lazyMountEnabled: true,
     autosaveEnabled: true,
     flushAutosave: flushMetaAutosave,

@@ -96,7 +96,7 @@
       window.setTimeout(() => {
         if (element.dataset.state === "saved") {
           element.textContent =
-            "VERIFICATION DB / EDIT READY";
+            "PRODUCTION DB / EDIT READY";
           element.dataset.state = "";
         }
       }, 2600);
@@ -383,7 +383,7 @@
       );
 
       setWriteStatus(
-        "SAVED / VERIFICATION ONLY",
+        "SAVED / PRODUCTION",
         "saved"
       );
 
@@ -430,12 +430,12 @@
         novalidate
       >
         <p class="next-schedule-detail-section-label">
-          VERIFICATION EDIT
+          PRODUCTION EDIT
         </p>
 
         <div class="next-schedule-edit-warning">
-          <strong>検証DBだけを書き換えます。</strong>
-          <span>本番DBには反映されません。</span>
+          <strong>本番DBを書き換えます。</strong>
+          <span>保存内容は本番へ即時反映されます。</span>
         </div>
 
         <div class="next-schedule-edit-grid">
@@ -549,7 +549,7 @@
             class="next-schedule-edit-save"
             id="nextScheduleEditSave"
           >
-            検証DBへ保存
+            本番DBへ保存
           </button>
         </div>
       </form>
@@ -666,7 +666,7 @@
       saveButton.textContent = "保存中…";
     }
 
-    editMessage("検証DBへ保存しています…");
+    editMessage("本番DBへ保存しています…");
     setWriteStatus("VERIFICATION DB / WRITING", "writing");
 
     try {
@@ -730,7 +730,7 @@
       );
 
       setWriteStatus(
-        "SAVED / VERIFICATION ONLY",
+        "SAVED / PRODUCTION",
         "saved"
       );
 
@@ -749,7 +749,7 @@
       if (saveButton) {
         saveButton.disabled = false;
         saveButton.textContent =
-          "検証DBへ保存";
+          "本番DBへ保存";
       }
     }
   }
@@ -793,7 +793,7 @@
         );
 
         setWriteStatus(
-          "VERIFICATION DB / EDIT READY",
+          "PRODUCTION DB / EDIT READY",
           ""
         );
       }
@@ -829,7 +829,7 @@
 
 
   /* =========================================================
-     VERIFICATION EDIT V2
+     PRODUCTION EDIT V2
      store / course / extension / option / customer status
   ========================================================= */
 
@@ -1269,12 +1269,12 @@
         novalidate
       >
         <p class="next-schedule-detail-section-label">
-          VERIFICATION EDIT
+          PRODUCTION EDIT
         </p>
 
         <div class="next-schedule-edit-warning">
-          <strong>検証DBだけを書き換えます。</strong>
-          <span>本番DBには反映されません。</span>
+          <strong>本番DBを書き換えます。</strong>
+          <span>保存内容は本番へ即時反映されます。</span>
         </div>
 
         ${
@@ -1960,7 +1960,7 @@
 
     if (save) {
       save.disabled = false;
-      save.textContent = "検証DBへ保存";
+      save.textContent = "本番DBへ保存";
     }
   }
 
@@ -2535,7 +2535,7 @@
       );
 
       setWriteStatus(
-        "SAVED / VERIFICATION ONLY",
+        "SAVED / PRODUCTION",
         "saved"
       );
 
@@ -2554,7 +2554,7 @@
       if (saveButton) {
         saveButton.disabled = false;
         saveButton.textContent =
-          "検証DBへ保存";
+          "本番DBへ保存";
       }
     }
   }
@@ -2761,7 +2761,7 @@
         if (save) {
           save.disabled = false;
           save.textContent =
-            "検証DBへ保存";
+            "本番DBへ保存";
         }
       });
     }
@@ -3785,7 +3785,7 @@
       );
 
       setWriteStatus(
-        "SAVED / VERIFICATION ONLY",
+        "SAVED / PRODUCTION",
         "saved"
       );
 
@@ -3804,7 +3804,7 @@
       if (saveButton) {
         saveButton.disabled = false;
         saveButton.textContent =
-          "検証DBへ保存";
+          "本番DBへ保存";
       }
     }
   }
@@ -3859,10 +3859,11 @@
   }
 
   const scheduleApi = api();
-  scheduleApi.verificationWriteEnabled = true;
+  scheduleApi.verificationWriteEnabled = false;
+  scheduleApi.productionWriteEnabled = true;
 
   setWriteStatus(
-    "VERIFICATION DB / EDIT READY",
+    "PRODUCTION DB / EDIT READY",
     ""
   );
 })();

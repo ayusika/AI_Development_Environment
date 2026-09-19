@@ -687,8 +687,8 @@
   restoreShellHeight();
 
   window.KohakuWorkNextScheduleInteractions = {
-    verificationWriteEnabled:true,
-    productionWriteEnabled:false,
+    verificationWriteEnabled:false,
+    productionWriteEnabled:true,
     heightStorageKey:HEIGHT_KEY,
   };
 })();

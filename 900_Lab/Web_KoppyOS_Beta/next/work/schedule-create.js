@@ -19,8 +19,8 @@ function modal(){
   if(document.getElementById("nextCreateModal"))return;
   const el=document.createElement("div");el.id="nextCreateModal";el.className="ncr-modal";
   el.innerHTML=`<div class="ncr-back" data-ncr-close></div><section class="ncr-panel">
-  <header><div><small>VERIFICATION / CREATE</small><h2>新規予約</h2></div><button type="button" data-ncr-close>×</button></header>
-  <p class="ncr-note">検証DBだけに保存します。本番DBには書き込みません。</p>
+  <header><div><small>PRODUCTION / CREATE</small><h2>新規予約</h2></div><button type="button" data-ncr-close>×</button></header>
+  <p class="ncr-note">本番DBへ保存します。作成内容を確認してから登録してください。</p>
   <form id="nextCreateForm">
   <div class="ncr-grid">
   <label>予約日<input id="ncrDate" type="date" required></label><label>開始時間<input id="ncrTime" type="time" required></label>
@@ -35,7 +35,7 @@ function modal(){
   <div class="ncr-grid gap"><label>その他OP名<input id="ncrCustomOption"></label><label>その他OP手取り<input id="ncrCustomAmount" type="number" min="0"></label></div></section>
   <section class="ncr-sec"><div class="ncr-grid"><label>チップ<input id="ncrTip" type="number" min="0" value="0"></label><label>調整分<input id="ncrAdjustment" type="number" value="0"></label></div></section>
   <p id="nextCreateMsg" class="ncr-msg"></p>
-  <div class="ncr-actions"><button type="button" data-ncr-close>キャンセル</button><button id="ncrSave" type="submit">検証DBへ予約作成</button></div>
+  <div class="ncr-actions"><button type="button" data-ncr-close>キャンセル</button><button id="ncrSave" type="submit">本番DBへ予約作成</button></div>
   </form></section>`;
   document.body.appendChild(el);
 }
@@ -332,7 +332,7 @@ async function save(){
     msg(e.message,true);
   }finally{
     b.disabled=false;
-    b.textContent="検証DBへ予約作成";
+    b.textContent="本番DBへ予約作成";
   }
 }
 function open(initial={}){
@@ -386,5 +386,5 @@ document.addEventListener("input",e=>{if(!e.target.matches("#ncrSearch"))return;
 document.addEventListener("submit",e=>{if(e.target.id!=="nextCreateForm")return;e.preventDefault();void save()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("nextCreateModal")?.classList.contains("is-open"))close()});
 mount();
-window.KohakuWorkNextReservationCreate={open,openAt,close,verificationWriteEnabled:true,productionWriteEnabled:false};
+window.KohakuWorkNextReservationCreate={open,openAt,close,verificationWriteEnabled:false,productionWriteEnabled:true};
 })();

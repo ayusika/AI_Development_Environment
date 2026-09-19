@@ -942,9 +942,9 @@
 
   window.KohakuWorkNextHeavenCreate = {
     open,
-    verificationReadEnabled: true,
-    verificationWriteEnabled: true,
-    productionWriteEnabled: false,
+    verificationReadEnabled: false,
+    verificationWriteEnabled: false,
+    productionWriteEnabled: true,
     bridgeCompatible: true,
   };
 })();

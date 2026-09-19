@@ -233,7 +233,7 @@
       <p class="next-schedule-detail-section-label">CUSTOMER CANCELLATION</p>
       <div class="next-schedule-cancel-warning">
         <strong>お客様キャンセルとして記録します。</strong>
-        <span>予約は削除せず、状態・取消日時・理由を検証DBに残します。</span>
+        <span>予約は削除せず、状態・取消日時・理由を本番DBに残します。</span>
       </div>
       <label class="next-schedule-cancel-field">
         <span>キャンセル理由</span>
@@ -280,10 +280,10 @@
       button.textContent = "記録中…";
     }
     if (message) {
-      message.textContent = "検証DBへ記録しています…";
+      message.textContent = "本番DBへ記録しています…";
       message.classList.remove("is-error");
     }
-    status("VERIFICATION DB / CANCELLING","writing");
+    status("PRODUCTION DB / CANCELLING","writing");
 
     try {
       const res = await fetch(API,{
@@ -315,8 +315,8 @@
 
       S.closeDetail();
       S.render({preserveScroll:true});
-      status("CUSTOMER CANCELLED / VERIFICATION","saved");
-      window.alert("お客様キャンセルとして検証DBに記録しました。");
+      status("CUSTOMER CANCELLED / PRODUCTION","saved");
+      window.alert("お客様キャンセルとして本番DBに記録しました。");
     } catch (error) {
       if (message) {
         message.textContent =
@@ -409,8 +409,8 @@
   mount();
 
   window.KohakuWorkNextScheduleHistoryCancel = {
-    verificationReadEnabled:true,
-    verificationWriteEnabled:true,
-    productionWriteEnabled:false,
+    verificationReadEnabled:false,
+    verificationWriteEnabled:false,
+    productionWriteEnabled:true,
   };
 })();
