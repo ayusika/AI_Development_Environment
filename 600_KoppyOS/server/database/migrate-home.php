@@ -69,7 +69,7 @@ try {
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_home_devices_room_sort ON home_devices(room_id, sort_order, id)');
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_home_connections_source_sort ON home_connections(source_device_id, sort_order, id)');
     $pdo->exec('CREATE INDEX IF NOT EXISTS idx_home_connections_target ON home_connections(target_device_id)');
-    // Snapshot of the two 020_Shichan/自宅 sources, 2026-09-13.
+    // Snapshot of the two 020_Shichan/自宅 sources, through 2026-09-19.
     // Unknown manufacturer/model/role remain NULL; recorded specs are notes.
     $seed = json_decode(<<<'JSON'
 {
@@ -241,7 +241,16 @@ try {
       "PC",
       "現役",
       0,
-      "2.7GHz Quad-Core Intel Core i7 / 16GB LPDDR3 / Intel Iris Plus Graphics 655 / 約500GB / コンピュータ名 Koppy-Worker-Pro。Koppy Worker用途"
+      "2.7GHz Quad-Core Intel Core i7 / 16GB LPDDR3 / Intel Iris Plus Graphics 655 / 約500GB / コンピュータ名 Koppy-Worker-Pro。Koppy Base Server用途"
+    ],
+    [
+      "gaming",
+      "sandisk-extreme-portable-ssd-v2-500gb",
+      "SanDisk Extreme Portable SSD V2",
+      "外付けSSD",
+      "保有",
+      0,
+      "SDSSDE61-500G-GH25 / 500GB / USB 3.2 Gen 2 / 読出最大1050MB/s / Koppy Base Server用StorageとしてProへ接続予定 / 物理接続未確認"
     ],
     [
       "gaming",

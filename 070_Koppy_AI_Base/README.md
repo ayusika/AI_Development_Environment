@@ -1,4 +1,4 @@
-# 07_Koppy_AI_Base
+# 070_Koppy_AI_Base
 
 ## 概要
 Koppy AI Base は、しいちゃん専用の AI 実行基盤・開発基盤・画像生成基盤をまとめて設計・管理するためのディレクトリです。
@@ -6,7 +6,7 @@ Koppy AI Base は、しいちゃん専用の AI 実行基盤・開発基盤・�
 このディレクトリでは、以下の4本柱を中心に管理します。
 
 - MacBook Air（Koppy本体 / 司令塔 / メインAI）
-- MacBook Pro 2018（Koppy Worker / Git / 自動処理 / 補助サーバー）
+- MacBook Pro 2018（Koppy Base Server / Web / API / DB / 自動処理 / 保存）
 - iPhone 18 Pro Max（ポケットKoppy / 音声入力 / 確認 / 通知）
 - Gaming PC（GPU工場 / 画像生成 / LoRA学習 / ComfyUI）
 
@@ -41,11 +41,14 @@ Koppy AI Base は、しいちゃん専用の AI 実行基盤・開発基盤・�
    - メイン作業環境
 
 2. **MacBook Pro 2018**
-   - Koppy Worker
+   - Koppy Base Server
+   - Web / API / DB
    - Git / GitHub / tmux
-   - PHP / ripgrep
-   - 自動処理
-   - 画面共有 / SSH / Worker運用
+   - PHP / SQLite / ripgrep
+   - 自動処理 / 監視 / バックアップ
+   - 画面共有 / SSH
+   - SanDisk Extreme Portable SSD V2 500GBを外付けServer Storageとして利用予定
+   - Qwen 7B / Aiderは実験用として休眠
 
 3. **iPhone 18 Pro Max**
    - Koppy Pocket
@@ -63,10 +66,31 @@ Koppy AI Base は、しいちゃん専用の AI 実行基盤・開発基盤・�
    - inpaint / ControlNet
 
 ## 優先方針
-- Air = 考える
-- Pro = 支える・実行する
+- Air = Koppy Command Center / メイン開発環境
+- Pro = Koppy Base Server / 常時稼働インフラ
 - iPhone = 呼ぶ・確認する
-- Gaming PC = 重いAI処理を回す
+- Gaming PC = 重いGPU AI処理を回す
+
+## 開発Executor 4本柱
+1. **Koppy → CMD**
+   - メインExecutor
+   - Koppyが設計・変更内容を判断し、AirのローカルCMD経由で実行・検証する
+
+2. **Codex**
+   - 大規模実装
+   - 複数ファイル
+   - 高度なコード変更
+
+3. **VS Code Agent**
+   - Local Workspace
+   - Terminal
+   - ローカル実環境を使う作業
+
+4. **Koppy World Writer**
+   - Deterministic / Safe Write
+   - GitHub正本への限定的・確定的変更
+
+MacBook Pro 2018は開発Executor 4本柱には含めず、Server / Infrastructureを担当する。
 
 ## 関連ファイル
 - `CURRENT_STATUS.md`

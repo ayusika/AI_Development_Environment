@@ -26,6 +26,7 @@ on:
           - migrate-home-desk-supports.php
           - migrate-home-desk-layout.php
           - migrate-home-desk-pekaro.php
+          - migrate-home-koppy-base-server.php
           - migrate-heaven-diaries.php
           - migrate-heaven-diary-drafts.php
           - migrate-heaven-diary-settings.php
