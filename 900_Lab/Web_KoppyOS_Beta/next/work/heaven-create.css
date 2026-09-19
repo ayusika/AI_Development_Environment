@@ -81,6 +81,13 @@
   font-size:9px;
 }
 
+.next-heaven-customer-options{
+  display:block;
+  margin-top:3px;
+  color:var(--wf-text-soft);
+  line-height:1.45;
+}
+
 .next-heaven-customer-store strong small{
   margin:0;
   color:var(--wf-text-dim);

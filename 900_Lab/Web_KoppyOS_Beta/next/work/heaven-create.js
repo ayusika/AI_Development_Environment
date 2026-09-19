@@ -309,6 +309,7 @@
 
     const customer = $("#nextHeavenCustomer");
     const meta = $("#nextHeavenMeta");
+    const options = $("#nextHeavenOptions");
     const store = $("#nextHeavenStore");
 
     if (customer) customer.textContent = customerLabel(visit);
@@ -323,6 +324,12 @@
         `${time}｜${Number(visit.course_minutes || 0)}分｜${statusLabel(
           visit.customer_status
         )}`;
+    }
+
+    if (options) {
+      const names = optionNames(visit);
+      options.textContent =
+        `OP: ${names.length ? names.join("・") : "なし"}`;
     }
 
     if (store) {
@@ -908,11 +915,6 @@
 
     if (event.target.closest("[data-nhc-generate]")) {
       void generateDiary();
-      return;
-    }
-
-    if (event.target.closest("[data-nhc-save-final]")) {
-      void saveFinal();
       return;
     }
 
