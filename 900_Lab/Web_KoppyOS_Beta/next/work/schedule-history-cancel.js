@@ -327,7 +327,7 @@
         button.disabled = false;
         button.textContent = "お客様キャンセルとして記録";
       }
-      status("CANCEL ERROR / VERIFICATION","error");
+      status("CANCEL ERROR / PRODUCTION","error");
     }
   }
 

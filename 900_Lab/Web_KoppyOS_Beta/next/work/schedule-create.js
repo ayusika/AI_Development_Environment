@@ -290,7 +290,7 @@ async function save(){
   const cn=document.getElementById("ncrCustomOption").value.trim(),car=document.getElementById("ncrCustomAmount").value.trim(),ca=car===""?null:Number(car);if(ca!==null&&(!Number.isSafeInteger(ca)||ca<0))throw Error("その他OP手取りを確認してね。");if(!cn&&ca!==null)throw Error("その他OP名も入力してね。");
   const p={store_id:store,started_at:`${date} ${time}`,booked_at:bd&&bt?`${bd} ${bt}`:null,course_minutes:minutes,store_course_id:courseId,customer_status:status,customer_id:(status==="repeat"||status==="other_store_repeat")?customerId:null,options,custom_option:cn,custom_option_amount:ca,extensions,tip_amount:intv("ncrTip",0,0),adjustment_amount:intv("ncrAdjustment",null,0)};
   if(status==="new"||status==="repeat_unknown_id"){p.new_customer_name=document.getElementById("ncrNewName")?.value.trim()||"";p.new_customer_kashikoi_name=document.getElementById("ncrKashikoi")?.value.trim()||""}
-  const b=document.getElementById("ncrSave");b.disabled=true;b.textContent="作成中…";msg("検証DBへ新規予約を作成しています…");
+  const b=document.getElementById("ncrSave");b.disabled=true;b.textContent="作成中…";msg("本番DBへ新規予約を作成しています…");
   try{
     const d=await req(API,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(p)});
     const created=d.visit||null;

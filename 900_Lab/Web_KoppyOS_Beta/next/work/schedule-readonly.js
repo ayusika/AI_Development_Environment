@@ -677,7 +677,7 @@
         : [];
       state.loaded = true;
 
-      status.textContent = "VERIFY DB";
+      status.textContent = "PRODUCTION DB";
       status.classList.remove("is-loading", "is-error");
       render();
 

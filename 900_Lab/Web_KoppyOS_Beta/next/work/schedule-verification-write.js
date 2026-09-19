@@ -315,7 +315,7 @@
     }
 
     setWriteStatus(
-      "VERIFICATION DB / WRITING",
+      "PRODUCTION DB / WRITING",
       "writing"
     );
 
@@ -400,7 +400,7 @@
       }
 
       setWriteStatus(
-        "WRITE ERROR / VERIFICATION",
+        "WRITE ERROR / PRODUCTION",
         "error"
       );
 
@@ -667,7 +667,7 @@
     }
 
     editMessage("本番DBへ保存しています…");
-    setWriteStatus("VERIFICATION DB / WRITING", "writing");
+    setWriteStatus("PRODUCTION DB / WRITING", "writing");
 
     try {
       const response =
@@ -742,7 +742,7 @@
       );
 
       setWriteStatus(
-        "WRITE ERROR / VERIFICATION",
+        "WRITE ERROR / PRODUCTION",
         "error"
       );
 
@@ -820,7 +820,7 @@
         );
 
         setWriteStatus(
-          "WRITE ERROR / VERIFICATION",
+          "WRITE ERROR / PRODUCTION",
           "error"
         );
       });
@@ -1373,7 +1373,7 @@
             class="next-schedule-v2-master-body"
           >
             <p class="next-schedule-v2-loading">
-              検証DBの料金マスタを読み込み中…
+              本番DBの料金マスタを読み込み中…
             </p>
           </div>
         </section>
@@ -2459,11 +2459,11 @@
     }
 
     editMessage(
-      "検証DBへ予約内容を保存しています…"
+      "本番DBへ予約内容を保存しています…"
     );
 
     setWriteStatus(
-      "VERIFICATION DB / WRITING",
+      "PRODUCTION DB / WRITING",
       "writing"
     );
 
@@ -2547,7 +2547,7 @@
       );
 
       setWriteStatus(
-        "WRITE ERROR / VERIFICATION",
+        "WRITE ERROR / PRODUCTION",
         "error"
       );
 
@@ -2749,7 +2749,7 @@
         );
 
         setWriteStatus(
-          "WRITE ERROR / VERIFICATION",
+          "WRITE ERROR / PRODUCTION",
           "error"
         );
 
@@ -3709,11 +3709,11 @@
     }
 
     editMessage(
-      "検証DBへ予約内容を保存しています…"
+      "本番DBへ予約内容を保存しています…"
     );
 
     setWriteStatus(
-      "VERIFICATION DB / WRITING",
+      "PRODUCTION DB / WRITING",
       "writing"
     );
 
@@ -3797,7 +3797,7 @@
       );
 
       setWriteStatus(
-        "WRITE ERROR / VERIFICATION",
+        "WRITE ERROR / PRODUCTION",
         "error"
       );
 
