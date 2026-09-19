@@ -32,6 +32,7 @@ on:
           - migrate-heaven-diary-settings.php
           - migrate-customer-name-kashikoi.php
           - migrate-customer-identity-days-off.php
+          - migrate-visit-service-place.php
           - migrate-sales-v2.php
           - migrate-sapporo-rates-v2.php
           - migrate-chiba-rates-v2.php

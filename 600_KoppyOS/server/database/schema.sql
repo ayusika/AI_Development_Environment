@@ -225,6 +225,15 @@ CREATE TABLE visits (
         )
     ),
 
+    service_place TEXT CHECK (
+        service_place IS NULL
+        OR service_place IN (
+            'hotel',
+            'room',
+            'home'
+        )
+    ),
+
     customer_features TEXT,
 
     conversation_notes TEXT,
