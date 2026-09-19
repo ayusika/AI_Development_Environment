@@ -138,6 +138,71 @@
     };
   }
 
+  function positionFloatingSaveIndicator(
+    indicator
+  ) {
+    if (!indicator) return;
+
+    const mobile =
+      window.matchMedia(
+        "(max-width:768px)"
+      ).matches;
+
+    if (!mobile) {
+      indicator.style.removeProperty(
+        "top"
+      );
+      indicator.style.removeProperty(
+        "left"
+      );
+      indicator.style.removeProperty(
+        "right"
+      );
+      return;
+    }
+
+    const viewport =
+      window.visualViewport;
+
+    if (!viewport) {
+      indicator.style.removeProperty(
+        "top"
+      );
+      indicator.style.removeProperty(
+        "left"
+      );
+      indicator.style.removeProperty(
+        "right"
+      );
+      return;
+    }
+
+    const width =
+      indicator.offsetWidth;
+
+    const top =
+      viewport.offsetTop
+      + 8;
+
+    const left =
+      Math.max(
+        viewport.offsetLeft + 8,
+        viewport.offsetLeft
+        + viewport.width
+        - width
+        - 10
+      );
+
+    indicator.style.top =
+      `${top}px`;
+
+    indicator.style.left =
+      `${left}px`;
+
+    indicator.style.right =
+      "auto";
+  }
+
   function mountHeaderSaveIndicator() {
     const header =
       drawer.querySelector(
@@ -146,47 +211,69 @@
 
     if (!header) return null;
 
+    const mobile =
+      window.matchMedia(
+        "(max-width:768px)"
+      ).matches;
+
     let indicator =
-      header.querySelector(
+      document.querySelector(
         "[data-next-save-indicator]"
       );
 
-    if (indicator) {
-      return indicator;
+    if (!indicator) {
+      indicator =
+        document.createElement("div");
+
+      indicator.className =
+        "next-save-indicator";
+
+      indicator.dataset.nextSaveIndicator =
+        "true";
+
+      indicator.setAttribute(
+        "role",
+        "status"
+      );
+
+      indicator.setAttribute(
+        "aria-live",
+        "polite"
+      );
+
+      indicator.innerHTML = `
+        <span
+          class="next-save-indicator-icon"
+          data-next-save-indicator-icon
+          aria-hidden="true"
+        ></span>
+        <span
+          class="next-save-indicator-label"
+          data-next-save-indicator-label
+        ></span>
+      `;
     }
 
-    indicator =
-      document.createElement("div");
+    const target =
+      mobile
+        ? document.body
+        : header;
 
-    indicator.className =
-      "next-save-indicator";
+    if (
+      indicator.parentElement
+      !== target
+    ) {
+      target.append(indicator);
+    }
 
-    indicator.dataset.nextSaveIndicator =
-      "true";
+    indicator.hidden =
+      !drawer.classList.contains(
+        "is-open"
+      );
 
-    indicator.setAttribute(
-      "role",
-      "status"
+    positionFloatingSaveIndicator(
+      indicator
     );
-
-    indicator.setAttribute(
-      "aria-live",
-      "polite"
-    );
-
-    indicator.innerHTML = `
-      <span
-        class="next-save-indicator-icon"
-        data-next-save-indicator-icon
-        aria-hidden="true"
-      ></span>
-      <span
-        class="next-save-indicator-label"
-        data-next-save-indicator-label
-      ></span>
-    `;
-
-    header.append(indicator);
 
     return indicator;
   }
@@ -356,6 +443,39 @@
       renderHeaderSaveIndicator();
     }
   );
+
+  function syncSaveIndicatorViewport() {
+    const indicator =
+      document.querySelector(
+        "[data-next-save-indicator]"
+      );
+
+    if (!indicator) return;
+
+    mountHeaderSaveIndicator();
+    positionFloatingSaveIndicator(
+      indicator
+    );
+  }
+
+  window.addEventListener(
+    "resize",
+    syncSaveIndicatorViewport
+  );
+
+  if (window.visualViewport) {
+    window.visualViewport
+      .addEventListener(
+        "resize",
+        syncSaveIndicatorViewport
+      );
+
+    window.visualViewport
+      .addEventListener(
+        "scroll",
+        syncSaveIndicatorViewport
+      );
+  }
 
   function escapeHtml(value) {
     return String(value ?? "")

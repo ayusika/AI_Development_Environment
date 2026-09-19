@@ -1045,3 +1045,83 @@
     font-size:9px;
   }
 }
+
+
+/* =========================================================
+   KOHaku WORK NEXT / FLOATING SAVE INDICATOR + IOS ZOOM FIX V1
+
+   1. iOS Safari auto-zoom prevention:
+      form controls must be 16px or larger while focused.
+   2. Save indicator:
+      keep it pinned to the visible screen instead of the
+      sticky header flow.
+========================================================= */
+
+@supports (-webkit-touch-callout:none){
+  @media(max-width:768px){
+    .next-schedule-detail-drawer
+    input:not([type="checkbox"]):not([type="radio"]),
+    .next-schedule-detail-drawer
+    textarea,
+    .next-schedule-detail-drawer
+    select{
+      font-size:16px !important;
+    }
+  }
+}
+
+.next-save-indicator[hidden]{
+  display:none !important;
+}
+
+@media(max-width:768px){
+  .next-schedule-detail-header
+  .wf-eyebrow{
+    grid-column:1 / -1;
+  }
+
+  .next-save-indicator{
+    position:fixed;
+    top:calc(
+      env(safe-area-inset-top, 0px)
+      + 8px
+    );
+    right:10px;
+    z-index:10000;
+
+    grid-column:auto;
+    grid-row:auto;
+    align-self:auto;
+    justify-self:auto;
+
+    min-height:28px;
+    max-width:calc(100vw - 20px);
+    padding:5px 9px;
+
+    border-color:
+      rgba(255,255,255,.16);
+    background:
+      rgba(12,20,29,.88);
+
+    box-shadow:
+      0 5px 18px
+      rgba(0,0,0,.28);
+
+    -webkit-backdrop-filter:
+      blur(10px);
+    backdrop-filter:
+      blur(10px);
+
+    pointer-events:none;
+  }
+
+  .next-save-indicator-icon{
+    width:14px;
+    height:14px;
+    font-size:11px;
+  }
+
+  .next-save-indicator-label{
+    font-size:7px;
+  }
+}
