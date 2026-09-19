@@ -2,7 +2,23 @@
 
 declare(strict_types=1);
 
-require __DIR__ . '/bootstrap.php';
+header(
+    'Content-Type: application/json; charset=utf-8'
+);
+
+require_once
+    __DIR__
+    . '/lib/response.php';
+
+require_once
+    __DIR__
+    . '/../../auth/auth.php';
+
+koppyRequireApiAuth();
+
+date_default_timezone_set(
+    'Asia/Tokyo'
+);
 
 require_once
     __DIR__

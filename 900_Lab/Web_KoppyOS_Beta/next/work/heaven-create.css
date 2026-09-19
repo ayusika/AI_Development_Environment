@@ -54,9 +54,38 @@
   background:color-mix(in srgb,var(--wf-accent) 9%,transparent);
 }
 
+.next-heaven-customer{
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+}
+
+.next-heaven-customer-main,
+.next-heaven-customer-store{
+  min-width:0;
+}
+
+.next-heaven-customer-store{
+  text-align:right;
+}
+
+.next-heaven-customer-store strong{
+  display:flex;
+  align-items:baseline;
+  justify-content:flex-end;
+  gap:4px;
+  white-space:nowrap;
+}
+
 .next-heaven-customer small{
   color:var(--wf-text-dim);
   font-size:9px;
+}
+
+.next-heaven-customer-store strong small{
+  margin:0;
+  color:var(--wf-text-dim);
+  font-size:8px;
+  font-weight:800;
 }
 
 .next-heaven-place{

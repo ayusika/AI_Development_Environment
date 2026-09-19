@@ -239,6 +239,34 @@
     );
   }
 
+  function placeText(place) {
+    return ({
+      hotel: "ホテルで",
+      room: "Rで",
+      home: "自宅で",
+    })[text(place)] || "ホテルで";
+  }
+
+  function syncRenderedBodyPlace() {
+    const body = $("#nextHeavenBody");
+    if (!body) return;
+
+    const current = body.value || "";
+    if (!current) return;
+
+    const replacement =
+      placeText(formValues().place);
+
+    const next = current.replace(
+      /(ホテルで|ルームで|Rで|自宅で)/,
+      replacement
+    );
+
+    if (next !== current) {
+      body.value = next;
+    }
+  }
+
   function renderBody(core) {
     const body = $("#nextHeavenBody");
     if (!body) return;
@@ -253,7 +281,7 @@
     const options = optionNames(visit);
 
     const values = {
-      place: placeMap[formValues().place] || "ホテルで",
+      place: placeText(formValues().place),
       course: text(Number(visit?.course_minutes || 0)),
       options_part: options.length
         ? `${options.join("、")}希望の`
@@ -863,7 +891,10 @@
     if (event.target.matches('input[name="next-heaven-place"]')) {
       if (state.generatedCore !== null) {
         renderBody(state.generatedCore);
+      } else {
+        syncRenderedBodyPlace();
       }
+
       saveLocalDraft();
       scheduleDbSave(0);
     }
