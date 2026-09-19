@@ -20,6 +20,12 @@
     openingToken: 0,
   };
 
+  const AUTOSAVE_DELAY = 800;
+
+  let autosaveTimer = null;
+  let changeRevision = 0;
+  let saveQueue = Promise.resolve(true);
+
   function $(selector) {
     return root.querySelector(selector);
   }
@@ -347,7 +353,8 @@
       if (!draft) return false;
 
       applyDraft(draft);
-      setStatus("✓ 検証DBの下書きを読み込みました");
+      syncServicePlace(draft.place);
+      setStatus("✓ DBの保存内容を読み込みました");
       return true;
     } catch (error) {
       console.warn("NEXT Heaven cloud draft load failed:", error);
@@ -355,21 +362,50 @@
     }
   }
 
-  async function saveCloudDraft() {
-    const visitId = Number(state.visit?.id || 0);
-    if (!visitId) return;
+  function syncServicePlace(place) {
+    const normalized = [
+      "hotel",
+      "room",
+      "home",
+    ].includes(text(place))
+      ? text(place)
+      : "";
 
-    const button = $("[data-nhc-save-draft]");
-    if (button) {
-      button.disabled = true;
-      button.textContent = "保存中…";
+    if (!normalized) return;
+
+    if (state.visit) {
+      state.visit.service_place = normalized;
     }
 
-    setStatus("検証DBへ下書きを保存しています…");
+    const scheduleVisit =
+      window.KohakuWorkNextSchedule
+        ?.state
+        ?.visits
+        ?.find(
+          item =>
+            Number(item.id)
+            === Number(state.visit?.id || 0)
+        );
+
+    if (scheduleVisit) {
+      scheduleVisit.service_place = normalized;
+    }
+  }
+
+  async function persistDb(
+    revision,
+    { quiet = false } = {}
+  ) {
+    const visitId = Number(state.visit?.id || 0);
+    if (!visitId) return false;
+
+    const values = formValues();
+
+    if (!quiet) {
+      setStatus("↻ DB保存中…");
+    }
 
     try {
-      const values = formValues();
-
       await requestJson(DRAFT_API, {
         method: "POST",
         headers: {
@@ -386,18 +422,83 @@
       });
 
       saveLocalDraft();
-      setStatus("✓ 検証DBへ下書きを保存しました");
-    } catch (error) {
-      setStatus(
-        error.message || "下書きを保存できませんでした。",
-        true
-      );
-    } finally {
-      if (button) {
-        button.disabled = false;
-        button.textContent = "☁️ 下書きを検証DBへ保存";
+      syncServicePlace(values.place);
+
+      if (
+        revision === changeRevision
+        && !quiet
+      ) {
+        setStatus("✓ DB保存");
       }
+
+      return true;
+    } catch (error) {
+      if (revision === changeRevision) {
+        setStatus(
+          error.message || "DB保存できませんでした。",
+          true
+        );
+      }
+
+      return false;
     }
+  }
+
+  function queueDbSave(
+    revision,
+    options = {}
+  ) {
+    const run =
+      () => persistDb(revision, options);
+
+    saveQueue =
+      saveQueue
+        .catch(() => true)
+        .then(run);
+
+    return saveQueue;
+  }
+
+  function scheduleDbSave(
+    delay = AUTOSAVE_DELAY
+  ) {
+    if (autosaveTimer) {
+      window.clearTimeout(autosaveTimer);
+    }
+
+    changeRevision += 1;
+    const revision = changeRevision;
+
+    setStatus(
+      delay === 0
+        ? "↻ DB保存中…"
+        : "• DB保存待ち"
+    );
+
+    autosaveTimer =
+      window.setTimeout(
+        () => {
+          autosaveTimer = null;
+          void queueDbSave(revision);
+        },
+        delay
+      );
+  }
+
+  async function flushDbSave(
+    { quiet = false } = {}
+  ) {
+    if (autosaveTimer) {
+      window.clearTimeout(autosaveTimer);
+      autosaveTimer = null;
+    }
+
+    changeRevision += 1;
+
+    return await queueDbSave(
+      changeRevision,
+      { quiet }
+    );
   }
 
   async function generateDiary() {
@@ -447,6 +548,7 @@
       state.generatedCore = core;
       renderBody(core);
       saveLocalDraft();
+      scheduleDbSave(0);
       setStatus("✓ 日記本文を作成しました");
     } catch (error) {
       setStatus(
@@ -459,26 +561,6 @@
         button.textContent = "このお客様の日記を作る ✦ API";
       }
     }
-  }
-
-  async function copyDiary() {
-    const body = $("#nextHeavenBody");
-    const value = body?.value?.trim() || "";
-
-    if (!value) {
-      setStatus("コピーする本文がありません。", true);
-      return;
-    }
-
-    try {
-      await navigator.clipboard.writeText(value);
-    } catch {
-      body.focus();
-      body.select();
-      document.execCommand("copy");
-    }
-
-    setStatus("✓ ヘブン投稿本文をコピーしました");
   }
 
   async function saveFinal() {
@@ -496,9 +578,20 @@
       button.textContent = "保存中…";
     }
 
-    setStatus("検証DBへ日記を保存しています…");
+    setStatus("DBへ日記を保存しています…");
 
     try {
+      const workingSaved =
+        await flushDbSave({
+          quiet:true,
+        });
+
+      if (!workingSaved) {
+        throw new Error(
+          "入力内容をDB保存できませんでした。"
+        );
+      }
+
       await requestJson(FINAL_API, {
         method: "POST",
         headers: {
@@ -522,7 +615,7 @@
 
       clearLocalDraft();
       if (state.visit) state.visit.diary_saved = true;
-      setStatus("✓ 検証DBに保存しました");
+      setStatus("✓ DBに保存しました");
     } catch (error) {
       setStatus(
         error.message || "日記を保存できませんでした。",
@@ -531,7 +624,7 @@
     } finally {
       if (button) {
         button.disabled = false;
-        button.textContent = "保存する";
+        button.textContent = "DBに保存";
       }
     }
   }
@@ -566,8 +659,21 @@
     }
   }
 
-  function sendToHeaven() {
+  async function sendToHeaven() {
     const bridge = bridgeElements();
+
+    const workingSaved =
+      await flushDbSave({
+        quiet:true,
+      });
+
+    if (!workingSaved) {
+      setStatus(
+        "DB保存に失敗したため送信を止めました。",
+        true
+      );
+      return;
+    }
 
     const titleValue = $("#nextHeavenTitle")?.value?.trim() || "";
     const bodyValue = $("#nextHeavenBody")?.value?.trim() || "";
@@ -660,6 +766,26 @@
     if (note) note.value = "";
     if (extra) extra.value = "";
 
+    const visitPlace =
+      text(state.visit?.service_place);
+
+    if (
+      [
+        "hotel",
+        "room",
+        "home",
+      ].includes(visitPlace)
+    ) {
+      root
+        .querySelectorAll(
+          'input[name="next-heaven-place"]'
+        )
+        .forEach(input => {
+          input.checked =
+            input.value === visitPlace;
+        });
+    }
+
     state.generatedCore = null;
     renderBody("");
 
@@ -674,16 +800,19 @@
     if (token !== state.openingToken) return;
 
     const hasLocalDraft =
-      restoreLocalDraft();
+      !hasCloudDraft
+      && restoreLocalDraft();
 
     if (hasLocalDraft) {
-      setStatus("✓ この端末の下書きを復元しました");
+      setStatus(
+        "✓ この端末の保存内容を復元しました"
+      );
     } else if (
       !hasCloudDraft
       && !hasSavedFinal
     ) {
       setStatus(
-        "未保存の日記です。新しく作成できます。"
+        "入力内容はリアルタイムでDB保存されます。"
       );
     }
 
@@ -705,9 +834,18 @@
     void initializeOpen(token);
   }
 
-  function backToSchedule() {
+  async function backToSchedule() {
     saveLocalDraft();
-    window.KohakuWorkNext?.showView?.("schedule");
+
+    await flushDbSave({
+      quiet:true,
+    });
+
+    window.KohakuWorkNext
+      ?.showView?.("schedule");
+
+    void window.KohakuWorkNextSchedule
+      ?.load?.();
   }
 
   root.addEventListener("input", event => {
@@ -717,6 +855,7 @@
       )
     ) {
       saveLocalDraft();
+      scheduleDbSave();
     }
   });
 
@@ -726,27 +865,18 @@
         renderBody(state.generatedCore);
       }
       saveLocalDraft();
+      scheduleDbSave(0);
     }
   });
 
   root.addEventListener("click", event => {
     if (event.target.closest("[data-nhc-back]")) {
-      backToSchedule();
+      void backToSchedule();
       return;
     }
 
     if (event.target.closest("[data-nhc-generate]")) {
       void generateDiary();
-      return;
-    }
-
-    if (event.target.closest("[data-nhc-copy]")) {
-      void copyDiary();
-      return;
-    }
-
-    if (event.target.closest("[data-nhc-save-draft]")) {
-      void saveCloudDraft();
       return;
     }
 
@@ -756,7 +886,7 @@
     }
 
     if (event.target.closest("#nextHeavenSend")) {
-      sendToHeaven();
+      void sendToHeaven();
     }
   });
 

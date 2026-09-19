@@ -35,6 +35,7 @@ try {
             v.course_minutes,
             v.store_course_id,
             v.customer_status,
+            v.service_place,
             v.customer_features,
             v.conversation_notes,
             v.visit_notes,

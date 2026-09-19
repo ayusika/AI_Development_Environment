@@ -223,7 +223,54 @@
 }
 
 @media(max-width:620px){
-  .next-heaven-place,
+  html:has(
+    #view-heaven-create:not([hidden])
+  ),
+  body:has(
+    #view-heaven-create:not([hidden])
+  ){
+    width:100%;
+    max-width:100%;
+    overflow-x:hidden;
+  }
+
+  body:has(
+    #view-heaven-create:not([hidden])
+  )
+  .next-app,
+  body:has(
+    #view-heaven-create:not([hidden])
+  )
+  .next-app-main,
+  body:has(
+    #view-heaven-create:not([hidden])
+  )
+  #view-heaven-create{
+    min-width:0;
+    max-width:100%;
+  }
+
+  #view-heaven-create
+  .next-heaven-create{
+    box-sizing:border-box;
+    width:100%;
+    max-width:100%;
+    margin-left:0;
+    margin-right:0;
+  }
+
+  .next-heaven-place{
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:6px;
+  }
+
+  .next-heaven-place span{
+    min-height:38px;
+    padding:0 4px;
+    font-size:8px;
+    white-space:nowrap;
+  }
+
   .next-heaven-actions{
     grid-template-columns:1fr;
   }

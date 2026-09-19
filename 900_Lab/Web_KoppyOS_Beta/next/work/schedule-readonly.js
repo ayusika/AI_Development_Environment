@@ -343,6 +343,14 @@
     return ({ local:"地元", travel:"旅行", business:"出張" })[value] || "不明";
   }
 
+  function detailServicePlace(value) {
+    return ({
+      hotel:"ホテル",
+      room:"ルーム",
+      home:"自宅",
+    })[value] || "未登録";
+  }
+
   function renderDetailMeta(title, visit, course) {
     let meta =
       document.getElementById(
@@ -447,6 +455,7 @@
         <div class="next-schedule-detail-row"><span>予約時間</span><strong>${escapeHtml(course)}</strong></div>
         <div class="next-schedule-detail-row"><span>区分</span><strong>${escapeHtml(statusLabel(visit.customer_status))}</strong></div>
         <div class="next-schedule-detail-row"><span>来訪タイプ</span><strong>${escapeHtml(detailVisitorType(visit.visitor_type))}</strong></div>
+        <div class="next-schedule-detail-row"><span>接客場所</span><strong>${escapeHtml(detailServicePlace(visit.service_place))}</strong></div>
         <div class="next-schedule-detail-row"><span>OP</span><strong class="next-detail-option-cell">${detailOptionTagsHtml(visit)}</strong></div>
         <div class="next-schedule-detail-row"><span>チップ</span><strong>${escapeHtml(tipText)}</strong></div>
         <div class="next-schedule-detail-row"><span>調整分</span><strong>${escapeHtml(adjustmentText)}</strong></div>

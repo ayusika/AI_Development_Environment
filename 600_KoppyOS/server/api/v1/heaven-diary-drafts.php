@@ -261,7 +261,7 @@ try {
         ) {
 
             respondError(
-                '保存する下書きがありません。',
+                '保存する内容がありません。',
                 422
             );
         }
@@ -297,6 +297,9 @@ try {
                 $pdo,
                 $visitId
             );
+
+
+        $pdo->beginTransaction();
 
 
         if ($existingDraft) {
@@ -370,6 +373,33 @@ try {
         }
 
 
+        $visitStatement =
+            $pdo->prepare(
+                "
+                UPDATE visits
+
+                SET
+                    service_place = ?,
+                    updated_at = strftime(
+                        '%Y-%m-%d %H:%M',
+                        'now',
+                        'localtime'
+                    )
+
+                WHERE id = ?
+                "
+            );
+
+
+        $visitStatement->execute([
+            $place,
+            $visitId,
+        ]);
+
+
+        $pdo->commit();
+
+
         respondSuccess([
             'visit_id' =>
                 $visitId,
@@ -441,6 +471,14 @@ try {
 
 
 } catch (Throwable $error) {
+
+    if (
+        isset($pdo)
+        && $pdo instanceof PDO
+        && $pdo->inTransaction()
+    ) {
+        $pdo->rollBack();
+    }
 
     respondError(
         $error->getMessage(),

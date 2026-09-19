@@ -893,6 +893,7 @@ function fetchVisit(
                 v.customer_status,
                 v.customer_features,
                 v.visitor_type,
+                v.service_place,
                 v.status,
                 v.cancelled_at,
                 v.cancel_reason,
@@ -1192,6 +1193,7 @@ try {
 
                     v.customer_status,
                     v.visitor_type,
+                    v.service_place,
                     v.status,
                     v.cancelled_at,
                     v.cancel_reason,
