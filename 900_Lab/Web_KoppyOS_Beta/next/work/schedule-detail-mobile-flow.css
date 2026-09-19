@@ -1173,3 +1173,52 @@
 > .next-customer-panel-close:active{
   background:rgba(255,255,255,.065);
 }
+
+/* =========================================================
+   KOHaku WORK NEXT / PAST VISIT CANCELLATION V1
+========================================================= */
+
+.next-past-visit.is-cancelled{
+  opacity:.72;
+  border-color:rgba(255,120,150,.20);
+  background:rgba(255,120,150,.025);
+}
+
+.next-past-visit-date{
+  display:flex !important;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:5px;
+}
+
+.next-past-visit-cancelled-badge{
+  display:inline-flex;
+  align-items:center;
+  min-height:16px;
+  padding:2px 5px;
+  border:1px solid rgba(255,120,150,.32);
+  border-radius:999px;
+  color:#ffc1cf;
+  background:rgba(255,120,150,.075);
+  font-size:6px;
+  font-style:normal;
+  font-weight:900;
+  line-height:1;
+}
+
+.next-past-visit-cancellation{
+  grid-column:1 / -1;
+  border-color:rgba(255,120,150,.18) !important;
+  background:rgba(255,120,150,.035) !important;
+}
+
+.next-past-visit-cancellation > span{
+  color:#ff9caf !important;
+}
+
+.next-past-visit-cancellation p small{
+  display:block;
+  margin-top:5px;
+  color:var(--wf-text-dim);
+  font-size:7px;
+}

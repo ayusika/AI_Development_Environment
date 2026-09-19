@@ -137,6 +137,59 @@
     return hour * 60 + parts.minute;
   }
 
+  function isCancelledVisit(visit) {
+    return Boolean(
+      visit
+      && (
+        visit.status === "cancelled"
+        || visit.cancelled_at
+      )
+    );
+  }
+
+  function visitsInCurrentPeriod() {
+    const dates =
+      new Set(
+        Array.isArray(
+          state.period?.dates
+        )
+          ? state.period.dates
+          : []
+      );
+
+    return state.visits.filter(
+      visit =>
+        dates.has(
+          visitBusinessDate(visit)
+        )
+    );
+  }
+
+  function cancelledVisitsInCurrentPeriod() {
+    return visitsInCurrentPeriod()
+      .filter(
+        isCancelledVisit
+      );
+  }
+
+  function businessDateTimeLabel(visit) {
+    const businessDate =
+      visitBusinessDate(visit);
+
+    const date =
+      String(businessDate || "")
+        .split("-");
+
+    const dateLabel =
+      date.length === 3
+      && date[1]
+      && date[2]
+        ? `${Number(date[1])}/${Number(date[2])}`
+        : businessDate;
+
+    return `${dateLabel} ${compactTime(visit?.started_at)}`.trim();
+  }
+
   function extensionMinutes(visit) {
     return (Array.isArray(visit.extensions) ? visit.extensions : []).reduce(
       (total, extension) =>
@@ -241,7 +294,7 @@
   }
 
   function renderEvent(visit, hourHeight) {
-    if (visit.status === "cancelled" || visit.cancelled_at) return "";
+    if (isCancelledVisit(visit)) return "";
 
     const startMinutes = visitStartMinutes(visit);
     const top = (startMinutes - START_HOUR * 60) * hourHeight / 60;
@@ -427,7 +480,12 @@
     drawer.dataset.visitId = String(Number(visit.id));
 
     const customer = detailCustomerLabel(visit);
-    const date = String(visit.started_at || "").slice(0, 10) || "未登録";
+    const date =
+      visitBusinessDate(visit)
+      || String(
+        visit.started_at || ""
+      ).slice(0, 10)
+      || "未登録";
     const time = compactTime(visit.started_at);
     const course = `${visit.pricing_category === "foreign" ? "外" : ""}${Number(visit.course_minutes || 0)}分`;
     const tip = Number(visit.tip_amount || 0);
@@ -534,8 +592,78 @@
     const periodElement = document.getElementById("nextSchedulePeriod");
     if (periodElement && state.period) periodElement.textContent = periodLabel(state.period);
 
+    const periodVisits =
+      visitsInCurrentPeriod();
+
+    const cancelledVisits =
+      periodVisits.filter(
+        isCancelledVisit
+      );
+
+    const activeVisitCount =
+      periodVisits.length
+      - cancelledVisits.length;
+
     const count = document.getElementById("nextScheduleVisitCount");
-    if (count) count.textContent = `${state.visits.length}件`;
+    if (count) count.textContent = `${activeVisitCount}件`;
+
+    const cancelledCount =
+      document.getElementById(
+        "nextScheduleCancelledCount"
+      );
+
+    if (cancelledCount) {
+      cancelledCount.textContent =
+        String(cancelledVisits.length);
+    }
+
+    const cancelledPanel =
+      document.getElementById(
+        "nextScheduleCancelledPanel"
+      );
+
+    const cancelledToggle =
+      document.querySelector(
+        "[data-next-cancelled-toggle]"
+      );
+
+    if (
+      cancelledVisits.length === 0
+      && cancelledPanel
+      && !cancelledPanel.hidden
+    ) {
+      cancelledPanel.hidden = true;
+    }
+
+    const cancelledPanelOpen =
+      Boolean(
+        cancelledVisits.length
+        && cancelledPanel
+        && !cancelledPanel.hidden
+      );
+
+    if (cancelledToggle) {
+      cancelledToggle.disabled =
+        cancelledVisits.length === 0;
+
+      cancelledToggle.classList.toggle(
+        "is-selected",
+        cancelledPanelOpen
+      );
+
+      cancelledToggle.setAttribute(
+        "aria-expanded",
+        cancelledPanelOpen
+          ? "true"
+          : "false"
+      );
+    }
+
+    if (cancelledPanelOpen) {
+      renderCancelledList(
+        cancelledVisits
+      );
+    }
 
     document.querySelectorAll("[data-next-timeline-view]").forEach(button => {
       button.classList.toggle("is-selected", button.dataset.nextTimelineView === state.view);
@@ -590,6 +718,150 @@
         scrollToNowAndToday();
       }
     });
+  }
+
+  function renderCancelledList(
+    cancelledVisits =
+      cancelledVisitsInCurrentPeriod()
+  ) {
+    const list =
+      document.getElementById(
+        "nextScheduleCancelledList"
+      );
+
+    if (!list) return;
+
+    if (!cancelledVisits.length) {
+      list.innerHTML = `
+        <p class="next-schedule-cancelled-empty">
+          この表示期間にキャンセル予約はありません。
+        </p>
+      `;
+      return;
+    }
+
+    const sorted =
+      [...cancelledVisits]
+        .sort(
+          (a, b) =>
+            String(a.started_at || "")
+              .localeCompare(
+                String(b.started_at || "")
+              )
+        );
+
+    list.innerHTML =
+      sorted
+        .map(visit => {
+          const customer =
+            customerParts(visit)
+              .join(" / ")
+            || visit.customer_code
+            || `予約 #${Number(visit.id)}`;
+
+          const cancelType =
+            visit.cancelled_by === "customer"
+              ? "お客様キャンセル"
+              : "キャンセル";
+
+          const reason =
+            String(
+              visit.cancel_reason || ""
+            ).trim()
+            || "理由なし";
+
+          return `
+            <button
+              type="button"
+              class="next-schedule-cancelled-item"
+              data-next-cancelled-visit="${Number(visit.id)}"
+            >
+              <span class="next-schedule-cancelled-date">
+                ${escapeHtml(
+                  businessDateTimeLabel(visit)
+                )}
+              </span>
+
+              <strong>
+                ${escapeHtml(customer)}
+              </strong>
+
+              <small>
+                ${escapeHtml(
+                  visit.store_name || "店舗未登録"
+                )}
+                ${
+                  visit.course_minutes
+                    ? ` / ${Number(visit.course_minutes)}分`
+                    : ""
+                }
+              </small>
+
+              <em>
+                ${escapeHtml(cancelType)}
+                · ${escapeHtml(reason)}
+              </em>
+            </button>
+          `;
+        })
+        .join("");
+  }
+
+  function setCancelledPanelOpen(open) {
+    const panel =
+      document.getElementById(
+        "nextScheduleCancelledPanel"
+      );
+
+    const toggle =
+      document.querySelector(
+        "[data-next-cancelled-toggle]"
+      );
+
+    if (!panel) return;
+
+    const cancelledVisits =
+      cancelledVisitsInCurrentPeriod();
+
+    const nextOpen =
+      Boolean(
+        open
+        && cancelledVisits.length
+      );
+
+    panel.hidden =
+      !nextOpen;
+
+    if (toggle) {
+      toggle.classList.toggle(
+        "is-selected",
+        nextOpen
+      );
+
+      toggle.setAttribute(
+        "aria-expanded",
+        nextOpen ? "true" : "false"
+      );
+    }
+
+    if (nextOpen) {
+      renderCancelledList(
+        cancelledVisits
+      );
+    }
+  }
+
+  function toggleCancelledPanel() {
+    const panel =
+      document.getElementById(
+        "nextScheduleCancelledPanel"
+      );
+
+    if (!panel) return;
+
+    setCancelledPanelOpen(
+      panel.hidden
+    );
   }
 
   function refreshNowLine() {
@@ -882,6 +1154,58 @@
   );
 
   document.addEventListener("click", event => {
+    const cancelledToggle =
+      event.target.closest(
+        "[data-next-cancelled-toggle]"
+      );
+
+    if (cancelledToggle) {
+      toggleCancelledPanel();
+      return;
+    }
+
+    if (
+      event.target.closest(
+        "[data-next-cancelled-close]"
+      )
+    ) {
+      setCancelledPanelOpen(false);
+      return;
+    }
+
+    const cancelledReservation =
+      event.target.closest(
+        "[data-next-cancelled-visit]"
+      );
+
+    if (cancelledReservation) {
+      const visitId =
+        Number(
+          cancelledReservation
+            .dataset
+            .nextCancelledVisit
+          || 0
+        );
+
+      const visit =
+        state.visits.find(
+          item =>
+            Number(item.id)
+            === visitId
+        )
+        || null;
+
+      if (visit) {
+        event.preventDefault();
+        openDetail(
+          visit,
+          cancelledReservation
+        );
+      }
+
+      return;
+    }
+
     const move = event.target.closest("[data-next-timeline-move]");
     if (move) {
       movePeriod(Number(move.dataset.nextTimelineMove));
@@ -926,7 +1250,25 @@
   });
 
   document.addEventListener("keydown", event => {
-    if (event.key === "Escape") closeDetail();
+    if (event.key !== "Escape") return;
+
+    const cancelledPanel =
+      document.getElementById(
+        "nextScheduleCancelledPanel"
+      );
+
+    if (
+      cancelledPanel
+      && !cancelledPanel.hidden
+      && !document.body.classList.contains(
+        "next-schedule-detail-open"
+      )
+    ) {
+      setCancelledPanelOpen(false);
+      return;
+    }
+
+    closeDetail();
   });
 
   window.setInterval(refreshNowLine, 15 * 1000);

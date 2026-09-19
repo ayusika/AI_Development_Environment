@@ -1791,8 +1791,58 @@
     "2026-08-24";
 
   function pastVisitBusinessDate(value) {
-    return String(value || "")
-      .slice(0, 10);
+    const text =
+      String(value || "");
+
+    const parts =
+      text.slice(0, 10)
+        .split("-")
+        .map(Number);
+
+    const hour =
+      Number(
+        text.slice(11, 13)
+      );
+
+    if (
+      parts.length !== 3
+      || !parts[0]
+      || !parts[1]
+      || !parts[2]
+    ) {
+      return text.slice(0, 10);
+    }
+
+    const date =
+      new Date(
+        parts[0],
+        parts[1] - 1,
+        parts[2],
+        12,
+        0,
+        0,
+        0
+      );
+
+    if (
+      Number.isFinite(hour)
+      && hour >= 0
+      && hour < 3
+    ) {
+      date.setDate(
+        date.getDate() - 1
+      );
+    }
+
+    return [
+      date.getFullYear(),
+      String(
+        date.getMonth() + 1
+      ).padStart(2, "0"),
+      String(
+        date.getDate()
+      ).padStart(2, "0"),
+    ].join("-");
   }
 
   function pastVisitServicePlace(visit) {
@@ -1881,6 +1931,31 @@
   }
 
   function formatPastVisitDate(value) {
+    const text =
+      String(value || "");
+
+    const date =
+      pastVisitBusinessDate(
+        text
+      ).split("-");
+
+    const time =
+      text.slice(11, 16);
+
+    if (
+      date.length === 3
+      && date[1]
+      && date[2]
+    ) {
+      return `${Number(date[1])}/${Number(date[2])} ${time}`;
+    }
+
+    return text || "日時不明";
+  }
+
+  function formatPastVisitTimestamp(
+    value
+  ) {
     const text =
       String(value || "");
 
@@ -1986,6 +2061,10 @@
           visit.store_name,
           visit.course_minutes,
           visit.service_place,
+          visit.status,
+          visit.cancelled_at,
+          visit.cancel_reason,
+          visit.cancelled_by,
           visit.heaven_diary_body,
           visit.diary_body,
           visit.diary_note_body,
@@ -2014,6 +2093,57 @@
                 pastVisitServicePlace(
                   visit
                 );
+
+              const cancelled =
+                Boolean(
+                  visit.status
+                    === "cancelled"
+                  || visit.cancelled_at
+                );
+
+              const cancelType =
+                visit.cancelled_by
+                  === "customer"
+                  ? "お客様キャンセル"
+                  : "キャンセル";
+
+              const cancelReason =
+                String(
+                  visit.cancel_reason
+                  || ""
+                ).trim()
+                || "理由なし";
+
+              const cancellationHtml =
+                cancelled
+                  ? `
+                    <article class="next-past-visit-cancellation">
+                      <span>キャンセル</span>
+                      <p>
+                        <strong>${escapeHtml(
+                          cancelType
+                        )}</strong>
+                        <span>${escapeHtml(
+                          cancelReason
+                        )}</span>
+                        ${
+                          visit.cancelled_at
+                            ? `
+                              <small>
+                                取消:
+                                ${escapeHtml(
+                                  formatPastVisitTimestamp(
+                                    visit.cancelled_at
+                                  )
+                                )}
+                              </small>
+                            `
+                            : ""
+                        }
+                      </p>
+                    </article>
+                  `
+                  : "";
 
               const memos = [
                 [
@@ -2055,14 +2185,23 @@
                   `;
 
               return `
-                <details class="next-past-visit">
+                <details class="next-past-visit${cancelled ? " is-cancelled" : ""}">
                   <summary>
-                    <span>
+                    <span class="next-past-visit-date">
                       ${escapeHtml(
                         formatPastVisitDate(
                           visit.started_at
                         )
                       )}
+                      ${
+                        cancelled
+                          ? `
+                            <em class="next-past-visit-cancelled-badge">
+                              キャンセル
+                            </em>
+                          `
+                          : ""
+                      }
                     </span>
 
                     <small>
@@ -2082,6 +2221,8 @@
                   </summary>
 
                   <div class="next-past-visit-grid">
+                    ${cancellationHtml}
+
                     <article class="next-past-visit-place">
                       <span>接客場所</span>
                       <p class="${

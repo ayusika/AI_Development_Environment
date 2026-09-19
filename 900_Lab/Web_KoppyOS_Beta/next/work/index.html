@@ -660,6 +660,16 @@
             <div class="next-schedule-period-heading">
               <strong id="nextSchedulePeriod">読み込み中…</strong>
               <span id="nextScheduleVisitCount">−件</span>
+              <button
+                type="button"
+                class="next-schedule-cancelled-toggle"
+                data-next-cancelled-toggle
+                aria-expanded="false"
+                aria-controls="nextScheduleCancelledPanel"
+              >
+                キャンセル
+                <b id="nextScheduleCancelledCount">0</b>件
+              </button>
             </div>
 
             <div class="next-schedule-view-switcher" aria-label="表示期間">
@@ -673,6 +683,33 @@
               <button type="button" id="nextScheduleZoomLabel" data-next-timeline-zoom="reset">100%</button>
               <button type="button" data-next-timeline-zoom="in">＋</button>
             </div>
+          </section>
+
+          <section
+            class="next-schedule-cancelled-panel"
+            id="nextScheduleCancelledPanel"
+            aria-label="キャンセル予約"
+            hidden
+          >
+            <div class="next-schedule-cancelled-head">
+              <div>
+                <span>CANCELLED</span>
+                <strong>キャンセル予約</strong>
+              </div>
+
+              <button
+                type="button"
+                data-next-cancelled-close
+                aria-label="キャンセル予約一覧を閉じる"
+              >
+                ×
+              </button>
+            </div>
+
+            <div
+              class="next-schedule-cancelled-list"
+              id="nextScheduleCancelledList"
+            ></div>
           </section>
 
           <div class="next-schedule-store-legend" aria-label="店舗カラー">
