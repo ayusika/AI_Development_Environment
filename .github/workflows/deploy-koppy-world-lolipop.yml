@@ -13,8 +13,10 @@ on:
       - "900_Lab/Web_KoppyOS_Beta/house/**"
       - "900_Lab/Web_KoppyOS_Beta/world-frame-lab/**"
       - "900_Lab/Web_KoppyOS_Beta/kohaku-work/**"
+      - "900_Lab/Web_KoppyOS_Beta/work/**"
       - "900_Lab/Web_KoppyOS_Beta/next/**"
       - "600_KoppyOS/server/api/**"
+      - "600_KoppyOS/server/auth/**"
       - "600_KoppyOS/server/database/migrate-sales-v2.php"
       - "600_KoppyOS/server/database/migrate-sapporo-rates-v2.php"
       - "600_KoppyOS/server/database/migrate-customer-name-kashikoi.php"
@@ -147,12 +149,14 @@ jobs:
           HOUSE_SOURCE="900_Lab/Web_KoppyOS_Beta/house"
           WORLD_FRAME_LAB_SOURCE="900_Lab/Web_KoppyOS_Beta/world-frame-lab"
           NEXT_SOURCE="900_Lab/Web_KoppyOS_Beta/next"
+          WORK_ENTRY_SOURCE="900_Lab/Web_KoppyOS_Beta/work"
 
           KOHAKU_WORK_SOURCE="900_Lab/Web_KoppyOS_Beta/kohaku-work"
           KOHAKU_WORK_REMOTE="/home/users/2/her.jp-mikipiano/web/koppy/kohaku-work"
 
           API_SOURCE="600_KoppyOS/server/api"
           API_REMOTE="/home/users/2/her.jp-mikipiano/web/koppy/api"
+          AUTH_SOURCE="600_KoppyOS/server/auth"
 
           test -f "$SOURCE_FILE"
           test -d "$ASSETS_SOURCE"
@@ -162,8 +166,10 @@ jobs:
           test -d "$HOUSE_SOURCE"
           test -d "$WORLD_FRAME_LAB_SOURCE"
           test -d "$NEXT_SOURCE"
+          test -d "$WORK_ENTRY_SOURCE"
           test -d "$KOHAKU_WORK_SOURCE"
           test -d "$API_SOURCE"
+          test -d "$AUTH_SOURCE"
 
           DEPLOY_PACKAGE_DIR="$RUNNER_TEMP/koppy-world-package"
           DEPLOY_ARCHIVE="$RUNNER_TEMP/koppy-world-deploy.tar.gz"
@@ -206,6 +212,17 @@ jobs:
             "$NEXT_SOURCE" \
             "$DEPLOY_PACKAGE_DIR/next"
 
+          mkdir -p \
+            "$DEPLOY_PACKAGE_DIR/work"
+
+          cp -R \
+            "$NEXT_SOURCE/work/." \
+            "$DEPLOY_PACKAGE_DIR/work/"
+
+          cp -R \
+            "$WORK_ENTRY_SOURCE/." \
+            "$DEPLOY_PACKAGE_DIR/work/"
+
           cp -R \
             "$KOHAKU_WORK_SOURCE" \
             "$DEPLOY_PACKAGE_DIR/kohaku-work"
@@ -213,6 +230,10 @@ jobs:
           cp -R \
             "$API_SOURCE" \
             "$DEPLOY_PACKAGE_DIR/api"
+
+          cp -R \
+            "$AUTH_SOURCE" \
+            "$DEPLOY_PACKAGE_DIR/auth"
 
           tar \
             -C "$DEPLOY_PACKAGE_DIR" \

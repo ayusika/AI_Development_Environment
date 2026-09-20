@@ -60,17 +60,25 @@ $returnUrl =
         $_GET['return']
     )
         ? (string) $_GET['return']
-        : '/kohaku-work/';
+        : '/work/';
 
 
 if (
     !str_starts_with(
         $returnUrl,
+        '/work/'
+    )
+    && !str_starts_with(
+        $returnUrl,
+        '/next/work/'
+    )
+    && !str_starts_with(
+        $returnUrl,
         '/kohaku-work/'
     )
 ) {
     $returnUrl =
-        '/kohaku-work/';
+        '/work/';
 }
 
 
@@ -98,18 +106,26 @@ if (
             $_POST[
                 'return'
             ]
-            ?? '/kohaku-work/'
+            ?? '/work/'
         );
 
 
     if (
         !str_starts_with(
             $postedReturnUrl,
+            '/work/'
+        )
+        && !str_starts_with(
+            $postedReturnUrl,
+            '/next/work/'
+        )
+        && !str_starts_with(
+            $postedReturnUrl,
             '/kohaku-work/'
         )
     ) {
         $postedReturnUrl =
-            '/kohaku-work/';
+            '/work/';
     }
 
 
