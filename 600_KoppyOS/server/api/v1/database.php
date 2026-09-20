@@ -1,17 +1,100 @@
 <?php
 
+declare(strict_types=1);
+
+/*
+ * Legacy database diagnostic compatibility router.
+ *
+ * The original /api/v1/database.php endpoint historically exposed
+ * both Kohaku Work tables and calendar_events from one SQLite file.
+ *
+ * The databases are now separately owned:
+ *
+ * Kohaku Work:
+ *   060_Kohaku_Work/server/api/v1/database.php
+ *
+ * KoppyOS:
+ *   600_KoppyOS/server/api/v1/koppyos-database.php
+ *
+ * Keep this route only while the legacy UI still depends on it.
+ */
+
 header(
     'Content-Type: application/json; charset=utf-8'
 );
 
-require_once __DIR__ . '/../../auth/auth.php';
+require_once __DIR__
+    . '/../../auth/auth.php';
 
 koppyRequireApiAuth();
 
-require_once __DIR__ . '/lib/database.php';
+require_once __DIR__
+    . '/../../core/database-inspector.php';
+
+require_once __DIR__
+    . '/../../core/koppyos-database.php';
+
+require_once __DIR__
+    . '/lib/database.php';
 
 
-$pdo = null;
+function legacyDatabaseDiagnosticRespond(
+    array $data,
+    int $statusCode = 200
+): never {
+    http_response_code(
+        $statusCode
+    );
+
+    echo json_encode(
+        $data,
+        JSON_UNESCAPED_UNICODE
+        | JSON_PRETTY_PRINT
+    );
+
+    exit;
+}
+
+
+$legacyTableOrder = [
+    'stores',
+    'workers',
+    'work_shifts',
+    'shift_default_rules',
+    'holidays',
+    'calendar_events',
+    'customers',
+    'customer_names',
+    'customer_identity_features',
+    'customer_acquisition_sources',
+    'visits',
+    'visit_change_history',
+    'customer_identity_history',
+    'options',
+    'store_courses',
+    'store_course_rates_v2',
+    'store_option_rates_v2',
+    'store_daily_fee_rules',
+    'visit_extensions',
+    'visit_sales_v2',
+    'visit_sales_history',
+];
+
+
+$kohakuTables =
+    array_values(
+        array_filter(
+            $legacyTableOrder,
+            static fn (string $tableName): bool =>
+                $tableName
+                !== 'calendar_events'
+        )
+    );
+
+
+$koppyOsTables = [
+    'calendar_events',
+];
 
 
 try {
@@ -20,349 +103,133 @@ try {
         $_SERVER['REQUEST_METHOD']
         ?? 'GET';
 
-
     if ($method !== 'GET') {
 
-        http_response_code(405);
-
-        echo json_encode(
+        legacyDatabaseDiagnosticRespond(
             [
-                'success' => false,
+                'success' =>
+                    false,
+
                 'error' =>
                     'Method not allowed.',
             ],
-            JSON_UNESCAPED_UNICODE |
-            JSON_PRETTY_PRINT
+            405
         );
-
-        exit;
     }
 
 
-    $pdo =
-        koppyDatabase();
-
-
-    $allowedTables = [
-        'stores',
-        'workers',
-        'work_shifts',
-        'shift_default_rules',
-        'holidays',
-        'calendar_events',
-        'customers',
-        'customer_names',
-        'customer_identity_features',
-        'customer_acquisition_sources',
-        'visits',
-        'visit_change_history',
-        'customer_identity_history',
-        'options',
-        'store_courses',
-        'store_course_rates_v2',
-        'store_option_rates_v2',
-        'store_daily_fee_rules',
-        'visit_extensions',
-        'visit_sales_v2',
-        'visit_sales_history',
-    ];
-
-
     $requestedTable =
-        isset($_GET['table'])
+        isset(
+            $_GET['table']
+        )
             ? trim(
-                (string)
-                $_GET['table']
+                (string) $_GET['table']
             )
             : '';
 
 
+    /*
+     * Table-specific legacy requests can delegate directly
+     * to the new product-owned endpoints.
+     */
     if ($requestedTable !== '') {
 
         if (
-            !in_array(
+            in_array(
                 $requestedTable,
-                $allowedTables,
+                $kohakuTables,
                 true
             )
         ) {
+            require __DIR__
+                . '/../../../../060_Kohaku_Work/server/api/v1/database.php';
 
-            throw new RuntimeException(
-                'Table is not allowed.'
-            );
+            exit;
         }
 
 
-        $existsStatement =
-            $pdo->prepare(
-                "
-                SELECT
-                    COUNT(*)
+        if (
+            in_array(
+                $requestedTable,
+                $koppyOsTables,
+                true
+            )
+        ) {
+            require __DIR__
+                . '/koppyos-database.php';
 
-                FROM sqlite_master
-
-                WHERE
-                    type = 'table'
-                    AND name = ?
-                "
-            );
-
-
-        $existsStatement->execute([
-            $requestedTable
-        ]);
-
-
-        $exists =
-            (int)
-            $existsStatement->fetchColumn()
-            > 0;
-
-
-        if (!$exists) {
-
-            throw new RuntimeException(
-                'Table does not exist.'
-            );
+            exit;
         }
 
 
-    $orderByColumn =
-    $requestedTable === 'holidays'
-        ? 'holiday_date'
-        : 'id';
-
-
-    $recordStatement =
-        $pdo->query(
-            'SELECT * FROM "'
-            . $requestedTable
-            . '" ORDER BY "'
-            . $orderByColumn
-            . '" DESC LIMIT 50'
-         );
-
-
-        $records =
-            $recordStatement->fetchAll();
-
-
-        $customerNames =
-            [];
-
-
-        if ($requestedTable === 'visits') {
-
-            $nameStatement =
-                $pdo->query(
-                    "
-                    SELECT
-                        customer_id,
-                        name
-
-                    FROM customer_names
-
-                    WHERE is_primary = 1
-
-                    ORDER BY id ASC
-                    "
-                );
-
-
-            foreach (
-                $nameStatement->fetchAll()
-                as $nameRecord
-            ) {
-
-                $customerId =
-                    (int)
-                    $nameRecord['customer_id'];
-
-
-                if (
-                    !isset(
-                        $customerNames[
-                            $customerId
-                        ]
-                    )
-                ) {
-                    $customerNames[
-                        $customerId
-                    ] =
-                        (string)
-                        $nameRecord['name'];
-                }
-            }
-        }
-
-
-        echo json_encode(
-            [
-                'success' =>
-                    true,
-
-                'read_only' =>
-                    true,
-
-                'table' =>
-                    $requestedTable,
-
-                'records' =>
-                    $records,
-
-                'customer_names' =>
-                    $customerNames,
-
-                'error' =>
-                    null,
-            ],
-            JSON_UNESCAPED_UNICODE |
-            JSON_PRETTY_PRINT
+        throw new RuntimeException(
+            'Table is not allowed.'
         );
-
-
-        exit;
     }
 
+
+    /*
+     * Preserve the original combined table-list response and order,
+     * but read each table from its new owning database.
+     */
+
+    $kohakuPdo =
+        koppyDatabase();
+
+    $koppyOsPdo =
+        koppyOsDatabase();
 
     $tables = [];
 
 
     foreach (
-        $allowedTables as $tableName
+        $legacyTableOrder
+        as $tableName
     ) {
 
-        $existsStatement =
-            $pdo->prepare(
-                "
-                SELECT
-                    COUNT(*)
-
-                FROM sqlite_master
-
-                WHERE
-                    type = 'table'
-                    AND name = ?
-                "
-            );
-
-        $existsStatement->execute([
-            $tableName
-        ]);
-
-
-        $exists =
-            (int)
-            $existsStatement->fetchColumn()
-            > 0;
-
-
-        if (!$exists) {
-
-            $tables[] = [
-                'name' =>
-                    $tableName,
-                'exists' =>
-                    false,
-                'row_count' =>
-                    null,
-                'columns' =>
-                    [],
-            ];
-
-            continue;
-        }
-
-
-        $countStatement =
-            $pdo->query(
-                'SELECT COUNT(*) FROM "'
-                . $tableName
-                . '"'
-            );
-
-
-        $rowCount =
-            (int)
-            $countStatement->fetchColumn();
-
-
-        $columnStatement =
-            $pdo->query(
-                'PRAGMA table_info("'
-                . $tableName
-                . '")'
-            );
-
-
-        $rawColumns =
-            $columnStatement->fetchAll();
-
-
-        $columns =
-            array_map(
-                static function (
-                    array $column
-                ): array {
-
-                    return [
-                        'name' =>
-                            (string)
-                            $column['name'],
-
-                        'type' =>
-                            (string)
-                            $column['type'],
-
-                        'not_null' =>
-                            (bool)
-                            $column['notnull'],
-
-                        'primary_key' =>
-                            (bool)
-                            $column['pk'],
-                    ];
-                },
-                $rawColumns
-            );
-
-
-        $tables[] = [
-            'name' =>
+        $pdo =
+            in_array(
                 $tableName,
-            'exists' =>
-                true,
-            'row_count' =>
-                $rowCount,
-            'columns' =>
-                $columns,
-        ];
+                $koppyOsTables,
+                true
+            )
+                ? $koppyOsPdo
+                : $kohakuPdo;
+
+
+        $tables[] =
+            koppyDatabaseInspectorDescribeTable(
+                $pdo,
+                $tableName
+            );
     }
 
 
-    echo json_encode(
+    legacyDatabaseDiagnosticRespond([
+        'success' =>
+            true,
+
+        'read_only' =>
+            true,
+
+        'tables' =>
+            $tables,
+
+        'error' =>
+            null,
+    ]);
+
+
+} catch (Throwable $error) {
+
+    legacyDatabaseDiagnosticRespond(
         [
-            'success' => true,
-            'read_only' => true,
-            'tables' => $tables,
-            'error' => null,
-        ],
-        JSON_UNESCAPED_UNICODE |
-        JSON_PRETTY_PRINT
-    );
+            'success' =>
+                false,
 
-
-} catch (Throwable $e) {
-
-    http_response_code(400);
-
-    echo json_encode(
-        [
-            'success' => false,
             'error' =>
-                $e->getMessage(),
+                $error->getMessage(),
         ],
-        JSON_UNESCAPED_UNICODE |
-        JSON_PRETTY_PRINT
+        400
     );
 }
