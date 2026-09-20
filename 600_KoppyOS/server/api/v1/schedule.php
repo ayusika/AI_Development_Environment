@@ -1213,6 +1213,18 @@ try {
 
                     cn.name AS customer_name,
 
+                    COALESCE(
+                        vs.tip_amount,
+                        0
+                    ) AS tip_amount,
+
+                    COALESCE(
+                        vs.adjustment_amount,
+                        0
+                    ) AS adjustment_amount,
+
+                    vs.confirmed_at AS sales_confirmed_at,
+
                     CASE
                         WHEN v.customer_id IS NOT NULL
                         THEN 1
@@ -1309,49 +1321,274 @@ try {
         $visits =
             $statement->fetchAll();
 
+
+        $visitIds =
+            array_values(
+                array_map(
+                    static fn (array $visit): int =>
+                        (int) $visit['id'],
+                    $visits
+                )
+            );
+
+
+        $optionsByVisit = [];
+        $extensionsByVisit = [];
+        $customerNamesByCustomer = [];
+
+
+        if ($visitIds) {
+
+            $visitPlaceholders =
+                implode(
+                    ', ',
+                    array_fill(
+                        0,
+                        count($visitIds),
+                        '?'
+                    )
+                );
+
+
+            $optionsStatement =
+                $pdo->prepare(
+                    "
+                    SELECT
+                        vo.visit_id,
+                        vo.option_id,
+                        o.name,
+                        vo.custom_name,
+                        vo.income_amount
+
+                    FROM visit_options vo
+
+                    LEFT JOIN options o
+                        ON o.id = vo.option_id
+
+                    WHERE vo.visit_id IN (
+                        $visitPlaceholders
+                    )
+
+                    ORDER BY
+                        vo.visit_id ASC,
+                        o.sort_order ASC,
+                        vo.id ASC
+                    "
+                );
+
+            $optionsStatement->execute(
+                $visitIds
+            );
+
+            foreach (
+                $optionsStatement->fetchAll()
+                as $option
+            ) {
+
+                $visitId =
+                    (int) $option['visit_id'];
+
+                unset(
+                    $option['visit_id']
+                );
+
+                $optionsByVisit[
+                    $visitId
+                ][] =
+                    $option;
+            }
+
+
+            $extensionsStatement =
+                $pdo->prepare(
+                    "
+                    SELECT
+                        ve.visit_id,
+                        ve.store_course_id,
+                        ve.quantity,
+                        sc.course_code,
+                        sc.course_name,
+                        sc.course_minutes
+
+                    FROM visit_extensions ve
+
+                    JOIN store_courses sc
+                        ON sc.id =
+                            ve.store_course_id
+
+                    WHERE ve.visit_id IN (
+                        $visitPlaceholders
+                    )
+
+                    ORDER BY
+                        ve.visit_id ASC,
+                        sc.sort_order ASC,
+                        ve.id ASC
+                    "
+                );
+
+            $extensionsStatement->execute(
+                $visitIds
+            );
+
+            foreach (
+                $extensionsStatement->fetchAll()
+                as $extension
+            ) {
+
+                $visitId =
+                    (int) $extension[
+                        'visit_id'
+                    ];
+
+                unset(
+                    $extension['visit_id']
+                );
+
+                $extensionsByVisit[
+                    $visitId
+                ][] =
+                    $extension;
+            }
+        }
+
+
+        $customerIds =
+            array_values(
+                array_unique(
+                    array_map(
+                        'intval',
+                        array_filter(
+                            array_column(
+                                $visits,
+                                'customer_id'
+                            ),
+                            static fn ($value): bool =>
+                                $value !== null
+                                && $value !== ''
+                        )
+                    )
+                )
+            );
+
+
+        if ($customerIds) {
+
+            $customerPlaceholders =
+                implode(
+                    ', ',
+                    array_fill(
+                        0,
+                        count($customerIds),
+                        '?'
+                    )
+                );
+
+
+            $namesStatement =
+                $pdo->prepare(
+                    "
+                    SELECT
+                        customer_id,
+                        name_type,
+                        name,
+                        is_primary,
+                        id
+
+                    FROM customer_names
+
+                    WHERE customer_id IN (
+                        $customerPlaceholders
+                    )
+
+                    ORDER BY
+                        customer_id ASC,
+                        is_primary DESC,
+                        id ASC
+                    "
+                );
+
+            $namesStatement->execute(
+                $customerIds
+            );
+
+            foreach (
+                $namesStatement->fetchAll()
+                as $name
+            ) {
+
+                $customerId =
+                    (int) $name[
+                        'customer_id'
+                    ];
+
+                $customerNamesByCustomer[
+                    $customerId
+                ][] = [
+                    'name_type' =>
+                        $name['name_type'],
+
+                    'name' =>
+                        $name['name'],
+
+                    'is_primary' =>
+                        $name['is_primary'],
+                ];
+            }
+        }
+
+
         foreach ($visits as &$visit) {
 
+            $visitId =
+                (int) $visit['id'];
+
+            $customerId =
+                isset($visit['customer_id'])
+                && $visit['customer_id'] !== null
+                    ? (int) $visit[
+                        'customer_id'
+                    ]
+                    : null;
+
+
             $visit['options'] =
-                fetchVisitOptions(
-                    $pdo,
-                    (int) $visit['id']
-                );
+                $optionsByVisit[
+                    $visitId
+                ]
+                ?? [];
 
             $visit['extensions'] =
-                fetchVisitExtensions(
-                    $pdo,
-                    (int) $visit['id']
-                );
-
-
-            $moneyDraft =
-                fetchVisitMoneyDraft(
-                    $pdo,
-                    (int) $visit['id']
-                );
+                $extensionsByVisit[
+                    $visitId
+                ]
+                ?? [];
 
 
             $visit['tip_amount'] =
-                (int)
-                $moneyDraft['tip_amount'];
+                (int) (
+                    $visit['tip_amount']
+                    ?? 0
+                );
 
             $visit['adjustment_amount'] =
-                (int)
-                $moneyDraft[
-                    'adjustment_amount'
-                ];
-
-            $visit['sales_confirmed_at'] =
-                $moneyDraft['confirmed_at'];
+                (int) (
+                    $visit[
+                        'adjustment_amount'
+                    ]
+                    ?? 0
+                );
 
 
             $visit['customer_names'] =
-                fetchCustomerNames(
-                    $pdo,
-                    isset($visit['customer_id'])
-                        ? (int) $visit['customer_id']
-                        : null
-                );
+                $customerId !== null
+                    ? (
+                        $customerNamesByCustomer[
+                            $customerId
+                        ]
+                        ?? []
+                    )
+                    : [];
         }
 
         unset($visit);
