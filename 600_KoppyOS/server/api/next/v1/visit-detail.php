@@ -228,11 +228,23 @@ try {
         $heavenDiary = null;
     }
 
+    $statement = $pdo->prepare("
+        SELECT 1
+        FROM heaven_diary_drafts
+        WHERE visit_id = ?
+          AND trim(body) <> ''
+        LIMIT 1
+    ");
+    $statement->execute([$visitId]);
+    $heavenDiaryDraftExists =
+        $statement->fetchColumn() !== false;
+
     $visit['diary_linked'] =
         (
             $diaryNote !== null
             || count($diaries) > 0
             || $heavenDiary !== null
+            || $heavenDiaryDraftExists
         )
             ? 1
             : 0;

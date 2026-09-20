@@ -930,6 +930,12 @@ function fetchVisit(
                         FROM heaven_diaries hd
                         WHERE hd.visit_id = v.id
                     )
+                    OR EXISTS (
+                        SELECT 1
+                        FROM heaven_diary_drafts hdd
+                        WHERE hdd.visit_id = v.id
+                          AND trim(hdd.body) <> ''
+                    )
                     THEN 1
                     ELSE 0
                 END AS diary_linked
@@ -1229,6 +1235,12 @@ try {
                             SELECT 1
                             FROM heaven_diaries hd
                             WHERE hd.visit_id = v.id
+                        )
+                        OR EXISTS (
+                            SELECT 1
+                            FROM heaven_diary_drafts hdd
+                            WHERE hdd.visit_id = v.id
+                              AND trim(hdd.body) <> ''
                         )
                         THEN 1
                         ELSE 0
