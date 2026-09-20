@@ -4,8 +4,14 @@
 
 NEXT is the parallel rebuild area for Koppy World.
 
-Current production pages remain operational and act as the
-working specification while NEXT is rebuilt.
+Most legacy production pages remain operational and act as the
+working specification while their NEXT replacements are rebuilt.
+
+Kohaku Work has completed production URL promotion:
+
+- Official: `/work/`
+- NEXT mirror / retained preview path: `/next/work/`
+- Legacy fallback: `/kohaku-work/`
 
 ## Core rules
 
@@ -15,30 +21,29 @@ working specification while NEXT is rebuilt.
 - `app` is used for full applications.
 - App Mode owns its own scrolling, sticky/fixed UI,
   drawers, modals, safe areas and z-index system.
-- Kohaku Work NEXT must not be wrapped in a World Frame shell.
+- Kohaku Work app must not be wrapped in a World Frame shell.
 - Existing APIs remain the source of truth unless an
   incompatible API change is explicitly required.
 
 ## Kohaku Work verification database
 
-Kohaku Work NEXT will use an isolated verification database
-created from a production snapshot before write testing begins.
+Kohaku Work used an isolated verification database created from
+a production snapshot during write testing.
 
 Rules:
 
 - Production -> verification copy is allowed.
-- NEXT writes must never flow back into production.
+- Verification data must never be merged or copied back into production.
 - Verification DB may be refreshed from production.
-- Destructive NEXT testing occurs only against verification.
-- When NEXT is validated, configuration is switched to
-  production data.
+- Destructive testing occurs only against verification.
+- After validation, Kohaku Work was switched to production data.
 
 This is a test snapshot/clone strategy.
 It is NOT bidirectional database replication.
 
 ## URL plan
 
-| Role | Current | NEXT | Final |
+| Role | Legacy | NEXT | Final |
 | --- | --- | --- | --- |
 | WORLD | `/` | `/next/` | `/` |
 | WORK | `/kohaku-work/` | `/next/work/` | `/work/` |
@@ -63,4 +68,4 @@ It is NOT bidirectional database replication.
 8. Koppy
 9. Tools
 10. WORLD navigation
-11. Production URL promotion
+11. Production URL promotion — WORK completed 2026-09-20

@@ -283,7 +283,7 @@ function koppyLogout(): void
 
 function koppyRequirePageAuth(
     string $loginUrl =
-        '/kohaku-work/login.php'
+        '/auth/login.php'
 ): void {
 
     if (
@@ -297,7 +297,7 @@ function koppyRequirePageAuth(
         $_SERVER[
             'REQUEST_URI'
         ]
-        ?? '/kohaku-work/';
+        ?? '/work/';
 
 
     header(
