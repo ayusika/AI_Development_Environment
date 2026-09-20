@@ -366,6 +366,175 @@ body:has(#view-schedule.is-active) .work-next-bottom-nav{
   }
 }
 
+/* =========================================================
+   KOHaku WORK / DESKTOP SCHEDULE HOVER PREVIEW
+========================================================= */
+
+.next-schedule-hover-card{
+  position:fixed;
+  z-index:5200;
+  box-sizing:border-box;
+  width:min(290px,calc(100vw - 16px));
+  padding:14px;
+  pointer-events:none;
+  opacity:0;
+  transform:translateY(4px) scale(.98);
+  transform-origin:top left;
+  border:1px solid color-mix(in srgb,var(--next-hover-store-color,var(--wf-accent)) 52%,transparent);
+  border-radius:16px;
+  color:var(--wf-text);
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb,var(--next-hover-store-color,var(--wf-accent)) 10%,rgba(11,34,55,.98)),
+      rgba(5,22,41,.985)
+    );
+  box-shadow:
+    0 24px 65px rgba(0,0,0,.42),
+    0 0 0 1px rgba(255,255,255,.035) inset;
+  backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);
+  transition:
+    opacity .12s ease,
+    transform .14s ease;
+}
+
+.next-schedule-hover-card::before{
+  content:"";
+  position:absolute;
+  top:0;
+  left:14px;
+  right:14px;
+  height:3px;
+  border-radius:0 0 999px 999px;
+  background:var(--next-hover-store-color,var(--wf-accent));
+  box-shadow:0 0 16px color-mix(in srgb,var(--next-hover-store-color,var(--wf-accent)) 65%,transparent);
+}
+
+.next-schedule-hover-card.is-visible{
+  opacity:1;
+  transform:translateY(0) scale(1);
+}
+
+.next-schedule-hover-card-head{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:5px;
+}
+
+.next-schedule-hover-card-head > span{
+  color:#8cecff;
+  font-size:14px;
+  font-weight:950;
+}
+
+.next-schedule-hover-card-head > b{
+  padding:3px 6px;
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:999px;
+  color:var(--wf-text-soft);
+  background:rgba(255,255,255,.055);
+  font-size:9px;
+  font-weight:900;
+}
+
+.next-schedule-hover-card-name{
+  display:block;
+  margin-top:10px;
+  color:#f2fbff;
+  font-size:15px;
+  font-weight:950;
+  line-height:1.35;
+  overflow-wrap:anywhere;
+}
+
+.next-schedule-hover-card-meta{
+  display:grid;
+  gap:8px;
+  margin-top:10px;
+}
+
+.next-schedule-hover-card-meta > span{
+  display:grid;
+  grid-template-columns:36px minmax(0,1fr);
+  gap:8px;
+  align-items:start;
+}
+
+.next-schedule-hover-card-meta small{
+  color:var(--wf-text-dim);
+  font-size:8px;
+  font-weight:900;
+}
+
+.next-schedule-hover-card-meta strong{
+  color:var(--wf-text-soft);
+  font-size:10px;
+  line-height:1.45;
+  overflow-wrap:anywhere;
+}
+
+.next-schedule-hover-progress{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:6px;
+  margin-top:12px;
+}
+
+.next-schedule-hover-progress-item{
+  min-width:0;
+  padding:7px 6px;
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:10px;
+  background:rgba(255,255,255,.035);
+}
+
+.next-schedule-hover-progress-item small,
+.next-schedule-hover-progress-item strong{
+  display:block;
+}
+
+.next-schedule-hover-progress-item small{
+  color:var(--wf-text-dim);
+  font-size:7px;
+  font-weight:850;
+}
+
+.next-schedule-hover-progress-item strong{
+  margin-top:3px;
+  color:#ff9caf;
+  font-size:8px;
+  font-weight:950;
+  white-space:nowrap;
+}
+
+.next-schedule-hover-progress-item.is-complete strong{
+  color:#8effc1;
+}
+
+.next-schedule-hover-card-hint{
+  display:block;
+  margin-top:10px;
+  padding-top:9px;
+  border-top:1px solid rgba(255,255,255,.055);
+  color:var(--wf-text-dim);
+  font-size:7px;
+  line-height:1.4;
+}
+
+@media(max-width:760px), (hover:none), (pointer:coarse){
+  .next-schedule-hover-card{
+    display:none !important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .next-schedule-hover-card{
+    transition:none;
+  }
+}
+
 .next-schedule-now-line{
   position:absolute;
   left:0;

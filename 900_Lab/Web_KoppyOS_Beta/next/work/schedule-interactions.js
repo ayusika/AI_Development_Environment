@@ -144,42 +144,539 @@
     dragPreview = marker;
   }
 
+  const hoverPreviewEnabled =
+    window.matchMedia(
+      "(hover:hover) and (pointer:fine)"
+    ).matches;
+
+  let hoverCard = null;
+  let hoverCardSource = null;
+  let hoverTimer = null;
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  function compactTime(value) {
+    const text = String(value || "");
+    const hour = Number(text.slice(11, 13));
+    const minute = Number(text.slice(14, 16));
+
+    if (
+      !Number.isFinite(hour)
+      || !Number.isFinite(minute)
+    ) {
+      return "−";
+    }
+
+    return (
+      `${String(hour).padStart(2, "0")}:`
+      + String(minute).padStart(2, "0")
+    );
+  }
+
+  function statusLabel(value) {
+    return ({
+      new:"新規",
+      repeat:"リピ",
+      other_store_repeat:"他店リピ",
+      repeat_unknown_id:"リピ・ID不明",
+    })[value] || value || "予約";
+  }
+
+  function customerLabel(visit) {
+    const names =
+      Array.isArray(visit?.customer_names)
+        ? visit.customer_names
+        : [];
+
+    if (!names.length) {
+      return (
+        visit?.customer_name
+        || visit?.customer_code
+        || statusLabel(visit?.customer_status)
+      );
+    }
+
+    const primary =
+      names.find(
+        record =>
+          record?.name
+          && Number(record.is_primary) === 1
+      )
+      || names.find(
+        record =>
+          record?.name
+          && record.name_type === "nickname"
+      )
+      || names.find(record => record?.name)
+      || null;
+
+    const okini =
+      names.find(
+        record =>
+          record?.name
+          && record.name_type === "okini_talk"
+      )
+      || null;
+
+    const line =
+      names.find(
+        record =>
+          record?.name
+          && record.name_type === "line"
+      )
+      || null;
+
+    return [primary, okini, line]
+      .filter(Boolean)
+      .filter(
+        (record, index, list) =>
+          list.findIndex(
+            item =>
+              String(item.name)
+              === String(record.name)
+          )
+          === index
+      )
+      .map(record => {
+        const prefix =
+          record.name_type === "okini_talk"
+            ? "オ:"
+            : (
+              record.name_type === "line"
+                ? "L:"
+                : ""
+            );
+
+        return prefix + String(record.name);
+      })
+      .join(" / ");
+  }
+
+  function optionLabel(visit) {
+    const values =
+      (
+        Array.isArray(visit?.options)
+          ? visit.options
+          : []
+      )
+        .map(
+          option =>
+            option?.name
+            || option?.custom_name
+            || ""
+        )
+        .filter(Boolean);
+
+    return values.length
+      ? values.join("・")
+      : "なし";
+  }
+
+  function progressItemHtml(
+    label,
+    complete,
+    completeText,
+    incompleteText
+  ) {
+    return `
+      <span
+        class="next-schedule-hover-progress-item ${complete ? "is-complete" : "is-incomplete"}"
+      >
+        <small>${escapeHtml(label)}</small>
+        <strong>${escapeHtml(complete ? completeText : incompleteText)}</strong>
+      </span>
+    `;
+  }
+
+  function hoverPreviewHtml(visit) {
+    const course =
+      `${visit?.pricing_category === "foreign" ? "外" : ""}`
+      + `${Number(visit?.course_minutes || 0)}分`;
+
+    return `
+      <div class="next-schedule-hover-card-head">
+        <span>${escapeHtml(compactTime(visit?.started_at))}</span>
+        <b>${escapeHtml(course)}</b>
+        <b>${escapeHtml(statusLabel(visit?.customer_status))}</b>
+      </div>
+
+      <strong class="next-schedule-hover-card-name">
+        ${escapeHtml(customerLabel(visit))}
+      </strong>
+
+      <div class="next-schedule-hover-card-meta">
+        <span>
+          <small>店舗</small>
+          <strong>${escapeHtml(visit?.store_name || "未登録")}</strong>
+        </span>
+        <span>
+          <small>OP</small>
+          <strong>${escapeHtml(optionLabel(visit))}</strong>
+        </span>
+      </div>
+
+      <div class="next-schedule-hover-progress">
+        ${progressItemHtml(
+          "顧客",
+          Number(visit?.customer_linked) === 1,
+          "紐付け済",
+          "未紐付け"
+        )}
+        ${progressItemHtml(
+          "日記",
+          Number(visit?.diary_linked) === 1,
+          "完了",
+          "未入力"
+        )}
+        ${progressItemHtml(
+          "売上",
+          Number(visit?.sales_entered) === 1,
+          "入力済",
+          "未入力"
+        )}
+      </div>
+
+      <small class="next-schedule-hover-card-hint">
+        クリックで詳細 / ドラッグで日時変更
+      </small>
+    `;
+  }
+
+  function ensureHoverCard() {
+    if (hoverCard?.isConnected) {
+      return hoverCard;
+    }
+
+    hoverCard =
+      document.createElement("div");
+
+    hoverCard.className =
+      "next-schedule-hover-card";
+
+    hoverCard.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+
+    document.body.appendChild(
+      hoverCard
+    );
+
+    return hoverCard;
+  }
+
+  function positionHoverCard(card) {
+    if (!hoverCard || !card) {
+      return;
+    }
+
+    const rect =
+      card.getBoundingClientRect();
+
+    const previewRect =
+      hoverCard.getBoundingClientRect();
+
+    const margin = 10;
+    const edge = 8;
+
+    let left =
+      rect.right + margin;
+
+    if (
+      left + previewRect.width
+      > window.innerWidth - edge
+    ) {
+      left =
+        rect.left
+        - previewRect.width
+        - margin;
+    }
+
+    left =
+      clamp(
+        left,
+        edge,
+        Math.max(
+          edge,
+          window.innerWidth
+          - previewRect.width
+          - edge
+        )
+      );
+
+    let top =
+      rect.top
+      + Math.min(
+        8,
+        Math.max(
+          0,
+          rect.height / 2 - 18
+        )
+      );
+
+    top =
+      clamp(
+        top,
+        edge,
+        Math.max(
+          edge,
+          window.innerHeight
+          - previewRect.height
+          - edge
+        )
+      );
+
+    hoverCard.style.left =
+      `${Math.round(left)}px`;
+
+    hoverCard.style.top =
+      `${Math.round(top)}px`;
+  }
+
+  function hideHoverPreview() {
+    window.clearTimeout(
+      hoverTimer
+    );
+
+    hoverTimer = null;
+    hoverCardSource = null;
+
+    if (!hoverCard) {
+      return;
+    }
+
+    hoverCard.classList.remove(
+      "is-visible"
+    );
+
+    hoverCard.setAttribute(
+      "aria-hidden",
+      "true"
+    );
+  }
+
+  function showHoverPreview(card) {
+    if (
+      !hoverPreviewEnabled
+      || !card
+      || desktopDrag
+      || touchDrag?.active
+    ) {
+      return;
+    }
+
+    const visit =
+      visitById(
+        Number(
+          card.dataset.nextScheduleEvent
+          || 0
+        )
+      );
+
+    if (!visit) {
+      return;
+    }
+
+    window.clearTimeout(
+      hoverTimer
+    );
+
+    // Mark the source before the delay starts so pointerout/focusout
+    // can cancel a pending preview before it appears.
+    hoverCardSource =
+      card;
+
+    hoverTimer =
+      window.setTimeout(
+        () => {
+          const preview =
+            ensureHoverCard();
+
+          preview.innerHTML =
+            hoverPreviewHtml(
+              visit
+            );
+
+          preview.style.setProperty(
+            "--next-hover-store-color",
+            getComputedStyle(card)
+              .getPropertyValue(
+                "--store-color"
+              )
+              .trim()
+              || "var(--wf-accent)"
+          );
+
+          preview.classList.add(
+            "is-visible"
+          );
+
+          preview.setAttribute(
+            "aria-hidden",
+            "false"
+          );
+
+          positionHoverCard(
+            card
+          );
+        },
+        90
+      );
+  }
+
   function setEventsDraggable() {
     timeline
       .querySelectorAll("[data-next-schedule-event]")
       .forEach(card => {
         card.draggable = true;
 
-        const interactionHint =
-          "クリックで詳細 / ドラッグで日時変更";
-
-        const currentTitle =
-          card.getAttribute("title")
-          || "";
-
-        if (
-          !currentTitle.includes(
-            interactionHint
-          )
-        ) {
-          card.setAttribute(
-            "title",
-            currentTitle
-              ? `${currentTitle}\n${interactionHint}`
-              : interactionHint
-          );
-        }
+        // Native title tooltips are intentionally disabled.
+        // Desktop gets a full custom hover preview instead.
+        card.removeAttribute(
+          "title"
+        );
       });
   }
 
-  const timelineObserver = new MutationObserver(setEventsDraggable);
-  timelineObserver.observe(timeline, { childList:true, subtree:true });
+  const timelineObserver =
+    new MutationObserver(
+      setEventsDraggable
+    );
+
+  timelineObserver.observe(
+    timeline,
+    {
+      childList:true,
+      subtree:true,
+    }
+  );
+
   setEventsDraggable();
 
   function visitById(visitId) {
     return scheduleApi.state.visits.find(
       visit => Number(visit.id) === Number(visitId)
     ) || null;
+  }
+
+  if (hoverPreviewEnabled) {
+    document.addEventListener(
+      "pointerover",
+      event => {
+        if (
+          event.pointerType
+          && event.pointerType !== "mouse"
+        ) {
+          return;
+        }
+
+        const card =
+          event.target.closest(
+            "[data-next-schedule-event]"
+          );
+
+        if (
+          !card
+          || !timeline.contains(card)
+        ) {
+          return;
+        }
+
+        if (
+          card.contains(
+            event.relatedTarget
+          )
+        ) {
+          return;
+        }
+
+        showHoverPreview(
+          card
+        );
+      }
+    );
+
+    document.addEventListener(
+      "pointerout",
+      event => {
+        const card =
+          event.target.closest(
+            "[data-next-schedule-event]"
+          );
+
+        if (
+          !card
+          || card !== hoverCardSource
+        ) {
+          return;
+        }
+
+        if (
+          card.contains(
+            event.relatedTarget
+          )
+        ) {
+          return;
+        }
+
+        hideHoverPreview();
+      }
+    );
+
+    document.addEventListener(
+      "focusin",
+      event => {
+        const card =
+          event.target.closest(
+            "[data-next-schedule-event]"
+          );
+
+        if (
+          card
+          && timeline.contains(card)
+        ) {
+          showHoverPreview(
+            card
+          );
+        }
+      }
+    );
+
+    document.addEventListener(
+      "focusout",
+      event => {
+        const card =
+          event.target.closest(
+            "[data-next-schedule-event]"
+          );
+
+        if (
+          card
+          && card === hoverCardSource
+        ) {
+          hideHoverPreview();
+        }
+      }
+    );
+
+    shell.addEventListener(
+      "scroll",
+      hideHoverPreview,
+      { passive:true }
+    );
+
+    window.addEventListener(
+      "resize",
+      hideHoverPreview,
+      { passive:true }
+    );
   }
 
   function showToast(text) {
@@ -313,6 +810,8 @@
   document.addEventListener("dragstart", event => {
     const card = event.target.closest("[data-next-schedule-event]");
     if (!card) return;
+
+    hideHoverPreview();
 
     const visitId = Number(card.dataset.nextScheduleEvent || 0);
     const visit = visitById(visitId);
