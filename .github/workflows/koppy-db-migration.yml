@@ -10,7 +10,8 @@ on:
     branches:
       - main
     paths:
-      - "600_KoppyOS/server/database/migrate-*.php"
+      - "600_KoppyOS/server/database/migrate-home*.php"
+      - "060_Kohaku_Work/database/migrate-*.php"
       - ".github/workflows/koppy-db-migration.yml"
 
   workflow_dispatch:
@@ -171,7 +172,14 @@ jobs:
 
           publish_migration_status "running"
 
-          LOCAL_FILE="600_KoppyOS/server/database/$MIGRATION_FILE"
+          case "$MIGRATION_FILE" in
+            migrate-home*.php)
+              LOCAL_FILE="600_KoppyOS/server/database/$MIGRATION_FILE"
+              ;;
+            *)
+              LOCAL_FILE="060_Kohaku_Work/database/$MIGRATION_FILE"
+              ;;
+          esac
 
           REMOTE_DIR="/home/users/2/her.jp-mikipiano/.koppy-private/migrations"
 

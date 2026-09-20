@@ -59,7 +59,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          LOCAL_SCRIPT="600_KoppyOS/server/database/refresh-verification-db.php"
+          LOCAL_SCRIPT="060_Kohaku_Work/database/refresh-verification-db.php"
           REMOTE_TOOL_DIR="/home/users/2/her.jp-mikipiano/.koppy-private/tools"
           REMOTE_SCRIPT="$REMOTE_TOOL_DIR/refresh-verification-db.php"
           PRODUCTION_DB="/home/users/2/her.jp-mikipiano/.koppy-private/database/kohaku-work.sqlite"

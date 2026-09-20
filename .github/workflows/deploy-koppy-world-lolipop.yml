@@ -17,10 +17,10 @@ on:
       - "900_Lab/Web_KoppyOS_Beta/next/**"
       - "600_KoppyOS/server/api/**"
       - "600_KoppyOS/server/auth/**"
-      - "600_KoppyOS/server/database/migrate-sales-v2.php"
-      - "600_KoppyOS/server/database/migrate-sapporo-rates-v2.php"
-      - "600_KoppyOS/server/database/migrate-customer-name-kashikoi.php"
-      - "600_KoppyOS/server/database/migrate-heaven-diaries.php"
+      - "060_Kohaku_Work/database/migrate-sales-v2.php"
+      - "060_Kohaku_Work/database/migrate-sapporo-rates-v2.php"
+      - "060_Kohaku_Work/database/migrate-customer-name-kashikoi.php"
+      - "060_Kohaku_Work/database/migrate-heaven-diaries.php"
       - ".github/workflows/deploy-koppy-world-lolipop.yml"
 
   workflow_dispatch:
@@ -304,7 +304,7 @@ jobs:
               -P "$SSH_PORT" \
               -o StrictHostKeyChecking=accept-new \
               -o UpdateHostKeys=no \
-              "600_KoppyOS/server/database/migrate-sales-v2.php" \
+              "060_Kohaku_Work/database/migrate-sales-v2.php" \
               "$SSH_USER@$SSH_HOST:/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-sales-v2.php"
 
             sshpass -p "$SSH_PASSWORD" \
@@ -323,7 +323,7 @@ jobs:
               -P "$SSH_PORT" \
               -o StrictHostKeyChecking=accept-new \
               -o UpdateHostKeys=no \
-              "600_KoppyOS/server/database/migrate-sapporo-rates-v2.php" \
+              "060_Kohaku_Work/database/migrate-sapporo-rates-v2.php" \
               "$SSH_USER@$SSH_HOST:/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-sapporo-rates-v2.php"
 
             sshpass -p "$SSH_PASSWORD" \
@@ -342,7 +342,7 @@ jobs:
               -P "$SSH_PORT" \
               -o StrictHostKeyChecking=accept-new \
               -o UpdateHostKeys=no \
-              "600_KoppyOS/server/database/migrate-customer-name-kashikoi.php" \
+              "060_Kohaku_Work/database/migrate-customer-name-kashikoi.php" \
               "$SSH_USER@$SSH_HOST:/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-customer-name-kashikoi.php"
 
             sshpass -p "$SSH_PASSWORD" \
@@ -361,7 +361,7 @@ jobs:
               -P "$SSH_PORT" \
               -o StrictHostKeyChecking=accept-new \
               -o UpdateHostKeys=no \
-              "600_KoppyOS/server/database/migrate-heaven-diaries.php" \
+              "060_Kohaku_Work/database/migrate-heaven-diaries.php" \
               "$SSH_USER@$SSH_HOST:/home/users/2/her.jp-mikipiano/.koppy-private/migrations/migrate-heaven-diaries.php"
 
             sshpass -p "$SSH_PASSWORD" \
