@@ -1,5 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
+require_once __DIR__
+    . '/../../../600_KoppyOS/server/core/sqlite.php';
+
+
 function koppyDatabaseContext(): string
 {
     $context =
@@ -34,18 +40,45 @@ function koppyDatabaseContext(): string
 
 function koppyDatabasePath(): string
 {
+    $context =
+        koppyDatabaseContext();
+
+    $environmentVariable =
+        $context === 'verification'
+            ? 'KOHAKU_WORK_VERIFICATION_DATABASE_PATH'
+            : 'KOHAKU_WORK_DATABASE_PATH';
+
+    $configuredPath =
+        getenv(
+            $environmentVariable
+        );
+
+    if ($configuredPath !== false) {
+        $configuredPath =
+            trim(
+                $configuredPath
+            );
+
+        if ($configuredPath !== '') {
+            return $configuredPath;
+        }
+    }
+
+    /*
+     * Legacy Lolipop-compatible fallback.
+     *
+     * Pro production will provide
+     * KOHAKU_WORK_DATABASE_PATH explicitly.
+     */
     $documentRoot =
         $_SERVER['DOCUMENT_ROOT']
         ?? '';
 
     if ($documentRoot === '') {
         throw new RuntimeException(
-            'DOCUMENT_ROOT is not available.'
+            'Kohaku Work database path is not configured.'
         );
     }
-
-    $context =
-        koppyDatabaseContext();
 
     $databaseFilename =
         $context === 'verification'
@@ -66,43 +99,39 @@ function koppyDatabase(): PDO
     $context =
         koppyDatabaseContext();
 
-    if (
-        isset($connections[$context])
-        && $connections[$context] instanceof PDO
-    ) {
-        return $connections[$context];
-    }
-
     $databasePath =
         koppyDatabasePath();
 
-    if (!is_file($databasePath)) {
-        throw new RuntimeException(
-            'Kohaku Work '
-            . $context
-            . ' database was not found.'
-        );
+    $connectionKey =
+        $context
+        . "\0"
+        . $databasePath;
+
+    if (
+        isset(
+            $connections[
+                $connectionKey
+            ]
+        )
+        && $connections[
+            $connectionKey
+        ] instanceof PDO
+    ) {
+        return $connections[
+            $connectionKey
+        ];
     }
 
-    $pdo = new PDO(
-        'sqlite:' . $databasePath,
-        null,
-        null,
-        [
-            PDO::ATTR_ERRMODE =>
-                PDO::ERRMODE_EXCEPTION,
+    $connections[
+        $connectionKey
+    ] =
+        koppyOpenSqliteDatabase(
+            $databasePath,
+            'Kohaku Work '
+            . $context
+        );
 
-            PDO::ATTR_DEFAULT_FETCH_MODE =>
-                PDO::FETCH_ASSOC,
-        ]
-    );
-
-    $pdo->exec(
-        'PRAGMA foreign_keys = ON'
-    );
-
-    $connections[$context] =
-        $pdo;
-
-    return $connections[$context];
+    return $connections[
+        $connectionKey
+    ];
 }
