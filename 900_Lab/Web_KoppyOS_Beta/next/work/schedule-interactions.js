@@ -149,10 +149,26 @@
       .querySelectorAll("[data-next-schedule-event]")
       .forEach(card => {
         card.draggable = true;
-        card.setAttribute(
-          "title",
-          "クリックで詳細 / ドラッグで日時変更"
-        );
+
+        const interactionHint =
+          "クリックで詳細 / ドラッグで日時変更";
+
+        const currentTitle =
+          card.getAttribute("title")
+          || "";
+
+        if (
+          !currentTitle.includes(
+            interactionHint
+          )
+        ) {
+          card.setAttribute(
+            "title",
+            currentTitle
+              ? `${currentTitle}\n${interactionHint}`
+              : interactionHint
+          );
+        }
       });
   }
 
