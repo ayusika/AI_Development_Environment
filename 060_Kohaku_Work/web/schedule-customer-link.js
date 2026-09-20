@@ -1,8 +1,8 @@
 (() => {
 "use strict";
 
-const SEARCH="/api/next/v1/customer-identity-search.php";
-const SCHEDULE="/api/next/v1/schedule.php";
+const SEARCH="/api/v1/customer-identity-search.php";
+const SCHEDULE="/api/v1/schedule.php";
 const S=window.KohakuWorkNextSchedule;
 const drawer=document.getElementById("nextScheduleDetailDrawer");
 const body=document.getElementById("nextScheduleDetailBody");

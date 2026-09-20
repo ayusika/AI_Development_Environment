@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const SCHEDULE_API = "/api/next/v1/schedule.php";
+  const SCHEDULE_API = "/api/v1/schedule.php";
   const START_HOUR = 11;
   const END_HOUR = 27;
   const SNAP_MINUTES = 10;

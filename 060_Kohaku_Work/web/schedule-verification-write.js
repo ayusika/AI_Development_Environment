@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const SCHEDULE_API = "/api/next/v1/schedule.php";
+  const SCHEDULE_API = "/api/v1/schedule.php";
 
   function api() {
     const value = window.KohakuWorkNextSchedule;
@@ -841,7 +841,7 @@
   ========================================================= */
 
   const V2_MASTER_API =
-    "/api/next/v1/sales-master.php";
+    "/api/v1/sales-master.php";
 
   const V2_STORES = [
     { id:1, name:"札幌" },

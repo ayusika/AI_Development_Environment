@@ -1,9 +1,9 @@
 (() => {
 "use strict";
-const API="/api/next/v1/schedule.php";
-const MASTER="/api/next/v1/sales-master.php";
-const SEARCH="/api/next/v1/customer-identity-search.php";
-const HISTORY="/api/next/v1/repeat-customer-history.php";
+const API="/api/v1/schedule.php";
+const MASTER="/api/v1/sales-master.php";
+const SEARCH="/api/v1/customer-identity-search.php";
+const HISTORY="/api/v1/repeat-customer-history.php";
 const S=window.KohakuWorkNextSchedule;
 const V=document.getElementById("view-schedule");
 if(!S||!V)return;

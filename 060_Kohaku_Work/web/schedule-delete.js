@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const SCHEDULE_API = "/api/next/v1/schedule.php";
+  const SCHEDULE_API = "/api/v1/schedule.php";
   const scheduleApi = window.KohakuWorkNextSchedule;
   const drawer = document.getElementById("nextScheduleDetailDrawer");
   const footer = drawer?.querySelector(".next-schedule-detail-footer");

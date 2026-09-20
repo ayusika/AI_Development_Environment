@@ -2,10 +2,10 @@
   "use strict";
 
   const PROFILE_API =
-    "/api/next/v1/customer-profile.php";
+    "/api/v1/customer-profile.php";
 
   const VISIT_NOTES_API =
-    "/api/next/v1/visit-notes.php";
+    "/api/v1/visit-notes.php";
 
   const scheduleApi =
     window.KohakuWorkNextSchedule;

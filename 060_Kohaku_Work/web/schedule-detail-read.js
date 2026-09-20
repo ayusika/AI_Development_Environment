@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  const DETAIL_API = "/api/next/v1/visit-detail.php";
+  const DETAIL_API = "/api/v1/visit-detail.php";
   const scheduleApi = window.KohakuWorkNextSchedule;
 
   if (

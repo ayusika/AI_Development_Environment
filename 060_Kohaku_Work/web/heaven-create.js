@@ -1,10 +1,10 @@
 (() => {
   "use strict";
 
-  const FINAL_API = "/api/next/v1/heaven-diaries.php";
-  const DRAFT_API = "/api/next/v1/heaven-diary-drafts.php";
-  const GENERATE_API = "/api/next/v1/heaven-diary.php";
-  const SETTINGS_API = "/api/next/v1/heaven-diary-settings.php";
+  const FINAL_API = "/api/v1/heaven-diaries.php";
+  const DRAFT_API = "/api/v1/heaven-diary-drafts.php";
+  const GENERATE_API = "/api/v1/heaven-diary.php";
+  const SETTINGS_API = "/api/v1/heaven-diary-settings.php";
 
   const root = document.getElementById("view-heaven-create");
 
