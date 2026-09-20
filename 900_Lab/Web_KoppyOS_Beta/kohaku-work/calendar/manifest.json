@@ -1,0 +1,28 @@
+{
+  "id": "/kohaku-work/calendar/",
+  "name": "共有カレンダー | Koppy World",
+  "short_name": "共有カレンダー",
+  "description": "しい・ういの共有カレンダー",
+  "lang": "ja",
+  "start_url": "/kohaku-work/calendar/",
+  "scope": "/kohaku-work/calendar/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f4fbff",
+  "theme_color": "#f4fbff",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "./icons/calendar-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/calendar-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
