@@ -1,7 +1,7 @@
 # CURRENT_STATUS
 
 ## 現在地
-2026-09-21 JST: Koppy Base ServerのPrivate Web初期基盤を構築し、Thunderbolt / Tailscale経由の動作と、今回の再起動後・GUI未ログインでの復旧を実機確認。
+2026-09-21 JST: Koppy Base ServerのPrivate Web初期基盤を構築。TailscaleをStandalone版からMacPortsのCLI-only版へ移行し、iPhoneからProへの通信をHTTPS/TCP 443のみに制限。Pro再起動後・GUI未ログインでもThunderbolt / Tailscale / Serve / Private Webが自動復旧することを実機確認。
 Koppy World / Kohaku Work本体および実DBは未移行。詳細は本書末尾のcheckpointを参照。
 
 ## 現在の進捗
@@ -21,6 +21,8 @@ Koppy World / Kohaku Work本体および実DBは未移行。詳細は本書末�
 - GitHub 正本 `AI_Development_Environment` clone 済み
 - PHP / SQLite / ripgrep 利用可能
 - MacPorts を主系として設定済み
+- TailscaleはStandalone版からMacPorts CLI-only版へ移行済み
+- `tailscaled` はlaunchd + daemondoで常駐し、GUI未ログイン状態でも起動確認済み
 - Qwen 2.5 Coder 7B / llama.cpp / Aider実験済み
 - ローカル7Bは主開発Executorには採用せず、実験用として休眠
 - SanDisk Extreme Portable SSD V2 500GBを所有済み
@@ -67,14 +69,13 @@ Koppy World / Kohaku Work本体および実DBは未移行。詳細は本書末�
 - 自宅開発ではAir ↔ ProのThunderbolt Bridgeを優先する
 
 ## 次の優先タスク
-1. tailnetのAccess Control / Funnel無効状態を設定面から確認し、iPhoneの到達範囲を必要最小限にする
-2. 常設Directory Layout / Service実行ユーザー / 権限 / ログと監視の設計
-3. Koppy World / Kohaku Workの現行コード・認証・DB依存を確認し、認証を維持した移行計画を作成
-4. 実DBの保存先・整合性のあるBackup / Restore手順と復元テストを設計
-5. SanDisk Extreme Portable SSD V2 500GBの接続・File System / Mount / 用途を決定
-6. Thunderbolt未接続起動・停電復旧等、今回未確認のService lifecycle条件を検証
-7. 必要に応じてtailnet経由SSHを確認（今回のSSHはThunderbolt経由）
-8. Gaming PC 現物スペック確認・画像AI基盤の導入計画作成
+1. 常設Directory Layout / Service実行ユーザー / 権限 / ログと監視の設計
+2. Koppy World / Kohaku Workの現行コード・認証・DB依存を確認し、認証を維持した移行計画を作成
+3. 実DBの保存先・整合性のあるBackup / Restore手順と復元テストを設計
+4. SanDisk Extreme Portable SSD V2 500GBの接続・File System / Mount / 用途を決定
+5. Thunderbolt未接続起動・停電復旧等、今回未確認のService lifecycle条件を検証
+6. 必要に応じてtailnet経由SSHを確認（今回のSSHはThunderbolt経由）
+7. Gaming PC 現物スペック確認・画像AI基盤の導入計画作成
 
 ## 2026-09-21 JST｜Private Web初期基盤 checkpoint
 
@@ -83,9 +84,12 @@ Koppy World / Kohaku Work本体および実DBは未移行。詳細は本書末�
 - macOS Sequoia 15.7.9 (24G830)、hostname: Koppy-Worker-Pro、user: kwpro
 - Air → Pro: `ssh koppy-worker`、接続先 `10.77.0.2`（Thunderbolt Bridge）
 - MacPorts: nginx 1.30.4、php83 / php83-fpm / php83-sqlite 8.3.33、sqlite3 3.53.4
-- Tailscale 1.102.4 Standalone版、bundle ID: `io.tailscale.ipn.macsys`
-- Tailscale Network Extensionはactivated / enabled
-- Pro Tailscale IP: `100.89.19.32`、iPhone 14: `100.124.178.3`
+- Tailscale 1.102.3 MacPorts CLI-only版へ移行済み
+- binary: `/opt/local/bin/tailscale` / `/opt/local/bin/tailscaled`
+- `sudo port load tailscale` によりlaunchd + daemondoで常駐
+- 旧Standalone版 `Tailscale.app` とNetwork Extensionは削除済み
+- Pro Tailscale IP: `100.122.158.90`、iPhone 14: `100.124.178.3`
+- 旧Standalone node `100.89.19.32` はtailnetから削除済み
 
 ### 接続とService管理
 - nginxの待受: `127.0.0.1:8080` と `10.77.0.2:8080`
@@ -97,8 +101,10 @@ Koppy World / Kohaku Work本体および実DBは未移行。詳細は本書末�
 - launchd + daemondoで管理。plistのKeepAliveは有効。異常終了を意図的に起こす復旧試験は未実施
 - 現在のworker / PHP-FPM poolは `nobody`。本番アプリ用ユーザーと書込権限は未設計
 - HTTPのThunderbolt経路は確認用。認証付きアプリ移行時にHTTPS / Secure Cookie / Proxy経由HTTPS判定を設計する
-- Public port forwarding・Funnelは使用しない方針を維持。Serve出力は「Available within your tailnet」
-- VPN OFFで当該URLに接続不可を確認したが、tailnet全体の権限監査・他Serviceの公開範囲監査の完了は意味しない
+- Public port forwarding・Funnelは使用しない方針を維持。Serveは `tailnet only`
+- Tailscale Access Controlは iPhone 14 `100.124.178.3` → Pro `100.122.158.90` の `tcp:443` のみ許可
+- iPhoneでTailscale ON時のみPrivate Webへ到達し、OFF時は接続不可を実機確認
+- Air → Proの管理経路はThunderbolt Bridgeを使用しており、このTailscale grantとは独立
 
 ### 実ファイル
 - nginx設定: `/opt/local/etc/nginx/nginx.conf`
@@ -124,10 +130,14 @@ Koppy World / Kohaku Work本体および実DBは未移行。詳細は本書末�
 - Air → Thunderbolt → health.php: PASS
 - iPhone 14、Wi-Fi OFF・4G・Tailscale ON → HTTPS health.php: PASS
 - 同条件でTailscale OFF → 接続不可、ONへ戻す → 復旧: PASS
-- Proへ `sudo shutdown -r now` を実行後、ユーザー申告でProのGUI未ログインを確認
-- 再起動後、Air / iPhoneの両経路で応答成功。新しいquery `?check=after-reboot-01` でも両方成功を確認
-- これは今回の構成・再起動条件での実機結果。Standalone版の一般的なログイン前動作保証には拡張しない
-- 公式比較表のログイン前動作に関する記載との相違があるため、CLI版への変更はいったん保留し現構成を継続
+- Standalone版ではGUI未ログイン時のTailscale復旧に再現性の揺れが見られたため、MacPorts CLI-only版へ移行
+- Proへ `sudo shutdown -r now` を実行し、再起動後 `stat -f "%Su" /dev/console` が `root` のGUI未ログイン状態を確認
+- GUI未ログインのままAir → Thunderbolt SSH: PASS
+- GUI未ログインのまま `tailscaled`: PASS
+- GUI未ログインのままTailscale Serve復旧: PASS
+- GUI未ログインのままiPhone 14・Wi-Fi OFF・4G・Tailscale ON → HTTPS health.php: PASS
+- Tailscale OFF → 接続不可、ON → 復旧: PASS
+- CLI-only版で無人再起動後のPrivate Web自動復旧を実機確認済み
 - 参照: https://tailscale.com/docs/concepts/macos-variants
 
 ### 電源・実験環境

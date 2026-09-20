@@ -38,7 +38,8 @@
 - [x] tailnet内疎通確認
 - [ ] tailnet経由SSH確認
 - [x] Private Web接続確認
-- [ ] iPhoneから利用可能なService範囲を必要最小限へ制限
+- [x] iPhoneから利用可能なService範囲を必要最小限へ制限（iPhone → Pro TCP 443のみ）
+- [x] TailscaleをMacPorts CLI-only版へ移行し、GUI未ログイン再起動後の自動復旧を実機確認
 - [ ] Public InternetへのWeb / SSH / DB直接公開を行わない
 - [ ] Tailscale Funnelを使用しない
 - [ ] RTX830をHome Gateway / Firewallとして導入
