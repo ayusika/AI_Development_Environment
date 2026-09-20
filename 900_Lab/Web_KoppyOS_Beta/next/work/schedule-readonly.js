@@ -92,10 +92,12 @@
     const start = new Date(anchor);
     let days = 1;
 
-    if (state.view === "week" || state.view === "two-weeks") {
+    if (state.view === "week") {
       const day = start.getDay();
       start.setDate(start.getDate() + (day === 0 ? -6 : 1 - day));
-      days = state.view === "week" ? 7 : 14;
+      days = 7;
+    } else if (state.view === "two-weeks") {
+      days = 14;
     }
 
     const dates = [];
@@ -196,6 +198,59 @@
         total
         + Number(extension.course_minutes || 0) * Number(extension.quantity || 1),
       0
+    );
+  }
+
+  function visitEndAt(visit) {
+    const parts = timeParts(visit?.started_at);
+    const [year, month, day] =
+      String(parts.date || "")
+        .split("-")
+        .map(Number);
+
+    if (
+      !Number.isFinite(year)
+      || !Number.isFinite(month)
+      || !Number.isFinite(day)
+      || !Number.isFinite(parts.hour)
+      || !Number.isFinite(parts.minute)
+    ) {
+      return null;
+    }
+
+    const startedAt =
+      new Date(
+        year,
+        month - 1,
+        day,
+        parts.hour,
+        parts.minute,
+        0,
+        0
+      );
+
+    if (Number.isNaN(startedAt.getTime())) {
+      return null;
+    }
+
+    const durationMinutes =
+      Math.max(
+        0,
+        Number(visit?.course_minutes || 0)
+        + extensionMinutes(visit)
+      );
+
+    return new Date(
+      startedAt.getTime()
+      + durationMinutes * 60 * 1000
+    );
+  }
+
+  function isPastVisit(visit, now = new Date()) {
+    const endedAt = visitEndAt(visit);
+    return Boolean(
+      endedAt
+      && endedAt.getTime() <= now.getTime()
     );
   }
 
@@ -306,9 +361,27 @@
     );
     const height = Math.max(28, duration * hourHeight / 60 - 3);
     const repeat = ["repeat", "other_store_repeat", "repeat_unknown_id"].includes(visit.customer_status);
-    const customer = customerParts(visit).map(escapeHtml).join(" / ");
+    const customerText = customerParts(visit).join(" / ");
+    const customer = escapeHtml(customerText);
     const options = optionNames(visit);
     const courseText = `${visit.pricing_category === "foreign" ? "外" : ""}${Number(visit.course_minutes || 0)}分`;
+    const past = isPastVisit(visit);
+    const diaryComplete = Number(visit.diary_linked) === 1;
+    const salesComplete = Number(visit.sales_entered) === 1;
+    const diaryClass = diaryComplete
+      ? ""
+      : `is-incomplete${past ? " is-overdue" : ""}`;
+    const salesClass = salesComplete
+      ? ""
+      : `is-incomplete${past ? " is-overdue" : ""}`;
+
+    const tooltipText = [
+      `${compactTime(visit.started_at)} ${courseText} ${statusLabel(visit.customer_status)}`,
+      customerText || "顧客未登録",
+      options.length
+        ? `OP: ${options.join("・")}`
+        : "OP: なし",
+    ].join("\n");
 
     return `
       <button
@@ -316,6 +389,7 @@
         data-next-schedule-event="${Number(visit.id)}"
         class="next-schedule-event ${storeClass(visit.store_name)} ${courseClass(visit.course_minutes)} ${repeat ? "is-repeat" : ""}"
         style="top:${top}px;height:${height}px"
+        title="${escapeHtml(tooltipText)}"
       >
         <span class="next-schedule-event-heading">
           <span class="next-schedule-event-time">${escapeHtml(compactTime(visit.started_at))}</span>
@@ -326,8 +400,8 @@
         ${options.length ? `<span class="next-schedule-event-options">${escapeHtml(options.join("・"))}</span>` : ""}
         <span class="next-schedule-event-progress">
           <span class="${Number(visit.customer_linked) ? "" : "is-incomplete"}">👤</span>
-          <span class="${Number(visit.diary_linked) ? "" : "is-incomplete"}">📓</span>
-          <span class="${Number(visit.sales_entered) ? "" : "is-incomplete"}">¥</span>
+          <span class="${diaryClass}">📓</span>
+          <span class="${salesClass}">¥</span>
         </span>
       </button>`;
   }

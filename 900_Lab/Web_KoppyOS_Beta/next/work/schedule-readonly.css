@@ -340,6 +340,32 @@ body:has(#view-schedule.is-active) .work-next-bottom-nav{
 
 .next-schedule-event-progress .is-incomplete{opacity:.22;}
 
+.next-schedule-event-progress .is-overdue{
+  opacity:1;
+  color:#ff5f79;
+  filter:drop-shadow(0 0 4px rgba(255,95,121,.72));
+  animation:next-schedule-overdue-blink 1.05s ease-in-out infinite;
+}
+
+@keyframes next-schedule-overdue-blink{
+  0%,100%{
+    opacity:1;
+    filter:drop-shadow(0 0 5px rgba(255,95,121,.82));
+  }
+
+  50%{
+    opacity:.28;
+    filter:drop-shadow(0 0 1px rgba(255,95,121,.28));
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .next-schedule-event-progress .is-overdue{
+    animation:none;
+    opacity:1;
+  }
+}
+
 .next-schedule-now-line{
   position:absolute;
   left:0;
