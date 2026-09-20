@@ -226,8 +226,9 @@
           ✎ 予約を編集
         </button>
 
-        <div class="next-detail-visitor-quick">
-          <div class="next-detail-visitor-quick-head">
+        <div class="next-detail-profile-quick-row">
+          <div class="next-detail-visitor-quick">
+            <div class="next-detail-visitor-quick-head">
             <div>
               <span>VISITOR TYPE</span>
               <strong>来訪タイプ</strong>
@@ -256,11 +257,17 @@
             }
           </div>
 
-          <p
-            class="next-detail-visitor-status"
-            data-next-detail-visitor-status
-            aria-live="polite"
-          ></p>
+            <p
+              class="next-detail-visitor-status"
+              data-next-detail-visitor-status
+              aria-live="polite"
+            ></p>
+          </div>
+
+          <div
+            class="next-detail-acquisition-quick-host"
+            data-next-acquisition-quick
+          ></div>
         </div>
       `;
     }

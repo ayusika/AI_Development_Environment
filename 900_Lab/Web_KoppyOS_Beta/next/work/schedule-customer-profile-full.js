@@ -212,8 +212,6 @@
   }
 
   function editorHtml() {
-    const source = meta?.acquisition_source || null;
-
     const nameFields = NAME_TYPES.map(([type, label]) => `
       <label class="ncpf-field">
         <span>${escapeHtml(label)}</span>
@@ -224,13 +222,6 @@
           placeholder="${escapeHtml(label)}"
         >
       </label>
-    `).join("");
-
-    const sourceOptions = SOURCE_TYPES.map(([value, label]) => `
-      <option
-        value="${escapeHtml(value)}"
-        ${String(source?.source_type || "unknown") === value ? "selected" : ""}
-      >${escapeHtml(label)}</option>
     `).join("");
 
     return `
@@ -245,34 +236,9 @@
         <div class="ncpf-grid">${nameFields}</div>
       </div>
 
-      <div class="ncpf-section">
-        <div class="ncpf-section-head">
-          <div>
-            <span>ACQUISITION</span>
-            <strong>初回流入元</strong>
-          </div>
-          <small>最初に知ったきっかけ</small>
-        </div>
-        <div class="ncpf-grid">
-          <label class="ncpf-field">
-            <span>きっかけ</span>
-            <select id="nextCustomerAcquisitionSource">${sourceOptions}</select>
-          </label>
-          <label class="ncpf-field">
-            <span>補足</span>
-            <input
-              id="nextCustomerAcquisitionDetail"
-              type="text"
-              value="${escapeHtml(source?.source_detail || "")}"
-              placeholder="例：Xの投稿を見た、友人○○さんの紹介"
-            >
-          </label>
-        </div>
-      </div>
-
       <p class="ncpf-message" id="nextCustomerProfileMetaMessage" aria-live="polite"></p>
       <small class="ncpf-autosave-note">
-        入力内容は自動保存されます。
+        名義情報は自動保存されます。
       </small>
     `;
   }
@@ -280,6 +246,264 @@
   function renderEditor() {
     const host = document.querySelector("[data-next-profile-meta-editor]");
     if (host) host.innerHTML = editorHtml();
+  }
+
+  function acquisitionOptionsHtml(sourceType) {
+    const current = String(sourceType || "unknown");
+
+    return SOURCE_TYPES
+      .map(([value, label]) => `
+        <option
+          value="${escapeHtml(value)}"
+          ${value === current ? "selected" : ""}
+        >
+          ${escapeHtml(label)}
+        </option>
+      `)
+      .join("");
+  }
+
+  function quickAcquisitionHtml() {
+    const customerId = currentCustomerId();
+
+    if (!customerId) {
+      return `
+        <div class="ncpf-acquisition-quick is-disabled">
+          <div class="ncpf-acquisition-quick-head">
+            <div>
+              <span>FIRST SOURCE</span>
+              <strong>初回流入元</strong>
+            </div>
+            <small>顧客共通</small>
+          </div>
+          <select disabled>
+            <option>顧客未紐付け</option>
+          </select>
+        </div>
+      `;
+    }
+
+    if (
+      failedCustomerId === customerId
+      && (!meta || metaCustomerId !== customerId)
+    ) {
+      return `
+        <div class="ncpf-acquisition-quick is-error">
+          <div class="ncpf-acquisition-quick-head">
+            <div>
+              <span>FIRST SOURCE</span>
+              <strong>初回流入元</strong>
+            </div>
+            <small>顧客共通</small>
+          </div>
+          <select disabled>
+            <option>読込エラー</option>
+          </select>
+        </div>
+      `;
+    }
+
+    if (!meta || metaCustomerId !== customerId) {
+      return `
+        <div class="ncpf-acquisition-quick is-loading">
+          <div class="ncpf-acquisition-quick-head">
+            <div>
+              <span>FIRST SOURCE</span>
+              <strong>初回流入元</strong>
+            </div>
+            <small>顧客共通</small>
+          </div>
+          <select disabled>
+            <option>読み込み中…</option>
+          </select>
+        </div>
+      `;
+    }
+
+    const source = meta.acquisition_source || null;
+    const sourceType = String(source?.source_type || "unknown");
+    const detail = String(source?.source_detail || "").trim();
+
+    return `
+      <div class="ncpf-acquisition-quick">
+        <div class="ncpf-acquisition-quick-head">
+          <div>
+            <span>FIRST SOURCE</span>
+            <strong>初回流入元</strong>
+          </div>
+          <small>顧客共通</small>
+        </div>
+
+        <select
+          id="nextCustomerAcquisitionQuickSource"
+          data-customer-id="${customerId}"
+          aria-label="初回流入元"
+        >
+          ${acquisitionOptionsHtml(sourceType)}
+        </select>
+
+        ${
+          detail
+            ? `
+              <small class="ncpf-acquisition-quick-detail">
+                ${escapeHtml(detail)}
+              </small>
+            `
+            : ""
+        }
+
+        <p
+          class="ncpf-acquisition-quick-status"
+          id="nextCustomerAcquisitionQuickStatus"
+          aria-live="polite"
+        ></p>
+      </div>
+    `;
+  }
+
+  function renderQuickAcquisition() {
+    const host = body.querySelector("[data-next-acquisition-quick]");
+    if (!host) return;
+
+    const html = quickAcquisitionHtml();
+    if (host.innerHTML === html) return;
+    host.innerHTML = html;
+  }
+
+  function mountQuickAcquisition() {
+    const host = body.querySelector("[data-next-acquisition-quick]");
+    if (!host) return;
+
+    const customerId = currentCustomerId();
+
+    if (!customerId) {
+      renderQuickAcquisition();
+      return;
+    }
+
+    if (meta && metaCustomerId === customerId) {
+      renderQuickAcquisition();
+      return;
+    }
+
+    const cached = metaCache.get(customerId) || null;
+
+    if (cached) {
+      meta = cached;
+      metaCustomerId = customerId;
+      failedCustomerId = 0;
+      renderQuickAcquisition();
+      return;
+    }
+
+    renderQuickAcquisition();
+
+    if (
+      loadingCustomerId === customerId
+      || failedCustomerId === customerId
+    ) {
+      return;
+    }
+
+    void loadMeta(customerId);
+  }
+
+  async function saveQuickAcquisition(value) {
+    const customerId = currentCustomerId();
+
+    if (!customerId) {
+      throw new Error("顧客が紐付いていません。");
+    }
+
+    if (!meta || metaCustomerId !== customerId) {
+      throw new Error("顧客情報をまだ読み込めていません。");
+    }
+
+    const sourceType = String(value || "unknown");
+    const currentSource = meta.acquisition_source || null;
+    const currentType = String(currentSource?.source_type || "unknown");
+
+    if (sourceType === currentType) return;
+
+    const sourceDetail =
+      String(currentSource?.source_detail || "").trim();
+
+    const select =
+      document.getElementById("nextCustomerAcquisitionQuickSource");
+
+    const status =
+      document.getElementById("nextCustomerAcquisitionQuickStatus");
+
+    if (select) select.disabled = true;
+
+    if (status) {
+      status.textContent = "保存中…";
+      status.dataset.state = "writing";
+    }
+
+    setHeaderSaveIndicator("saving");
+
+    try {
+      const data =
+        await requestJson(
+          META_API,
+          {
+            method:"PATCH",
+            headers:{
+              "Content-Type":"application/json",
+            },
+            body:JSON.stringify({
+              id:customerId,
+              acquisition_source:{
+                source_type:sourceType,
+                source_detail:sourceDetail,
+              },
+            }),
+          }
+        );
+
+      const next = data.customer || null;
+
+      if (next) {
+        metaCache.set(customerId, next);
+      }
+
+      if (currentCustomerId() === customerId) {
+        meta = next;
+        metaCustomerId = customerId;
+        renderSummary();
+
+        const nextSelect =
+          document.getElementById("nextCustomerAcquisitionQuickSource");
+        if (nextSelect) nextSelect.disabled = false;
+
+        const nextStatus =
+          document.getElementById("nextCustomerAcquisitionQuickStatus");
+
+        if (nextStatus) {
+          nextStatus.textContent = "✓ 保存済み";
+          nextStatus.dataset.state = "saved";
+        }
+      }
+
+      setHeaderSaveIndicator("saved");
+
+    } catch (error) {
+      if (select) select.disabled = false;
+
+      if (status) {
+        status.textContent =
+          error.message || "初回流入元を保存できませんでした。";
+        status.dataset.state = "error";
+      }
+
+      setHeaderSaveIndicator(
+        "error",
+        error.message || "初回流入元を保存できませんでした。"
+      );
+
+      throw error;
+    }
   }
 
   function updateVisitNames(data) {
@@ -380,12 +604,15 @@
 
       renderSummary();
       renderEditor();
+      renderQuickAcquisition();
 
       const editorHost = document.querySelector("[data-next-profile-meta-editor]");
       if (editorHost) editorHost.dataset.renderedCustomerId = String(customerId);
 
     } catch (error) {
       failedCustomerId = customerId;
+
+      renderQuickAcquisition();
 
       const summaryHost = document.querySelector("[data-next-profile-meta-summary]");
       if (summaryHost) {
@@ -432,16 +659,6 @@
     return {
       customerId,
       names,
-      sourceType:
-        host.querySelector(
-          "#nextCustomerAcquisitionSource"
-        )?.value
-        || "unknown",
-      sourceDetail:
-        host.querySelector(
-          "#nextCustomerAcquisitionDetail"
-        )?.value?.trim()
-        || "",
     };
   }
 
@@ -455,8 +672,6 @@
           draft.names[type]
           || ""
       ),
-      draft.sourceType,
-      draft.sourceDetail,
     ]);
   }
 
@@ -475,16 +690,6 @@
             type
           )
       ),
-      String(
-        data.acquisition_source
-          ?.source_type
-        || "unknown"
-      ),
-      String(
-        data.acquisition_source
-          ?.source_detail
-        || ""
-      ).trim(),
     ]);
   }
 
@@ -558,12 +763,6 @@
             id:draft.customerId,
             names:
               draft.names,
-            acquisition_source:{
-              source_type:
-                draft.sourceType,
-              source_detail:
-                draft.sourceDetail,
-            },
           }),
         }
       );
@@ -740,9 +939,7 @@
     return Boolean(
       target instanceof Element
       && target.matches(
-        "[data-ncpf-name],"
-        + "#nextCustomerAcquisitionSource,"
-        + "#nextCustomerAcquisitionDetail"
+        "[data-ncpf-name]"
       )
     );
   }
@@ -783,6 +980,19 @@
   document.addEventListener(
     "change",
     event => {
+      if (
+        event.target instanceof Element
+        && event.target.matches(
+          "#nextCustomerAcquisitionQuickSource"
+        )
+      ) {
+        void saveQuickAcquisition(
+          event.target.value
+        ).catch(() => {});
+
+        return;
+      }
+
       if (
         isMetaAutosaveTarget(
           event.target
@@ -852,6 +1062,47 @@
         void flushMetaAutosave();
       }
     }
+  );
+
+  const quickAcquisitionObserver =
+    new MutationObserver(
+      () => {
+        queueMicrotask(
+          mountQuickAcquisition
+        );
+      }
+    );
+
+  quickAcquisitionObserver.observe(
+    body,
+    {
+      childList:true,
+      subtree:true,
+    }
+  );
+
+  const quickAcquisitionDrawerObserver =
+    new MutationObserver(
+      () => {
+        queueMicrotask(
+          mountQuickAcquisition
+        );
+      }
+    );
+
+  quickAcquisitionDrawerObserver.observe(
+    drawer,
+    {
+      attributes:true,
+      attributeFilter:[
+        "class",
+        "data-visit-id",
+      ],
+    }
+  );
+
+  queueMicrotask(
+    mountQuickAcquisition
   );
 
   window.KohakuWorkNextCustomerProfileFull = {

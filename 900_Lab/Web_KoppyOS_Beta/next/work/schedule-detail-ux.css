@@ -1149,3 +1149,186 @@
     padding:10px;
   }
 }
+
+/* =========================================================
+   KOHaku WORK NEXT / QUICK ACQUISITION V1
+   Customer-common first source beside visit-specific visitor type.
+========================================================= */
+
+.next-detail-profile-quick-row{
+  display:grid;
+  grid-template-columns:minmax(0,1.35fr) minmax(145px,.85fr);
+  align-items:start;
+  gap:8px;
+}
+
+.next-detail-profile-quick-row .next-detail-visitor-quick{
+  min-width:0;
+}
+
+.next-detail-acquisition-quick-host{
+  min-width:0;
+}
+
+.ncpf-acquisition-quick{
+  display:grid;
+  gap:6px;
+  min-width:0;
+  padding:9px 10px;
+  border:1px solid rgba(112,216,255,.20);
+  border-radius:13px;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(112,216,255,.055),
+      rgba(255,255,255,.018)
+    );
+}
+
+.ncpf-acquisition-quick-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:8px;
+}
+
+.ncpf-acquisition-quick-head > div{
+  display:grid;
+  gap:2px;
+  min-width:0;
+}
+
+.ncpf-acquisition-quick-head span{
+  color:#70d8ff;
+  font-size:7px;
+  font-weight:900;
+  letter-spacing:.10em;
+}
+
+.ncpf-acquisition-quick-head strong{
+  color:var(--wf-text);
+  font-size:10px;
+}
+
+.ncpf-acquisition-quick-head > small{
+  flex:none;
+  color:var(--wf-text-dim);
+  font-size:7px;
+  font-weight:800;
+}
+
+.ncpf-acquisition-quick select{
+  width:100%;
+  min-width:0;
+  min-height:34px;
+  padding:5px 9px;
+  border:1px solid rgba(112,216,255,.24);
+  border-radius:9px;
+  color:var(--wf-text);
+  background:rgba(5,22,41,.74);
+  font:inherit;
+  font-size:9px;
+  font-weight:900;
+}
+
+.ncpf-acquisition-quick select:focus{
+  border-color:rgba(112,216,255,.62);
+  outline:none;
+  box-shadow:0 0 0 2px rgba(112,216,255,.08);
+}
+
+.ncpf-acquisition-quick select:disabled{
+  opacity:.58;
+  cursor:wait;
+}
+
+.ncpf-acquisition-quick-detail{
+  min-width:0;
+  overflow:hidden;
+  color:var(--wf-text-dim);
+  font-size:7px;
+  line-height:1.35;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.ncpf-acquisition-quick-status{
+  min-height:10px;
+  margin:0;
+  color:var(--wf-text-dim);
+  font-size:7px;
+  line-height:1.35;
+}
+
+.ncpf-acquisition-quick-status:empty{
+  display:none;
+}
+
+.ncpf-acquisition-quick-status[data-state="writing"]{
+  color:#ffe58a;
+}
+
+.ncpf-acquisition-quick-status[data-state="saved"]{
+  color:#8effc1;
+}
+
+.ncpf-acquisition-quick-status[data-state="error"],
+.ncpf-acquisition-quick.is-error{
+  color:#ff9caf;
+}
+
+.ncpf-acquisition-quick.is-loading,
+.ncpf-acquisition-quick.is-disabled{
+  opacity:.72;
+}
+
+/* =========================================================
+   KOHaku WORK NEXT / QUICK ACQUISITION MOBILE FOLLOWUP V1
+   Keep visitor type + acquisition side-by-side on normal phones.
+========================================================= */
+
+@media(max-width:520px){
+  .next-detail-profile-quick-row{
+    grid-template-columns:minmax(0,1.15fr) minmax(126px,.85fr);
+    gap:6px;
+  }
+
+  .next-detail-profile-quick-row
+  .next-detail-visitor-options{
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:5px;
+  }
+
+  .next-detail-profile-quick-row
+  .next-detail-visitor-quick{
+    padding:9px 9px 8px;
+  }
+
+  .ncpf-acquisition-quick{
+    padding:9px 8px 8px;
+  }
+
+  .ncpf-acquisition-quick-head{
+    align-items:start;
+  }
+
+  .ncpf-acquisition-quick-head > small{
+    display:none;
+  }
+
+  .ncpf-acquisition-quick select{
+    min-height:33px;
+    padding-left:7px;
+    padding-right:7px;
+  }
+}
+
+@media(max-width:340px){
+  .next-detail-profile-quick-row{
+    grid-template-columns:1fr;
+  }
+
+  .ncpf-acquisition-quick-head > small{
+    display:block;
+  }
+}
