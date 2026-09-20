@@ -10,7 +10,7 @@ require_once __DIR__ . '/../../auth/auth.php';
 
 koppyRequireApiAuth();
 
-require_once __DIR__ . '/lib/database.php';
+require_once __DIR__ . '/../../core/koppyos-database.php';
 
 
 function calendarEventJsonResponse(
@@ -958,7 +958,7 @@ try {
         );
 
     $pdo =
-        koppyDatabase();
+        koppyOsDatabase();
 
 
     /* =====================================================

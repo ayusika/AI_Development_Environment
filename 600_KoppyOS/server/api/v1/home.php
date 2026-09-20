@@ -10,11 +10,11 @@ if (!in_array($method, ['GET', 'OPTIONS'], true)) {
     respondError('Method not allowed.', 405);
 }
 require __DIR__ . '/bootstrap.php';
-require_once __DIR__ . '/lib/database.php';
+require_once __DIR__ . '/../../core/koppyos-database.php';
 header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Cache-Control: no-store');
 try {
-    $pdo = koppyDatabase();
+    $pdo = koppyOsDatabase();
     $pdo->beginTransaction();
     $rooms = $pdo->query('SELECT id, code, name, sort_order FROM home_rooms ORDER BY sort_order, id')->fetchAll();
     $devices = $pdo->query('SELECT id, room_id, code, name, category, manufacturer, model, status, role, portable, notes, weight_kg, weight_is_estimate, load_capacity_kg, sort_order FROM home_devices ORDER BY sort_order, id')->fetchAll();
