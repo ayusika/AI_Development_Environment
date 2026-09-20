@@ -54,14 +54,20 @@ Koppy AI Base の初期設計を開始。
 - 画像AIの中心はGaming PC
 - iPhoneは補助・確認・音声・将来のPrivate Access導線
 - Pro上のQwen 7B / Aiderは実験用として休眠
-- 外部VPN構想は現時点で保留
+- 現マンション回線は端末へ172.16.15.xのPrivate IPv4を配布しており、upstream NATが存在する
+- 現回線では通常のInbound Self-hosted VPNを前提にしない
+- 暫定Private Remote AccessとしてTailscaleを採用
+- RTX830はHome Gateway / Firewall / 将来のSelf-hosted VPN endpoint候補
+- RTX830によるSelf-hosted VPNは、外部着信可能な回線を確保できた後の将来Phaseとする
 - 自宅開発ではAir ↔ ProのThunderbolt Bridgeを優先する
 
 ## 次の優先タスク
-1. Koppy Base ServerのWeb / API / DB基盤設計
-2. SanDisk Extreme Portable SSD V2 500GBをProへ接続
-3. SSDのFile System / Mount / Data Layout / Backup方針決定
-4. Proの常時稼働Service / Automation / Monitoring設計
-5. Gaming PC 現物スペック確認
-6. 画像AI基盤の導入計画作成
-7. VPN / 外部Private Accessは必要時に再検討
+1. ProへTailscale導入
+2. iPhoneへTailscale導入
+3. tailnet内でProへの疎通 / SSH / Private Web接続確認
+4. Koppy Base ServerのWeb / API / DB基盤設計
+5. SanDisk Extreme Portable SSD V2 500GBをProへ接続
+6. SSDのFile System / Mount / Data Layout / Backup方針決定
+7. Proの常時稼働Service / Automation / Monitoring設計
+8. Gaming PC 現物スペック確認
+9. 画像AI基盤の導入計画作成

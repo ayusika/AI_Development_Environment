@@ -27,7 +27,21 @@
 - [ ] Executor Selection ProtocolへKoppy → CMD主系を正式反映
 - [ ] ProとのServer連携フロー整理
 
-## Phase 3: Gaming PC の画像AI基盤
+## Phase 3: Private Remote Access
+- [x] 現マンション回線でupstream NATを確認
+- [x] 暫定Private Remote AccessとしてTailscaleを採用
+- [ ] ProへTailscale導入
+- [ ] iPhoneへTailscale導入
+- [ ] tailnet内疎通確認
+- [ ] tailnet経由SSH確認
+- [ ] Private Web接続確認
+- [ ] iPhoneから利用可能なService範囲を必要最小限へ制限
+- [ ] Public InternetへのWeb / SSH / DB直接公開を行わない
+- [ ] Tailscale Funnelを使用しない
+- [ ] RTX830をHome Gateway / Firewallとして導入
+- [ ] 外部着信可能な回線確保後にSelf-hosted VPNを再検討
+
+## Phase 4: Gaming PC の画像AI基盤
 - [ ] 現物スペック確認
 - [ ] SSD拡張検討
 - [ ] ComfyUI導入
@@ -36,15 +50,14 @@
 - [ ] 顔学習方針整理
 - [ ] LoRA学習方針整理
 
-## Phase 4: iPhone 18 Pro Max 連携
+## Phase 5: iPhone 18 Pro Max 連携
 - [ ] ショートカット方針
 - [ ] Koppy Pocket 構想整理
 - [ ] 通知 / 承認フロー検討
 - [ ] 音声入力導線整理
-- [ ] 外部Private Accessは必要時に再検討
-- [ ] VPN方式は自前 / Tailscale等を含め未確定のまま保留
+- [ ] Tailscale経由Private AccessをKoppy Pocket導線へ統合
 
-## Phase 5: 4本柱統合
+## Phase 6: 4本柱統合
 - [ ] Air ↔ Pro Thunderbolt Server接続の運用確定
 - [ ] Pro ↔ Gaming PC接続方針確定
 - [ ] Server Storage保存先ルール確定

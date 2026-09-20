@@ -98,8 +98,11 @@ MacBook Pro 2018は開発Executorから外し、Koppy Base ServerとしてInfras
 - 常時稼働: Pro
 - Air ↔ Proの自宅開発通信はThunderbolt Bridgeを優先
 - Pro上にPrivate Web / API / DB / Automation / Storageを集約
-- 外部Private Access用VPNは方式未確定のため保留
-- マンション回線制約を踏まえ、自前VPNまたは外部VPN方式を将来再検討
+- 外部Private Accessは当面Tailscaleを採用
+- TailscaleはPublic InternetへWeb / SSH / DBを直接公開せず、tailnet内で利用する
+- 現マンション回線は172.16.15.xのPrivate IPv4が配布され、upstream NATが存在する
+- RTX830はHome Gateway / Firewall / 将来のSelf-hosted VPN endpoint候補とする
+- Self-hosted VPNは外部着信可能なGlobal IPv4等を持つ回線を確保できた後に再検討する
 
 ## 基本思想
 - 1台で全部やらない
