@@ -361,13 +361,72 @@
     `;
   }
 
+  function quickAcquisitionRenderKey() {
+    const customerId =
+      currentCustomerId();
+
+    if (!customerId) {
+      return "unlinked";
+    }
+
+    if (
+      failedCustomerId === customerId
+      && (
+        !meta
+        || metaCustomerId !== customerId
+      )
+    ) {
+      return `error:${customerId}`;
+    }
+
+    if (
+      !meta
+      || metaCustomerId !== customerId
+    ) {
+      return `loading:${customerId}`;
+    }
+
+    const source =
+      meta.acquisition_source
+      || null;
+
+    return JSON.stringify([
+      "ready",
+      customerId,
+      String(
+        source?.source_type
+        || "unknown"
+      ),
+      String(
+        source?.source_detail
+        || ""
+      ).trim(),
+    ]);
+  }
+
   function renderQuickAcquisition() {
-    const host = body.querySelector("[data-next-acquisition-quick]");
+    const host =
+      body.querySelector(
+        "[data-next-acquisition-quick]"
+      );
+
     if (!host) return;
 
-    const html = quickAcquisitionHtml();
-    if (host.innerHTML === html) return;
-    host.innerHTML = html;
+    const renderKey =
+      quickAcquisitionRenderKey();
+
+    if (
+      host.dataset.renderKey
+      === renderKey
+    ) {
+      return;
+    }
+
+    host.dataset.renderKey =
+      renderKey;
+
+    host.innerHTML =
+      quickAcquisitionHtml();
   }
 
   function mountQuickAcquisition() {
