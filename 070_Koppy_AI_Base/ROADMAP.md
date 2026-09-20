@@ -11,8 +11,11 @@
 - [x] ローカル7B / Aider試作
 - [x] Proを主開発Executorにしない方針を確定
 - [x] Koppy Base Serverへ役割変更
-- [ ] Private Web Server基盤
-- [ ] API / DB基盤
+- [x] Private Web Server初期基盤（nginx / PHP-FPM / health.php、詳細はCURRENT_STATUS.md）
+- [x] 今回の再起動後・GUI未ログインでThunderbolt / VPN両経路の復旧確認
+- [ ] 本番用Serviceユーザー / 権限 / Directory Layout / 再構築手順の確定
+- [ ] Koppy World / Kohaku Workを既存認証維持で移行
+- [ ] API / DB基盤（PHP + SQLiteメモリ上の疎通まで確認、実DBは未移行）
 - [ ] SanDisk Extreme Portable SSD V2 500GB接続
 - [ ] SSD File System決定
 - [ ] Mount / Directory Layout決定
@@ -30,11 +33,11 @@
 ## Phase 3: Private Remote Access
 - [x] 現マンション回線でupstream NATを確認
 - [x] 暫定Private Remote AccessとしてTailscaleを採用
-- [ ] ProへTailscale導入
-- [ ] iPhoneへTailscale導入
-- [ ] tailnet内疎通確認
+- [x] ProへTailscale導入
+- [x] iPhoneへTailscale導入
+- [x] tailnet内疎通確認
 - [ ] tailnet経由SSH確認
-- [ ] Private Web接続確認
+- [x] Private Web接続確認
 - [ ] iPhoneから利用可能なService範囲を必要最小限へ制限
 - [ ] Public InternetへのWeb / SSH / DB直接公開を行わない
 - [ ] Tailscale Funnelを使用しない
