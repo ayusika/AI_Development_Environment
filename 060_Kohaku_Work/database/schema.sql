@@ -5,6 +5,11 @@ PRAGMA foreign_keys = ON;
    Kohaku Work Database
    Production Beta Schema v1.0
 
+   Historical base schema only.
+   This file does not represent the complete current production schema.
+   Do not use it as a full database rebuild source until a new canonical
+   bootstrap schema is designed and validated.
+
    日時:
    YYYY-MM-DD HH:MM
 
