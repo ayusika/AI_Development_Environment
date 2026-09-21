@@ -5,9 +5,15 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/auth.php';
 
+require_once __DIR__
+    . '/../core/runtime-path.php';
+
 
 $authConfigPath =
-    '/home/users/2/her.jp-mikipiano/.koppy-private/auth/auth-config.php';
+    koppyResolveRuntimePath(
+        'KOPPY_PASSWORD_AUTH_CONFIG_PATH',
+        '/home/users/2/her.jp-mikipiano/.koppy-private/auth/auth-config.php'
+    );
 
 
 if (

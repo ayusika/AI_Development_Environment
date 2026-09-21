@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+require_once __DIR__ . '/../../core/runtime-path.php';
 require_once __DIR__ . '/lib/response.php';
 
 header(
@@ -49,12 +50,20 @@ $documentRoot =
     $_SERVER['DOCUMENT_ROOT']
     ?? '';
 
+$legacyConfigPath =
+    $documentRoot === ''
+        ? ''
+        : $documentRoot
+            . '/../../.koppy-private/config.php';
+
 $configPath =
-    $documentRoot
-    . '/../../.koppy-private/config.php';
+    koppyResolveRuntimePath(
+        'KOPPY_PRIVATE_CONFIG_PATH',
+        $legacyConfigPath
+    );
 
 if (
-    $documentRoot === ''
+    $configPath === ''
     || !file_exists(
         $configPath
     )
@@ -81,11 +90,22 @@ if (!is_array($config)) {
 |--------------------------------------------------------------------------
 */
 
-$authConfigPath =
-    $documentRoot
-    . '/../../.koppy-private/auth-config.php';
+$legacyAuthConfigPath =
+    $documentRoot === ''
+        ? ''
+        : $documentRoot
+            . '/../../.koppy-private/auth-config.php';
 
-if (!file_exists($authConfigPath)) {
+$authConfigPath =
+    koppyResolveRuntimePath(
+        'KOPPY_OAUTH_CONFIG_PATH',
+        $legacyAuthConfigPath
+    );
+
+if (
+    $authConfigPath === ''
+    || !file_exists($authConfigPath)
+) {
     respondError(
         'Authentication configuration was not found.',
         500

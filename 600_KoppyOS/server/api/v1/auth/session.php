@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+require_once __DIR__
+    . '/../../../core/runtime-path.php';
+
 /*
 |--------------------------------------------------------------------------
 | KoppyOS Authentication - Session
@@ -15,7 +18,10 @@ declare(strict_types=1);
 */
 
 $authConfigPath =
-    '/home/users/2/her.jp-mikipiano/.koppy-private/auth-config.php';
+    koppyResolveRuntimePath(
+        'KOPPY_OAUTH_CONFIG_PATH',
+        '/home/users/2/her.jp-mikipiano/.koppy-private/auth-config.php'
+    );
 
 if (!is_file($authConfigPath)) {
     http_response_code(500);
