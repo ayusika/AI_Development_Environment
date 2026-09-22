@@ -1160,14 +1160,24 @@ button[data-calendar-today] {
 
 
 .calendar-shift-listing-status.is-match {
+  gap: 0;
+
+  margin-left:
+    3px;
+
+  padding: 0;
+
   border-color:
-    rgba(65, 139, 103, 0.24);
+    transparent;
 
   background:
-    rgba(222, 245, 232, 0.88);
+    transparent;
 
   color:
     #37785a;
+
+  font-size:
+    10px;
 }
 
 
@@ -1212,6 +1222,9 @@ button[data-calendar-today] {
   }
 
 
+  .calendar-shift-listing-status.is-match
+  .calendar-shift-listing-status-label,
+  .calendar-shift-listing-status.is-unavailable
   .calendar-shift-listing-status-label {
     display:
       none;

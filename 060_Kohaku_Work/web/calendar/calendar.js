@@ -797,14 +797,33 @@ function formatDaySummaryShift(
   }
 
 
+  const storeName =
+    String(
+      shift.store_name
+      || ''
+    );
+
+  const workerCode =
+    String(
+      shift.worker_code
+      || ''
+    );
+
+  const hideStoreName =
+    storeName === '札幌'
+    && (
+      workerCode === 'shii'
+      || workerCode === 'ui'
+    );
+
+
   return {
     main,
 
     meta:
-      String(
-        shift.store_name
-        || ''
-      ),
+      hideStoreName
+        ? ''
+        : storeName,
   };
 }
 
@@ -2601,8 +2620,7 @@ function applyShiftListingCheckData(
 
 
       if (
-        sourceStatus !== 'ok'
-        || !Array.isArray(
+        !Array.isArray(
           worker?.results
         )
       ) {
@@ -2678,6 +2696,62 @@ function getShiftListingStatus(
   }
 
 
+  const result =
+    calendarState
+      .listingChecks
+      .byKey[
+        `${workerCode}::${dateKey}`
+      ];
+
+
+  if (result) {
+
+    if (result.isMatch) {
+      return {
+        kind:
+          'match',
+
+        symbol:
+          '☑',
+
+        label:
+          '',
+
+        title:
+          'Heaven掲載と照合済みです',
+
+        comparison:
+          result.comparison,
+      };
+    }
+
+
+    return {
+      kind:
+        'mismatch',
+
+      symbol:
+        '',
+
+      label:
+        'Heavenと差異あり',
+
+      title:
+        (
+          'Heaven掲載とKoppyのシフトに差異があります'
+          + (
+            result.comparison
+              ? ` (${result.comparison})`
+              : ''
+          )
+        ),
+
+      comparison:
+        result.comparison,
+    };
+  }
+
+
   const sourceStatus =
     calendarState
       .listingChecks
@@ -2701,7 +2775,7 @@ function getShiftListingStatus(
         '取得失敗',
 
       title:
-        '店舗掲載情報を取得できませんでした',
+        'Heaven掲載情報を取得できませんでした',
 
       comparison:
         'source_unavailable',
@@ -2709,62 +2783,7 @@ function getShiftListingStatus(
   }
 
 
-  const result =
-    calendarState
-      .listingChecks
-      .byKey[
-        `${workerCode}::${dateKey}`
-      ];
-
-
-  if (!result) {
-    return null;
-  }
-
-
-  if (result.isMatch) {
-    return {
-      kind:
-        'match',
-
-      symbol:
-        '✓',
-
-      label:
-        '店舗一致',
-
-      title:
-        '店舗掲載とKoppyのシフトが一致しています',
-
-      comparison:
-        result.comparison,
-    };
-  }
-
-
-  return {
-    kind:
-      'mismatch',
-
-    symbol:
-      '⚠',
-
-    label:
-      '店舗差異',
-
-    title:
-      (
-        '店舗掲載とKoppyのシフトに差異があります'
-        + (
-          result.comparison
-            ? ` (${result.comparison})`
-            : ''
-        )
-      ),
-
-    comparison:
-      result.comparison,
-  };
+  return null;
 }
 
 
@@ -2847,6 +2866,13 @@ function createShiftElement(shift) {
 
   const isSapporo =
     shift.store_name === '札幌';
+
+  const hideSapporoStoreName =
+    isSapporo
+    && (
+      workerCode === 'shii'
+      || workerCode === 'ui'
+    );
 
 
   if (
@@ -2952,6 +2978,7 @@ function createShiftElement(shift) {
     if (
       shift.store_name
       && !isPortraitPhone
+      && !hideSapporoStoreName
     ) {
       detailElement.append(
         document.createTextNode(

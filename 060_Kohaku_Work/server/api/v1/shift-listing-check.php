@@ -884,6 +884,281 @@ function shiftListingCompareDay(
 }
 
 
+function shiftListingWorkerId(
+    PDO $pdo,
+    string $workerCode
+): int {
+    $statement =
+        $pdo->prepare(
+            '
+            SELECT id
+
+            FROM workers
+
+            WHERE worker_code = ?
+
+            LIMIT 1
+            '
+        );
+
+    $statement->execute([
+        $workerCode,
+    ]);
+
+    $workerId =
+        $statement->fetchColumn();
+
+    if ($workerId === false) {
+        throw new RuntimeException(
+            'Shift listing worker was not found.'
+        );
+    }
+
+    return
+        (int) $workerId;
+}
+
+
+function shiftListingPersistResults(
+    PDO $pdo,
+    array $source,
+    array $results
+): void {
+    $workerId =
+        shiftListingWorkerId(
+            $pdo,
+            (string)
+            $source['worker_code']
+        );
+
+    $statement =
+        $pdo->prepare(
+            '
+            INSERT INTO shift_listing_checks
+            (
+                worker_id,
+                provider,
+                listing_name,
+                expected_store_name,
+                shift_date,
+                comparison,
+                is_match,
+                listing_json,
+                calendar_json,
+                checked_at
+            )
+            VALUES
+            (
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?,
+                ?
+            )
+
+            ON CONFLICT(
+                worker_id,
+                provider,
+                shift_date
+            )
+
+            DO UPDATE SET
+                listing_name =
+                    excluded.listing_name,
+
+                expected_store_name =
+                    excluded.expected_store_name,
+
+                comparison =
+                    excluded.comparison,
+
+                is_match =
+                    excluded.is_match,
+
+                listing_json =
+                    excluded.listing_json,
+
+                calendar_json =
+                    excluded.calendar_json,
+
+                checked_at =
+                    excluded.checked_at,
+
+                updated_at =
+                    strftime(
+                        \'%Y-%m-%d %H:%M\',
+                        \'now\',
+                        \'localtime\'
+                    )
+            '
+        );
+
+    $checkedAt =
+        (
+            new DateTimeImmutable(
+                'now',
+                new DateTimeZone(
+                    'Asia/Tokyo'
+                )
+            )
+        )->format(
+            'Y-m-d H:i'
+        );
+
+
+    $pdo->beginTransaction();
+
+    try {
+
+        foreach ($results as $result) {
+
+            $listingJson =
+                json_encode(
+                    $result['listing'],
+                    JSON_UNESCAPED_UNICODE
+                    | JSON_UNESCAPED_SLASHES
+                    | JSON_THROW_ON_ERROR
+                );
+
+            $calendarJson =
+                json_encode(
+                    $result['calendar'],
+                    JSON_UNESCAPED_UNICODE
+                    | JSON_UNESCAPED_SLASHES
+                    | JSON_THROW_ON_ERROR
+                );
+
+
+            $statement->execute([
+                $workerId,
+                (string)
+                $source['provider'],
+                (string)
+                $source['listing_name'],
+                (string)
+                $source['store_name'],
+                (string)
+                $result['shift_date'],
+                (string)
+                $result['comparison'],
+                $result['is_match']
+                    ? 1
+                    : 0,
+                $listingJson,
+                $calendarJson,
+                $checkedAt,
+            ]);
+        }
+
+
+        $pdo->commit();
+
+
+    } catch (Throwable $error) {
+
+        if ($pdo->inTransaction()) {
+            $pdo->rollBack();
+        }
+
+        throw $error;
+    }
+}
+
+
+function shiftListingLoadPersistedResults(
+    PDO $pdo,
+    string $workerCode,
+    string $provider
+): array {
+    $statement =
+        $pdo->prepare(
+            '
+            SELECT
+                checks.shift_date,
+                checks.comparison,
+                checks.is_match,
+                checks.listing_json,
+                checks.calendar_json,
+                checks.checked_at
+
+            FROM shift_listing_checks checks
+
+            JOIN workers
+                ON workers.id =
+                    checks.worker_id
+
+            WHERE
+                workers.worker_code = ?
+                AND checks.provider = ?
+
+            ORDER BY
+                checks.shift_date ASC
+            '
+        );
+
+    $statement->execute([
+        $workerCode,
+        $provider,
+    ]);
+
+
+    $results = [];
+
+
+    foreach (
+        $statement->fetchAll()
+        as $row
+    ) {
+
+        $results[] = [
+            'shift_date' =>
+                (string)
+                $row['shift_date'],
+
+            'comparison' =>
+                (string)
+                $row['comparison'],
+
+            'is_match' =>
+                (int)
+                $row['is_match']
+                === 1,
+
+            'listing' =>
+                json_decode(
+                    (string)
+                    $row['listing_json'],
+                    true,
+                    512,
+                    JSON_THROW_ON_ERROR
+                ),
+
+            'calendar' =>
+                json_decode(
+                    (string)
+                    $row['calendar_json'],
+                    true,
+                    512,
+                    JSON_THROW_ON_ERROR
+                ),
+
+            'checked_at' =>
+                (string)
+                $row['checked_at'],
+        ];
+    }
+
+
+    return
+        $results;
+}
+
+
 $method =
     strtoupper(
         $_SERVER['REQUEST_METHOD']
@@ -1031,6 +1306,24 @@ foreach ($sources as $source) {
             ];
         }
 
+
+        shiftListingPersistResults(
+            $pdo,
+            $source,
+            $results
+        );
+
+
+        $historyResults =
+            shiftListingLoadPersistedResults(
+                $pdo,
+                (string)
+                $source['worker_code'],
+                (string)
+                $source['provider']
+            );
+
+
         $workers[] = [
             'worker_code' =>
                 $source['worker_code'],
@@ -1057,7 +1350,7 @@ foreach ($sources as $source) {
                 $dateTo,
 
             'results' =>
-                $results,
+                $historyResults,
 
             'error' =>
                 null,
@@ -1066,6 +1359,17 @@ foreach ($sources as $source) {
     } catch (Throwable $error) {
 
         $summary['source_errors'] += 1;
+
+
+        $historyResults =
+            shiftListingLoadPersistedResults(
+                $pdo,
+                (string)
+                $source['worker_code'],
+                (string)
+                $source['provider']
+            );
+
 
         $workers[] = [
             'worker_code' =>
@@ -1090,7 +1394,7 @@ foreach ($sources as $source) {
                 null,
 
             'results' =>
-                [],
+                $historyResults,
 
             'error' =>
                 $error->getMessage(),
