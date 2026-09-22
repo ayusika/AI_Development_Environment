@@ -2656,6 +2656,12 @@ function applyShiftListingCheckData(
               isMatch:
                 result?.is_match
                 === true,
+
+              sourceUrl:
+                String(
+                  worker?.source_url
+                  || ''
+                ),
             };
         }
       );
@@ -2722,6 +2728,9 @@ function getShiftListingStatus(
 
         comparison:
           result.comparison,
+
+        sourceUrl:
+          result.sourceUrl,
       };
     }
 
@@ -2748,6 +2757,9 @@ function getShiftListingStatus(
 
       comparison:
         result.comparison,
+
+      sourceUrl:
+        result.sourceUrl,
     };
   }
 
@@ -2784,6 +2796,105 @@ function getShiftListingStatus(
 
 
   return null;
+}
+
+
+function createShiftListingStatusElement(
+  listingStatus
+) {
+  const sourceUrl =
+    String(
+      listingStatus?.sourceUrl
+      || ''
+    );
+
+  const isMismatchLink =
+    listingStatus?.kind
+      === 'mismatch'
+    && sourceUrl !== '';
+
+
+  const statusElement =
+    document.createElement(
+      isMismatchLink
+        ? 'a'
+        : 'span'
+    );
+
+
+  statusElement.className =
+    (
+      'calendar-shift-listing-status '
+      + `is-${listingStatus.kind}`
+    );
+
+  statusElement.title =
+    listingStatus.title;
+
+  statusElement.dataset
+    .comparison =
+      listingStatus.comparison;
+
+
+  if (isMismatchLink) {
+
+    statusElement.href =
+      sourceUrl;
+
+    statusElement.target =
+      '_blank';
+
+    statusElement.rel =
+      'noopener noreferrer';
+
+    statusElement.setAttribute(
+      'aria-label',
+      'Heavenと差異あり。照合したHeavenページを開く'
+    );
+  }
+
+
+  if (listingStatus.symbol) {
+
+    const symbolElement =
+      document.createElement(
+        'span'
+      );
+
+    symbolElement.className =
+      'calendar-shift-listing-status-symbol';
+
+    symbolElement.textContent =
+      listingStatus.symbol;
+
+
+    statusElement.append(
+      symbolElement
+    );
+  }
+
+
+  if (listingStatus.label) {
+
+    const labelElement =
+      document.createElement(
+        'span'
+      );
+
+    labelElement.className =
+      'calendar-shift-listing-status-label';
+
+    labelElement.textContent =
+      listingStatus.label;
+
+
+    statusElement.append(
+      labelElement
+    );
+  }
+
+
+  return statusElement;
 }
 
 
@@ -2989,69 +3100,39 @@ function createShiftElement(shift) {
   }
 
 
-  shiftElement.append(
-    detailElement
-  );
-
-
   const listingStatus =
     getShiftListingStatus(
       shift
     );
 
 
-  if (listingStatus) {
-    const statusElement =
-      document.createElement(
-        'span'
-      );
-
-    statusElement.className =
-      (
-        'calendar-shift-listing-status '
-        + `is-${listingStatus.kind}`
-      );
-
-    statusElement.title =
-      listingStatus.title;
-
-    statusElement.dataset
-      .comparison =
-        listingStatus.comparison;
-
-
-    const symbolElement =
-      document.createElement(
-        'span'
-      );
-
-    symbolElement.className =
-      'calendar-shift-listing-status-symbol';
-
-    symbolElement.textContent =
-      listingStatus.symbol;
-
-
-    const labelElement =
-      document.createElement(
-        'span'
-      );
-
-    labelElement.className =
-      'calendar-shift-listing-status-label';
-
-    labelElement.textContent =
-      listingStatus.label;
-
-
-    statusElement.append(
-      symbolElement,
-      labelElement
-    );
-
-
+  if (
+    listingStatus
+    && listingStatus.kind
+      === 'match'
+  ) {
     shiftElement.append(
-      statusElement
+      createShiftListingStatusElement(
+        listingStatus
+      )
+    );
+  }
+
+
+  shiftElement.append(
+    detailElement
+  );
+
+
+  if (
+    listingStatus
+    && listingStatus.kind
+      !== 'match'
+  ) {
+    shiftElement.append(
+      createShiftListingStatusElement(
+        listingStatus
+      )
     );
   }
 

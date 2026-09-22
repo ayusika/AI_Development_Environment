@@ -1162,7 +1162,9 @@ button[data-calendar-today] {
 .calendar-shift-listing-status.is-match {
   gap: 0;
 
-  margin-left:
+  margin-left: 0;
+
+  margin-right:
     3px;
 
   padding: 0;
@@ -1177,7 +1179,7 @@ button[data-calendar-today] {
     #37785a;
 
   font-size:
-    10px;
+    11px;
 }
 
 
@@ -1190,6 +1192,31 @@ button[data-calendar-today] {
 
   color:
     #b04e49;
+
+  text-decoration:
+    none;
+
+  cursor:
+    pointer;
+}
+
+
+.calendar-shift-listing-status.is-mismatch:visited {
+  color:
+    #b04e49;
+}
+
+
+.calendar-shift-listing-status.is-mismatch:hover,
+.calendar-shift-listing-status.is-mismatch:focus-visible {
+  border-color:
+    rgba(190, 72, 67, 0.46);
+
+  background:
+    rgba(255, 217, 213, 0.98);
+
+  outline:
+    none;
 }
 
 

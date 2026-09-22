@@ -1198,6 +1198,25 @@ $sources = [
             . 'hokkaido/A0101/A010103/jmix/'
             . 'girlid-49782139/?mypage_flg=1',
     ],
+
+    [
+        'worker_code' =>
+            'ui',
+
+        'listing_name' =>
+            'ねこ',
+
+        'store_name' =>
+            '札幌',
+
+        'provider' =>
+            'cityheaven',
+
+        'url' =>
+            'https://www.cityheaven.net/'
+            . 'hokkaido/A0101/A010103/jmix/'
+            . 'girlid-54935024/',
+    ],
 ];
 
 
