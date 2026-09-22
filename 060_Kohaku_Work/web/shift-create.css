@@ -711,4 +711,228 @@
 
 }
 
+
+/* ========================================
+   KOPPY WORLD NEXT DARK SURFACE OVERRIDE
+======================================== */
+
+#view-shift{
+  --shift-surface:
+    rgba(8, 31, 53, .76);
+
+  --shift-surface-strong:
+    rgba(10, 39, 66, .94);
+
+  --shift-surface-soft:
+    rgba(83, 201, 246, .065);
+
+  --shift-border:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 24%,
+      transparent
+    );
+
+  --shift-border-strong:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 58%,
+      transparent
+    );
+}
+
+
+#view-shift .shift-worker-button,
+#view-shift .shift-week-nav-button,
+#view-shift .shift-week-today-button,
+#view-shift .shift-day-button,
+#view-shift .shift-day-row,
+#view-shift .shift-day-off-button,
+#view-shift .shift-field select,
+#view-shift .shift-day-row input,
+#view-shift #shift-line-message{
+  border-color:
+    var(--shift-border);
+
+  color:
+    var(--wf-text);
+
+  background:
+    var(--shift-surface);
+
+  box-shadow:
+    inset 0 1px 0
+    rgba(255, 255, 255, .025);
+
+  color-scheme:
+    dark;
+}
+
+
+#view-shift .shift-worker-button:hover,
+#view-shift .shift-week-nav-button:hover,
+#view-shift .shift-week-today-button:hover,
+#view-shift .shift-day-button:hover,
+#view-shift .shift-day-off-button:hover{
+  border-color:
+    var(--shift-border-strong);
+
+  background:
+    rgba(29, 83, 116, .72);
+}
+
+
+#view-shift .shift-worker-button.is-selected{
+  color:
+    #dff8ff;
+
+  border-color:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 72%,
+      transparent
+    );
+
+  background:
+    linear-gradient(
+      135deg,
+      rgba(77, 200, 244, .28),
+      rgba(32, 111, 156, .20)
+    );
+
+  box-shadow:
+    0 0 18px
+    rgba(80, 205, 248, .11),
+    inset 0 0 0 1px
+    rgba(172, 235, 255, .09);
+}
+
+
+#view-shift .shift-day-button.is-weekend{
+  background:
+    rgba(10, 34, 58, .86);
+}
+
+
+#view-shift .shift-day-button.is-selected{
+  color:
+    #e7faff;
+
+  border-color:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 70%,
+      transparent
+    );
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(67, 184, 229, .30),
+      rgba(25, 86, 126, .24)
+    );
+
+  box-shadow:
+    0 0 16px
+    rgba(83, 210, 255, .10);
+}
+
+
+#view-shift .shift-day-button.is-holiday{
+  border-color:
+    rgba(239, 132, 169, .40);
+}
+
+
+#view-shift .shift-day-button.is-selected.is-holiday{
+  background:
+    linear-gradient(
+      180deg,
+      rgba(164, 67, 105, .30),
+      rgba(47, 67, 105, .28)
+    );
+
+  border-color:
+    rgba(245, 148, 181, .58);
+}
+
+
+#view-shift .shift-day-type{
+  color:
+    var(--wf-text-soft);
+
+  background:
+    rgba(255, 255, 255, .06);
+}
+
+
+#view-shift .shift-day-button.is-selected
+.shift-day-type{
+  color:
+    #dff8ff;
+
+  background:
+    rgba(255, 255, 255, .09);
+}
+
+
+#view-shift .shift-day-off-button.is-selected{
+  color:
+    #ffdbe6;
+
+  border-color:
+    rgba(241, 132, 169, .54);
+
+  background:
+    rgba(142, 50, 85, .30);
+}
+
+
+#view-shift .shift-save-preview,
+#view-shift .shift-line-share{
+  border-color:
+    var(--shift-border);
+
+  color:
+    var(--wf-text-soft);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(10, 38, 65, .90),
+      rgba(7, 27, 48, .86)
+    );
+}
+
+
+#view-shift .shift-field select:focus,
+#view-shift .shift-day-row input:focus,
+#view-shift #shift-line-message:focus{
+  border-color:
+    var(--shift-border-strong);
+
+  box-shadow:
+    0 0 0 3px
+    rgba(78, 205, 249, .09);
+}
+
+
+#view-shift .shift-field select option{
+  color:
+    #eefaff;
+
+  background:
+    #0b2844;
+}
+
+
+#view-shift .shift-shared-calendar-frame{
+  background:
+    #071b30;
+
+  border-color:
+    var(--shift-border);
+}
+
+
 /* WRITER:NEXT_WORK_SHIFT_STYLE:END */
