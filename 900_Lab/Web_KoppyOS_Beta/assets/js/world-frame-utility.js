@@ -1,6 +1,35 @@
 (() => {
   "use strict";
 
+  const loadGlobalMemo = () => {
+    if (
+      window.KoppyGlobalMemo?.mounted
+      || document.querySelector(
+        '[data-koppy-global-memo-loader]'
+      )
+    ) {
+      return;
+    }
+
+    const script =
+      document.createElement(
+        "script"
+      );
+
+    script.src =
+      "/assets/js/koppy-global-memo.js";
+
+    script.dataset
+      .koppyGlobalMemoLoader =
+        "";
+
+    document.head.appendChild(
+      script
+    );
+  };
+
+  loadGlobalMemo();
+
   const POSITION_KEY =
     "koppy.world-frame.refresh.position.v1";
 
