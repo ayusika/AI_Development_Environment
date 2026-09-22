@@ -25,6 +25,9 @@ const calendarState = {
   previewShifts: [],
   events: [],
   holidays: {},
+
+  ownerFilter:
+    'all',
 };
 
 
@@ -95,11 +98,20 @@ const refreshButton =
     '[data-calendar-refresh]'
   );
 
+const refreshStatusElement =
+  document.querySelector(
+    '[data-calendar-refresh-status]'
+  );
+
+const ownerFilterButtons =
+  [
+    ...document.querySelectorAll(
+      '[data-calendar-owner-filter]'
+    ),
+  ];
+
 
 async function refreshLatestCalendar() {
-  const refreshToken =
-    Date.now().toString();
-
 
   if (refreshButton) {
 
@@ -113,83 +125,21 @@ async function refreshLatestCalendar() {
 
   try {
 
-    const documentUrl =
-      new URL(
-        window.location.href
-      );
+    await loadMonthShifts({
+      silent: true,
+    });
 
+  } finally {
 
-    documentUrl.search =
-      '';
+    if (refreshButton) {
 
-    documentUrl.hash =
-      '';
+      refreshButton.disabled =
+        false;
 
-
-    const assetUrls =
-      Array.from(
-        new Set([
-          documentUrl.href,
-
-          ...Array.from(
-            document.querySelectorAll(
-              'link[rel="stylesheet"][href]'
-            ),
-            (link) =>
-              link.href
-          ),
-
-          ...Array.from(
-            document.querySelectorAll(
-              'script[src]'
-            ),
-            (script) =>
-              script.src
-          ),
-        ])
-      );
-
-
-    await Promise.allSettled(
-      assetUrls.map(
-        (url) =>
-          fetch(
-            url,
-            {
-              cache:
-                'reload',
-
-              credentials:
-                'same-origin',
-            }
-          )
-      )
-    );
-
-  } catch (error) {
-
-    console.error(
-      'Failed to refresh latest calendar assets.',
-      error
-    );
+      refreshButton.textContent =
+        '↻';
+    }
   }
-
-
-  const latestUrl =
-    new URL(
-      window.location.href
-    );
-
-
-  latestUrl.searchParams.set(
-    '_refresh',
-    refreshToken
-  );
-
-
-  window.location.replace(
-    latestUrl.toString()
-  );
 }
 
 
@@ -200,6 +150,138 @@ if (refreshButton) {
     refreshLatestCalendar
   );
 }
+
+
+function calendarOwnerIsVisible(
+  ownerCode
+) {
+
+  const filter =
+    calendarState.ownerFilter;
+
+
+  if (filter === 'all') {
+    return true;
+  }
+
+
+  return (
+    ownerCode === 'shared'
+    || ownerCode === filter
+  );
+}
+
+
+function filterCalendarShifts(
+  shifts
+) {
+
+  if (
+    calendarState.ownerFilter
+    === 'all'
+  ) {
+    return shifts;
+  }
+
+
+  return shifts.filter(
+    (shift) =>
+      String(
+        shift.worker_code
+        || ''
+      )
+      === calendarState.ownerFilter
+  );
+}
+
+
+function filterCalendarEvents(
+  events
+) {
+
+  return events.filter(
+    (calendarEvent) =>
+      calendarOwnerIsVisible(
+        String(
+          calendarEvent.owner_code
+          || ''
+        )
+      )
+  );
+}
+
+
+function syncCalendarOwnerFilterButtons() {
+
+  ownerFilterButtons.forEach(
+    (button) => {
+
+      const active =
+        button.dataset
+          .calendarOwnerFilter
+        === calendarState.ownerFilter;
+
+
+      button.classList.toggle(
+        'is-active',
+        active
+      );
+
+      button.setAttribute(
+        'aria-pressed',
+        active
+          ? 'true'
+          : 'false'
+      );
+    }
+  );
+}
+
+
+ownerFilterButtons.forEach(
+  (button) => {
+
+    button.addEventListener(
+      'click',
+      () => {
+
+        const filter =
+          String(
+            button.dataset
+              .calendarOwnerFilter
+            || ''
+          );
+
+
+        if (
+          ![
+            'all',
+            'shii',
+            'ui',
+          ].includes(
+            filter
+          )
+        ) {
+          return;
+        }
+
+
+        calendarState.ownerFilter =
+          filter;
+
+
+        syncCalendarOwnerFilterButtons();
+
+        closeDaySummary();
+
+        renderMonthCalendar();
+      }
+    );
+  }
+);
+
+
+syncCalendarOwnerFilterButtons();
 
 
 const daySummaryModal =
@@ -729,7 +811,9 @@ function openDaySummary(
 
   const eventsByDate =
     groupEventsByDate(
-      calendarState.events
+      filterCalendarEvents(
+        calendarState.events
+      )
     );
 
   const dayEvents =
@@ -747,20 +831,34 @@ function openDaySummary(
     );
 
   const hasUi =
-    appendDaySummarySection(
-      'ui',
-      'うい',
-      dateKey,
-      dayEvents
-    );
+    (
+      calendarState.ownerFilter
+      === 'all'
+      || calendarState.ownerFilter
+        === 'ui'
+    )
+      ? appendDaySummarySection(
+          'ui',
+          'うい',
+          dateKey,
+          dayEvents
+        )
+      : false;
 
   const hasShii =
-    appendDaySummarySection(
-      'shii',
-      'しい',
-      dateKey,
-      dayEvents
-    );
+    (
+      calendarState.ownerFilter
+      === 'all'
+      || calendarState.ownerFilter
+        === 'shii'
+    )
+      ? appendDaySummarySection(
+          'shii',
+          'しい',
+          dateKey,
+          dayEvents
+        )
+      : false;
 
 
   if (
@@ -4231,15 +4329,27 @@ function renderSingleMonthCalendar(
   ];
 
 
+  const filteredShifts =
+    filterCalendarShifts(
+      visibleShifts
+    );
+
+
+  const filteredEvents =
+    filterCalendarEvents(
+      calendarState.events
+    );
+
+
   const shiftsByDate =
     groupShiftsByDate(
-      visibleShifts
+      filteredShifts
     );
 
 
   const eventsByDate =
     groupEventsByDate(
-      calendarState.events
+      filteredEvents
     );
 
 
@@ -4501,10 +4611,29 @@ function renderSingleMonthCalendar(
       'calendar-day-lanes';
 
 
-    [
-      'ui',
-      'shii',
-    ].forEach(
+    const visibleWorkerCodes =
+      calendarState.ownerFilter
+      === 'all'
+        ? [
+            'ui',
+            'shii',
+          ]
+        : [
+            calendarState.ownerFilter,
+          ];
+
+
+    if (
+      visibleWorkerCodes.length
+      === 1
+    ) {
+      lanesElement.classList.add(
+        'is-single-owner'
+      );
+    }
+
+
+    visibleWorkerCodes.forEach(
       (workerCode) => {
 
         const laneElement =
@@ -4673,7 +4802,7 @@ function renderSingleMonthCalendar(
       renderMultiDayEventOverlays(
         gridElement,
         gridStartDate,
-        calendarState.events
+        filteredEvents
       );
     }
   );
@@ -5672,6 +5801,54 @@ let calendarBackgroundRefreshInFlight =
   false;
 
 
+function formatCalendarRefreshClock(
+  timestamp
+) {
+
+  const date =
+    new Date(timestamp);
+
+
+  return `${
+    String(
+      date.getHours()
+    ).padStart(
+      2,
+      '0'
+    )
+  }:${
+    String(
+      date.getMinutes()
+    ).padStart(
+      2,
+      '0'
+    )
+  }`;
+}
+
+
+function updateCalendarRefreshStatus() {
+
+  if (!refreshStatusElement) {
+    return;
+  }
+
+
+  refreshStatusElement.textContent =
+    `自動更新 5分｜最終 ${
+      formatCalendarRefreshClock(
+        calendarLastRefreshAt
+      )
+    }`;
+
+  refreshStatusElement.title =
+    '共有カレンダーは5分ごとに自動更新されます';
+}
+
+
+updateCalendarRefreshStatus();
+
+
 async function loadMonthShifts(
   options = {}
 ) {
@@ -5846,6 +6023,8 @@ async function loadMonthShifts(
 
     calendarLastRefreshAt =
       Date.now();
+
+    updateCalendarRefreshStatus();
 
     return true;
 

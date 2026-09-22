@@ -58,6 +58,11 @@
     rel="stylesheet"
     href="./calendar.css"
   >
+
+  <link
+    rel="stylesheet"
+    href="/assets/css/world-frame-utility.css"
+  >
 </head>
 
 <body>
@@ -78,11 +83,18 @@
 
       <div class="calendar-header-actions">
 
+        <span
+          class="calendar-refresh-status"
+          data-calendar-refresh-status
+        >
+          自動更新 5分
+        </span>
+
         <button
           type="button"
           data-calendar-refresh
-          aria-label="最新版に更新"
-          title="最新版に更新"
+          aria-label="カレンダーを今すぐ更新"
+          title="カレンダーを今すぐ更新"
         >
           ↻
         </button>
@@ -192,22 +204,35 @@
         </div>
 
         <div
-          class="calendar-person-legend"
-          aria-label="予定の色分け"
+          class="calendar-owner-filter"
+          aria-label="表示する予定を切り替え"
         >
-          <span
-            class="calendar-person-legend-item"
-            data-worker-code="ui"
+          <button
+            type="button"
+            class="calendar-owner-filter-button is-active"
+            data-calendar-owner-filter="all"
+            aria-pressed="true"
           >
-            うい
-          </span>
+            全表示
+          </button>
 
-          <span
-            class="calendar-person-legend-item"
-            data-worker-code="shii"
+          <button
+            type="button"
+            class="calendar-owner-filter-button"
+            data-calendar-owner-filter="shii"
+            aria-pressed="false"
           >
             しい
-          </span>
+          </button>
+
+          <button
+            type="button"
+            class="calendar-owner-filter-button"
+            data-calendar-owner-filter="ui"
+            aria-pressed="false"
+          >
+            うい
+          </button>
         </div>
 
       </div>
@@ -985,6 +1010,7 @@
   </div>
 
 
+  <script src="/assets/js/world-frame-utility.js"></script>
   <script src="./calendar.js"></script>
 
 </body>

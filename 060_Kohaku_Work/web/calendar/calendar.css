@@ -4920,3 +4920,310 @@ button[data-calendar-today] {
   font-weight:
     800;
 }
+
+
+/* KOPPY CALENDAR COMPACT FILTER UI v1 */
+
+/* ----------------------------------------
+   Refresh status
+---------------------------------------- */
+
+.calendar-refresh-status{
+  max-width:
+    180px;
+
+  color:
+    var(--calendar-muted);
+
+  font-size:
+    10px;
+
+  font-weight:
+    700;
+
+  line-height:
+    1.35;
+
+  text-align:
+    right;
+
+  white-space:
+    nowrap;
+}
+
+
+/* ----------------------------------------
+   Owner filter
+---------------------------------------- */
+
+.calendar-owner-filter{
+  display:
+    inline-grid;
+
+  grid-template-columns:
+    repeat(
+      3,
+      minmax(0, 1fr)
+    );
+
+  gap:
+    4px;
+
+  padding:
+    3px;
+
+  border:
+    1px solid
+    var(--calendar-line-strong);
+
+  border-radius:
+    12px;
+
+  background:
+    rgba(235, 248, 253, .72);
+}
+
+
+.calendar-owner-filter-button{
+  min-width:
+    58px;
+
+  min-height:
+    30px;
+
+  padding:
+    4px 10px;
+
+  border:
+    1px solid
+    transparent;
+
+  border-radius:
+    9px;
+
+  background:
+    transparent;
+
+  color:
+    var(--calendar-muted);
+
+  font:
+    inherit;
+
+  font-size:
+    11px;
+
+  font-weight:
+    800;
+
+  cursor:
+    pointer;
+}
+
+
+.calendar-owner-filter-button.is-active{
+  border-color:
+    rgba(73, 182, 223, .38);
+
+  background:
+    #ffffff;
+
+  color:
+    var(--calendar-text);
+
+  box-shadow:
+    0 2px 8px
+    rgba(62, 121, 148, .10);
+}
+
+
+.calendar-owner-filter-button[
+  data-calendar-owner-filter="shii"
+].is-active{
+  box-shadow:
+    inset 0 -3px 0
+    var(--calendar-shift-shii);
+}
+
+
+.calendar-owner-filter-button[
+  data-calendar-owner-filter="ui"
+].is-active{
+  box-shadow:
+    inset 0 -3px 0
+    var(--calendar-shift-ui);
+}
+
+
+/* ----------------------------------------
+   Compact month transitions
+---------------------------------------- */
+
+.calendar-toolbar h2{
+  font-size:
+    11px;
+
+  color:
+    var(--calendar-muted);
+
+  font-weight:
+    800;
+
+  letter-spacing:
+    .02em;
+}
+
+
+.calendar-month-navigation{
+  gap:
+    3px;
+}
+
+
+.month-calendar.is-scroll-range{
+  gap:
+    0;
+}
+
+
+.calendar-month-section{
+  border-radius:
+    0;
+
+  box-shadow:
+    none;
+
+  border-bottom:
+    0;
+}
+
+
+.calendar-month-section:first-child{
+  border-radius:
+    18px 18px 0 0;
+}
+
+
+.calendar-month-section:last-child{
+  border-bottom:
+    1px solid
+    var(--calendar-line-strong);
+
+  border-radius:
+    0 0 18px 18px;
+}
+
+
+.calendar-scroll-month-title{
+  margin:
+    0;
+
+  padding:
+    3px 9px 2px;
+
+  border-top:
+    4px solid
+    #5abfe6;
+
+  background:
+    rgba(236, 249, 254, .92);
+
+  color:
+    var(--calendar-muted);
+
+  font-size:
+    10px;
+
+  font-weight:
+    900;
+
+  line-height:
+    1.3;
+
+  letter-spacing:
+    .02em;
+}
+
+
+/* ----------------------------------------
+   Single-person view
+---------------------------------------- */
+
+.calendar-day-lanes.is-single-owner{
+  grid-template-rows:
+    minmax(
+      34px,
+      auto
+    );
+
+  min-height:
+    34px;
+}
+
+
+.calendar-day-lanes.is-single-owner
+.calendar-day-lane:first-child{
+  border-bottom:
+    0;
+}
+
+
+@media (max-width:700px){
+
+  .calendar-header-actions{
+    gap:
+      6px;
+  }
+
+
+  .calendar-refresh-status{
+    max-width:
+      120px;
+
+    font-size:
+      8px;
+  }
+
+
+  .calendar-owner-filter{
+    width:
+      100%;
+  }
+
+
+  .calendar-owner-filter-button{
+    min-width:
+      0;
+
+    min-height:
+      34px;
+  }
+
+
+  .month-calendar.is-scroll-range{
+    gap:
+      0;
+  }
+
+
+  .calendar-scroll-month-title{
+    padding:
+      3px 7px 2px;
+
+    font-size:
+      9px;
+  }
+
+
+  .calendar-day-lanes.is-single-owner{
+    min-height:
+      32px;
+
+    grid-template-rows:
+      minmax(
+        32px,
+        auto
+      );
+  }
+
+}
