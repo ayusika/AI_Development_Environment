@@ -526,9 +526,6 @@ function startQuickDrag(event) {
   };
 
 
-  quickControl.setPointerCapture(
-    event.pointerId
-  );
 }
 
 
@@ -626,17 +623,17 @@ if (quickControl) {
     startQuickDrag
   );
 
-  quickControl.addEventListener(
+  window.addEventListener(
     'pointermove',
     moveQuickDrag
   );
 
-  quickControl.addEventListener(
+  window.addEventListener(
     'pointerup',
     finishQuickDrag
   );
 
-  quickControl.addEventListener(
+  window.addEventListener(
     'pointercancel',
     finishQuickDrag
   );

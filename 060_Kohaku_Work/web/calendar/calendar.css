@@ -5255,11 +5255,14 @@ button[data-calendar-today] {
   display:
     inline-flex;
 
+  flex-direction:
+    column;
+
   align-items:
-    center;
+    stretch;
 
   gap:
-    2px;
+    3px;
 
   padding:
     4px;
@@ -5327,6 +5330,52 @@ button[data-calendar-today] {
 
 
 .calendar-quick-control
+.calendar-refresh-status{
+  align-self:
+    stretch;
+
+  max-width:
+    none;
+
+  padding:
+    1px 7px 0;
+
+  color:
+    rgba(181,230,250,.74);
+
+  font-size:
+    9px;
+
+  font-weight:
+    700;
+
+  line-height:
+    1.25;
+
+  text-align:
+    right;
+
+  white-space:
+    nowrap;
+
+  pointer-events:
+    none;
+}
+
+
+.calendar-quick-actions{
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    2px;
+}
+
+
+.calendar-quick-control
 .calendar-owner-filter-button,
 .calendar-quick-control
 .calendar-quick-today{
@@ -5382,7 +5431,7 @@ button[data-calendar-today] {
     none;
 
   cursor:
-    inherit;
+    pointer;
 }
 
 
@@ -5456,6 +5505,16 @@ button:active{
 
     border-radius:
       16px;
+  }
+
+
+  .calendar-quick-control
+  .calendar-refresh-status{
+    padding:
+      0 5px;
+
+    font-size:
+      8px;
   }
 
 
