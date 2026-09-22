@@ -5227,3 +5227,202 @@ button[data-calendar-today] {
   }
 
 }
+
+
+/* KOPPY CALENDAR PERSISTENT FILTER v2 */
+
+/* Desktop / tablet:
+   filter cluster lives beside Today. */
+
+.calendar-header-actions
+.calendar-owner-filter{
+  position:
+    fixed;
+
+  right:
+    calc(
+      118px
+      + env(safe-area-inset-right)
+    );
+
+  bottom:
+    calc(
+      20px
+      + env(safe-area-inset-bottom)
+    );
+
+  z-index:
+    20;
+
+  width:
+    auto;
+
+  padding:
+    3px;
+
+  box-shadow:
+    0 8px 24px
+    rgba(72,181,223,.14);
+}
+
+
+.calendar-header-actions
+.calendar-owner-filter-button{
+  min-width:
+    54px;
+
+  width:
+    auto;
+
+  min-height:
+    48px;
+
+  height:
+    48px;
+
+  padding:
+    0 9px;
+
+  border-radius:
+    11px;
+
+  font-size:
+    10px;
+}
+
+
+/* Portrait phone:
+   the sticky header keeps filter + Today together. */
+
+@media (
+  max-width:700px
+) and (
+  orientation:portrait
+){
+
+  .calendar-header{
+    align-items:
+      flex-start;
+  }
+
+
+  .calendar-header-actions{
+    display:
+      grid;
+
+    grid-template-columns:
+      auto 58px;
+
+    grid-template-rows:
+      auto 38px;
+
+    gap:
+      3px 5px;
+
+    align-items:
+      center;
+  }
+
+
+  .calendar-refresh-status{
+    grid-column:
+      1 / 3;
+
+    grid-row:
+      1;
+
+    justify-self:
+      end;
+
+    max-width:
+      none;
+
+    font-size:
+      8px;
+  }
+
+
+  .calendar-header-actions
+  .calendar-owner-filter{
+    position:
+      static;
+
+    right:
+      auto;
+
+    bottom:
+      auto;
+
+    z-index:
+      auto;
+
+    grid-column:
+      1;
+
+    grid-row:
+      2;
+
+    width:
+      auto;
+
+    padding:
+      2px;
+
+    gap:
+      2px;
+
+    box-shadow:
+      none;
+  }
+
+
+  .calendar-header-actions
+  .calendar-owner-filter-button{
+    min-width:
+      38px;
+
+    width:
+      38px;
+
+    min-height:
+      34px;
+
+    height:
+      34px;
+
+    padding:
+      0 4px;
+
+    border-radius:
+      8px;
+
+    font-size:
+      9px;
+  }
+
+
+  .calendar-header-actions
+  button[data-calendar-today]{
+    grid-column:
+      2;
+
+    grid-row:
+      2;
+
+    min-width:
+      58px;
+
+    width:
+      58px;
+
+    min-height:
+      38px;
+
+    height:
+      38px;
+
+    padding:
+      0 10px;
+  }
+
+}

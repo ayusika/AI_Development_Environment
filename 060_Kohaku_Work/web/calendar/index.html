@@ -90,14 +90,37 @@
           自動更新 5分
         </span>
 
-        <button
-          type="button"
-          data-calendar-refresh
-          aria-label="カレンダーを今すぐ更新"
-          title="カレンダーを今すぐ更新"
+        <div
+          class="calendar-owner-filter"
+          aria-label="表示する予定を切り替え"
         >
-          ↻
-        </button>
+          <button
+            type="button"
+            class="calendar-owner-filter-button is-active"
+            data-calendar-owner-filter="all"
+            aria-pressed="true"
+          >
+            全表示
+          </button>
+
+          <button
+            type="button"
+            class="calendar-owner-filter-button"
+            data-calendar-owner-filter="shii"
+            aria-pressed="false"
+          >
+            しい
+          </button>
+
+          <button
+            type="button"
+            class="calendar-owner-filter-button"
+            data-calendar-owner-filter="ui"
+            aria-pressed="false"
+          >
+            うい
+          </button>
+        </div>
 
         <button
           type="button"
@@ -201,38 +224,6 @@
 
           </div>
 
-        </div>
-
-        <div
-          class="calendar-owner-filter"
-          aria-label="表示する予定を切り替え"
-        >
-          <button
-            type="button"
-            class="calendar-owner-filter-button is-active"
-            data-calendar-owner-filter="all"
-            aria-pressed="true"
-          >
-            全表示
-          </button>
-
-          <button
-            type="button"
-            class="calendar-owner-filter-button"
-            data-calendar-owner-filter="shii"
-            aria-pressed="false"
-          >
-            しい
-          </button>
-
-          <button
-            type="button"
-            class="calendar-owner-filter-button"
-            data-calendar-owner-filter="ui"
-            aria-pressed="false"
-          >
-            うい
-          </button>
         </div>
 
       </div>

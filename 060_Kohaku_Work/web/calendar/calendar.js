@@ -93,11 +93,6 @@ const todayButton =
     '[data-calendar-today]'
   );
 
-const refreshButton =
-  document.querySelector(
-    '[data-calendar-refresh]'
-  );
-
 const refreshStatusElement =
   document.querySelector(
     '[data-calendar-refresh-status]'
@@ -109,47 +104,6 @@ const ownerFilterButtons =
       '[data-calendar-owner-filter]'
     ),
   ];
-
-
-async function refreshLatestCalendar() {
-
-  if (refreshButton) {
-
-    refreshButton.disabled =
-      true;
-
-    refreshButton.textContent =
-      '…';
-  }
-
-
-  try {
-
-    await loadMonthShifts({
-      silent: true,
-    });
-
-  } finally {
-
-    if (refreshButton) {
-
-      refreshButton.disabled =
-        false;
-
-      refreshButton.textContent =
-        '↻';
-    }
-  }
-}
-
-
-if (refreshButton) {
-
-  refreshButton.addEventListener(
-    'click',
-    refreshLatestCalendar
-  );
-}
 
 
 function calendarOwnerIsVisible(
