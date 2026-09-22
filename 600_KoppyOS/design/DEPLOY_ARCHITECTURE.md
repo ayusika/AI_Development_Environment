@@ -3,7 +3,7 @@
 Version: v0.2
 Status: Design / Manual Pro Runtime Validated
 Created: 2026-08-07
-Updated: 2026-09-22
+Updated: 2026-09-23
 
 ---
 
@@ -130,6 +130,74 @@ MacPorts `php83-mbstring` をproduction dependencyとして導入した。
 
 OS / package dependency不足はrelease codeの書換えで回避せず、
 runtime dependencyとして明示的に導入・検証する。
+
+Shift listing comparisonではCityHeavenのHTMLをHTTPS取得するため、
+MacPorts `php83-curl` をproduction dependencyとして導入した。
+
+外部掲載ページへの過剰アクセスを避けるため、
+shift listing APIは取得HTMLを10分間だけServer側でcacheする。
+cacheはimmutable release外の一時runtime stateとして扱い、
+`sys_get_temp_dir()/koppy-shift-listing-<URL SHA-256>.json` に0600相当で保存する。
+cache失効後は外部sourceを再取得し、
+source取得失敗をKoppyのシフトデータへ自動反映してはならない。
+
+### PHP-FPM symlink / realpath boundary
+
+2026-09-23、immutable releaseのatomic switch直後に、
+nginx `try_files` は新release上の新APIを認識した一方、
+PHP-FPMが
+
+~~~text
+/opt/local/libexec/koppy/current/...
+~~~
+
+を旧release側として解決し、
+新規PHPに対して `Unable to open primary script` を返す事象を確認した。
+
+Pro PHP 8.3では
+
+~~~text
+realpath_cache_ttl=120
+~~~
+
+であり、共通 `fastcgi.conf` は当時
+
+~~~nginx
+fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+~~~
+
+を使用していた。
+
+Koppy productionでは、
+global `fastcgi.conf` 自体を変更せず、
+専用runtime include
+
+~~~text
+/opt/local/etc/nginx/fastcgi-koppy.conf
+~~~
+
+を作成し、
+
+~~~nginx
+fastcgi_param SCRIPT_FILENAME $realpath_root$fastcgi_script_name;
+~~~
+
+を使用する方式を採用した。
+
+`koppy-work.conf` 内でPHP-FPM port 9001へ渡すKoppy各locationのみ
+`fastcgi-koppy.conf` をincludeする。
+
+port 9000のbase health check等も利用するglobal `fastcgi.conf` は変更しない。
+
+この方式でGitHub commit
+`56a7a898eb83c84b9e238d6cf3c2fa0618cfa65b`
+へのatomic switch直後、
+新規 `/api/v1/shift-listing-check.php` が待機時間なしで
+認証境界 `401` を返すことを実機確認した。
+
+release switchでは今後も、
+新規PHP endpointを含む変更について
+switch直後のHTTP verificationを実施する。
 
 ### nginx change procedure
 

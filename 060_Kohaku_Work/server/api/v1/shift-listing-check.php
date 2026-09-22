@@ -23,6 +23,10 @@ date_default_timezone_set(
 );
 
 
+const SHIFT_LISTING_SOURCE_CACHE_TTL_SECONDS =
+    10 * 60;
+
+
 function shiftListingResponse(
     array $data,
     int $statusCode = 200
@@ -63,6 +67,66 @@ function shiftListingNormalizeText(
 function shiftListingFetchHtml(
     string $url
 ): string {
+    $cachePath =
+        rtrim(
+            sys_get_temp_dir(),
+            DIRECTORY_SEPARATOR
+        )
+        . DIRECTORY_SEPARATOR
+        . 'koppy-shift-listing-'
+        . hash(
+            'sha256',
+            $url
+        )
+        . '.json';
+
+    $cachedRaw =
+        @file_get_contents(
+            $cachePath
+        );
+
+    if (
+        $cachedRaw !== false
+        && trim($cachedRaw) !== ''
+    ) {
+        $cached =
+            json_decode(
+                $cachedRaw,
+                true
+            );
+
+        if (is_array($cached)) {
+            $cachedUrl =
+                (string)
+                ($cached['url'] ?? '');
+
+            $fetchedAt =
+                (int)
+                ($cached['fetched_at'] ?? 0);
+
+            $cachedHtml =
+                (string)
+                ($cached['html'] ?? '');
+
+            $age =
+                time()
+                - $fetchedAt;
+
+            if (
+                $cachedUrl === $url
+                && $fetchedAt > 0
+                && $age >= 0
+                && $age
+                    <=
+                    SHIFT_LISTING_SOURCE_CACHE_TTL_SECONDS
+                && trim($cachedHtml) !== ''
+            ) {
+                return
+                    $cachedHtml;
+            }
+        }
+    }
+
     if (!function_exists('curl_init')) {
         throw new RuntimeException(
             'PHP cURL extension is unavailable.'
@@ -165,6 +229,46 @@ function shiftListingFetchHtml(
     if (trim((string) $html) === '') {
         throw new RuntimeException(
             'CityHeaven returned an empty page.'
+        );
+    }
+
+    $cachePayload =
+        json_encode(
+            [
+                'url' =>
+                    $url,
+
+                'fetched_at' =>
+                    time(),
+
+                'html' =>
+                    (string) $html,
+            ],
+            JSON_UNESCAPED_UNICODE
+            | JSON_UNESCAPED_SLASHES
+        );
+
+    if (is_string($cachePayload)) {
+        $previousUmask =
+            umask(
+                0077
+            );
+
+        try {
+            @file_put_contents(
+                $cachePath,
+                $cachePayload,
+                LOCK_EX
+            );
+        } finally {
+            umask(
+                $previousUmask
+            );
+        }
+
+        @chmod(
+            $cachePath,
+            0600
         );
     }
 
@@ -1011,6 +1115,9 @@ shiftListingResponse(
             )->format(
                 DATE_ATOM
             ),
+
+        'source_cache_ttl_seconds' =>
+            SHIFT_LISTING_SOURCE_CACHE_TTL_SECONDS,
 
         'summary' =>
             $summary,

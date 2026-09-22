@@ -10,6 +10,9 @@ const CALENDAR_EVENTS_API_URL =
 const CALENDAR_COLOR_PALETTE_API_URL =
   '/api/v1/calendar-color-palette.php';
 
+const SHIFT_LISTING_CHECK_API_URL =
+  '/api/v1/shift-listing-check.php';
+
 const HOLIDAYS_API_URL =
   'https://holidays-jp.github.io/api/v1/date.json';
 
@@ -25,6 +28,11 @@ const calendarState = {
   previewShifts: [],
   events: [],
   holidays: {},
+
+  listingChecks: {
+    byKey: {},
+    workerStatus: {},
+  },
 
   ownerFilter:
     'all',
@@ -2541,6 +2549,225 @@ function getShiftMinutes(
 }
 
 
+function resetShiftListingChecks() {
+  calendarState.listingChecks = {
+    byKey: {},
+    workerStatus: {},
+  };
+}
+
+
+function applyShiftListingCheckData(
+  data
+) {
+  resetShiftListingChecks();
+
+
+  const workers =
+    Array.isArray(
+      data?.workers
+    )
+      ? data.workers
+      : [];
+
+
+  workers.forEach(
+    (worker) => {
+
+      const workerCode =
+        String(
+          worker?.worker_code
+          || ''
+        );
+
+      if (workerCode === '') {
+        return;
+      }
+
+
+      const sourceStatus =
+        String(
+          worker?.source_status
+          || ''
+        );
+
+
+      calendarState
+        .listingChecks
+        .workerStatus[
+          workerCode
+        ] =
+          sourceStatus;
+
+
+      if (
+        sourceStatus !== 'ok'
+        || !Array.isArray(
+          worker?.results
+        )
+      ) {
+        return;
+      }
+
+
+      worker.results.forEach(
+        (result) => {
+
+          const dateKey =
+            String(
+              result?.shift_date
+              || ''
+            );
+
+          if (dateKey === '') {
+            return;
+          }
+
+
+          calendarState
+            .listingChecks
+            .byKey[
+              `${workerCode}::${dateKey}`
+            ] = {
+              comparison:
+                String(
+                  result?.comparison
+                  || ''
+                ),
+
+              isMatch:
+                result?.is_match
+                === true,
+            };
+        }
+      );
+    }
+  );
+}
+
+
+function getShiftListingStatus(
+  shift
+) {
+  if (
+    shift?.is_preview
+    === true
+  ) {
+    return null;
+  }
+
+
+  const workerCode =
+    String(
+      shift?.worker_code
+      || ''
+    );
+
+  const dateKey =
+    String(
+      shift?.shift_date
+      || ''
+    );
+
+
+  if (
+    workerCode === ''
+    || dateKey === ''
+  ) {
+    return null;
+  }
+
+
+  const sourceStatus =
+    calendarState
+      .listingChecks
+      .workerStatus[
+        workerCode
+      ];
+
+
+  if (
+    sourceStatus
+    === 'unavailable'
+  ) {
+    return {
+      kind:
+        'unavailable',
+
+      symbol:
+        '?',
+
+      label:
+        '取得失敗',
+
+      title:
+        '店舗掲載情報を取得できませんでした',
+
+      comparison:
+        'source_unavailable',
+    };
+  }
+
+
+  const result =
+    calendarState
+      .listingChecks
+      .byKey[
+        `${workerCode}::${dateKey}`
+      ];
+
+
+  if (!result) {
+    return null;
+  }
+
+
+  if (result.isMatch) {
+    return {
+      kind:
+        'match',
+
+      symbol:
+        '✓',
+
+      label:
+        '店舗一致',
+
+      title:
+        '店舗掲載とKoppyのシフトが一致しています',
+
+      comparison:
+        result.comparison,
+    };
+  }
+
+
+  return {
+    kind:
+      'mismatch',
+
+    symbol:
+      '⚠',
+
+    label:
+      '店舗差異',
+
+    title:
+      (
+        '店舗掲載とKoppyのシフトに差異があります'
+        + (
+          result.comparison
+            ? ` (${result.comparison})`
+            : ''
+        )
+      ),
+
+    comparison:
+      result.comparison,
+  };
+}
+
+
 function createShiftElement(shift) {
   const shiftElement =
     document.createElement('div');
@@ -2738,6 +2965,69 @@ function createShiftElement(shift) {
   shiftElement.append(
     detailElement
   );
+
+
+  const listingStatus =
+    getShiftListingStatus(
+      shift
+    );
+
+
+  if (listingStatus) {
+    const statusElement =
+      document.createElement(
+        'span'
+      );
+
+    statusElement.className =
+      (
+        'calendar-shift-listing-status '
+        + `is-${listingStatus.kind}`
+      );
+
+    statusElement.title =
+      listingStatus.title;
+
+    statusElement.dataset
+      .comparison =
+        listingStatus.comparison;
+
+
+    const symbolElement =
+      document.createElement(
+        'span'
+      );
+
+    symbolElement.className =
+      'calendar-shift-listing-status-symbol';
+
+    symbolElement.textContent =
+      listingStatus.symbol;
+
+
+    const labelElement =
+      document.createElement(
+        'span'
+      );
+
+    labelElement.className =
+      'calendar-shift-listing-status-label';
+
+    labelElement.textContent =
+      listingStatus.label;
+
+
+    statusElement.append(
+      symbolElement,
+      labelElement
+    );
+
+
+    shiftElement.append(
+      statusElement
+    );
+  }
+
 
   return shiftElement;
 }
@@ -6241,6 +6531,82 @@ function updateCalendarRefreshStatus() {
 updateCalendarRefreshStatus();
 
 
+let calendarListingRefreshInFlight =
+  false;
+
+
+async function refreshShiftListingChecks() {
+  if (
+    calendarListingRefreshInFlight
+  ) {
+    return;
+  }
+
+
+  calendarListingRefreshInFlight =
+    true;
+
+
+  try {
+    const response =
+      await fetch(
+        SHIFT_LISTING_CHECK_API_URL,
+        {
+          credentials:
+            'same-origin',
+
+          cache:
+            'no-store',
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || data.success !== true
+      || !Array.isArray(
+        data.workers
+      )
+    ) {
+      throw new Error(
+        data.error
+        || '店舗掲載チェックを取得できませんでした。'
+      );
+    }
+
+
+    const anchor =
+      captureCalendarAnchor();
+
+
+    applyShiftListingCheckData(
+      data
+    );
+
+
+    renderMonthCalendar();
+
+    restoreCalendarAnchor(
+      anchor
+    );
+
+  } catch (error) {
+    console.warn(
+      '店舗掲載チェックをスキップします。',
+      error
+    );
+
+  } finally {
+    calendarListingRefreshInFlight =
+      false;
+  }
+}
+
+
 async function loadMonthShifts(
   options = {}
 ) {
@@ -6417,6 +6783,8 @@ async function loadMonthShifts(
       Date.now();
 
     updateCalendarRefreshStatus();
+
+    refreshShiftListingChecks();
 
     return true;
 

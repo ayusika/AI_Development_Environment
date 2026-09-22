@@ -1095,6 +1095,11 @@ button[data-calendar-today] {
 
 
 .calendar-shift-detail {
+  flex:
+    1 1 auto;
+
+  min-width: 0;
+
   overflow:
     hidden;
 
@@ -1112,6 +1117,105 @@ button[data-calendar-today] {
 
   color:
     #405f70;
+}
+
+
+.calendar-shift-listing-status {
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap:
+    2px;
+
+  flex:
+    0 0 auto;
+
+  margin-left:
+    4px;
+
+  padding:
+    1px 4px;
+
+  border:
+    1px solid transparent;
+
+  border-radius:
+    999px;
+
+  white-space:
+    nowrap;
+
+  font-size:
+    8px;
+
+  font-weight:
+    850;
+
+  line-height:
+    1.2;
+}
+
+
+.calendar-shift-listing-status.is-match {
+  border-color:
+    rgba(65, 139, 103, 0.24);
+
+  background:
+    rgba(222, 245, 232, 0.88);
+
+  color:
+    #37785a;
+}
+
+
+.calendar-shift-listing-status.is-mismatch {
+  border-color:
+    rgba(206, 101, 95, 0.28);
+
+  background:
+    rgba(255, 229, 226, 0.92);
+
+  color:
+    #b04e49;
+}
+
+
+.calendar-shift-listing-status.is-unavailable {
+  border-color:
+    rgba(112, 128, 138, 0.24);
+
+  background:
+    rgba(236, 241, 244, 0.92);
+
+  color:
+    #697a84;
+}
+
+
+@media (
+  max-width: 700px
+) and (
+  orientation: portrait
+) {
+
+  .calendar-shift-listing-status {
+    gap: 0;
+
+    margin-left:
+      2px;
+
+    padding:
+      1px 3px;
+  }
+
+
+  .calendar-shift-listing-status-label {
+    display:
+      none;
+  }
 }
 
 
