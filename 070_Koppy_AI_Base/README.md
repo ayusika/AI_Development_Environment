@@ -12,26 +12,52 @@ Koppy AI Base は、しいちゃん専用の AI 実行基盤・開発基盤・�
 
 ## Current Production State
 
-2026-09-22 JST、Kohaku WorkはMacBook Pro 2018 / Koppy Base Serverへproduction cutover済み。
+2026-09-22 JST、Kohaku Workと共有カレンダーはMacBook Pro 2018 / Koppy Base Serverへproduction cutover済み。
 
 ```text
+External private access
 iPhone
 → Tailscale Serve HTTPS
 → nginx
 → PHP-FPM 9001 / _koppyweb
-→ production SQLite
+→ Kohaku Work DB
+
+Home LAN
+OPPO
+→ https://koppy-worker-pro.local/work/calendar/
+→ nginx
+→ PHP-FPM 9001 / _koppyweb
+→ KoppyOS DB
 ```
 
-Current URL:
+Current endpoints:
 
 ```text
+Kohaku Work:
 https://koppy-worker-pro.tailba49c0.ts.net/work/
+
+Shared Calendar:
+https://koppy-worker-pro.local/work/calendar/
 ```
 
-このURLはRTX830 / Self-hosted VPN / private DNSを再設計するまで暫定production endpointとして維持する。
+Production DB ownership:
+
+```text
+Kohaku Work:
+ /opt/local/var/lib/koppy/kohaku-work/kohaku-work.sqlite
+ 33 user tables
+
+KoppyOS:
+ /opt/local/var/lib/koppy/koppyos/koppyos.sqlite
+ 5 user tables
+```
+
+KoppyOS 5-table DBはPro移行済み。
+共有カレンダーはOPPO実機で表示・作成・編集・削除とPWA運用まで確認済み。
+Runtime codeはimmutable release `/opt/local/libexec/koppy/current` で管理し、current production releaseは `8ce84b3152485280bf6329fc9e4d3c5a051f84ba`。
 
 Lolipop旧Kohaku DBはmode 0444で凍結し、短期rollback window用として保持する。
-Koppy World本体 / OAuth / KoppyOS 5-table DBは別phaseでProへ移行する。
+Koppy World本体 / OAuthは別phaseでProへ移行する。
 
 ## 目的
 - KoppyOS全体のAI基盤を整理する
@@ -68,6 +94,8 @@ Koppy World本体 / OAuth / KoppyOS 5-table DBは別phaseでProへ移行する�
    - Web / API / DB
    - Git / GitHub / tmux
    - PHP / SQLite / ripgrep
+   - Kohaku Work DB / KoppyOS DBの分離production runtime
+   - MacPorts `php83-mbstring` をcalendar API dependencyとして導入済み
    - 自動処理 / 監視 / バックアップ
    - 画面共有 / SSH
    - SanDisk Extreme Portable SSD V2 500GBを外付けServer Storageとして利用予定

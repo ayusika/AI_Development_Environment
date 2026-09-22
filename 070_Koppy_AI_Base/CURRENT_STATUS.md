@@ -1,10 +1,11 @@
 # CURRENT_STATUS
 
 ## 現在地
-2026-09-22 JST: Kohaku WorkをLolipopからMacBook Pro 2018 / Koppy Base Serverへproduction cutover済み。
-現在のKohaku Work production authorityはPro。iPhone 14からTailscale Serve HTTPS経由で認証・最新データ読込・formal API・production DB実書込・別requestからの再読込まで実機確認済み。
-Production URLは `https://koppy-worker-pro.tailba49c0.ts.net/work/`。このTailscale hostnameはRTX830 / Self-hosted VPN / private DNSを再設計するまで暫定production endpointとして維持する。
-Lolipop旧Kohaku DBはmode 0444で凍結し短期rollback window用に保持。Koppy World本体 / OAuth / KoppyOS 5-table DBのPro移行とmain mergeは未実施。
+2026-09-22 JST: Kohaku Workと共有カレンダーをMacBook Pro 2018 / Koppy Base Serverへproduction cutover済み。
+Kohaku Work production authorityはPro。iPhone 14からTailscale Serve HTTPS経由で認証・最新データ読込・formal API・production DB実書込・別requestからの再読込まで実機確認済み。
+KoppyOS 5-table DBもProへ分離移行済み。共有カレンダーはOPPOからLAN HTTPS `https://koppy-worker-pro.local/work/calendar/` で表示・作成・編集・削除まで実機確認済み。
+Kohaku Workの外出先向けProduction URLは `https://koppy-worker-pro.tailba49c0.ts.net/work/`。このTailscale hostnameはRTX830 / Self-hosted VPN / private DNSを再設計するまで暫定production endpointとして維持する。
+Lolipop旧Kohaku DBはmode 0444で凍結し短期rollback window用に保持。Koppy World本体 / OAuthのPro移行とmain mergeは未実施。
 
 ## 現在の進捗
 ### MacBook Pro 2018
@@ -12,9 +13,13 @@ Lolipop旧Kohaku DBはmode 0444で凍結し短期rollback window用に保持。K
 - Koppy Base Server運用へ役割変更
 - Kohaku Work production runtimeとして稼働中
 - dedicated service user `_koppyweb` を採用
-- Kohaku専用PHP-FPM `127.0.0.1:9001` を運用
-- production SQLiteを `/opt/local/var/lib/koppy/kohaku-work/kohaku-work.sqlite` で運用
+- production PHP-FPM `127.0.0.1:9001` / service user `_koppyweb` を運用
+- Kohaku Work production SQLiteを `/opt/local/var/lib/koppy/kohaku-work/kohaku-work.sqlite` で運用
+- KoppyOS production SQLiteを `/opt/local/var/lib/koppy/koppyos/koppyos.sqlite` で運用
+- PHP-FPMへ `KOHAKU_WORK_DATABASE_PATH` / `KOPPYOS_DATABASE_PATH` を明示注入
+- calendar API依存としてMacPorts `php83-mbstring` を導入済み
 - immutable release `/opt/local/libexec/koppy/current` を採用
+- current production release: `8ce84b3152485280bf6329fc9e4d3c5a051f84ba`
 - コンピュータ名 `Koppy-Worker-Pro` は現時点では維持
 - Apple Account ログイン済み
 - iCloud同期は最小化済み
@@ -49,6 +54,13 @@ Lolipop旧Kohaku DBはmode 0444で凍結し短期rollback window用に保持。K
 - Wi-Fi OFF・4GでProのPrivate Web / HTTPS接続を実機確認
 - Kohaku Work productionへloginし、最新データ表示を実機確認済み
 
+### OPPO
+- Android 13 / model OPD2102A
+- Home LANから `https://koppy-worker-pro.local/work/calendar/` へHTTPS接続
+- local Koppy CAをtrust済み
+- 共有カレンダーをPWAとしてホーム画面運用
+- 既存予定 / shift読込、予定作成・編集・削除を実機確認済み
+
 ### iPhone 18 Pro Max
 - 導入予定
 - 将来的に Koppy Pocket として利用予定
@@ -81,11 +93,49 @@ Lolipop旧Kohaku DBはmode 0444で凍結し短期rollback window用に保持。K
 2. rollback window終了後、Lolipop旧配信・旧deploy/workflowのretirementを判断
 3. Backup / Restore automation、retention、restore testを設計
 4. SanDisk Extreme Portable SSD V2 500GBの接続・File System / Mount / Backup用途を決定
-5. Koppy World本体 / KoppyOS 5-table DB / OAuthのPro migrationを別Phaseとして設計
+5. Koppy World本体 / OAuthのPro migrationを別Phaseとして設計
 6. Automation / Monitoring / log rotationを設計
 7. Thunderbolt未接続起動・停電復旧・蓋閉じ等のService lifecycle条件を検証
 8. RTX830導入条件とSelf-hosted VPN migration gateを継続管理
 9. Gaming PC現物スペック確認・画像AI基盤の導入計画作成
+
+## 2026-09-22 JST｜Shared Calendar / KoppyOS DB Production checkpoint
+
+### KoppyOS DB cutover
+- KoppyOS ownershipは5 tables:
+  - `calendar_color_palette`
+  - `calendar_events`
+  - `home_connections`
+  - `home_devices`
+  - `home_rooms`
+- production DB: `/opt/local/var/lib/koppy/koppyos/koppyos.sqlite`
+- owner / group: `_koppyweb:_koppyweb`
+- DB mode: `0600`
+- directory mode: `0750`
+- `PRAGMA quick_check=ok`
+- `calendar_events=26`
+- `calendar_color_palette=6`
+- PHP-FPM poolへ `KOPPYOS_DATABASE_PATH` を設定しruntime参照を確定
+
+### Shared Calendar production
+- canonical path: `/work/calendar/`
+- OPPO LAN URL: `https://koppy-worker-pro.local/work/calendar/`
+- PWA `id` / `start_url` / `scope`: `/work/calendar/`
+- calendar pageは既存password authを継承
+- calendar static assetsはexact route allowlistのみ公開
+- `/work/calendar/index.html` と未知のcalendar配下pathは404
+- `calendar-events.php` / `calendar-color-palette.php` はKoppyOS serverへexact route
+- `shifts.php` はKohaku Work server routeを維持
+- 未認証APIは401を確認
+- OPPO実機で表示 / 読込 / create / update / deleteをPASS
+- `php83-mbstring` 未導入によりcreate時 `mb_strlen()` が失敗したためMacPortsで導入し、PHP-FPM graceful reload後にCRUD PASS
+
+### Production release
+- GitHub commit: `8ce84b3152485280bf6329fc9e4d3c5a051f84ba`
+- release: `/opt/local/libexec/koppy/releases/8ce84b3152485280bf6329fc9e4d3c5a051f84ba`
+- `current` symlinkを同releaseへatomic switch済み
+- existing `/work/` / login / Kohaku APIsのhealthを維持
+- old release `b28b616e693c10bee51758355c0d3281b55fb65d` はrollback sourceとして保持
 
 ## 2026-09-22 JST｜Kohaku Work Production Cutover checkpoint
 

@@ -12,6 +12,7 @@ Date: 2026-09-22
 
 - MacBook Pro 2018 / Koppy Base Server
 - iPhone / Koppy Pocket
+- OPPO / Home LAN PWA client
 - 将来のRTX830 Home Gateway
 
 ## 2. Current Network
@@ -84,6 +85,43 @@ RTX830 / Self-hosted VPN migration時に以下を一体で再設計する。
 - custom HTTPS hostname
 - certificate management
 - Tailscale exit / emergency fallback policy
+
+## 3.2 Home LAN Shared Calendar Endpoint
+
+2026-09-22 JST、OPPOからKoppy Base Serverの共有カレンダーへHome LAN HTTPSで接続する経路をproduction利用開始。
+
+```text
+OPPO
+172.16.15.170
+↓
+Home LAN
+↓
+https://koppy-worker-pro.local/work/calendar/
+↓
+Koppy Base Server
+172.16.15.107
+↓
+nginx HTTPS
+↓
+password auth
+↓
+PHP-FPM 127.0.0.1:9001 / _koppyweb
+↓
+KoppyOS DB
+```
+
+Current policy:
+
+- OPPOのLAN client `172.16.15.170` のみWeb HTTPS listenerへ許可
+- AirのWi-Fi経路から同LAN surfaceへアクセスした場合は403を維持
+- Airの管理・開発経路はThunderbolt Bridge `10.77.0.1 ↔ 10.77.0.2` を使用
+- OPPOはlocal Koppy CAをtrustし、`koppy-worker-pro.local` のHTTPSを利用
+- Shared Calendarは `/work/calendar/` のexact allowlist surfaceのみ公開
+- direct `/work/calendar/index.html` と未知のcalendar配下pathは404
+- Calendar APIは既存password authを継承し、未認証requestは401
+- Public port forwarding / Funnelは使用しない
+
+Shared CalendarはOPPOへPWA install済みで、表示・create・update・deleteまで実機確認済み。
 
 ## 4. Local Development Path
 

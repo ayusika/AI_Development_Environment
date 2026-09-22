@@ -10,27 +10,61 @@ Koppy AI Base は、4本柱構成で動くしいちゃん専用のAI基盤です
 
 ## 2026-09-22 Production State
 
-Kohaku Work productionはProへ移行済み。
+Kohaku Work productionとKoppyOS shared calendar productionはProへ移行済み。
 
 ```text
+External private access
+
 iPhone
 → Tailscale tailnet
 → Tailscale Serve HTTPS
-→ nginx 127.0.0.1:8080
+→ nginx
 → password auth
 → PHP-FPM 127.0.0.1:9001 / _koppyweb
-→ /opt/local/var/lib/koppy/kohaku-work/kohaku-work.sqlite
+→ Kohaku Work DB
+   /opt/local/var/lib/koppy/kohaku-work/kohaku-work.sqlite
 ```
 
-Current private URL:
+```text
+Home LAN shared calendar
+
+OPPO
+→ https://koppy-worker-pro.local/work/calendar/
+→ LAN HTTPS
+→ nginx
+→ password auth
+→ PHP-FPM 127.0.0.1:9001 / _koppyweb
+→ KoppyOS DB
+   /opt/local/var/lib/koppy/koppyos/koppyos.sqlite
+```
+
+Kohaku Work private remote URL:
 
 ```text
 https://koppy-worker-pro.tailba49c0.ts.net/work/
 ```
 
+Shared Calendar home LAN URL:
+
+```text
+https://koppy-worker-pro.local/work/calendar/
+```
+
+DB ownershipはKohaku Work 33 tables / KoppyOS 5 tablesに分離し、
+PHP-FPMへ `KOHAKU_WORK_DATABASE_PATH` / `KOPPYOS_DATABASE_PATH` を明示する。
+
 Runtime codeは`/opt/local/libexec/koppy/releases/`のimmutable releaseと
 `/opt/local/libexec/koppy/current` symlinkで管理し、
 DB / session / secret / logはrelease外へ分離する。
+
+Current production release:
+
+```text
+8ce84b3152485280bf6329fc9e4d3c5a051f84ba
+```
+
+Calendar APIはmultibyte title validationに `mb_strlen()` を使用するため、
+Pro runtime dependencyとしてMacPorts `php83-mbstring` を導入する。
 
 Lolipop旧Kohaku DBはmode 0444のrollback-only legacy。
 現在のTailscale hostnameはRTX830 / Self-hosted VPN / private DNS phaseまで維持する。
@@ -54,6 +88,8 @@ Lolipop旧Kohaku DBはmode 0444のrollback-only legacy。
 - API / DB
 - Git / GitHub
 - PHP / SQLite
+- Kohaku Work / KoppyOSの分離production DB
+- `php83-mbstring` を含むproduction PHP runtime
 - launchd等による自動処理
 - 監視 / Log
 - Backup
@@ -125,6 +161,8 @@ MacBook Pro 2018は開発Executorから外し、Koppy Base ServerとしてInfras
 - 常時稼働: Pro
 - Air ↔ Proの自宅開発通信はThunderbolt Bridgeを優先
 - Pro上にPrivate Web / API / DB / Automation / Storageを集約
+- Home LANではOPPOから `koppy-worker-pro.local` のHTTPSへ必要なWeb surfaceのみ接続
+- Airの管理経路はThunderbolt Bridgeを優先し、OPPO向けLAN Web経路と分離
 - 外部Private Accessは当面Tailscaleを採用
 - TailscaleはPublic InternetへWeb / SSH / DBを直接公開せず、tailnet内で利用する
 - 現マンション回線は172.16.15.xのPrivate IPv4が配布され、upstream NATが存在する

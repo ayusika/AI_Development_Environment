@@ -1,8 +1,9 @@
 # KoppyOS Server Deploy Architecture
 
-Version: v0.1  
-Status: Design / Not Yet Implemented  
+Version: v0.2
+Status: Design / Manual Pro Runtime Validated
 Created: 2026-08-07
+Updated: 2026-09-22
 
 ---
 
@@ -14,12 +15,151 @@ Kohaku Work production cutoverでは旧Lolipop deploy workflowをPro向けに流
 reviewed GitHub sourceからimmutable releaseを作成し、
 `/opt/local/libexec/koppy/current`でproductionを切り替える方式を採用した。
 
+2026-09-22 Shared Calendar migrationでこの方式を再実行し、
+GitHub commit `8ce84b3152485280bf6329fc9e4d3c5a051f84ba` のsnapshot作成、
+Git snapshot一致確認、nginx route検証、atomic current switch、production health、
+OPPO実機CRUDまで確認した。
+
 Current branch: `refactor/koppy-world-graduation`
 mainはrollback window中mergeしない。
 旧Lolipop deploy / workflowは1〜2日のburn-in後にretirementを判断する。
 
 本文中のLolipop向けserver path / initial Deploy Allowlistは初期設計・履歴として扱い、
 Pro production deployの確定仕様としてそのまま適用しない。
+
+---
+
+## 2026-09-22 Validated Pro Immutable Release Procedure
+
+### Runtime layout
+
+Pro production codeは以下で管理する。
+
+```text
+/opt/local/libexec/koppy/releases/<GITHUB_COMMIT_SHA>/
+/opt/local/libexec/koppy/current -> releases/<GITHUB_COMMIT_SHA>
+```
+
+ReleaseにはGit metadataを含めず、GitHubでreview済みの固定commitからsnapshotを生成する。
+
+Current validated archive scope:
+
+```text
+060_Kohaku_Work
+600_KoppyOS
+900_Lab/Web_KoppyOS_Beta
+```
+
+生成元はPro上のGit clone:
+
+```text
+/Users/kwpro/Development/AI_Development_Environment
+```
+
+working treeをcheckoutしてproduction化せず、固定commitに対する `git archive` を使用する。
+
+### Release creation
+
+Validated flow:
+
+1. target branch / commit SHAを固定
+2. local / remote divergenceが0であることを確認
+3. target commit objectの存在を確認
+4. `git archive <SHA>` から新しいrelease directoryへ展開
+5. owner / permissionをproduction規則に合わせる
+6. PHP / JSON等のsyntax validation
+7. 同一commitから一時snapshotを再生成し `diff -qr` でrelease全体一致を確認
+8. current switch前に既存production healthを確認
+9. nginx等runtime configurationを別レイヤーで検査
+10. current symlinkをatomic switch
+11. existing surface / new surface / auth / APIを検証
+12. 実機CRUD等、変更内容に応じたproduction verificationを実施
+
+### Atomic current switch
+
+`current` はdirectoryではなくsymlinkとして交換する。
+
+macOSで以下の形式を使用してはならない。
+
+```text
+mv current.next current
+```
+
+`current` がdirectory symlinkの場合、`mv` がsymlink自体を置換せず、
+リンク先release directory内へ `current.next` を移動する挙動を確認した。
+
+2026-09-22の実作業では旧release内部へ不要な `current.next` が生成され、
+production switch自体は発生しなかった。
+不要linkを削除し、旧releaseをGit snapshotと再比較して完全一致を確認後に再実行した。
+
+Validated atomic method:
+
+```python
+os.symlink("releases/<NEW_SHA>", temporary_link)
+os.replace(temporary_link, "/opt/local/libexec/koppy/current")
+```
+
+同一filesystem / 同一directory上でtemporary symlinkを作成し、
+`os.replace()` でsymlinkそのものを置換する。
+
+Switch前後で `readlink` を確認し、
+旧releaseはrollback sourceとして削除せず保持する。
+
+### Runtime configuration boundary
+
+以下はimmutable release外のServer runtime stateとして扱う。
+
+- nginx configuration
+- PHP-FPM configuration
+- DB
+- session
+- secret
+- log
+- OS / MacPorts package dependencies
+
+Shared Calendar migrationでは:
+
+```text
+KOPPYOS_DATABASE_PATH=/opt/local/var/lib/koppy/koppyos/koppyos.sqlite
+```
+
+をPHP-FPM poolへ追加した。
+
+また `calendar-events.php` のmultibyte title validationが `mb_strlen()` を使用するため、
+MacPorts `php83-mbstring` をproduction dependencyとして導入した。
+
+OS / package dependency不足はrelease codeの書換えで回避せず、
+runtime dependencyとして明示的に導入・検証する。
+
+### nginx change procedure
+
+nginx route変更はrelease switchと分離する。
+
+1. active include fileを `nginx -T` で特定
+2. production configを直接編集せずcandidateを作成
+3. candidate main configからcandidate includeを参照
+4. `nginx -t` PASS
+5. original configをtimestamp付きbackup
+6. candidateをproduction configへ採用
+7. production `nginx -t` PASS
+8. graceful reload
+9. existing endpoint healthを再確認
+10. release switch後にnew endpointを確認
+
+Shared Calendarでは既存 `/work/` のcatch-allを緩めず、
+calendar page / static asset / KoppyOS calendar APIだけをexact routeで追加した。
+
+### Rollback
+
+Rollback時は:
+
+- previous release SHAを明示
+- previous release directoryのGit snapshot一致を確認
+- same atomic symlink replacement方式で `current` を戻す
+- nginx / PHP-FPM等のruntime config変更がある場合はcode rollbackと別に判断
+- DB migrationを伴う場合はDB rollback policyを別途適用
+
+Release switchとDB rollbackを同一操作として暗黙に扱わない。
 
 ---
 
