@@ -8,6 +8,33 @@ Koppy AI Base は、4本柱構成で動くしいちゃん専用のAI基盤です
 - iPhone = Koppy Pocket
 - Gaming PC = GPU AI Factory
 
+## 2026-09-22 Production State
+
+Kohaku Work productionはProへ移行済み。
+
+```text
+iPhone
+→ Tailscale tailnet
+→ Tailscale Serve HTTPS
+→ nginx 127.0.0.1:8080
+→ password auth
+→ PHP-FPM 127.0.0.1:9001 / _koppyweb
+→ /opt/local/var/lib/koppy/kohaku-work/kohaku-work.sqlite
+```
+
+Current private URL:
+
+```text
+https://koppy-worker-pro.tailba49c0.ts.net/work/
+```
+
+Runtime codeは`/opt/local/libexec/koppy/releases/`のimmutable releaseと
+`/opt/local/libexec/koppy/current` symlinkで管理し、
+DB / session / secret / logはrelease外へ分離する。
+
+Lolipop旧Kohaku DBはmode 0444のrollback-only legacy。
+現在のTailscale hostnameはRTX830 / Self-hosted VPN / private DNS phaseまで維持する。
+
 ## 4本柱の役割
 
 ### 1. MacBook Air

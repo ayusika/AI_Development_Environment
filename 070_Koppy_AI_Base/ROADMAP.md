@@ -13,9 +13,15 @@
 - [x] Koppy Base Serverへ役割変更
 - [x] Private Web Server初期基盤（nginx / PHP-FPM / health.php、詳細はCURRENT_STATUS.md）
 - [x] 今回の再起動後・GUI未ログインでThunderbolt / VPN両経路の復旧確認
-- [ ] 本番用Serviceユーザー / 権限 / Directory Layout / 再構築手順の確定
-- [ ] Koppy World / Kohaku Workを既存認証維持で移行
-- [ ] API / DB基盤（PHP + SQLiteメモリ上の疎通まで確認、実DBは未移行）
+- [x] 本番用Serviceユーザー / 権限 / Directory Layoutを確定（`_koppyweb` / dedicated runtime layout）
+- [ ] 実機構成の再構築手順をscript化
+- [x] Kohaku Workを既存password auth維持でPro productionへ移行
+- [ ] Koppy World本体 / OAuthをProへ移行
+- [x] Kohaku Work formal API / production SQLite基盤をProへ移行
+- [ ] KoppyOS 5-table DBをProへ移行
+- [x] Final DB atomic cutover / FPM runtime read / actual write / separate readback検証
+- [ ] 1〜2日production burn-in
+- [ ] rollback window終了後にLolipop旧deploy / workflow /配信経路をretire
 - [ ] SanDisk Extreme Portable SSD V2 500GB接続
 - [ ] SSD File System決定
 - [ ] Mount / Directory Layout決定
@@ -40,8 +46,11 @@
 - [x] Private Web接続確認
 - [x] iPhoneから利用可能なService範囲を必要最小限へ制限（iPhone → Pro TCP 443のみ）
 - [x] TailscaleをMacPorts CLI-only版へ移行し、GUI未ログイン再起動後の自動復旧を実機確認
-- [ ] Public InternetへのWeb / SSH / DB直接公開を行わない
-- [ ] Tailscale Funnelを使用しない
+- [x] Kohaku WorkをTailscale Serve HTTPSのtailnet-only production endpointとして運用開始
+- [x] 現在の `koppy-worker-pro.tailba49c0.ts.net` hostnameを暫定production URLとして維持
+- [x] Public InternetへのWeb / SSH / DB直接公開を行わない
+- [x] Tailscale Funnelを使用しない
+- [ ] RTX830 / Self-hosted VPN phaseでprivate/split DNS + custom HTTPS hostnameを設計
 - [ ] RTX830をHome Gateway / Firewallとして導入
 - [ ] 外部着信可能な回線確保後にSelf-hosted VPNを再検討
 

@@ -1,10 +1,41 @@
 # KoppyOS Architecture
 
+## 2026-09-22 Current Production Override
+
+この文書には初期構築時のLolipop / GitHub Pages前提の記録が含まれる。
+
+Kohaku Workの現行production:
+
+```text
+GitHub = source of truth
+Air = development / command center
+Pro = Koppy Base Server / Kohaku Work production
+iPhone = Tailscale private client
+Lolipop Kohaku DB = mode 0444 rollback-only legacy
+```
+
+Current URL:
+
+```text
+https://koppy-worker-pro.tailba49c0.ts.net/work/
+```
+
+本文中の旧実行環境記述と競合する場合、
+Kohaku Workについては`070_Koppy_AI_Base/CURRENT_STATUS.md`と
+`070_Koppy_AI_Base/01_Overview/Architecture.md`を優先する。
+
+Koppy World本体 / OAuth / KoppyOS DBのPro移行は別phase。
+
+---
+
 ## 1. 目的
 
 KoppyOSは、しいちゃんとKoppyが、特定のチャットや端末だけに依存せず、継続的に設計・開発・判断を進めるためのAI開発基盤です。
 
-Koppy Worldをユーザーが触れる画面とし、GitHubを正本、ロリポップを秘密情報とサーバー処理の実行環境として使用します。
+Koppy Worldをユーザーが触れる画面とし、GitHubをソースコード・設計書の正本として使用する。
+
+実行環境は段階移行中であり、Kohaku Work productionはMacBook Pro 2018 / Koppy Base Serverへ移行済み。
+LolipopはKohaku Workについてrollback-only legacy environmentとして扱う。
 
 ---
 

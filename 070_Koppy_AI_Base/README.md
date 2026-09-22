@@ -10,6 +10,29 @@ Koppy AI Base は、しいちゃん専用の AI 実行基盤・開発基盤・�
 - iPhone 18 Pro Max（ポケットKoppy / 音声入力 / 確認 / 通知）
 - Gaming PC（GPU工場 / 画像生成 / LoRA学習 / ComfyUI）
 
+## Current Production State
+
+2026-09-22 JST、Kohaku WorkはMacBook Pro 2018 / Koppy Base Serverへproduction cutover済み。
+
+```text
+iPhone
+→ Tailscale Serve HTTPS
+→ nginx
+→ PHP-FPM 9001 / _koppyweb
+→ production SQLite
+```
+
+Current URL:
+
+```text
+https://koppy-worker-pro.tailba49c0.ts.net/work/
+```
+
+このURLはRTX830 / Self-hosted VPN / private DNSを再設計するまで暫定production endpointとして維持する。
+
+Lolipop旧Kohaku DBはmode 0444で凍結し、短期rollback window用として保持する。
+Koppy World本体 / OAuth / KoppyOS 5-table DBは別phaseでProへ移行する。
+
 ## 目的
 - KoppyOS全体のAI基盤を整理する
 - ローカルAI開発環境を一貫して管理する

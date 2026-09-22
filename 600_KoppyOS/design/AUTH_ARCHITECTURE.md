@@ -6,6 +6,19 @@ Created: 2026-08-08
 
 ---
 
+## 2026-09-22 Current Runtime Note
+
+この文書はKoppyOS全体のGitHub OAuth target architectureを定義する。
+現在のKohaku Work production login方式そのものではない。
+
+Kohaku Workは既存password auth + server-side PHP sessionを維持してProへ移行済み。
+OAuth / GitHub App authenticationはKoppy World本体のPro migration phaseで別途実装・移行する。
+
+本文中の「Password Authenticationをv1では行わない」はOAuth target designに関する記述であり、
+現在のKohaku Work password authを否定しない。
+
+---
+
 ## 1. Purpose
 
 Koppy WorldおよびKoppy APIを、

@@ -1,13 +1,20 @@
 # CURRENT_STATUS
 
 ## 現在地
-2026-09-21 JST: Koppy Base ServerのPrivate Web初期基盤を構築。TailscaleをStandalone版からMacPortsのCLI-only版へ移行し、iPhoneからProへの通信をHTTPS/TCP 443のみに制限。Pro再起動後・GUI未ログインでもThunderbolt / Tailscale / Serve / Private Webが自動復旧することを実機確認。
-Koppy World / Kohaku Work本体および実DBは未移行。詳細は本書末尾のcheckpointを参照。
+2026-09-22 JST: Kohaku WorkをLolipopからMacBook Pro 2018 / Koppy Base Serverへproduction cutover済み。
+現在のKohaku Work production authorityはPro。iPhone 14からTailscale Serve HTTPS経由で認証・最新データ読込・formal API・production DB実書込・別requestからの再読込まで実機確認済み。
+Production URLは `https://koppy-worker-pro.tailba49c0.ts.net/work/`。このTailscale hostnameはRTX830 / Self-hosted VPN / private DNSを再設計するまで暫定production endpointとして維持する。
+Lolipop旧Kohaku DBはmode 0444で凍結し短期rollback window用に保持。Koppy World本体 / OAuth / KoppyOS 5-table DBのPro移行とmain mergeは未実施。
 
 ## 現在の進捗
 ### MacBook Pro 2018
 - 初期化完了
 - Koppy Base Server運用へ役割変更
+- Kohaku Work production runtimeとして稼働中
+- dedicated service user `_koppyweb` を採用
+- Kohaku専用PHP-FPM `127.0.0.1:9001` を運用
+- production SQLiteを `/opt/local/var/lib/koppy/kohaku-work/kohaku-work.sqlite` で運用
+- immutable release `/opt/local/libexec/koppy/current` を採用
 - コンピュータ名 `Koppy-Worker-Pro` は現時点では維持
 - Apple Account ログイン済み
 - iCloud同期は最小化済み
@@ -40,6 +47,7 @@ Koppy World / Kohaku Work本体および実DBは未移行。詳細は本書末�
 ### iPhone 14
 - Tailscale導入済み
 - Wi-Fi OFF・4GでProのPrivate Web / HTTPS接続を実機確認
+- Kohaku Work productionへloginし、最新データ表示を実機確認済み
 
 ### iPhone 18 Pro Max
 - 導入予定
@@ -69,13 +77,60 @@ Koppy World / Kohaku Work本体および実DBは未移行。詳細は本書末�
 - 自宅開発ではAir ↔ ProのThunderbolt Bridgeを優先する
 
 ## 次の優先タスク
-1. 常設Directory Layout / Service実行ユーザー / 権限 / ログと監視の設計
-2. Koppy World / Kohaku Workの現行コード・認証・DB依存を確認し、認証を維持した移行計画を作成
-3. 実DBの保存先・整合性のあるBackup / Restore手順と復元テストを設計
-4. SanDisk Extreme Portable SSD V2 500GBの接続・File System / Mount / 用途を決定
-5. Thunderbolt未接続起動・停電復旧等、今回未確認のService lifecycle条件を検証
-6. 必要に応じてtailnet経由SSHを確認（今回のSSHはThunderbolt経由）
-7. Gaming PC 現物スペック確認・画像AI基盤の導入計画作成
+1. Pro productionを1〜2日実運用し、予約追加・編集・売上等の通常業務を確認
+2. rollback window終了後、Lolipop旧配信・旧deploy/workflowのretirementを判断
+3. Backup / Restore automation、retention、restore testを設計
+4. SanDisk Extreme Portable SSD V2 500GBの接続・File System / Mount / Backup用途を決定
+5. Koppy World本体 / KoppyOS 5-table DB / OAuthのPro migrationを別Phaseとして設計
+6. Automation / Monitoring / log rotationを設計
+7. Thunderbolt未接続起動・停電復旧・蓋閉じ等のService lifecycle条件を検証
+8. RTX830導入条件とSelf-hosted VPN migration gateを継続管理
+9. Gaming PC現物スペック確認・画像AI基盤の導入計画作成
+
+## 2026-09-22 JST｜Kohaku Work Production Cutover checkpoint
+
+### Production runtime
+- Pro: MacBook Pro 2018 / Koppy Base Server
+- URL: `https://koppy-worker-pro.tailba49c0.ts.net/work/`
+- Access: Tailscale Serve / tailnet only
+- nginx: `127.0.0.1:8080`
+- Kohaku PHP-FPM: `127.0.0.1:9001`
+- Service user: `_koppyweb`
+- DB: `/opt/local/var/lib/koppy/kohaku-work/kohaku-work.sqlite`
+- Immutable release: `/opt/local/libexec/koppy/current`
+- Cutover時release: `b28b616e693c10bee51758355c0d3281b55fb65d`
+
+### DB cutover
+- Lolipop source 38 user tablesをKohaku 33 / KoppyOS 5へownership split
+- cross-boundary FKなし、views/triggersなし、row counts preserved
+- Final Kohaku DBをsame-filesystem staging後にatomic rename
+- post-cutover `quick_check=ok`
+- `tables=33`
+- `visits=107`
+- `sqlite_sequence(visits)=197`
+- `_koppyweb` read/write permission確認
+- PHP-FPM 9001がfinal production DBを実際に参照することをFastCGI direct probeで確認
+
+### Production write validation
+- write test前recovery point:
+  `/opt/local/var/lib/koppy/kohaku-work/backups/kohaku-work-final-production-before-write-test-20260922-155550.sqlite`
+- PHP-FPM 9001経由でtemporary probe tableへ実write commit: PASS
+- 別FastCGI requestからcommit済みtoken read: PASS
+- probe table cleanup: PASS
+- cleanup後 `quick_check=ok`, tables=33, visits=107, sequence=197
+- pre-write backupとcurrent DBのschema / 全table dataは論理一致
+- business data changed=NO
+
+### Rollback state
+- Lolipop旧Kohaku DBはmode 0444でfreeze
+- 新規業務書込先として使用しない
+- 旧deploy / workflow /配信経路は1〜2日のproduction burn-in中は保持
+- rollback window終了後にretirementを判断
+
+### Network decision
+- 現在のTailscale URLは変更しない
+- RTX830 / Self-hosted VPN phaseで private/split DNS、custom HTTPS hostname、certificate managementをまとめて再設計
+- Tailscaleはその時点で撤去またはemergency fallback化を再評価
 
 ## 2026-09-21 JST｜Private Web初期基盤 checkpoint
 

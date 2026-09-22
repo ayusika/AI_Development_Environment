@@ -1,8 +1,8 @@
 # Koppy AI Base Remote Access Architecture
 
-Version: v0.1
+Version: v0.2
 Status: ACTIVE
-Date: 2026-09-21
+Date: 2026-09-22
 
 ## 1. Purpose
 
@@ -43,7 +43,7 @@ Tailscale tailnet
 ↓
 Koppy Base Server
 ↓
-Private Web / SSH / required services
+Private Web / required services
 ```
 
 ### Principles
@@ -58,6 +58,32 @@ Private Web / SSH / required services
 - iPhoneから不要なLAN / Server管理領域へアクセスさせない
 - 必要に応じてTailscaleのAccess Controlで到達範囲を制限する
 - secret / password / tokenをGitHub正本へ保存しない
+
+## 3.1 Current Kohaku Work Production Endpoint
+
+2026-09-22 JST、Kohaku WorkはTailscale Serveをproduction private accessとして利用開始。
+
+```text
+iPhone 14
+→ cellular
+→ Tailscale tailnet
+→ https://koppy-worker-pro.tailba49c0.ts.net/work/
+→ nginx
+→ Kohaku Work
+```
+
+Access ControlはiPhone 14 → Pro `tcp:443` のみ。
+Public port forwarding / Funnel / Public SSH / Public DBは使用しない。
+
+現在のTailscale HTTPS hostnameは暫定production endpointとして維持し、
+見た目だけを理由に変更しない。
+
+RTX830 / Self-hosted VPN migration時に以下を一体で再設計する。
+
+- private / split DNS
+- custom HTTPS hostname
+- certificate management
+- Tailscale exit / emergency fallback policy
 
 ## 4. Local Development Path
 

@@ -6,6 +6,23 @@ Created: 2026-08-07
 
 ---
 
+## 2026-09-22 Current Runtime Note
+
+この文書は将来Deploy Executor設計を保持する。
+
+Kohaku Work production cutoverでは旧Lolipop deploy workflowをPro向けに流用せず、
+reviewed GitHub sourceからimmutable releaseを作成し、
+`/opt/local/libexec/koppy/current`でproductionを切り替える方式を採用した。
+
+Current branch: `refactor/koppy-world-graduation`
+mainはrollback window中mergeしない。
+旧Lolipop deploy / workflowは1〜2日のburn-in後にretirementを判断する。
+
+本文中のLolipop向けserver path / initial Deploy Allowlistは初期設計・履歴として扱い、
+Pro production deployの確定仕様としてそのまま適用しない。
+
+---
+
 ## 1. Purpose
 
 Koppy WorldからGitHubへ保存されたKoppyOS Serverコードを、

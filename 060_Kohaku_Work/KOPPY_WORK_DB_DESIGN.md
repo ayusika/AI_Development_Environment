@@ -1,7 +1,10 @@
 # Kohaku Work DB Design v1.0
 
-更新日：2026-08-14  
-状態：本番β運用前・正式DB設計
+初版：2026-08-14
+Production Update：2026-09-22
+状態：v1.0 schema baseline / production運用中
+
+> 本文のtable定義は2026-08-14時点のv1.0 baselineを保持する。2026-09-22 production DBはmigration後33 user tablesで運用中。現行schema確認ではschema / migration / production DB実体を正本として参照する。
 
 ---
 
@@ -37,11 +40,13 @@ SQLite
 
 PHP PDO_SQLITE
 
-DB本体：
+Production DB本体：
 
-/home/users/2/her.jp-mikipiano/.koppy-private/database/kohaku-work.sqlite
+/opt/local/var/lib/koppy/kohaku-work/kohaku-work.sqlite
 
-DB本体はWeb公開領域の外に置く。
+DB本体はWeb公開領域およびimmutable releaseの外に置く。
+
+Lolipop旧DB `/home/users/2/her.jp-mikipiano/.koppy-private/database/kohaku-work.sqlite` は2026-09-22 cutover後mode 0444で凍結し、短期rollback window用として保持する。
 
 GitHubには実データを保存しない。
 
@@ -155,6 +160,9 @@ stores
 └── store_option_rates
 
 合計13テーブル。
+
+これは2026-08-14時点のv1.0 initial schema design。
+2026-09-22 production DBは、その後のmigrationを経て33 user tablesで運用中。
 
 ---
 
@@ -969,22 +977,22 @@ Koppy DB相談
 
 # 25. 現在地
 
-SQLite動作確認：完了
+2026-09-22 JST
 
-private DB領域作成：完了
+Kohaku Work production DBはMacBook Pro 2018 / Koppy Base Serverへcutover済み。
 
-SQLite接続テスト：完了
+```text
+Production DB:
+/opt/local/var/lib/koppy/kohaku-work/kohaku-work.sqlite
 
-DB往復テスト：完了
+Lolipop source: 38 user tables
+Kohaku Work: 33 user tables
+KoppyOS: 5 user tables
+```
 
-旧Lite schema：
+Splitではviews/triggers/cross-boundary FKなし、row counts preservedを確認。
 
-本番データ投入前のため廃止予定。
+Cutoverではatomic swap、`_koppyweb` read/write、PHP-FPM 9001 runtime read、actual write、separate request readback、probe cleanup、logical restore verificationをPASS。
 
-次：
-
-この設計v1.0を正本化し、
-正式schema.sqlを新規設計する。
-
-その後、
-スケジュール機能をKohaku Workの次の実装起点とする。
+v1.0 initial schema定義は履歴として保持する。
+今後のschema変更はmigration / backup / verification / restore可能性を必須とする。

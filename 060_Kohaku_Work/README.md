@@ -86,13 +86,29 @@ KoppyはDBに保存された構造化データを参照し、
 
 ## 現在の状態
 
-2026-09-03
+2026-09-22
 
-本番β実装・運用改善フェーズ。
+Pro production運用・改善フェーズ。
 
-Kohaku WorkはKoppy World上で実際に動作する仕事管理システムとして実装を進行中。
+Kohaku WorkはMacBook Pro 2018 / Koppy Base Server上のprivate production applicationとして稼働中。
 
-現在は特に予約・顧客管理を中心に、実運用しながらUIとDB連携を改善している。
+Production URL:
+
+```text
+https://koppy-worker-pro.tailba49c0.ts.net/work/
+```
+
+Current runtime:
+
+```text
+Tailscale Serve
+→ nginx
+→ password auth
+→ PHP-FPM 9001 / _koppyweb
+→ production SQLite
+```
+
+iPhone 14から最新production data表示まで実機確認済み。
 
 ### 直近の完了事項
 
@@ -123,14 +139,38 @@ Kohaku WorkはKoppy World上で実際に動作する仕事管理システムと�
 - PHPサーバ側のセッション保存期間も30日に設定し、ブラウザ終了後もログイン状態を維持する構成へ変更
 - 30日間まったく利用しなかった場合のみセッションを失効する方針
 
+### Production cutover
+
+2026-09-22に以下を確認済み。
+
+- Lolipop source 38 user tablesをKohaku 33 / KoppyOS 5へownership split
+- Final Kohaku DBをProへatomic cutover
+- PHP-FPM 9001 runtime read
+- actual write commit
+- separate request readback
+- temporary probe cleanup
+- `quick_check=ok`
+- test前後でschema / business table data論理一致
+- Lolipop旧DBはmode 0444でrollback-only freeze
+
 ### 現在の方針
 
-GitHub正本を確認しながらWriterで小さく安全に修正し、
-本番で動作確認しながらKohaku Workを育てていく。
+- GitHubをsource of truthとして維持
+- Kohaku Work production authorityはPro
+- `refactor/koppy-world-graduation` はまだmainへmergeしない
+- codeはimmutable releaseとしてProへ配置
+- DB / session / secret / logはrelease外へ分離
+- 旧Lolipop deploy / workflowはrollback window終了まで保持
+- 実運用しながらUI / API / DBを安全に改善する
 
 ### 次
 
-- 予約・顧客管理の実運用テスト
+- 1〜2日のproduction burn-in
+- 予約追加・編集・売上等の通常実運用確認
 - 発見したUI / データ不整合の修正
 - 顧客管理機能の続きを実装
 - 写メ日記・売上など他機能との連携強化
+- Backup / Restore automation
+- Monitoring / log rotation
+- rollback window終了後のLolipop retirement判断
+- Koppy World本体 / KoppyOS DB / OAuth移行は別phase
