@@ -954,4 +954,66 @@
 }
 
 
+
+/* ========================================
+   SHIFT BUTTON NORMALIZATION
+======================================== */
+
+#view-shift .shift-worker-button,
+#view-shift .shift-week-nav-button,
+#view-shift .shift-week-today-button,
+#view-shift .primary-button,
+#view-shift .secondary-button,
+#view-shift .shift-delete-button,
+#view-shift .shift-day-off-button{
+  box-sizing: border-box;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  appearance: none;
+  -webkit-appearance: none;
+
+  line-height: 1.2;
+  white-space: nowrap;
+
+  vertical-align: middle;
+}
+
+
+#view-shift .shift-worker-button,
+#view-shift .primary-button,
+#view-shift .secondary-button{
+  width: 100%;
+}
+
+
+#view-shift .shift-week-nav-button{
+  width: 42px;
+  min-width: 42px;
+  padding: 0;
+}
+
+
+#view-shift .shift-week-today-button{
+  width: 100%;
+}
+
+
+#view-shift .shift-day-off-button{
+  min-width: 46px;
+  min-height: 42px;
+  padding: 8px 10px;
+}
+
+
+#view-shift .shift-entry-actions
+.primary-button,
+#view-shift .shift-entry-actions
+.secondary-button{
+  min-height: 44px;
+}
+
+
 /* WRITER:NEXT_WORK_SHIFT_STYLE:END */
