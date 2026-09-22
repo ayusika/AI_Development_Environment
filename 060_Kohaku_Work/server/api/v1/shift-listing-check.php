@@ -565,6 +565,49 @@ function shiftListingParseSchedule(
                 $timeNode->textContent
             );
 
+
+        /*
+         * CityHeaven may use the go2 slot on a day
+         * without a shift to advertise the next shift.
+         *
+         * Confirmed examples:
+         * - 明日出勤！
+         * - 次回9/24出勤！
+         *
+         * Only these verified future-notice forms are
+         * interpreted as off. Unknown non-time text
+         * continues to fail closed.
+         */
+        if (
+            preg_match(
+                '/^(?:'
+                . '明日出勤[!！]?'
+                . '|'
+                . '次回\d{1,2}\/\d{1,2}'
+                . '出勤[!！]?'
+                . ')$/u',
+                $timeText
+            )
+        ) {
+
+            $schedule[] = [
+                'shift_date' =>
+                    $shiftDate,
+
+                'status' =>
+                    'off',
+
+                'start_at' =>
+                    null,
+
+                'end_at' =>
+                    null,
+            ];
+
+            continue;
+        }
+
+
         if (
             !preg_match(
                 '/(\d{1,2}):([0-5]\d)'
