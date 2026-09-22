@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="/assets/css/world-frame-utility.css">
   <link rel="stylesheet" href="/next/_shared/scaffold.css">
   <link rel="stylesheet" href="./work.css">
+  <link rel="stylesheet" href="./shift-create.css">
   <link rel="stylesheet" href="./schedule-readonly.css">
   <link rel="stylesheet" href="./schedule-verification-write.css">
   <link rel="stylesheet" href="./schedule-detail-read.css">
@@ -771,32 +772,240 @@
         </aside>
         <!-- WRITER:NEXT_WORK_SCHEDULE_DETAIL_READONLY:END -->
 
+        <!-- WRITER:NEXT_WORK_SHIFT_VIEW:START -->
         <section
           class="work-next-view"
           data-view="shift"
-          id="view-shift" hidden
+          id="view-shift"
+          hidden
         >
 
-          <div class="work-next-heading">
-            <button type="button" data-next-view="home">←</button>
+          <div class="shift-page">
 
-            <div>
-              <p class="wf-eyebrow">SHIFT</p>
-              <h1>シフト</h1>
+            <div class="work-next-heading shift-page-header">
+              <button type="button" data-next-view="home">←</button>
+
+              <div>
+                <p class="wf-eyebrow">WORK SHIFT</p>
+                <h1>シフト</h1>
+              </div>
             </div>
+
+
+            <section
+              class="work-next-panel shift-control-card"
+              data-wf-panel
+              data-wf-panel-surface
+            >
+
+              <div class="shift-worker-switcher">
+                <button
+                  class="shift-worker-button is-selected"
+                  type="button"
+                  data-shift-worker="shii"
+                >
+                  しい
+                </button>
+
+                <button
+                  class="shift-worker-button"
+                  type="button"
+                  data-shift-worker="ui"
+                >
+                  うい
+                </button>
+              </div>
+
+
+              <div class="shift-week-navigation">
+                <button
+                  class="shift-week-nav-button"
+                  type="button"
+                  data-shift-week-move="-1"
+                  aria-label="前週"
+                >
+                  ‹
+                </button>
+
+                <button
+                  class="shift-week-today-button"
+                  type="button"
+                  data-shift-week-today
+                >
+                  今週
+                </button>
+
+                <button
+                  class="shift-week-nav-button"
+                  type="button"
+                  data-shift-week-move="1"
+                  aria-label="次週"
+                >
+                  ›
+                </button>
+              </div>
+
+
+              <div class="shift-week-heading">
+                <strong id="shift-week-title">
+                  読み込み中
+                </strong>
+
+                <span id="shift-selection-count">
+                  0日選択
+                </span>
+              </div>
+
+            </section>
+
+
+            <section
+              class="work-next-panel shift-calendar-card"
+              data-wf-panel
+              data-wf-panel-surface
+            >
+              <div
+                id="shift-week-calendar"
+                class="shift-week-calendar"
+              >
+                <p class="shift-loading">
+                  シフト情報を読み込み中…
+                </p>
+              </div>
+            </section>
+
+
+            <section
+              class="work-next-panel shift-entry-card"
+              id="shift-entry-card"
+              data-wf-panel
+              data-wf-panel-surface
+            >
+
+              <div class="shift-section-heading">
+                <div>
+                  <p class="wf-eyebrow">SHIFT INPUT</p>
+                  <h2>選択日のシフト</h2>
+                </div>
+
+                <span class="shift-direct-save-badge">
+                  保存＝確定
+                </span>
+              </div>
+
+
+              <label class="shift-field">
+                <span>店舗</span>
+
+                <select id="shift-store-select">
+                  <option value="">
+                    店舗を選択
+                  </option>
+                </select>
+              </label>
+
+
+              <div
+                id="shift-selected-days"
+                class="shift-selected-days"
+              >
+                <p class="shift-empty-message">
+                  日付を選択してください。
+                </p>
+              </div>
+
+
+              <div class="shift-entry-actions">
+                <button
+                  class="secondary-button"
+                  type="button"
+                  data-action="copy-previous-shift-week"
+                >
+                  前週をコピー
+                </button>
+
+                <button
+                  class="primary-button"
+                  type="button"
+                  data-action="save-shift"
+                >
+                  選択したシフトを保存
+                </button>
+              </div>
+
+
+              <button
+                class="shift-delete-button"
+                id="shift-delete-button"
+                type="button"
+                data-action="delete-shift"
+                hidden
+              >
+                このシフトを削除
+              </button>
+
+
+              <div
+                id="shift-save-preview"
+                class="shift-save-preview"
+                hidden
+              ></div>
+
+
+              <div
+                id="shift-line-share"
+                class="shift-line-share"
+                hidden
+              >
+                <div class="shift-line-share-heading">
+                  <div>
+                    <p class="wf-eyebrow">LINE SHARE</p>
+                    <h3>LINE送信用</h3>
+                  </div>
+                </div>
+
+                <textarea
+                  id="shift-line-message"
+                  rows="6"
+                  readonly
+                ></textarea>
+
+                <button
+                  class="secondary-button"
+                  type="button"
+                  data-action="copy-shift-line-message"
+                >
+                  📋 LINE本文をコピー
+                </button>
+              </div>
+
+            </section>
+
+
+            <section
+              class="work-next-panel shift-shared-calendar-card"
+              data-wf-panel
+              data-wf-panel-surface
+            >
+              <div class="shift-section-heading">
+                <div>
+                  <p class="wf-eyebrow">SHARED CALENDAR</p>
+                  <h2>共有カレンダー</h2>
+                </div>
+              </div>
+
+              <iframe
+                class="shift-shared-calendar-frame"
+                src="./calendar/"
+                title="共有カレンダー"
+                loading="lazy"
+              ></iframe>
+            </section>
+
           </div>
 
-
-          <article class="work-next-panel" data-wf-panel data-wf-panel-surface>
-            <span class="work-next-phase">PHASE 1</span>
-            <h2 class="wf-panel-title">View移植済み</h2>
-            <p class="wf-panel-copy">
-              現在は画面構造だけを移植済み。
-              API・本番DBへの接続は次の段階で行います。
-            </p>
-          </article>
-
         </section>
+        <!-- WRITER:NEXT_WORK_SHIFT_VIEW:END -->
 
         <section
           class="work-next-view"
@@ -959,6 +1168,7 @@
   <script src="/assets/js/world-frame-runtime.js"></script>
   <script src="/assets/js/world-frame-utility.js"></script>
   <script src="./work.js"></script>
+  <script src="./shift-create.js"></script>
   <script src="./schedule-readonly.js"></script>
   <script src="./schedule-detail-read.js"></script>
   <script src="./schedule-verification-write.js"></script>

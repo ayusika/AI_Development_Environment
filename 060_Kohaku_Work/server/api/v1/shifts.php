@@ -965,7 +965,7 @@ try {
                         $row['status']
                         === 'off'
                             ? 'off'
-                            : 'draft';
+                            : 'confirmed';
 
 
                     $insertStatement->execute([

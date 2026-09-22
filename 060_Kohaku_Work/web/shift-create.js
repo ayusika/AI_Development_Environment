@@ -1,0 +1,3046 @@
+// WRITER:NEXT_WORK_SHIFT_LOGIC:START
+
+(() => {
+  "use strict";
+
+  function escapeHtml(value) {
+    return String(value ?? "").replace(
+      /[&<>"']/g,
+      character => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#39;",
+      })[character]
+    );
+  }
+
+
+/* ========================================
+   WORK SHIFT
+======================================== */
+
+const shiftMasterApiUrl =
+  '/api/v1/shift-master.php';
+
+const shiftsApiUrl =
+  '/api/v1/shifts.php';
+
+
+const shiftWeekCalendar =
+  document.getElementById(
+    'shift-week-calendar'
+  );
+
+const shiftWeekTitle =
+  document.getElementById(
+    'shift-week-title'
+  );
+
+const shiftSelectionCount =
+  document.getElementById(
+    'shift-selection-count'
+  );
+
+const shiftStoreSelect =
+  document.getElementById(
+    'shift-store-select'
+  );
+
+const shiftSelectedDays =
+  document.getElementById(
+    'shift-selected-days'
+  );
+
+const shiftDeleteButton =
+  document.getElementById(
+    'shift-delete-button'
+  );
+
+const shiftState = {
+  workerCode: 'shii',
+
+  weekStart:
+    getShiftWeekStart(
+      new Date()
+    ),
+
+  workers: [],
+  stores: [],
+  defaultRules: [],
+  days: [],
+  shifts: [],
+
+  editingShiftId:
+    null,
+
+  selectedDates:
+    new Set(),
+
+  selectedStoreId: '',
+};
+
+
+/* ========================================
+   CALENDAR PREVIEW
+======================================== */
+
+function sendShiftCalendarPreview() {
+
+  const calendarFrame =
+    document.querySelector(
+      '.shift-shared-calendar-frame'
+    );
+
+
+  if (
+    !calendarFrame
+    || !calendarFrame.contentWindow
+  ) {
+    return;
+  }
+
+
+  const store =
+    shiftState.stores
+      .find(
+        (item) =>
+          String(
+            item.id
+          )
+          ===
+          String(
+            shiftState.selectedStoreId
+          )
+      )
+    || null;
+
+
+  const previewShifts =
+    shiftState.days
+      .filter(
+        (day) =>
+          shiftState.selectedDates
+            .has(
+              day.date
+            )
+      )
+      .map((day) => {
+
+        const row =
+          document.querySelector(
+            `[data-shift-row="${CSS.escape(
+              day.date
+            )}"]`
+          );
+
+
+        if (!row) {
+          return null;
+        }
+
+
+        const offButton =
+          row.querySelector(
+            '[data-shift-off]'
+          );
+
+
+        const isOff =
+          Boolean(
+            offButton
+              ?.classList
+              .contains(
+                'is-selected'
+              )
+          );
+
+
+        if (isOff) {
+
+          return {
+            shift_date:
+              day.date,
+
+            worker_code:
+              shiftState.workerCode,
+
+            status:
+              'off',
+
+            store_name:
+              null,
+
+            start_at:
+              null,
+
+            end_at:
+              null,
+          };
+        }
+
+
+        const startTime =
+          row
+            .querySelector(
+              '[data-shift-start]'
+            )
+            ?.value
+            ?.trim()
+          || '';
+
+        const endTime =
+          row
+            .querySelector(
+              '[data-shift-end]'
+            )
+            ?.value
+            ?.trim()
+          || '';
+
+
+        if (
+          !isShiftTimeValueValid(
+            startTime
+          )
+          ||
+          !isShiftTimeValueValid(
+            endTime
+          )
+          ||
+          shiftTimeToMinutes(
+            endTime
+          )
+          <=
+          shiftTimeToMinutes(
+            startTime
+          )
+        ) {
+          return null;
+        }
+
+
+        return {
+          shift_date:
+            day.date,
+
+          worker_code:
+            shiftState.workerCode,
+
+          status:
+            'confirmed',
+
+          store_name:
+            store?.name
+            || '',
+
+          start_at:
+            buildShiftPreviewDateTime(
+              day.date,
+              startTime
+            ),
+
+          end_at:
+            buildShiftPreviewDateTime(
+              day.date,
+              endTime
+            ),
+        };
+      })
+      .filter(Boolean);
+
+
+  calendarFrame.contentWindow
+    .postMessage(
+      {
+        type:
+          'kohaku-shift-preview',
+
+        shifts:
+          previewShifts,
+      },
+      window.location.origin
+    );
+}
+
+
+function buildShiftPreviewDateTime(
+  dateText,
+  timeText
+) {
+
+  const [
+    hourText,
+    minuteText,
+  ] =
+    String(
+      timeText
+    ).split(':');
+
+
+  const totalHour =
+    Number(
+      hourText
+    );
+
+  const minute =
+    Number(
+      minuteText
+    );
+
+
+  const date =
+    parseShiftDate(
+      dateText
+    );
+
+
+  date.setDate(
+    date.getDate()
+    + Math.floor(
+        totalHour / 24
+      )
+  );
+
+
+  const hour =
+    totalHour % 24;
+
+
+  return `${formatShiftDate(
+    date
+  )} ${String(
+    hour
+  ).padStart(
+    2,
+    '0'
+  )}:${String(
+    minute
+  ).padStart(
+    2,
+    '0'
+  )}`;
+}
+
+
+/* ========================================
+   LOAD
+======================================== */
+
+async function loadShift() {
+
+  if (!shiftWeekCalendar) {
+    return;
+  }
+
+
+  shiftWeekCalendar.innerHTML =
+    '<p class="shift-loading">シフト情報を読み込み中…</p>';
+
+
+  const weekEnd =
+    new Date(
+      shiftState.weekStart
+    );
+
+  weekEnd.setDate(
+    weekEnd.getDate() + 6
+  );
+
+
+  const dateFrom =
+    formatShiftDate(
+      shiftState.weekStart
+    );
+
+  const dateTo =
+    formatShiftDate(
+      weekEnd
+    );
+
+
+  try {
+
+    const params =
+      new URLSearchParams({
+        date_from:
+          dateFrom,
+
+        date_to:
+          dateTo,
+      });
+
+
+    const response =
+      await fetch(
+        `${shiftMasterApiUrl}?${params.toString()}`
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+      throw new Error(
+        data.error
+        || 'シフト情報を取得できませんでした。'
+      );
+    }
+
+
+    shiftState.workers =
+      Array.isArray(data.workers)
+        ? data.workers
+        : [];
+
+
+    shiftState.stores =
+      Array.isArray(data.stores)
+        ? data.stores
+        : [];
+
+
+    shiftState.defaultRules =
+      Array.isArray(
+        data.default_rules
+      )
+        ? data.default_rules
+        : [];
+
+
+    shiftState.days =
+      Array.isArray(data.days)
+        ? data.days
+        : [];
+
+
+    const selectedWorker =
+      shiftState.workers
+        .find(
+          (worker) =>
+            worker.worker_code
+            === shiftState.workerCode
+        )
+      || null;
+
+
+    if (selectedWorker) {
+
+      const shiftParams =
+        new URLSearchParams({
+          worker_id:
+            String(
+              selectedWorker.id
+            ),
+
+          date_from:
+            dateFrom,
+
+          date_to:
+            dateTo,
+        });
+
+
+      const shiftResponse =
+        await fetch(
+          `${shiftsApiUrl}?${shiftParams.toString()}`
+        );
+
+
+      const shiftData =
+        await shiftResponse.json();
+
+
+      if (
+        !shiftResponse.ok
+        || !shiftData.success
+      ) {
+        throw new Error(
+          shiftData.error
+          || '保存済みシフトを取得できませんでした。'
+        );
+      }
+
+
+      shiftState.shifts =
+        Array.isArray(
+          shiftData.shifts
+        )
+          ? shiftData.shifts
+          : [];
+
+    } else {
+
+      shiftState.shifts = [];
+    }
+
+
+    renderShiftStoreOptions();
+    renderShiftWeek();
+    renderShiftSelectedDays();
+    renderShiftLineShare();
+
+
+  } catch (error) {
+
+    shiftWeekCalendar.innerHTML = `
+      <p class="shift-loading">
+        ${escapeHtml(
+          error.message
+        )}
+      </p>
+    `;
+  }
+}
+
+
+/* ========================================
+   LINE SHARE
+======================================== */
+
+function renderShiftLineShare() {
+
+  const shareElement =
+    document.getElementById(
+      'shift-line-share'
+    );
+
+  const messageElement =
+    document.getElementById(
+      'shift-line-message'
+    );
+
+
+  if (
+    !shareElement
+    || !messageElement
+  ) {
+    return;
+  }
+
+
+  const weekEnd =
+    new Date(
+      shiftState.weekStart
+    );
+
+
+  weekEnd.setDate(
+    weekEnd.getDate() + 6
+  );
+
+
+  const weekStartText =
+    formatShiftDate(
+      shiftState.weekStart
+    );
+
+  const weekEndText =
+    formatShiftDate(
+      weekEnd
+    );
+
+
+  const shifts =
+    shiftState.shifts
+      .filter(
+        (shift) =>
+          (
+            shift.status
+            === 'confirmed'
+            ||
+            shift.status
+            === 'off'
+          )
+          &&
+          shift.shift_date
+          >= weekStartText
+          &&
+          shift.shift_date
+          <= weekEndText
+      )
+      .sort(
+        (a, b) =>
+          String(
+            a.shift_date
+          ).localeCompare(
+            String(
+              b.shift_date
+            )
+          )
+      );
+
+
+  if (
+    shifts.length
+    === 0
+  ) {
+
+    shareElement.hidden =
+      true;
+
+    messageElement.value =
+      '';
+
+    return;
+  }
+
+
+  const timeGroups =
+    new Map();
+
+  const offDates =
+    [];
+
+
+  shifts.forEach((shift) => {
+
+    if (
+      shift.status
+      === 'off'
+    ) {
+
+      offDates.push(
+        shift.shift_date
+      );
+
+      return;
+    }
+
+
+    const timeLabel =
+      formatShiftLineTime(
+        shift
+      );
+
+
+    if (!timeLabel) {
+      return;
+    }
+
+
+    if (
+      !timeGroups.has(
+        timeLabel
+      )
+    ) {
+
+      timeGroups.set(
+        timeLabel,
+        []
+      );
+    }
+
+
+    timeGroups
+      .get(
+        timeLabel
+      )
+      .push(
+        shift.shift_date
+      );
+  });
+
+
+  const lines = [
+    'お疲れ様です！シフトお願いします！',
+  ];
+
+
+  timeGroups.forEach(
+    (
+      dates,
+      timeLabel
+    ) => {
+
+      lines.push(
+        `${timeLabel} ${formatShiftLineDates(
+          dates
+        )}`
+      );
+    }
+  );
+
+
+  if (
+    offDates.length
+    > 0
+  ) {
+
+    lines.push(
+      `休み　${formatShiftLineDates(
+        offDates
+      )}`
+    );
+  }
+
+
+  if (
+    lines.length
+    === 1
+  ) {
+
+    shareElement.hidden =
+      true;
+
+    messageElement.value =
+      '';
+
+    return;
+  }
+
+
+  messageElement.value =
+    lines.join(
+      '\n'
+    );
+
+
+  shareElement.hidden =
+    false;
+}
+
+
+function formatShiftLineTime(
+  shift
+) {
+
+  const startTime =
+    String(
+      shift.start_at
+      || ''
+    ).slice(
+      11,
+      16
+    );
+
+
+  const endTime =
+    getSavedShiftEndTime(
+      shift
+    );
+
+
+  if (
+    !startTime
+    || !endTime
+  ) {
+    return '';
+  }
+
+
+  const compactTime =
+    (value) => {
+
+      const text =
+        String(
+          value
+        );
+
+
+      return text.endsWith(
+        ':00'
+      )
+        ? text.slice(
+            0,
+            -3
+          )
+        : text;
+    };
+
+
+  return `${compactTime(
+    startTime
+  )}-${compactTime(
+    endTime
+  )}時`;
+}
+
+
+function formatShiftLineDates(
+  dates
+) {
+
+  let previousMonth =
+    null;
+
+
+  const parts =
+    [...dates]
+      .sort()
+      .map((dateText) => {
+
+        const [
+          ,
+          monthText,
+          dayText,
+        ] =
+          String(
+            dateText
+          ).split(
+            '-'
+          );
+
+
+        const month =
+          Number(
+            monthText
+          );
+
+        const day =
+          Number(
+            dayText
+          );
+
+
+        const monthChanged =
+          month
+          !== previousMonth;
+
+
+        previousMonth =
+          month;
+
+
+        if (monthChanged) {
+
+          return `${
+            toFullWidthShiftNumber(
+              month
+            )
+          }月${
+            toFullWidthShiftNumber(
+              day
+            )
+          }`;
+        }
+
+
+        return toFullWidthShiftNumber(
+          day
+        );
+      });
+
+
+  return `${parts.join(
+    '、'
+  )}日`;
+}
+
+
+function toFullWidthShiftNumber(
+  value
+) {
+
+  return String(
+    value
+  ).replace(
+    /\d/g,
+    (digit) =>
+      String.fromCharCode(
+        digit.charCodeAt(0)
+        + 0xFEE0
+      )
+  );
+}
+
+
+async function copyShiftLineMessage() {
+
+  const messageElement =
+    document.getElementById(
+      'shift-line-message'
+    );
+
+
+  if (
+    !messageElement
+    || !messageElement.value
+  ) {
+    return;
+  }
+
+
+  const message =
+    messageElement.value;
+
+
+  try {
+
+    if (
+      navigator.clipboard
+      && navigator.clipboard.writeText
+    ) {
+
+      await navigator.clipboard.writeText(
+        message
+      );
+
+    } else {
+
+      throw new Error(
+        'Clipboard API unavailable'
+      );
+    }
+
+
+  } catch (error) {
+
+    messageElement.focus();
+    messageElement.select();
+
+    messageElement.setSelectionRange(
+      0,
+      messageElement.value.length
+    );
+
+
+    const copied =
+      document.execCommand(
+        'copy'
+      );
+
+
+    messageElement.setSelectionRange(
+      0,
+      0
+    );
+
+
+    if (!copied) {
+
+      window.alert(
+        'コピーできませんでした。本文を長押ししてコピーしてください。'
+      );
+
+      return;
+    }
+  }
+
+
+  showShiftSavePreview(
+    'LINE本文をコピーしました。'
+  );
+}
+
+
+/* ========================================
+   WEEK
+======================================== */
+
+function getShiftWeekStart(
+  sourceDate
+) {
+
+  const date =
+    new Date(
+      sourceDate
+    );
+
+
+  date.setHours(
+    12,
+    0,
+    0,
+    0
+  );
+
+
+  const weekday =
+    date.getDay();
+
+
+  const mondayOffset =
+    weekday === 0
+      ? -6
+      : 1 - weekday;
+
+
+  date.setDate(
+    date.getDate()
+    + mondayOffset
+  );
+
+
+  return date;
+}
+
+
+function moveShiftWeek(
+  amount
+) {
+
+  const next =
+    new Date(
+      shiftState.weekStart
+    );
+
+
+  next.setDate(
+    next.getDate()
+    + (amount * 7)
+  );
+
+
+  shiftState.weekStart =
+    next;
+
+
+  shiftState.selectedDates.clear();
+
+
+  loadShift();
+}
+
+
+function resetShiftWeekToToday() {
+
+  shiftState.weekStart =
+    getShiftWeekStart(
+      new Date()
+    );
+
+
+  shiftState.selectedDates.clear();
+
+
+  loadShift();
+}
+
+
+/* ========================================
+   WEEK RENDER
+======================================== */
+
+function renderShiftWeek() {
+
+  if (
+    !shiftWeekCalendar
+    || !shiftWeekTitle
+  ) {
+    return;
+  }
+
+
+  const weekEnd =
+    new Date(
+      shiftState.weekStart
+    );
+
+
+  weekEnd.setDate(
+    weekEnd.getDate() + 6
+  );
+
+
+  shiftWeekTitle.textContent =
+    `${formatShiftMonthDay(
+      shiftState.weekStart
+    )} 〜 ${formatShiftMonthDay(
+      weekEnd
+    )}`;
+
+
+  const weekdayLabels = [
+    '日',
+    '月',
+    '火',
+    '水',
+    '木',
+    '金',
+    '土',
+  ];
+
+
+  shiftWeekCalendar.innerHTML =
+    shiftState.days
+      .map((day) => {
+
+        const date =
+          parseShiftDate(
+            day.date
+          );
+
+
+        const isSelected =
+          shiftState.selectedDates
+            .has(
+              day.date
+            );
+
+
+        const holidayName =
+          day.holiday_name
+            ? String(
+                day.holiday_name
+              )
+            : '';
+
+
+        const isHoliday =
+          holidayName !== '';
+
+
+        const weekday =
+          weekdayLabels[
+            date.getDay()
+          ];
+
+
+        const dayTypeLabel =
+          day.day_type
+          === 'holiday_eve'
+            ? '休日前'
+            : '平日前';
+
+
+        const savedShift =
+          shiftState.shifts
+            .find(
+              (shift) =>
+                shift.shift_date
+                === day.date
+            )
+          || null;
+
+
+        const todayText =
+          formatShiftDate(
+            new Date()
+          );
+
+
+        const isFuture =
+          day.date > todayText;
+
+
+        const savedLabel =
+          savedShift
+            ? (
+                savedShift.status
+                === 'off'
+                  ? '休み'
+                  : `${
+                      savedShift.status
+                      === 'confirmed'
+                        ? '確定 '
+                        : ''
+                    }${savedShift.store_name || ''} ${
+                      formatSavedShiftTime(
+                        savedShift
+                      )
+                    }`
+              )
+            : (
+                isFuture
+                  ? 'シフト未確定'
+                  : ''
+              );
+
+
+        return `
+          <button
+            class="
+              shift-day-button
+              ${
+                isSelected
+                  ? 'is-selected'
+                  : ''
+              }
+              ${
+                day.is_weekend
+                  ? 'is-weekend'
+                  : ''
+              }
+              ${
+                isHoliday
+                  ? 'is-holiday'
+                  : ''
+              }
+              ${
+                savedShift
+                  ? 'is-saved'
+                  : ''
+              }
+            "
+            type="button"
+            data-shift-date="${escapeHtml(
+              day.date
+            )}"
+            ${
+              savedShift
+                ? 'data-shift-saved="1"'
+                : ''
+            }
+          >
+
+            <span class="shift-day-weekday">
+              ${escapeHtml(
+                weekday
+              )}
+            </span>
+
+            <strong class="shift-day-date">
+              ${escapeHtml(
+                `${date.getMonth() + 1}/${date.getDate()}`
+              )}
+            </strong>
+
+            ${
+              isHoliday
+                ? `
+                  <span class="shift-day-holiday">
+                    ${escapeHtml(
+                      holidayName
+                    )}
+                  </span>
+                `
+                : ''
+            }
+
+            <span class="shift-day-type">
+              ${escapeHtml(
+                dayTypeLabel
+              )}
+            </span>
+
+            ${
+              savedLabel
+                ? `
+                  <span class="shift-day-status">
+                    ${escapeHtml(
+                      savedLabel
+                    )}
+                  </span>
+                `
+                : ''
+            }
+
+          </button>
+        `;
+      })
+      .join('');
+
+
+  updateShiftSelectionCount();
+}
+
+
+/* ========================================
+   WORKER
+======================================== */
+
+function selectShiftWorker(
+  workerCode
+) {
+
+  const worker =
+    shiftState.workers
+      .find(
+        (item) =>
+          item.worker_code
+          === workerCode
+      );
+
+
+  if (!worker) {
+    return;
+  }
+
+
+  shiftState.workerCode =
+    workerCode;
+
+
+  document
+    .querySelectorAll(
+      '[data-shift-worker]'
+    )
+    .forEach((button) => {
+
+      button.classList.toggle(
+        'is-selected',
+        button.dataset.shiftWorker
+        === workerCode
+      );
+    });
+
+
+  shiftState.selectedDates.clear();
+
+  loadShift();
+}
+
+
+/* ========================================
+   SAVED SHIFT EDIT
+======================================== */
+
+function openSavedShiftEditor(
+  date
+) {
+
+  const savedShift =
+    shiftState.shifts
+      .find(
+        (shift) =>
+          shift.shift_date
+          === date
+      )
+    || null;
+
+
+  if (!savedShift) {
+
+    showShiftSavePreview(
+      '保存済みシフトを取得できませんでした。',
+      true
+    );
+
+    return;
+  }
+
+
+  shiftState.editingShiftId =
+    Number(
+      savedShift.id
+    );
+
+
+  if (shiftDeleteButton) {
+    shiftDeleteButton.hidden =
+      false;
+  }
+
+
+  shiftState.selectedDates.clear();
+
+  shiftState.selectedDates.add(
+    date
+  );
+
+
+  shiftState.selectedStoreId =
+    savedShift.store_id
+      ? String(
+          savedShift.store_id
+        )
+      : '';
+
+
+  if (shiftStoreSelect) {
+
+    shiftStoreSelect.value =
+      shiftState.selectedStoreId;
+  }
+
+
+  renderShiftWeek();
+  renderShiftSelectedDays();
+
+
+  const row =
+    document.querySelector(
+      `[data-shift-row="${CSS.escape(
+        date
+      )}"]`
+    );
+
+
+  if (!row) {
+    return;
+  }
+
+
+  const offButton =
+    row.querySelector(
+      '[data-shift-off]'
+    );
+
+
+  const startInput =
+    row.querySelector(
+      '[data-shift-start]'
+    );
+
+
+  const endInput =
+    row.querySelector(
+      '[data-shift-end]'
+    );
+
+
+  if (
+    savedShift.status
+    === 'off'
+  ) {
+
+    offButton
+      ?.classList
+      .add(
+        'is-selected'
+      );
+
+
+    if (startInput) {
+      startInput.disabled =
+        true;
+    }
+
+
+    if (endInput) {
+      endInput.disabled =
+        true;
+    }
+
+  } else {
+
+    if (startInput) {
+
+      startInput.value =
+        String(
+          savedShift.start_at
+          || ''
+        ).slice(
+          11,
+          16
+        );
+    }
+
+
+    if (endInput) {
+
+      endInput.value =
+        getSavedShiftEndTime(
+          savedShift
+        );
+    }
+  }
+
+
+  showShiftSavePreview(
+    `${formatShiftDisplayDate(
+      date
+    )} の保存済みシフトを編集中です。`
+  );
+}
+
+
+/* ========================================
+   DATE SELECTION
+======================================== */
+
+function toggleShiftDate(
+  date
+) {
+
+  shiftState.editingShiftId =
+    null;
+
+
+  if (shiftDeleteButton) {
+    shiftDeleteButton.hidden =
+      true;
+  }
+
+
+  if (
+    shiftState.selectedDates
+      .has(date)
+  ) {
+
+    shiftState.selectedDates
+      .delete(date);
+
+  } else {
+
+    shiftState.selectedDates
+      .add(date);
+  }
+
+
+  renderShiftWeek();
+  renderShiftSelectedDays();
+}
+
+
+function updateShiftSelectionCount() {
+
+  if (!shiftSelectionCount) {
+    return;
+  }
+
+
+  shiftSelectionCount.textContent =
+    `${shiftState.selectedDates.size}日選択`;
+}
+
+
+/* ========================================
+   STORES
+======================================== */
+
+function renderShiftStoreOptions() {
+
+  if (!shiftStoreSelect) {
+    return;
+  }
+
+
+  const previousValue =
+    shiftState.selectedStoreId;
+
+
+  shiftStoreSelect.innerHTML =
+    `
+      <option value="">
+        店舗を選択
+      </option>
+    `
+    +
+    shiftState.stores
+      .map((store) => `
+        <option
+          value="${escapeHtml(
+            store.id
+          )}"
+        >
+          ${escapeHtml(
+            store.name
+          )}
+        </option>
+      `)
+      .join('');
+
+
+  if (
+    previousValue
+    &&
+    shiftState.stores.some(
+      (store) =>
+        String(store.id)
+        === String(previousValue)
+    )
+  ) {
+
+    shiftStoreSelect.value =
+      String(
+        previousValue
+      );
+
+    return;
+  }
+
+
+  if (
+    !shiftState.editingShiftId
+  ) {
+
+    const sapporoStore =
+      shiftState.stores
+        .find(
+          (store) =>
+            store.name
+            === '札幌'
+        )
+      || null;
+
+
+    if (sapporoStore) {
+
+      shiftState.selectedStoreId =
+        String(
+          sapporoStore.id
+        );
+
+      shiftStoreSelect.value =
+        String(
+          sapporoStore.id
+        );
+    }
+  }
+}
+
+
+/* ========================================
+   DEFAULT RULE
+======================================== */
+
+function getSelectedShiftWorker() {
+
+  return shiftState.workers
+    .find(
+      (worker) =>
+        worker.worker_code
+        === shiftState.workerCode
+    )
+    || null;
+}
+
+
+function getShiftDefaultRule(
+  dayType
+) {
+
+  const worker =
+    getSelectedShiftWorker();
+
+
+  if (!worker) {
+    return null;
+  }
+
+
+  return shiftState.defaultRules
+    .find(
+      (rule) =>
+        Number(
+          rule.worker_id
+        )
+        === Number(
+          worker.id
+        )
+        &&
+        rule.day_type
+        === dayType
+    )
+    || null;
+}
+
+
+/* ========================================
+   SELECTED DAY LIST
+======================================== */
+
+function renderShiftSelectedDays() {
+
+  if (!shiftSelectedDays) {
+    return;
+  }
+
+
+  const selected =
+    shiftState.days
+      .filter(
+        (day) =>
+          shiftState.selectedDates
+            .has(
+              day.date
+            )
+      );
+
+
+  if (selected.length === 0) {
+
+    shiftSelectedDays.innerHTML =
+      `
+        <p class="shift-empty-message">
+          日付を選択してください。
+        </p>
+      `;
+
+    return;
+  }
+
+
+  shiftSelectedDays.innerHTML =
+    selected
+      .map((day) => {
+
+        const rule =
+          getShiftDefaultRule(
+            day.day_type
+          );
+
+
+        const dayTypeLabel =
+          day.day_type
+          === 'holiday_eve'
+            ? '休日前'
+            : '平日前';
+
+
+        const holidayName =
+          day.holiday_name
+            ? `・${day.holiday_name}`
+            : '';
+
+
+        return `
+          <div
+            class="shift-day-row"
+            data-shift-row="${escapeHtml(
+              day.date
+            )}"
+          >
+
+            <div class="shift-day-row-date">
+
+              <strong>
+                ${escapeHtml(
+                  formatShiftDisplayDate(
+                    day.date
+                  )
+                )}
+              </strong>
+
+              <small>
+                ${escapeHtml(
+                  holidayName
+                )}
+              </small>
+
+            </div>
+
+
+            <span class="shift-day-row-type">
+              ${escapeHtml(
+                dayTypeLabel
+              )}
+            </span>
+
+
+            <input
+              type="text"
+              inputmode="numeric"
+              value="${escapeHtml(
+                rule?.start_time
+                || ''
+              )}"
+              placeholder="開始"
+              data-shift-start
+            >
+
+
+            <input
+              type="text"
+              inputmode="numeric"
+              value="${escapeHtml(
+                rule?.end_time
+                || ''
+              )}"
+              placeholder="終了"
+              data-shift-end
+            >
+
+
+            <button
+              class="shift-day-off-button"
+              type="button"
+              data-shift-off="${escapeHtml(
+                day.date
+              )}"
+            >
+              休み
+            </button>
+
+          </div>
+        `;
+      })
+      .join('');
+}
+
+
+/* ========================================
+   OFF
+======================================== */
+
+function toggleShiftDayOff(
+  date
+) {
+
+  const row =
+    document.querySelector(
+      `[data-shift-row="${CSS.escape(
+        date
+      )}"]`
+    );
+
+
+  if (!row) {
+    return;
+  }
+
+
+  const button =
+    row.querySelector(
+      '[data-shift-off]'
+    );
+
+
+  const inputs =
+    row.querySelectorAll(
+      'input'
+    );
+
+
+  const isOff =
+    button.classList.toggle(
+      'is-selected'
+    );
+
+
+  inputs.forEach(
+    (input) => {
+      input.disabled =
+        isOff;
+    }
+  );
+}
+
+
+/* ========================================
+   EVENTS
+======================================== */
+
+document.addEventListener(
+  'click',
+  (event) => {
+
+    const workerButton =
+      event.target.closest(
+        '[data-shift-worker]'
+      );
+
+
+    if (workerButton) {
+
+      selectShiftWorker(
+        workerButton
+          .dataset
+          .shiftWorker
+      );
+
+      sendShiftCalendarPreview();
+
+      return;
+    }
+
+
+    const dateButton =
+      event.target.closest(
+        '[data-shift-date]'
+      );
+
+
+    if (dateButton) {
+
+      if (
+        dateButton
+          .dataset
+          .shiftSaved
+        === '1'
+      ) {
+
+        openSavedShiftEditor(
+          dateButton
+            .dataset
+            .shiftDate
+        );
+
+        sendShiftCalendarPreview();
+
+        return;
+      }
+
+
+      toggleShiftDate(
+        dateButton
+          .dataset
+          .shiftDate
+      );
+
+      sendShiftCalendarPreview();
+
+      return;
+    }
+
+
+    const weekMoveButton =
+      event.target.closest(
+        '[data-shift-week-move]'
+      );
+
+
+    if (weekMoveButton) {
+
+      moveShiftWeek(
+        Number(
+          weekMoveButton
+            .dataset
+            .shiftWeekMove
+        )
+      );
+
+      sendShiftCalendarPreview();
+
+      return;
+    }
+
+
+    const todayButton =
+      event.target.closest(
+        '[data-shift-week-today]'
+      );
+
+
+    if (todayButton) {
+
+      resetShiftWeekToToday();
+
+      sendShiftCalendarPreview();
+
+      return;
+    }
+
+
+    const offButton =
+      event.target.closest(
+        '[data-shift-off]'
+      );
+
+
+    if (offButton) {
+
+      toggleShiftDayOff(
+        offButton
+          .dataset
+          .shiftOff
+      );
+
+      sendShiftCalendarPreview();
+    }
+  }
+);
+
+
+document.addEventListener(
+  'input',
+  (event) => {
+
+    const timeInput =
+      event.target.closest(
+        '[data-shift-start], [data-shift-end]'
+      );
+
+
+    if (!timeInput) {
+      return;
+    }
+
+
+    sendShiftCalendarPreview();
+  }
+);
+
+
+shiftStoreSelect
+  ?.addEventListener(
+    'change',
+    () => {
+
+      shiftState.selectedStoreId =
+        shiftStoreSelect.value;
+
+      sendShiftCalendarPreview();
+    }
+  );
+
+
+document
+  .querySelector(
+    '.shift-shared-calendar-frame'
+  )
+  ?.addEventListener(
+    'load',
+    () => {
+
+      sendShiftCalendarPreview();
+    }
+  );
+
+
+/* ========================================
+   DELETE
+======================================== */
+
+async function deleteEditingShift() {
+
+  const shiftId =
+    Number(
+      shiftState.editingShiftId
+    );
+
+
+  if (!shiftId) {
+
+    showShiftSavePreview(
+      '削除するシフトが選択されていません。',
+      true
+    );
+
+    return;
+  }
+
+
+  const savedShift =
+    shiftState.shifts
+      .find(
+        (shift) =>
+          Number(
+            shift.id
+          )
+          === shiftId
+      )
+    || null;
+
+
+  if (!savedShift) {
+
+    showShiftSavePreview(
+      '削除対象のシフトを確認できませんでした。',
+      true
+    );
+
+    return;
+  }
+
+
+  const confirmed =
+    window.confirm(
+      `${formatShiftDisplayDate(
+        savedShift.shift_date
+      )} のシフトを削除しますか？`
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  if (shiftDeleteButton) {
+
+    shiftDeleteButton.disabled =
+      true;
+
+    shiftDeleteButton.textContent =
+      '削除中…';
+  }
+
+
+  try {
+
+    const response =
+      await fetch(
+        shiftsApiUrl,
+        {
+          method:
+            'DELETE',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              id:
+                shiftId,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      ||
+      !data.success
+    ) {
+      throw new Error(
+        data.error
+        || 'シフトを削除できませんでした。'
+      );
+    }
+
+
+    shiftState.editingShiftId =
+      null;
+
+    shiftState.selectedDates.clear();
+
+    shiftState.selectedStoreId =
+      '';
+
+
+    if (shiftDeleteButton) {
+      shiftDeleteButton.hidden =
+        true;
+    }
+
+
+    await loadShift();
+
+
+    showShiftSavePreview(
+      'シフトを削除しました。'
+    );
+
+
+  } catch (error) {
+
+    showShiftSavePreview(
+      error instanceof Error
+        ? error.message
+        : 'シフトを削除できませんでした。',
+      true
+    );
+
+
+  } finally {
+
+    if (shiftDeleteButton) {
+
+      shiftDeleteButton.disabled =
+        false;
+
+      shiftDeleteButton.textContent =
+        'このシフトを削除';
+    }
+  }
+}
+
+
+/* ========================================
+   SAVE
+======================================== */
+
+async function saveShiftBatch() {
+
+  const worker =
+    getSelectedShiftWorker();
+
+
+  if (!worker) {
+
+    showShiftSavePreview(
+      'worker情報を取得できません。',
+      true
+    );
+
+    return;
+  }
+
+
+  const selected =
+    shiftState.days
+      .filter(
+        (day) =>
+          shiftState.selectedDates
+            .has(
+              day.date
+            )
+      );
+
+
+  if (selected.length === 0) {
+
+    showShiftSavePreview(
+      '保存する日付を選択してください。',
+      true
+    );
+
+    return;
+  }
+
+
+  const rows = [];
+
+
+  for (const day of selected) {
+
+    const row =
+      document.querySelector(
+        `[data-shift-row="${CSS.escape(
+          day.date
+        )}"]`
+      );
+
+
+    if (!row) {
+
+      showShiftSavePreview(
+        `${day.date} の入力欄を確認できません。`,
+        true
+      );
+
+      return;
+    }
+
+
+    const offButton =
+      row.querySelector(
+        '[data-shift-off]'
+      );
+
+
+    const isOff =
+      Boolean(
+        offButton
+          ?.classList
+          .contains(
+            'is-selected'
+          )
+      );
+
+
+    const startInput =
+      row.querySelector(
+        '[data-shift-start]'
+      );
+
+
+    const endInput =
+      row.querySelector(
+        '[data-shift-end]'
+      );
+
+
+    const startTime =
+      startInput
+        ?.value
+        ?.trim()
+      || '';
+
+
+    const endTime =
+      endInput
+        ?.value
+        ?.trim()
+      || '';
+
+
+    if (
+      !isOff
+      &&
+      shiftState.selectedStoreId === ''
+    ) {
+
+      showShiftSavePreview(
+        '出勤日の店舗を選択してください。',
+        true
+      );
+
+      return;
+    }
+
+
+    if (
+      !isOff
+      &&
+      (
+        !isShiftTimeValueValid(
+          startTime
+        )
+        ||
+        !isShiftTimeValueValid(
+          endTime
+        )
+      )
+    ) {
+
+      showShiftSavePreview(
+        `${formatShiftDisplayDate(
+          day.date
+        )} の勤務時間を確認してください。`,
+        true
+      );
+
+      return;
+    }
+
+
+    if (
+      !isOff
+      &&
+      shiftTimeToMinutes(
+        endTime
+      )
+      <=
+      shiftTimeToMinutes(
+        startTime
+      )
+    ) {
+
+      showShiftSavePreview(
+        `${formatShiftDisplayDate(
+          day.date
+        )} の終了時刻は開始時刻より後にしてください。`,
+        true
+      );
+
+      return;
+    }
+
+
+    rows.push({
+      shift_date:
+        day.date,
+
+      status:
+        isOff
+          ? 'off'
+          : 'confirmed',
+
+      store_id:
+        isOff
+          ? null
+          : Number(
+              shiftState.selectedStoreId
+            ),
+
+      start_time:
+        isOff
+          ? null
+          : startTime,
+
+      end_time:
+        isOff
+          ? null
+          : endTime,
+
+      note:
+        null,
+    });
+  }
+
+
+  const saveButton =
+    document.querySelector(
+      '[data-action="save-shift"]'
+    );
+
+
+  const originalText =
+    saveButton
+      ? saveButton.textContent
+      : '選択したシフトを保存';
+
+
+  if (saveButton) {
+
+    saveButton.disabled =
+      true;
+
+    saveButton.textContent =
+      '保存中…';
+  }
+
+
+  try {
+
+    const isEditing =
+      Boolean(
+        shiftState.editingShiftId
+      );
+
+
+    if (
+      isEditing
+      &&
+      rows.length !== 1
+    ) {
+      throw new Error(
+        '編集時は1件のシフトだけ選択してください。'
+      );
+    }
+
+
+    const requestBody =
+      isEditing
+        ? {
+            id:
+              Number(
+                shiftState.editingShiftId
+              ),
+
+            store_id:
+              rows[0].store_id,
+
+            shift_date:
+              rows[0].shift_date,
+
+            start_time:
+              rows[0].start_time,
+
+            end_time:
+              rows[0].end_time,
+
+            status:
+              rows[0].status,
+
+            note:
+              rows[0].note,
+          }
+        : {
+            action:
+              'create_batch',
+
+            worker_id:
+              Number(
+                worker.id
+              ),
+
+            rows,
+          };
+
+
+    const response =
+      await fetch(
+        shiftsApiUrl,
+        {
+          method:
+            isEditing
+              ? 'PATCH'
+              : 'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify(
+              requestBody
+            ),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      || !data.success
+    ) {
+      throw new Error(
+        data.error
+        || 'シフトの保存に失敗しました。'
+      );
+    }
+
+
+    const wasEditing =
+      Boolean(
+        shiftState.editingShiftId
+      );
+
+
+    shiftState.editingShiftId =
+      null;
+
+
+    if (shiftDeleteButton) {
+      shiftDeleteButton.hidden =
+        true;
+    }
+
+
+    shiftState.selectedDates.clear();
+
+
+    await loadShift();
+
+
+    showShiftSavePreview(
+      wasEditing
+        ? 'シフトを更新しました。'
+        : `${data.created_count || rows.length}件のシフトを保存しました。`
+    );
+
+
+  } catch (error) {
+
+    showShiftSavePreview(
+      error.message,
+      true
+    );
+
+
+  } finally {
+
+    if (saveButton) {
+
+      saveButton.disabled =
+        false;
+
+      saveButton.textContent =
+        originalText;
+    }
+  }
+}
+
+
+function showShiftSavePreview(
+  message,
+  isError = false
+) {
+
+  const preview =
+    document.getElementById(
+      'shift-save-preview'
+    );
+
+
+  if (!preview) {
+    return;
+  }
+
+
+  preview.hidden =
+    false;
+
+
+  preview.classList.toggle(
+    'is-error',
+    isError
+  );
+
+
+  preview.textContent =
+    message;
+}
+
+
+/* ========================================
+   PREVIOUS WEEK PREVIEW
+======================================== */
+
+async function previewPreviousShiftWeek() {
+
+  const worker =
+    getSelectedShiftWorker();
+
+
+  if (!worker) {
+
+    showShiftSavePreview(
+      '担当者を取得できませんでした。',
+      true
+    );
+
+    return;
+  }
+
+
+  const targetWeekStart =
+    formatShiftDate(
+      shiftState.weekStart
+    );
+
+
+  const targetWeekEnd =
+    new Date(
+      shiftState.weekStart
+    );
+
+
+  targetWeekEnd.setDate(
+    targetWeekEnd.getDate() + 6
+  );
+
+
+  const targetWeekLabel =
+    `${formatShiftMonthDay(
+      shiftState.weekStart
+    )}〜${formatShiftMonthDay(
+      targetWeekEnd
+    )}`;
+
+
+  const confirmed =
+    window.confirm(
+      `${worker.display_name} の前週シフトを ${targetWeekLabel} にコピーしますか？`
+    );
+
+
+  if (!confirmed) {
+    return;
+  }
+
+
+  showShiftSavePreview(
+    '前週シフトをコピーしています...'
+  );
+
+
+  try {
+
+    const response =
+      await fetch(
+        shiftsApiUrl,
+        {
+          method:
+            'POST',
+
+          headers: {
+            'Content-Type':
+              'application/json',
+          },
+
+          body:
+            JSON.stringify({
+              action:
+                'copy_previous_week',
+
+              worker_id:
+                Number(
+                  worker.id
+                ),
+
+              target_week_start:
+                targetWeekStart,
+            }),
+        }
+      );
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      !response.ok
+      ||
+      !data.success
+    ) {
+
+      const errorMessage =
+        data.error
+        || '前週シフトをコピーできませんでした。';
+
+
+      if (
+        errorMessage
+        === 'No shifts found in previous week.'
+      ) {
+
+        throw new Error(
+          '前週にはコピーできるシフトがありません。'
+        );
+      }
+
+
+      if (
+        errorMessage
+        === 'Target week already has shifts.'
+      ) {
+
+        throw new Error(
+          'この週にはすでにシフトがあります。前週コピーは中止しました。'
+        );
+      }
+
+
+      throw new Error(
+        errorMessage
+      );
+    }
+
+
+    await loadShift();
+
+
+    showShiftSavePreview(
+      `${data.created_count || 0}件の前週シフトをコピーしました。`
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      error
+    );
+
+
+    showShiftSavePreview(
+      error instanceof Error
+        ? error.message
+        : '前週シフトをコピーできませんでした。',
+      true
+    );
+  }
+}
+
+
+/* ========================================
+   TIME VALIDATION
+======================================== */
+
+function isShiftTimeValueValid(
+  value
+) {
+
+  const match =
+    /^(\d{1,2}):([0-5]\d)$/
+      .exec(
+        value
+      );
+
+
+  if (!match) {
+    return false;
+  }
+
+
+  const hour =
+    Number(
+      match[1]
+    );
+
+
+  return (
+    hour >= 0
+    &&
+    hour <= 47
+  );
+}
+
+
+function shiftTimeToMinutes(
+  value
+) {
+
+  const [
+    hour,
+    minute,
+  ] =
+    value
+      .split(':')
+      .map(Number);
+
+
+  return (
+    hour * 60
+    +
+    minute
+  );
+}
+
+
+/* ========================================
+   DATE HELPERS
+======================================== */
+
+function getSavedShiftEndTime(
+  shift
+) {
+
+  if (
+    !shift.start_at
+    || !shift.end_at
+  ) {
+    return '';
+  }
+
+
+  const startDate =
+    String(
+      shift.start_at
+    ).slice(
+      0,
+      10
+    );
+
+
+  const endDate =
+    String(
+      shift.end_at
+    ).slice(
+      0,
+      10
+    );
+
+
+  let endHour =
+    Number(
+      String(
+        shift.end_at
+      ).slice(
+        11,
+        13
+      )
+    );
+
+
+  const endMinute =
+    String(
+      shift.end_at
+    ).slice(
+      14,
+      16
+    );
+
+
+  if (
+    endDate > startDate
+  ) {
+    endHour += 24;
+  }
+
+
+  return `${String(
+    endHour
+  ).padStart(
+    2,
+    '0'
+  )}:${endMinute}`;
+}
+
+
+function formatSavedShiftTime(
+  shift
+) {
+
+  if (
+    !shift.start_at
+    || !shift.end_at
+  ) {
+    return '';
+  }
+
+
+  const startDate =
+    String(
+      shift.start_at
+    ).slice(
+      0,
+      10
+    );
+
+
+  const endDate =
+    String(
+      shift.end_at
+    ).slice(
+      0,
+      10
+    );
+
+
+  const startTime =
+    String(
+      shift.start_at
+    ).slice(
+      11,
+      16
+    );
+
+
+  let endHour =
+    Number(
+      String(
+        shift.end_at
+      ).slice(
+        11,
+        13
+      )
+    );
+
+
+  const endMinute =
+    String(
+      shift.end_at
+    ).slice(
+      14,
+      16
+    );
+
+
+  if (
+    endDate > startDate
+  ) {
+    endHour += 24;
+  }
+
+
+  const endTime =
+    `${String(
+      endHour
+    ).padStart(
+      2,
+      '0'
+    )}:${endMinute}`;
+
+
+  return `${startTime}〜${endTime}`;
+}
+
+
+function parseShiftDate(
+  value
+) {
+
+  return new Date(
+    `${value}T12:00:00`
+  );
+}
+
+
+function formatShiftDate(
+  date
+) {
+
+  const year =
+    date.getFullYear();
+
+
+  const month =
+    String(
+      date.getMonth() + 1
+    ).padStart(
+      2,
+      '0'
+    );
+
+
+  const day =
+    String(
+      date.getDate()
+    ).padStart(
+      2,
+      '0'
+    );
+
+
+  return `${year}-${month}-${day}`;
+}
+
+
+function formatShiftMonthDay(
+  date
+) {
+
+  return `${
+    date.getMonth() + 1
+  }/${date.getDate()}`;
+}
+
+
+function formatShiftDisplayDate(
+  value
+) {
+
+  const date =
+    parseShiftDate(
+      value
+    );
+
+
+  const labels = [
+    '日',
+    '月',
+    '火',
+    '水',
+    '木',
+    '金',
+    '土',
+  ];
+
+
+  return `${
+    date.getMonth() + 1
+  }/${date.getDate()}（${
+    labels[
+      date.getDay()
+    ]
+  }）`;
+}
+
+
+/* ========================================
+   NEXT / DIRECT SAVE ACTIONS
+======================================== */
+
+document.addEventListener(
+  "click",
+  event => {
+    const button =
+      event.target.closest(
+        "#view-shift [data-action]"
+      );
+
+    if (!button) {
+      return;
+    }
+
+    switch (button.dataset.action) {
+      case "save-shift":
+        void saveShiftBatch();
+        break;
+
+      case "delete-shift":
+        void deleteEditingShift();
+        break;
+
+      case "copy-previous-shift-week":
+        void previewPreviousShiftWeek();
+        break;
+
+      case "copy-shift-line-message":
+        void copyShiftLineMessage();
+        break;
+
+      default:
+        break;
+    }
+  }
+);
+
+
+const nextShiftView =
+  document.getElementById(
+    "view-shift"
+  );
+
+
+if (nextShiftView) {
+  new MutationObserver(
+    () => {
+      if (!nextShiftView.hidden) {
+        void loadShift();
+      }
+    }
+  ).observe(
+    nextShiftView,
+    {
+      attributes:true,
+      attributeFilter:["hidden"],
+    }
+  );
+
+  if (!nextShiftView.hidden) {
+    void loadShift();
+  }
+}
+
+
+window.KohakuWorkNextShift = {
+  load:loadShift,
+  directSave:true,
+};
+
+})();
+
+// WRITER:NEXT_WORK_SHIFT_LOGIC:END
