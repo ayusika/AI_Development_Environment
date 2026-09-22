@@ -35,6 +35,7 @@
   <link rel="stylesheet" href="./schedule-sales-panel.css">
   <link rel="stylesheet" href="./heaven-create.css">
   <link rel="stylesheet" href="./heaven-standalone.css">
+  <link rel="stylesheet" href="./heaven-settings.css">
   <link rel="stylesheet" href="./schedule-detail-ux.css">
   <link rel="stylesheet" href="./schedule-detail-mobile-flow.css">
 </head>
@@ -582,32 +583,462 @@
           </div>
         </section>
 
+        <!-- WRITER:HEAVEN_SETTINGS_VIEW:START -->
         <section
           class="work-next-view"
           data-view="heaven-settings"
-          id="view-heaven-settings" hidden
+          id="view-heaven-settings"
+          hidden
         >
+          <div class="next-heaven-settings">
 
-          <div class="work-next-heading">
-            <button type="button" data-next-view="home">←</button>
+            <div class="work-next-heading">
+              <button
+                type="button"
+                data-next-view="diary"
+                aria-label="写メ日記へ戻る"
+              >
+                ←
+              </button>
 
-            <div>
-              <p class="wf-eyebrow">HEAVEN SETTINGS</p>
-              <h1>ヘブン設定</h1>
+              <div>
+                <p class="wf-eyebrow">
+                  HEAVEN SETTINGS
+                </p>
+
+                <h1>
+                  ヘブン設定
+                </h1>
+              </div>
             </div>
+
+
+            <section
+              class="next-heaven-card next-heaven-settings-intro"
+            >
+              <div>
+                <span class="next-heaven-kicker">
+                  PRODUCTION SETTINGS
+                </span>
+
+                <strong>
+                  本番ヘブン日記設定
+                </strong>
+
+                <p>
+                  通常投稿と予約カードのお礼日記を
+                  ここでまとめて調整します。
+                </p>
+              </div>
+
+              <span
+                class="next-heaven-settings-status"
+                data-heaven-settings-status
+                aria-live="polite"
+              >
+                設定画面を開くと読み込みます
+              </span>
+            </section>
+
+
+            <aside
+              class="next-heaven-card next-heaven-settings-preview"
+              data-heaven-settings-preview
+            >
+              <div class="next-heaven-settings-preview-head">
+                <div>
+                  <span class="next-heaven-kicker">
+                    LIVE PREVIEW
+                  </span>
+
+                  <strong
+                    data-heaven-preview-mode
+                  >
+                    通常ヘブン日記
+                  </strong>
+                </div>
+
+                <span
+                  data-heaven-preview-target
+                >
+                  設定項目をタップ
+                </span>
+              </div>
+
+
+              <div class="next-heaven-settings-preview-grid">
+
+                <div>
+                  <small>TITLE</small>
+
+                  <strong
+                    data-heaven-preview-title
+                  >
+                    出勤準備中♡最速18:30〜！
+                  </strong>
+                </div>
+
+
+                <div>
+                  <small>BODY</small>
+
+                  <p
+                    data-heaven-preview-body
+                  >
+                    設定項目を選ぶと、
+                    反映イメージをここに表示します。
+                  </p>
+                </div>
+
+              </div>
+            </aside>
+
+
+            <section class="next-heaven-card">
+
+              <div class="next-heaven-settings-section-head">
+                <div>
+                  <span class="next-heaven-kicker">
+                    BASIC
+                  </span>
+
+                  <strong>
+                    基本・文章設定
+                  </strong>
+                </div>
+              </div>
+
+
+              <div class="next-heaven-settings-grid">
+
+                <label class="next-heaven-field">
+                  <span>通常日記の署名</span>
+
+                  <input
+                    name="signature"
+                    type="text"
+                  >
+                </label>
+
+
+                <label class="next-heaven-field">
+                  <span>本文段落数</span>
+
+                  <select name="paragraphs">
+                    <option value="2">2段落</option>
+                    <option value="3">3段落</option>
+                    <option value="4">4段落</option>
+                  </select>
+                </label>
+
+              </div>
+
+
+              <label class="next-heaven-settings-check">
+                <input
+                  name="avoid_same_day"
+                  type="checkbox"
+                >
+
+                <span>
+                  同じ日の同一フレーズをなるべく避ける
+                </span>
+              </label>
+
+
+              <label class="next-heaven-settings-check">
+                <input
+                  name="reroll_enabled"
+                  type="checkbox"
+                >
+
+                <span>
+                  「この内容で作る」を押し直した時は
+                  別候補を優先する
+                </span>
+              </label>
+
+            </section>
+
+
+            <section class="next-heaven-card">
+
+              <div class="next-heaven-settings-section-head">
+                <div>
+                  <span class="next-heaven-kicker">
+                    RECEPTION / TITLE
+                  </span>
+
+                  <strong>
+                    受付計算・タイトル文字数
+                  </strong>
+                </div>
+              </div>
+
+
+              <div class="next-heaven-settings-grid">
+
+                <label class="next-heaven-field">
+                  <span>最小受付時間</span>
+
+                  <input
+                    name="minimum_minutes"
+                    type="number"
+                    min="1"
+                    max="600"
+                  >
+                </label>
+
+
+                <label class="next-heaven-field">
+                  <span>予約間バッファ</span>
+
+                  <input
+                    name="buffer_minutes"
+                    type="number"
+                    min="0"
+                    max="180"
+                  >
+                </label>
+
+
+                <label class="next-heaven-field">
+                  <span>推奨文字数</span>
+
+                  <input
+                    name="title_recommended"
+                    type="number"
+                    min="1"
+                  >
+                </label>
+
+
+                <label class="next-heaven-field">
+                  <span>軽警告開始</span>
+
+                  <input
+                    name="title_warning"
+                    type="number"
+                    min="2"
+                  >
+                </label>
+
+
+                <label class="next-heaven-field">
+                  <span>強警告開始</span>
+
+                  <input
+                    name="title_strong"
+                    type="number"
+                    min="2"
+                  >
+                </label>
+
+              </div>
+
+            </section>
+
+
+            <section class="next-heaven-card">
+
+              <div class="next-heaven-settings-section-head">
+                <div>
+                  <span class="next-heaven-kicker">
+                    TITLE TEMPLATES
+                  </span>
+
+                  <strong>
+                    タイトルテンプレ
+                  </strong>
+                </div>
+
+                <small>
+                  {time} / {customer}
+                </small>
+              </div>
+
+
+              <div
+                class="next-heaven-settings-template-list"
+                data-heaven-settings-titles
+              ></div>
+
+            </section>
+
+
+            <section class="next-heaven-card">
+
+              <div class="next-heaven-settings-section-head">
+                <div>
+                  <span class="next-heaven-kicker">
+                    PHRASE DICTIONARY
+                  </span>
+
+                  <strong>
+                    言い回し辞書
+                  </strong>
+                </div>
+
+                <small>
+                  自動生成に使う候補
+                </small>
+              </div>
+
+
+              <div
+                class="next-heaven-settings-phrase-groups"
+                data-heaven-settings-phrases
+              ></div>
+
+            </section>
+
+
+            <section class="next-heaven-card">
+
+              <div class="next-heaven-settings-section-head">
+                <div>
+                  <span class="next-heaven-kicker">
+                    OPTION PHRASES
+                  </span>
+
+                  <strong>
+                    OP別フレーズ
+                  </strong>
+                </div>
+
+                <small>
+                  実OP名と一致した時だけ使用
+                </small>
+              </div>
+
+
+              <div
+                class="next-heaven-settings-op-list"
+                data-heaven-settings-op
+              ></div>
+
+
+              <button
+                class="next-heaven-action"
+                type="button"
+                data-add-op-phrase
+              >
+                ＋ OPルールを追加
+              </button>
+
+            </section>
+
+
+            <section
+              class="next-heaven-card next-heaven-settings-thank-you"
+            >
+
+              <div class="next-heaven-settings-section-head">
+                <div>
+                  <span class="next-heaven-kicker">
+                    RESERVATION THANK YOU
+                  </span>
+
+                  <strong>
+                    個別お礼日記
+                  </strong>
+                </div>
+
+                <small>
+                  予約カード → 日記を書く
+                </small>
+              </div>
+
+
+              <div class="next-heaven-settings-grid">
+
+                <label class="next-heaven-field">
+                  <span>
+                    新規のデフォルトタイトル
+                  </span>
+
+                  <input
+                    data-title-template="thank_you_new"
+                    type="text"
+                  >
+                </label>
+
+
+                <label class="next-heaven-field">
+                  <span>
+                    リピのデフォルトタイトル
+                  </span>
+
+                  <input
+                    data-title-template="thank_you_repeat"
+                    type="text"
+                  >
+                </label>
+
+
+                <label class="next-heaven-field">
+                  <span>
+                    個別お礼日記の署名
+                  </span>
+
+                  <input
+                    data-thank-you-setting="signature"
+                    type="text"
+                  >
+                </label>
+
+              </div>
+
+
+              <div class="next-heaven-settings-variable-guide">
+                <code>{place}</code>
+                <code>{course}</code>
+                <code>{options_part}</code>
+                <code>{repeat}</code>
+                <code>{body}</code>
+                <code>{signature}</code>
+              </div>
+
+
+              <label class="next-heaven-field">
+                <span>
+                  本文テンプレ
+                </span>
+
+                <textarea
+                  rows="9"
+                  data-thank-you-setting="body_template"
+                  spellcheck="false"
+                ></textarea>
+              </label>
+
+            </section>
+
+
+            <div class="next-heaven-settings-actions">
+
+              <button
+                class="next-heaven-action is-primary"
+                type="button"
+                data-save-heaven-settings
+              >
+                設定を保存
+              </button>
+
+
+              <button
+                class="next-heaven-action"
+                type="button"
+                data-reset-heaven-settings
+              >
+                初期値をフォームに戻す
+              </button>
+
+            </div>
+
           </div>
-
-
-          <article class="work-next-panel" data-wf-panel data-wf-panel-surface>
-            <span class="work-next-phase">PHASE 1</span>
-            <h2 class="wf-panel-title">View移植済み</h2>
-            <p class="wf-panel-copy">
-              現在は画面構造だけを移植済み。
-              API・本番DBへの接続は次の段階で行います。
-            </p>
-          </article>
-
         </section>
+        <!-- WRITER:HEAVEN_SETTINGS_VIEW:END -->
 
         <section
           class="work-next-view"
@@ -1392,6 +1823,7 @@
   <script src="./schedule-sales-panel.js"></script>
   <script src="./heaven-settings-runtime.js"></script>
   <script src="./heaven-standalone.js"></script>
+  <script src="./heaven-settings.js"></script>
   <script src="./heaven-create.js"></script>
   <script src="./schedule-progress-jump.js"></script>
   <script src="./schedule-detail-mobile-flow.js"></script>
