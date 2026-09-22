@@ -732,6 +732,34 @@
   };
 
 
+  const cancelPendingSave = (
+    pageId
+  ) => {
+    const timer =
+      state.saveTimers.get(
+        pageId
+      );
+
+    if (timer) {
+      window.clearTimeout(
+        timer
+      );
+    }
+
+    state.saveTimers.delete(
+      pageId
+    );
+
+    state.dirtyPages.delete(
+      pageId
+    );
+
+    state.versions.delete(
+      pageId
+    );
+  };
+
+
   const flushDirty = () => {
     state.dirtyPages
       .forEach(
@@ -992,6 +1020,30 @@
       "メモボタンを増やす";
 
 
+    const deleteButton =
+      document.createElement(
+        "button"
+      );
+
+    deleteButton.type =
+      "button";
+
+    deleteButton.className =
+      "kgm-panel-action "
+      + "kgm-panel-action--danger";
+
+    deleteButton.textContent =
+      "🗑";
+
+    deleteButton.title =
+      state.buttons.length <= 1
+        ? "最後のメモボタンは削除できません"
+        : "このメモボタンを丸ごと削除";
+
+    deleteButton.disabled =
+      state.buttons.length <= 1;
+
+
     const close =
       document.createElement(
         "button"
@@ -1013,6 +1065,7 @@
     actions.append(
       addPage,
       addButton,
+      deleteButton,
       close
     );
 
@@ -1156,6 +1209,38 @@
         "saved";
 
 
+      const editorFooter =
+        document.createElement(
+          "div"
+        );
+
+      editorFooter.className =
+        "kgm-editor-footer";
+
+
+      const deletePage =
+        document.createElement(
+          "button"
+        );
+
+      deletePage.type =
+        "button";
+
+      deletePage.className =
+        "kgm-page-delete";
+
+      deletePage.textContent =
+        "このメモを削除";
+
+      deletePage.title =
+        button.pages.length <= 1
+          ? "最後のメモは削除できません"
+          : "現在のメモだけを削除";
+
+      deletePage.disabled =
+        button.pages.length <= 1;
+
+
       title.addEventListener(
         "input",
         () => {
@@ -1244,10 +1329,140 @@
       );
 
 
+      deletePage.addEventListener(
+        "click",
+        async () => {
+
+          if (
+            deletePage.disabled
+          ) {
+            return;
+          }
+
+
+          const confirmed =
+            window.confirm(
+              `「${
+                page.title
+                || "メモ"
+              }」を削除する？\n`
+              + "この操作は元に戻せません。"
+            );
+
+
+          if (!confirmed) {
+            return;
+          }
+
+
+          deletePage.disabled =
+            true;
+
+
+          const wasDirty =
+            state.dirtyPages.has(
+              page.id
+            );
+
+
+          cancelPendingSave(
+            page.id
+          );
+
+
+          try {
+
+            const data =
+              await api(
+                "DELETE",
+                {
+                  action:
+                    "delete_page",
+
+                  page_id:
+                    page.id
+                }
+              );
+
+
+            setButtons(
+              data.buttons
+            );
+
+
+            const updatedButton =
+              buttonById(
+                button.id
+              );
+
+
+            const nextPage =
+              updatedButton
+                ?.pages
+                ?.[0]
+              || null;
+
+
+            if (nextPage) {
+
+              state.activePages[
+                button.id
+              ] =
+                Number(
+                  nextPage.id
+                );
+
+            } else {
+
+              delete state.activePages[
+                button.id
+              ];
+            }
+
+
+            persistView();
+            renderLaunchers();
+            renderPanel();
+
+
+          } catch (error) {
+
+            if (wasDirty) {
+              scheduleSave(
+                page.id
+              );
+            }
+
+
+            setStatus(
+              "削除失敗",
+              "error"
+            );
+
+
+            console.error(
+              "Koppy global memo page delete failed.",
+              error
+            );
+
+
+            deletePage.disabled =
+              false;
+          }
+        }
+      );
+
+
+      editorFooter.append(
+        deletePage,
+        status
+      );
+
+
       editor.append(
         title,
         content,
-        status
+        editorFooter
       );
     }
 
@@ -1382,6 +1597,151 @@
         } finally {
 
           addButton.disabled =
+            false;
+        }
+      }
+    );
+
+
+    deleteButton.addEventListener(
+      "click",
+      async () => {
+
+        if (
+          deleteButton.disabled
+        ) {
+          return;
+        }
+
+
+        const pageCount =
+          button.pages
+            ?.length
+          || 0;
+
+
+        const confirmed =
+          window.confirm(
+            "このメモボタンと中のメモ"
+            + pageCount
+            + "件を全部削除する？\n"
+            + "この操作は元に戻せません。"
+          );
+
+
+        if (!confirmed) {
+          return;
+        }
+
+
+        deleteButton.disabled =
+          true;
+
+
+        const dirtyPageIds =
+          (
+            button.pages
+            || []
+          )
+            .filter(
+              memoPage =>
+                state.dirtyPages.has(
+                  memoPage.id
+                )
+            )
+            .map(
+              memoPage =>
+                Number(
+                  memoPage.id
+                )
+            );
+
+
+        (
+          button.pages
+          || []
+        ).forEach(
+          memoPage => {
+            cancelPendingSave(
+              Number(
+                memoPage.id
+              )
+            );
+          }
+        );
+
+
+        try {
+
+          const data =
+            await api(
+              "DELETE",
+              {
+                action:
+                  "delete_button",
+
+                button_id:
+                  button.id
+              }
+            );
+
+
+          delete state.positions[
+            button.id
+          ];
+
+
+          storageSet(
+            POSITION_KEY,
+            state.positions
+          );
+
+
+          delete state.activePages[
+            button.id
+          ];
+
+
+          setButtons(
+            data.buttons
+          );
+
+
+          state.openButtonId =
+            null;
+
+          panel.hidden =
+            true;
+
+
+          persistView();
+          renderLaunchers();
+
+
+        } catch (error) {
+
+          dirtyPageIds.forEach(
+            pageId => {
+              scheduleSave(
+                pageId
+              );
+            }
+          );
+
+
+          setStatus(
+            "削除失敗",
+            "error"
+          );
+
+
+          console.error(
+            "Koppy global memo button delete failed.",
+            error
+          );
+
+
+          deleteButton.disabled =
             false;
         }
       }

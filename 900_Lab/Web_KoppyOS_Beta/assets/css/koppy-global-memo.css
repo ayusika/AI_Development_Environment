@@ -246,6 +246,27 @@
     rgba(143,220,255,.48);
 }
 
+.kgm-panel-action--danger{
+  color:#ffd9e1;
+
+  border-color:
+    rgba(255,126,151,.30);
+}
+
+.kgm-panel-action--danger:hover{
+  background:
+    rgba(112,31,53,.72);
+
+  border-color:
+    rgba(255,126,151,.62);
+}
+
+.kgm-panel-action:disabled,
+.kgm-page-delete:disabled{
+  opacity:.35;
+  cursor:not-allowed;
+}
+
 .kgm-page-tabs{
   display:flex;
   gap:6px;
@@ -372,8 +393,51 @@
     rgba(143,220,255,.56);
 }
 
+.kgm-editor-footer{
+  display:flex;
+  align-items:center;
+  gap:10px;
+
+  min-height:30px;
+}
+
+.kgm-page-delete{
+  appearance:none;
+
+  flex:0 0 auto;
+
+  padding:6px 9px;
+
+  border:
+    1px solid
+    rgba(255,126,151,.28);
+
+  border-radius:10px;
+
+  background:
+    rgba(87,24,44,.48);
+
+  color:#ffd9e1;
+
+  font:inherit;
+  font-size:10px;
+  font-weight:700;
+
+  cursor:pointer;
+}
+
+.kgm-page-delete:hover:not(:disabled){
+  background:
+    rgba(112,31,53,.72);
+
+  border-color:
+    rgba(255,126,151,.58);
+}
+
 .kgm-status{
   min-height:16px;
+
+  flex:1;
 
   padding:0 2px;
 

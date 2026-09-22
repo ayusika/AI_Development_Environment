@@ -775,6 +775,273 @@ try {
     }
 
 
+    if ($method === 'DELETE') {
+
+        $body =
+            globalMemoBody();
+
+
+        $action =
+            (string)
+            (
+                $body['action']
+                ?? ''
+            );
+
+
+        if (
+            $action
+            === 'delete_page'
+        ) {
+
+            $pageId =
+                globalMemoId(
+                    $body['page_id']
+                    ?? null,
+                    'page_id'
+                );
+
+
+            $pdo->beginTransaction();
+
+
+            $statement =
+                $pdo->prepare(
+                    '
+                    SELECT
+                        button_id
+
+                    FROM
+                        koppy_global_memo_pages
+
+                    WHERE
+                        id = ?
+                    '
+                );
+
+
+            $statement->execute([
+                $pageId,
+            ]);
+
+
+            $page =
+                $statement->fetch();
+
+
+            if (!is_array($page)) {
+                throw new RuntimeException(
+                    'Memo page was not found.'
+                );
+            }
+
+
+            $buttonId =
+                (int)
+                $page['button_id'];
+
+
+            $statement =
+                $pdo->prepare(
+                    '
+                    SELECT COUNT(*)
+
+                    FROM
+                        koppy_global_memo_pages
+
+                    WHERE
+                        button_id = ?
+                    '
+                );
+
+
+            $statement->execute([
+                $buttonId,
+            ]);
+
+
+            $pageCount =
+                (int)
+                $statement->fetchColumn();
+
+
+            if ($pageCount <= 1) {
+                throw new RuntimeException(
+                    '最後のメモは削除できません。'
+                );
+            }
+
+
+            $statement =
+                $pdo->prepare(
+                    '
+                    DELETE FROM
+                        koppy_global_memo_pages
+
+                    WHERE
+                        id = ?
+                    '
+                );
+
+
+            $statement->execute([
+                $pageId,
+            ]);
+
+
+            if (
+                $statement->rowCount()
+                !== 1
+            ) {
+                throw new RuntimeException(
+                    'Memo page delete failed.'
+                );
+            }
+
+
+            $pdo->commit();
+
+
+            globalMemoResponse([
+                'success' =>
+                    true,
+
+                'buttons' =>
+                    globalMemoState(
+                        $pdo
+                    ),
+
+                'deleted_page_id' =>
+                    $pageId,
+
+                'button_id' =>
+                    $buttonId,
+
+                'error' =>
+                    null,
+            ]);
+        }
+
+
+        if (
+            $action
+            === 'delete_button'
+        ) {
+
+            $buttonId =
+                globalMemoId(
+                    $body['button_id']
+                    ?? null,
+                    'button_id'
+                );
+
+
+            $pdo->beginTransaction();
+
+
+            $buttonCount =
+                (int)
+                $pdo
+                    ->query(
+                        '
+                        SELECT COUNT(*)
+                        FROM koppy_global_memo_buttons
+                        '
+                    )
+                    ->fetchColumn();
+
+
+            if ($buttonCount <= 1) {
+                throw new RuntimeException(
+                    '最後のメモボタンは削除できません。'
+                );
+            }
+
+
+            $statement =
+                $pdo->prepare(
+                    '
+                    SELECT COUNT(*)
+
+                    FROM
+                        koppy_global_memo_buttons
+
+                    WHERE
+                        id = ?
+                    '
+                );
+
+
+            $statement->execute([
+                $buttonId,
+            ]);
+
+
+            if (
+                (int)
+                $statement->fetchColumn()
+                !== 1
+            ) {
+                throw new RuntimeException(
+                    'Memo button was not found.'
+                );
+            }
+
+
+            $statement =
+                $pdo->prepare(
+                    '
+                    DELETE FROM
+                        koppy_global_memo_buttons
+
+                    WHERE
+                        id = ?
+                    '
+                );
+
+
+            $statement->execute([
+                $buttonId,
+            ]);
+
+
+            if (
+                $statement->rowCount()
+                !== 1
+            ) {
+                throw new RuntimeException(
+                    'Memo button delete failed.'
+                );
+            }
+
+
+            $pdo->commit();
+
+
+            globalMemoResponse([
+                'success' =>
+                    true,
+
+                'buttons' =>
+                    globalMemoState(
+                        $pdo
+                    ),
+
+                'deleted_button_id' =>
+                    $buttonId,
+
+                'error' =>
+                    null,
+            ]);
+        }
+
+
+        throw new RuntimeException(
+            'Unknown memo delete action.'
+        );
+    }
+
+
     globalMemoResponse(
         [
             'success' =>
