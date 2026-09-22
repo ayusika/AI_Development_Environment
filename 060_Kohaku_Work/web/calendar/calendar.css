@@ -5228,201 +5228,269 @@ button[data-calendar-today] {
 
 }
 
+/* KOPPY CALENDAR FLOATING CONTROL v3 */
 
-/* KOPPY CALENDAR PERSISTENT FILTER v2 */
+.calendar-quick-control{
+  --quick-accent:
+    #82dcff;
 
-/* Desktop / tablet:
-   filter cluster lives beside Today. */
-
-.calendar-header-actions
-.calendar-owner-filter{
   position:
     fixed;
 
   right:
     calc(
-      118px
+      84px
       + env(safe-area-inset-right)
     );
 
   bottom:
     calc(
-      20px
+      16px
       + env(safe-area-inset-bottom)
     );
 
   z-index:
-    20;
+    2147482000;
 
-  width:
-    auto;
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  gap:
+    2px;
 
   padding:
-    3px;
+    4px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--quick-accent) 46%,
+      transparent
+    );
+
+  border-radius:
+    18px;
+
+  background:
+    radial-gradient(
+      circle at 24% 16%,
+      rgba(255,255,255,.18),
+      transparent 42%
+    ),
+    linear-gradient(
+      145deg,
+      rgba(12,47,76,.94),
+      rgba(5,20,42,.90)
+    );
+
+  backdrop-filter:
+    blur(18px)
+    saturate(140%);
+
+  -webkit-backdrop-filter:
+    blur(18px)
+    saturate(140%);
 
   box-shadow:
-    0 8px 24px
-    rgba(72,181,223,.14);
+    inset 0 1px 0
+      rgba(255,255,255,.14),
+    0 12px 32px
+      rgba(0,10,35,.36),
+    0 0 24px
+      rgba(82,205,255,.14);
+
+  cursor:
+    grab;
+
+  touch-action:
+    none;
+
+  user-select:
+    none;
+
+  -webkit-user-select:
+    none;
 }
 
 
-.calendar-header-actions
-.calendar-owner-filter-button{
+.calendar-quick-control.is-dragging{
+  cursor:
+    grabbing;
+
+  transform:
+    scale(1.025);
+}
+
+
+.calendar-quick-control
+.calendar-owner-filter-button,
+.calendar-quick-control
+.calendar-quick-today{
+  appearance:
+    none;
+
+  position:
+    static;
+
   min-width:
-    54px;
+    48px;
 
   width:
     auto;
 
   min-height:
-    48px;
+    46px;
 
   height:
-    48px;
+    46px;
+
+  margin:
+    0;
 
   padding:
-    0 9px;
+    0 10px;
+
+  border:
+    1px solid transparent;
 
   border-radius:
-    11px;
+    12px;
+
+  background:
+    transparent;
+
+  color:
+    rgba(228,247,255,.78);
+
+  font:
+    inherit;
 
   font-size:
     10px;
+
+  font-weight:
+    800;
+
+  line-height:
+    1;
+
+  box-shadow:
+    none;
+
+  cursor:
+    inherit;
 }
 
 
-/* Portrait phone:
-   the sticky header keeps filter + Today together. */
+.calendar-quick-control
+.calendar-owner-filter-button.is-active{
+  border-color:
+    rgba(125,224,255,.42);
 
-@media (
-  max-width:700px
-) and (
-  orientation:portrait
-){
+  background:
+    linear-gradient(
+      145deg,
+      rgba(87,199,241,.30),
+      rgba(50,127,182,.20)
+    );
 
-  .calendar-header{
-    align-items:
-      flex-start;
-  }
+  color:
+    #f4fcff;
 
-
-  .calendar-header-actions{
-    display:
-      grid;
-
-    grid-template-columns:
-      auto 58px;
-
-    grid-template-rows:
-      auto 38px;
-
-    gap:
-      3px 5px;
-
-    align-items:
-      center;
-  }
+  box-shadow:
+    inset 0 1px 0
+      rgba(255,255,255,.14),
+    0 0 15px
+      rgba(88,204,249,.14);
+}
 
 
-  .calendar-refresh-status{
-    grid-column:
-      1 / 3;
+.calendar-quick-control
+.calendar-quick-today{
+  min-width:
+    62px;
 
-    grid-row:
-      1;
+  border-color:
+    rgba(113,223,255,.44);
 
-    justify-self:
-      end;
+  background:
+    linear-gradient(
+      145deg,
+      rgba(92,215,255,.44),
+      rgba(44,159,211,.30)
+    );
 
-    max-width:
-      none;
-
-    font-size:
-      8px;
-  }
+  color:
+    #ffffff;
+}
 
 
-  .calendar-header-actions
-  .calendar-owner-filter{
-    position:
-      static;
+.calendar-quick-control
+button:active{
+  transform:
+    scale(.96);
+}
 
+
+@media (max-width:700px){
+
+  .calendar-quick-control{
     right:
-      auto;
+      calc(
+        78px
+        + env(safe-area-inset-right)
+      );
 
     bottom:
-      auto;
-
-    z-index:
-      auto;
-
-    grid-column:
-      1;
-
-    grid-row:
-      2;
-
-    width:
-      auto;
+      calc(
+        14px
+        + env(safe-area-inset-bottom)
+      );
 
     padding:
-      2px;
+      3px;
 
-    gap:
-      2px;
-
-    box-shadow:
-      none;
+    border-radius:
+      16px;
   }
 
 
-  .calendar-header-actions
+  .calendar-quick-control
   .calendar-owner-filter-button{
     min-width:
-      38px;
-
-    width:
-      38px;
+      41px;
 
     min-height:
-      34px;
+      42px;
 
     height:
-      34px;
+      42px;
 
     padding:
-      0 4px;
-
-    border-radius:
-      8px;
+      0 6px;
 
     font-size:
       9px;
   }
 
 
-  .calendar-header-actions
-  button[data-calendar-today]{
-    grid-column:
-      2;
-
-    grid-row:
-      2;
-
+  .calendar-quick-control
+  .calendar-quick-today{
     min-width:
-      58px;
-
-    width:
-      58px;
+      54px;
 
     min-height:
-      38px;
+      42px;
 
     height:
-      38px;
+      42px;
 
     padding:
-      0 10px;
+      0 8px;
   }
 
 }

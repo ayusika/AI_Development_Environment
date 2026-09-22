@@ -93,6 +93,11 @@ const todayButton =
     '[data-calendar-today]'
   );
 
+const quickControl =
+  document.querySelector(
+    '[data-calendar-quick-control]'
+  );
+
 const refreshStatusElement =
   document.querySelector(
     '[data-calendar-refresh-status]'
@@ -192,6 +197,111 @@ function syncCalendarOwnerFilterButtons() {
 }
 
 
+function captureCalendarAnchor() {
+
+  const y =
+    Math.min(
+      window.innerHeight * 0.4,
+      window.innerHeight - 80
+    );
+
+  const x =
+    window.innerWidth * 0.5;
+
+  const hit =
+    document.elementFromPoint(
+      x,
+      y
+    );
+
+  const day =
+    hit?.closest(
+      '.calendar-day[data-date-key]'
+    );
+
+
+  if (
+    day
+    && monthCalendarElement.contains(day)
+  ) {
+    return {
+      key:
+        day.dataset.dateKey,
+
+      top:
+        day.getBoundingClientRect().top,
+    };
+  }
+
+
+  const visible =
+    [
+      ...monthCalendarElement.querySelectorAll(
+        '.calendar-day[data-date-key]'
+      ),
+    ].find(
+      (item) => {
+
+        const rect =
+          item.getBoundingClientRect();
+
+        return (
+          rect.bottom > 0
+          && rect.top < window.innerHeight
+        );
+      }
+    );
+
+
+  return visible
+    ? {
+        key:
+          visible.dataset.dateKey,
+
+        top:
+          visible.getBoundingClientRect().top,
+      }
+    : null;
+}
+
+
+function restoreCalendarAnchor(anchor) {
+
+  if (!anchor) {
+    return;
+  }
+
+
+  window.requestAnimationFrame(
+    () => {
+
+      const target =
+        monthCalendarElement.querySelector(
+          `[data-date-key="${anchor.key}"]`
+        );
+
+
+      if (!target) {
+        return;
+      }
+
+
+      const delta =
+        target.getBoundingClientRect().top
+        - anchor.top;
+
+
+      if (Math.abs(delta) > 0.5) {
+        window.scrollBy(
+          0,
+          delta
+        );
+      }
+    }
+  );
+}
+
+
 ownerFilterButtons.forEach(
   (button) => {
 
@@ -201,8 +311,7 @@ ownerFilterButtons.forEach(
 
         const filter =
           String(
-            button.dataset
-              .calendarOwnerFilter
+            button.dataset.calendarOwnerFilter
             || ''
           );
 
@@ -212,23 +321,31 @@ ownerFilterButtons.forEach(
             'all',
             'shii',
             'ui',
-          ].includes(
-            filter
-          )
+          ].includes(filter)
+          ||
+          filter
+          === calendarState.ownerFilter
         ) {
           return;
         }
 
 
+        const anchor =
+          captureCalendarAnchor();
+
+
         calendarState.ownerFilter =
           filter;
-
 
         syncCalendarOwnerFilterButtons();
 
         closeDaySummary();
 
         renderMonthCalendar();
+
+        restoreCalendarAnchor(
+          anchor
+        );
       }
     );
   }
@@ -236,6 +353,330 @@ ownerFilterButtons.forEach(
 
 
 syncCalendarOwnerFilterButtons();
+
+
+/* ========================================
+   DRAGGABLE QUICK CONTROL
+======================================== */
+
+const QUICK_POSITION_KEY =
+  'koppy.calendar.quick-control.v1';
+
+let quickDrag =
+  null;
+
+let suppressQuickClick =
+  false;
+
+
+function placeQuickControl(
+  left,
+  top
+) {
+
+  const rect =
+    quickControl.getBoundingClientRect();
+
+  const edge =
+    12;
+
+  const maxLeft =
+    Math.max(
+      edge,
+      window.innerWidth
+      - rect.width
+      - edge
+    );
+
+  const maxTop =
+    Math.max(
+      edge,
+      window.innerHeight
+      - rect.height
+      - edge
+    );
+
+
+  quickControl.style.left =
+    `${Math.max(
+      edge,
+      Math.min(
+        maxLeft,
+        left
+      )
+    )}px`;
+
+  quickControl.style.top =
+    `${Math.max(
+      edge,
+      Math.min(
+        maxTop,
+        top
+      )
+    )}px`;
+
+  quickControl.style.right =
+    'auto';
+
+  quickControl.style.bottom =
+    'auto';
+}
+
+
+function saveQuickControlPosition() {
+
+  const rect =
+    quickControl.getBoundingClientRect();
+
+  try {
+
+    localStorage.setItem(
+      QUICK_POSITION_KEY,
+      JSON.stringify({
+        left:
+          rect.left,
+
+        top:
+          rect.top,
+      })
+    );
+
+  } catch {
+
+    // Storage may be unavailable.
+
+  }
+}
+
+
+function restoreQuickControlPosition() {
+
+  try {
+
+    const saved =
+      JSON.parse(
+        localStorage.getItem(
+          QUICK_POSITION_KEY
+        )
+      );
+
+
+    if (
+      saved
+      && Number.isFinite(saved.left)
+      && Number.isFinite(saved.top)
+    ) {
+      placeQuickControl(
+        saved.left,
+        saved.top
+      );
+
+      return;
+    }
+
+  } catch {
+
+    // Use CSS default position.
+
+  }
+
+
+  const rect =
+    quickControl.getBoundingClientRect();
+
+  placeQuickControl(
+    rect.left,
+    rect.top
+  );
+}
+
+
+function startQuickDrag(event) {
+
+  if (
+    event.button !== undefined
+    && event.button !== 0
+  ) {
+    return;
+  }
+
+
+  const rect =
+    quickControl.getBoundingClientRect();
+
+
+  quickDrag = {
+    id:
+      event.pointerId,
+
+    x:
+      event.clientX,
+
+    y:
+      event.clientY,
+
+    left:
+      rect.left,
+
+    top:
+      rect.top,
+
+    moved:
+      false,
+  };
+
+
+  quickControl.setPointerCapture(
+    event.pointerId
+  );
+}
+
+
+function moveQuickDrag(event) {
+
+  if (
+    !quickDrag
+    || quickDrag.id
+      !== event.pointerId
+  ) {
+    return;
+  }
+
+
+  const dx =
+    event.clientX - quickDrag.x;
+
+  const dy =
+    event.clientY - quickDrag.y;
+
+
+  if (
+    !quickDrag.moved
+    && Math.hypot(dx, dy) < 6
+  ) {
+    return;
+  }
+
+
+  quickDrag.moved =
+    true;
+
+  quickControl.classList.add(
+    'is-dragging'
+  );
+
+  event.preventDefault();
+
+
+  placeQuickControl(
+    quickDrag.left + dx,
+    quickDrag.top + dy
+  );
+}
+
+
+function finishQuickDrag(event) {
+
+  if (
+    !quickDrag
+    || quickDrag.id
+      !== event.pointerId
+  ) {
+    return;
+  }
+
+
+  const moved =
+    quickDrag.moved;
+
+
+  quickControl.classList.remove(
+    'is-dragging'
+  );
+
+  quickDrag =
+    null;
+
+
+  if (!moved) {
+    return;
+  }
+
+
+  saveQuickControlPosition();
+
+  suppressQuickClick =
+    true;
+
+
+  window.setTimeout(
+    () => {
+      suppressQuickClick =
+        false;
+    },
+    0
+  );
+}
+
+
+if (quickControl) {
+
+  quickControl.addEventListener(
+    'pointerdown',
+    startQuickDrag
+  );
+
+  quickControl.addEventListener(
+    'pointermove',
+    moveQuickDrag
+  );
+
+  quickControl.addEventListener(
+    'pointerup',
+    finishQuickDrag
+  );
+
+  quickControl.addEventListener(
+    'pointercancel',
+    finishQuickDrag
+  );
+
+
+  quickControl.addEventListener(
+    'click',
+    (event) => {
+
+      if (!suppressQuickClick) {
+        return;
+      }
+
+
+      suppressQuickClick =
+        false;
+
+      event.preventDefault();
+
+      event.stopPropagation();
+    },
+    true
+  );
+
+
+  window.requestAnimationFrame(
+    restoreQuickControlPosition
+  );
+
+
+  window.addEventListener(
+    'resize',
+    restoreQuickControlPosition
+  );
+
+  window.addEventListener(
+    'orientationchange',
+    restoreQuickControlPosition
+  );
+}
 
 
 const daySummaryModal =
