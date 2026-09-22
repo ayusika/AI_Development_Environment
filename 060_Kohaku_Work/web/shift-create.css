@@ -1016,4 +1016,85 @@
 }
 
 
+
+/* ========================================
+   SHIFT ROW GRID FIX
+======================================== */
+
+#view-shift .shift-day-row > *{
+  min-width: 0;
+}
+
+
+#view-shift .shift-field select,
+#view-shift .shift-day-row input{
+  box-sizing: border-box;
+  min-width: 0;
+}
+
+
+#view-shift .shift-day-row{
+  grid-template-columns:
+    minmax(120px, 1.2fr)
+    minmax(72px, .65fr)
+    minmax(92px, .7fr)
+    minmax(92px, .7fr)
+    54px;
+}
+
+
+#view-shift .shift-day-off-button{
+  width: 54px;
+  min-width: 54px;
+  max-width: 54px;
+
+  justify-self: end;
+
+  padding: 8px 6px;
+}
+
+
+@media (max-width: 700px){
+
+  #view-shift .shift-day-row{
+    grid-template-columns:
+      minmax(0, 1fr)
+      minmax(0, 1fr)
+      54px;
+  }
+
+
+  #view-shift .shift-day-row-date{
+    grid-column: 1 / 3;
+  }
+
+
+  #view-shift .shift-day-row-type{
+    grid-column: 3 / 4;
+    justify-self: end;
+  }
+
+
+  #view-shift
+  .shift-day-row
+  input[data-shift-start]{
+    grid-column: 1 / 2;
+  }
+
+
+  #view-shift
+  .shift-day-row
+  input[data-shift-end]{
+    grid-column: 2 / 3;
+  }
+
+
+  #view-shift .shift-day-off-button{
+    grid-column: 3 / 4;
+    grid-row: 2;
+  }
+
+}
+
+
 /* WRITER:NEXT_WORK_SHIFT_STYLE:END */

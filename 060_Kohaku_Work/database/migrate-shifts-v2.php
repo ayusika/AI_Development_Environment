@@ -517,13 +517,13 @@ try {
 
     /*
      * うい
-     * 平日前 16:00〜25:00
-     * 休日前 16:00〜25:00
+     * 平日前 15:00〜25:00
+     * 休日前 15:00〜25:00
      */
     $ruleInsertStatement->execute([
         $uiWorkerId,
         'weekday_eve',
-        '16:00',
+        '15:00',
         '25:00',
     ]);
 
@@ -531,7 +531,7 @@ try {
     $ruleInsertStatement->execute([
         $uiWorkerId,
         'holiday_eve',
-        '16:00',
+        '15:00',
         '25:00',
     ]);
 
