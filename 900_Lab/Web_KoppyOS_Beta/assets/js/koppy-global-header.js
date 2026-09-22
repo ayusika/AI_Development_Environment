@@ -12,11 +12,14 @@
   const STYLE_URL =
     "/assets/css/koppy-global-header.css";
 
+  const WORLD_ORIGIN =
+    "https://koppy.miki-piano.com";
+
 
   const ROUTES = [
     {
       id: "world",
-      href: "/",
+      href: WORLD_ORIGIN + "/",
       label: "Koppy World",
       detail: "WORLD HOME"
     },
@@ -34,25 +37,25 @@
     },
     {
       id: "house",
-      href: "/house/",
+      href: WORLD_ORIGIN + "/house/",
       label: "自宅",
       detail: "HOUSE"
     },
     {
       id: "brain",
-      href: "/brain/",
+      href: WORLD_ORIGIN + "/brain/",
       label: "GitHub Brain",
       detail: "BRAIN"
     },
     {
       id: "chat",
-      href: "/chat/",
+      href: WORLD_ORIGIN + "/chat/",
       label: "Koppy Chat",
       detail: "CHAT"
     },
     {
       id: "writer",
-      href: "/writer/",
+      href: WORLD_ORIGIN + "/writer/",
       label: "GitHub Writer",
       detail: "WRITER"
     },
@@ -145,7 +148,10 @@
 
     const routePath =
       normalizePath(
-        route.href
+        new URL(
+          route.href,
+          window.location.origin
+        ).pathname
       );
 
     return (
@@ -268,7 +274,7 @@
       );
 
     brand.href =
-      "/";
+      WORLD_ORIGIN + "/";
 
     brand.className =
       "kgh-brand";
