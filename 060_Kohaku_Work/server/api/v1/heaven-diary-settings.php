@@ -2,13 +2,68 @@
 
 declare(strict_types=1);
 
-require __DIR__ . '/../../../../600_KoppyOS/server/api/v1/bootstrap.php';
+header(
+    'Content-Type: application/json; charset=utf-8'
+);
+
+require_once __DIR__
+    . '/../../../../600_KoppyOS/server/api/v1/lib/response.php';
+
+require_once __DIR__
+    . '/../../../../600_KoppyOS/server/auth/auth.php';
+
+koppyRequireApiAuth();
+
+date_default_timezone_set(
+    'Asia/Tokyo'
+);
+
 require_once __DIR__ . '/../../core/database.php';
 
-$method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'GET');
-$ownerId = (int) ($koppyAuth['github_user_id'] ?? 0);
-if ($ownerId <= 0) respondError('Authentication session is invalid.', 401);
-$pdo = koppyDatabase();
+$method =
+    strtoupper(
+        $_SERVER['REQUEST_METHOD']
+        ?? 'GET'
+    );
+
+$pdo =
+    koppyDatabase();
+
+$ownerIds =
+    $pdo
+        ->query(
+            "
+            SELECT owner_github_id
+            FROM heaven_diary_settings
+
+            UNION
+
+            SELECT owner_github_id
+            FROM heaven_diary_phrase_usage
+
+            ORDER BY owner_github_id
+            "
+        )
+        ->fetchAll(
+            PDO::FETCH_COLUMN
+        );
+
+if (count($ownerIds) !== 1) {
+    respondError(
+        'Heaven owner could not be resolved.',
+        500
+    );
+}
+
+$ownerId =
+    (int) $ownerIds[0];
+
+if ($ownerId <= 0) {
+    respondError(
+        'Heaven owner is invalid.',
+        500
+    );
+}
 
 function heavenSettingsBody(): array {
     $raw = file_get_contents('php://input');
