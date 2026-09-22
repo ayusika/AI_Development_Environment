@@ -34,6 +34,7 @@
   <link rel="stylesheet" href="./schedule-progress-jump.css">
   <link rel="stylesheet" href="./schedule-sales-panel.css">
   <link rel="stylesheet" href="./heaven-create.css">
+  <link rel="stylesheet" href="./heaven-standalone.css">
   <link rel="stylesheet" href="./schedule-detail-ux.css">
   <link rel="stylesheet" href="./schedule-detail-mobile-flow.css">
 </head>
@@ -322,28 +323,263 @@
         <section
           class="work-next-view"
           data-view="heaven-diary"
-          id="view-heaven-diary" hidden
+          id="view-heaven-diary"
+          hidden
         >
+          <div class="next-heaven-standalone">
 
-          <div class="work-next-heading">
-            <button type="button" data-next-view="home">←</button>
+            <div class="work-next-heading">
+              <button
+                type="button"
+                data-next-view="diary"
+                aria-label="写メ日記へ戻る"
+              >
+                ←
+              </button>
 
-            <div>
-              <p class="wf-eyebrow">HEAVEN PHOTO DIARY</p>
-              <h1>ヘブン写メ日記</h1>
+              <div>
+                <p class="wf-eyebrow">
+                  HEAVEN PHOTO DIARY
+                </p>
+                <h1>ヘブン写メ日記</h1>
+              </div>
             </div>
+
+
+            <section
+              class="next-heaven-card next-heaven-standalone-banner"
+            >
+              <div>
+                <span class="next-heaven-kicker">
+                  STORE / PLATFORM
+                </span>
+
+                <strong>
+                  札幌
+                  <small>/ ヘブン</small>
+                </strong>
+              </div>
+
+              <span class="next-heaven-chip">
+                投稿準備
+              </span>
+            </section>
+
+
+            <section class="next-heaven-card">
+
+              <div class="next-heaven-standalone-section-head">
+                <div>
+                  <span class="next-heaven-kicker">
+                    DIARY TYPE
+                  </span>
+                  <strong>日記タイプ</strong>
+                </div>
+              </div>
+
+
+              <div
+                class="next-heaven-standalone-type"
+                role="radiogroup"
+                aria-label="日記タイプ"
+              >
+                <label>
+                  <input
+                    type="radio"
+                    name="heaven-standalone-type"
+                    value="attendance"
+                    checked
+                  >
+                  <span>出勤</span>
+                </label>
+
+                <label>
+                  <input
+                    type="radio"
+                    name="heaven-standalone-type"
+                    value="next"
+                  >
+                  <span>次回予告</span>
+                </label>
+
+                <label>
+                  <input
+                    type="radio"
+                    name="heaven-standalone-type"
+                    value="chat"
+                  >
+                  <span>雑談</span>
+                </label>
+              </div>
+
+
+              <div
+                class="next-heaven-standalone-next"
+                id="heaven-standalone-next-controls"
+                hidden
+              >
+                <label class="next-heaven-field">
+                  <span>次回予告の対象予約</span>
+
+                  <select
+                    id="heaven-standalone-reservation"
+                  ></select>
+                </label>
+
+                <label class="next-heaven-field">
+                  <span>連続数</span>
+
+                  <select
+                    id="heaven-standalone-sequence"
+                  >
+                    <option value="auto">
+                      自動
+                    </option>
+                    <option value="1">
+                      1人目
+                    </option>
+                    <option value="2">
+                      2人目
+                    </option>
+                    <option value="3">
+                      3人目以降
+                    </option>
+                  </select>
+                </label>
+              </div>
+
+
+              <div
+                class="next-heaven-standalone-closing"
+                id="heaven-standalone-closing-choice"
+                hidden
+              >
+                <span class="next-heaven-kicker">
+                  出勤終了後の扱い
+                </span>
+
+                <div class="next-heaven-closing-buttons">
+                  <button
+                    class="next-heaven-action"
+                    type="button"
+                    data-heaven-closing-choice="finished"
+                  >
+                    本日終了
+                  </button>
+
+                  <button
+                    class="next-heaven-action"
+                    type="button"
+                    data-heaven-closing-choice="consultation"
+                  >
+                    まだ続ける
+                  </button>
+                </div>
+              </div>
+
+
+              <pre
+                class="next-heaven-standalone-navigator"
+                id="heaven-standalone-navigator"
+                aria-live="polite"
+              >予約・シフトを確認中…</pre>
+
+
+              <p
+                class="next-heaven-note"
+                id="heaven-standalone-chat-note"
+                hidden
+              >
+                雑談はタイトルと本文を自由入力できます。
+              </p>
+
+
+              <button
+                class="next-heaven-action is-primary"
+                id="heaven-standalone-generate"
+                type="button"
+              >
+                この内容で作る
+              </button>
+
+            </section>
+
+
+            <section class="next-heaven-card">
+
+              <label class="next-heaven-field">
+                <span>日記タイトル</span>
+
+                <input
+                  id="heaven-standalone-title"
+                  type="text"
+                  placeholder="ヘブンの日記タイトル"
+                >
+              </label>
+
+
+              <div
+                class="next-heaven-title-meta"
+                aria-live="polite"
+              >
+                <span
+                  id="heaven-standalone-title-count"
+                >
+                  0文字
+                </span>
+
+                <span
+                  id="heaven-standalone-title-warning"
+                  hidden
+                >
+                  ⚠ 長めです
+                </span>
+
+                <span
+                  id="heaven-standalone-title-strong-warning"
+                  hidden
+                >
+                  ⚠ かなり長めです
+                </span>
+
+                <small>
+                  目安：23文字以内
+                </small>
+              </div>
+
+
+              <label class="next-heaven-field">
+                <span>投稿本文</span>
+
+                <textarea
+                  id="heaven-standalone-body"
+                  rows="14"
+                  placeholder="ヘブンへ投稿する本文"
+                ></textarea>
+              </label>
+
+
+              <button
+                class="next-heaven-action is-primary next-heaven-send"
+                id="heaven-bridge-send"
+                type="button"
+                disabled
+              >
+                🩷 ヘブンへ送る
+              </button>
+
+
+              <p
+                class="next-heaven-bridge-status"
+                id="heaven-bridge-status"
+                aria-live="polite"
+              >
+                Userscripts Bridgeを確認中…
+              </p>
+
+            </section>
+
           </div>
-
-
-          <article class="work-next-panel" data-wf-panel data-wf-panel-surface>
-            <span class="work-next-phase">PHASE 1</span>
-            <h2 class="wf-panel-title">View移植済み</h2>
-            <p class="wf-panel-copy">
-              現在は画面構造だけを移植済み。
-              API・本番DBへの接続は次の段階で行います。
-            </p>
-          </article>
-
         </section>
 
         <section
@@ -508,32 +744,6 @@
               入力内容はリアルタイムでDB保存されます。
             </p>
 
-          </div>
-
-          <div
-            class="next-heaven-bridge-compat"
-            aria-label="Userscripts Bridge compatibility"
-          >
-            <input
-              id="heaven-standalone-title"
-              type="text"
-              tabindex="-1"
-            >
-            <textarea
-              id="heaven-standalone-body"
-              tabindex="-1"
-            ></textarea>
-            <button
-              id="heaven-bridge-send"
-              type="button"
-              disabled
-              tabindex="-1"
-            >
-              Bridge
-            </button>
-            <p id="heaven-bridge-status">
-              Userscripts Bridgeを確認中…
-            </p>
           </div>
 
         </section>
@@ -1180,6 +1390,8 @@
   <script src="./schedule-customer-link.js"></script>
   <script src="./schedule-customer-profile-full.js"></script>
   <script src="./schedule-sales-panel.js"></script>
+  <script src="./heaven-settings-runtime.js"></script>
+  <script src="./heaven-standalone.js"></script>
   <script src="./heaven-create.js"></script>
   <script src="./schedule-progress-jump.js"></script>
   <script src="./schedule-detail-mobile-flow.js"></script>
