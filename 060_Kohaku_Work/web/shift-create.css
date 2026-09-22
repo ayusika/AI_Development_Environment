@@ -140,7 +140,7 @@
 }
 
 
-@media (min-width: 1200px) {
+@media (min-width: 1080px) {
 
   body:has(#view-shift.is-active)
   .next-app-main {
@@ -148,46 +148,65 @@
   }
 
 
-  .shift-page {
-    width: 760px;
+  #view-shift .shift-page {
+    width: 100%;
+    margin: 0;
 
-    margin-left: 0;
-    margin-right: auto;
+    display: grid;
+
+    grid-template-columns:
+      minmax(620px, 760px)
+      minmax(380px, 1fr);
+
+    grid-template-areas:
+      "header shared"
+      "controls shared"
+      "week shared"
+      "entry shared";
+
+    column-gap: 18px;
+    align-items: start;
   }
 
 
-  .shift-shared-calendar-card {
-    position: fixed;
+  #view-shift .shift-page-header {
+    grid-area: header;
+  }
 
-    top:
-      calc(
-        64px
-        + 18px
-      );
 
-    right: 16px;
+  #view-shift .shift-control-card {
+    grid-area: controls;
+  }
 
-    width:
-      min(
-        620px,
-        calc(100vw - 820px)
-      );
 
-    height:
-      calc(
-        100vh
-        - 64px
-        - 78px
-        - 38px
-      );
+  #view-shift .shift-calendar-card {
+    grid-area: week;
+  }
+
+
+  #view-shift .shift-entry-card {
+    grid-area: entry;
+  }
+
+
+  #view-shift .shift-shared-calendar-card {
+    grid-area: shared;
+
+    position: sticky;
+    top: 82px;
+
+    height: calc(100vh - 104px);
 
     margin: 0;
+    order: initial;
 
     overflow: hidden;
   }
 
 
-  .shift-shared-calendar-frame {
+  #view-shift .shift-shared-calendar-frame {
+    min-height: 0;
+
     height:
       calc(
         100%
