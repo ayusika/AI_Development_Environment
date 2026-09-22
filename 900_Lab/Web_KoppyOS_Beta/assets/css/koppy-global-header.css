@@ -1,0 +1,635 @@
+/* =========================================================
+   KOPPY WORLD / GLOBAL HEADER v1
+========================================================= */
+
+.kgh-shell{
+  --kgh-accent:#82dcff;
+  --kgh-line:rgba(143,220,255,.22);
+  --kgh-text:#edfaff;
+  --kgh-muted:#8eacbc;
+
+  position:sticky;
+  top:0;
+  z-index:2147482050;
+
+  width:100%;
+
+  padding-top:
+    env(safe-area-inset-top);
+
+  border-bottom:
+    1px solid
+    var(--kgh-line);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(6,24,46,.97),
+      rgba(5,19,39,.93)
+    );
+
+  box-shadow:
+    0 10px 30px
+    rgba(0,10,28,.22);
+
+  backdrop-filter:
+    blur(22px)
+    saturate(145%);
+
+  -webkit-backdrop-filter:
+    blur(22px)
+    saturate(145%);
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+
+.kgh-inner{
+  width:
+    min(
+      1440px,
+      calc(100% - 24px)
+    );
+
+  min-height:58px;
+
+  margin:0 auto;
+
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+
+.kgh-brand{
+  min-width:0;
+
+  display:flex;
+  align-items:center;
+  gap:10px;
+
+  color:
+    var(--kgh-text);
+
+  text-decoration:none;
+}
+
+
+.kgh-brand-mark{
+  width:34px;
+  height:34px;
+
+  flex:0 0 34px;
+
+  display:grid;
+  place-items:center;
+
+  border:
+    1px solid
+    rgba(130,220,255,.34);
+
+  border-radius:11px;
+
+  background:
+    rgba(130,220,255,.08);
+
+  color:
+    var(--kgh-accent);
+
+  font-size:15px;
+  font-weight:900;
+
+  box-shadow:
+    inset 0 1px 0
+    rgba(255,255,255,.10);
+}
+
+
+.kgh-brand-copy{
+  min-width:0;
+
+  display:flex;
+  flex-direction:column;
+
+  line-height:1.05;
+}
+
+
+.kgh-brand-copy strong{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+
+  color:
+    var(--kgh-text);
+
+  font-size:13px;
+  font-weight:850;
+}
+
+
+.kgh-brand-copy small{
+  margin-top:4px;
+
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+
+  color:
+    var(--kgh-muted);
+
+  font-size:8px;
+  font-weight:850;
+  letter-spacing:.13em;
+}
+
+
+.kgh-quick{
+  flex:1;
+
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:7px;
+}
+
+
+.kgh-quick-link{
+  min-height:36px;
+
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+
+  padding:0 11px;
+
+  border:
+    1px solid
+    rgba(143,220,255,.14);
+
+  border-radius:11px;
+
+  background:
+    rgba(255,255,255,.035);
+
+  color:
+    var(--kgh-muted);
+
+  text-decoration:none;
+
+  font-size:10px;
+  font-weight:800;
+
+  transition:
+    border-color .15s ease,
+    background .15s ease,
+    color .15s ease;
+}
+
+
+.kgh-quick-link span{
+  color:
+    var(--kgh-accent);
+
+  font-size:13px;
+}
+
+
+.kgh-quick-link:hover,
+.kgh-quick-link.is-active{
+  border-color:
+    rgba(130,220,255,.42);
+
+  background:
+    rgba(130,220,255,.09);
+
+  color:
+    var(--kgh-text);
+}
+
+
+.kgh-menu-button,
+.kgh-menu-close{
+  appearance:none;
+
+  border:
+    1px solid
+    rgba(143,220,255,.24);
+
+  background:
+    rgba(255,255,255,.045);
+
+  color:
+    var(--kgh-text);
+
+  cursor:pointer;
+
+  -webkit-tap-highlight-color:
+    transparent;
+}
+
+
+.kgh-menu-button{
+  width:38px;
+  height:38px;
+
+  flex:0 0 38px;
+
+  display:grid;
+  place-items:center;
+
+  padding:0;
+
+  border-radius:12px;
+
+  font-size:20px;
+  line-height:1;
+}
+
+
+.kgh-menu-button:hover{
+  border-color:
+    rgba(130,220,255,.52);
+
+  background:
+    rgba(130,220,255,.09);
+}
+
+
+.kgh-menu-backdrop{
+  position:fixed;
+  inset:0;
+
+  z-index:2147483180;
+
+  background:
+    rgba(0,8,22,.38);
+
+  backdrop-filter:
+    blur(3px);
+
+  -webkit-backdrop-filter:
+    blur(3px);
+}
+
+
+.kgh-menu-backdrop[hidden],
+.kgh-menu[hidden]{
+  display:none !important;
+}
+
+
+.kgh-menu{
+  position:fixed;
+
+  top:
+    calc(
+      66px
+      + env(safe-area-inset-top)
+    );
+
+  right:
+    max(
+      12px,
+      env(safe-area-inset-right)
+    );
+
+  z-index:2147483200;
+
+  width:
+    min(
+      340px,
+      calc(100vw - 24px)
+    );
+
+  max-height:
+    calc(
+      100vh
+      - 84px
+      - env(safe-area-inset-top)
+      - env(safe-area-inset-bottom)
+    );
+
+  overflow:auto;
+
+  border:
+    1px solid
+    rgba(143,220,255,.28);
+
+  border-radius:20px;
+
+  background:
+    linear-gradient(
+      155deg,
+      rgba(17,50,82,.98),
+      rgba(5,19,39,.98)
+    );
+
+  color:
+    var(--kgh-text);
+
+  box-shadow:
+    0 30px 90px
+    rgba(0,7,24,.58);
+
+  backdrop-filter:
+    blur(24px)
+    saturate(145%);
+
+  -webkit-backdrop-filter:
+    blur(24px)
+    saturate(145%);
+
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+
+.kgh-menu-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+
+  padding:14px 14px 10px 16px;
+
+  border-bottom:
+    1px solid
+    rgba(143,220,255,.14);
+}
+
+
+.kgh-menu-head > div{
+  min-width:0;
+
+  display:flex;
+  flex-direction:column;
+}
+
+
+.kgh-menu-head strong{
+  font-size:13px;
+}
+
+
+.kgh-menu-head small{
+  margin-top:3px;
+
+  color:
+    var(--kgh-muted);
+
+  font-size:8px;
+  font-weight:850;
+  letter-spacing:.14em;
+}
+
+
+.kgh-menu-close{
+  width:34px;
+  height:34px;
+
+  flex:0 0 34px;
+
+  display:grid;
+  place-items:center;
+
+  padding:0;
+
+  border-radius:11px;
+
+  font-size:21px;
+}
+
+
+.kgh-menu-list{
+  display:grid;
+  gap:4px;
+
+  padding:9px;
+}
+
+
+.kgh-menu-link{
+  min-height:52px;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+
+  padding:8px 11px;
+
+  border:
+    1px solid
+    transparent;
+
+  border-radius:13px;
+
+  color:
+    var(--kgh-text);
+
+  text-decoration:none;
+}
+
+
+.kgh-menu-link > span:first-child{
+  min-width:0;
+
+  display:flex;
+  flex-direction:column;
+}
+
+
+.kgh-menu-link strong{
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+
+  font-size:12px;
+  font-weight:800;
+}
+
+
+.kgh-menu-link small{
+  margin-top:3px;
+
+  color:
+    var(--kgh-muted);
+
+  font-size:8px;
+  font-weight:800;
+  letter-spacing:.10em;
+}
+
+
+.kgh-menu-arrow{
+  color:
+    var(--kgh-accent);
+
+  font-size:14px;
+}
+
+
+.kgh-menu-link:hover,
+.kgh-menu-link.is-active{
+  border-color:
+    rgba(130,220,255,.22);
+
+  background:
+    rgba(130,220,255,.08);
+}
+
+
+.kgh-menu-link.is-active::before{
+  content:"";
+
+  width:4px;
+  height:22px;
+
+  flex:0 0 4px;
+
+  border-radius:999px;
+
+  background:
+    var(--kgh-accent);
+
+  box-shadow:
+    0 0 12px
+    rgba(130,220,255,.42);
+}
+
+
+/*
+   Once the shared header is mounted,
+   retire duplicated page-level navigation.
+   Page titles such as the calendar heading remain.
+*/
+
+.kgh-mounted .kw-topbar,
+.kgh-mounted .brain-nav,
+.kgh-mounted .chat-nav,
+.kgh-mounted .writer-nav,
+.kgh-mounted .system-nav,
+.kgh-mounted .next-app-header,
+.kgh-mounted .app-header{
+  display:none !important;
+}
+
+
+@media(max-width:620px){
+
+  .kgh-inner{
+    width:
+      calc(100% - 16px);
+
+    min-height:54px;
+
+    gap:7px;
+  }
+
+
+  .kgh-brand{
+    gap:7px;
+  }
+
+
+  .kgh-brand-mark{
+    width:32px;
+    height:32px;
+
+    flex-basis:32px;
+
+    border-radius:10px;
+
+    font-size:13px;
+  }
+
+
+  .kgh-brand-copy strong{
+    font-size:11px;
+  }
+
+
+  .kgh-brand-copy small{
+    font-size:7px;
+  }
+
+
+  .kgh-quick{
+    gap:5px;
+  }
+
+
+  .kgh-quick-link{
+    min-height:34px;
+
+    padding:0 8px;
+
+    font-size:9px;
+  }
+
+
+  .kgh-menu-button{
+    width:36px;
+    height:36px;
+
+    flex-basis:36px;
+  }
+
+
+  .kgh-menu{
+    top:
+      calc(
+        62px
+        + env(safe-area-inset-top)
+      );
+  }
+}
+
+
+@media(max-width:480px){
+
+  .kgh-brand-copy small{
+    display:none;
+  }
+
+
+  .kgh-quick-link--work{
+    display:none;
+  }
+
+
+  .kgh-quick-link--calendar{
+    padding:0 8px;
+  }
+
+
+  .kgh-quick-link--calendar strong{
+    font-size:9px;
+  }
+}
+
+
+@media(max-width:370px){
+
+  .kgh-brand-copy{
+    display:none;
+  }
+}
+
+
+@media print{
+
+  .kgh-shell,
+  .kgh-menu,
+  .kgh-menu-backdrop{
+    display:none !important;
+  }
+}

@@ -1,6 +1,36 @@
 (() => {
   "use strict";
 
+  const loadGlobalHeader = () => {
+    if (
+      window.KoppyGlobalHeader?.mounted
+      || document.querySelector(
+        '[data-koppy-global-header-loader]'
+      )
+    ) {
+      return;
+    }
+
+    const script =
+      document.createElement(
+        "script"
+      );
+
+    script.src =
+      "/assets/js/koppy-global-header.js";
+
+    script.dataset
+      .koppyGlobalHeaderLoader =
+        "";
+
+    document.head.appendChild(
+      script
+    );
+  };
+
+  loadGlobalHeader();
+
+
   const loadGlobalMemo = () => {
     if (
       window.KoppyGlobalMemo?.mounted
