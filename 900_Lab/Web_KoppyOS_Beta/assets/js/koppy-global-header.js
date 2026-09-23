@@ -63,19 +63,20 @@
       legacy: true
     },
     {
+      id: "system",
+      href: "/system/",
+      label: "Local Development",
+      detail: "SYSTEM"
+    },
+    {
       id: "writer",
       href:
         LEGACY_WORLD_ORIGIN
         + "/writer/",
       label: "GitHub Writer",
-      detail: "WRITER / LOLIPOP LEGACY",
-      legacy: true
-    },
-    {
-      id: "system",
-      href: "/system/",
-      label: "Local Development",
-      detail: "SYSTEM"
+      detail: "RETIRED / LOLIPOP ARCHIVE",
+      legacy: true,
+      retired: true
     }
   ];
 
@@ -539,13 +540,52 @@
       "kgh-menu-list";
 
 
+    let retiredDividerAdded =
+      false;
+
+
     ROUTES.forEach(
       route => {
+
+        if (
+          route.retired === true
+          && !retiredDividerAdded
+        ) {
+          const divider =
+            document.createElement(
+              "div"
+            );
+
+          divider.className =
+            "kgh-menu-section";
+
+          divider.innerHTML =
+            "<strong>RETIRED</strong>"
+            + "<small>ARCHIVE / 旧機能</small>";
+
+          list.appendChild(
+            divider
+          );
+
+          retiredDividerAdded =
+            true;
+        }
+
+
         const link =
           createLink(
             route,
             "kgh-menu-link"
           );
+
+
+        if (
+          route.retired === true
+        ) {
+          link.classList.add(
+            "is-retired"
+          );
+        }
 
 
         const text =
