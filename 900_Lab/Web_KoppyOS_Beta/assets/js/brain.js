@@ -6,7 +6,7 @@
   ====================================================== */
 
   const brainApiUrl =
-    "https://koppy.miki-piano.com/api/v1/brain/github.php";
+    "/api/v1/brain/github.php";
 
   const loadButton =
     document.getElementById(

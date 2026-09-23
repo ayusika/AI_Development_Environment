@@ -258,7 +258,7 @@
     const controller = new AbortController();
     const timeout = window.setTimeout(() => controller.abort(), 15000);
     try {
-      const response = await fetch('https://koppy.miki-piano.com/api/v1/home.php', {method: 'GET', credentials: 'include', cache: 'no-store', headers: {Accept: 'application/json'}, signal: controller.signal});
+      const response = await fetch('/api/v1/home.php', {method: 'GET', credentials: 'same-origin', cache: 'no-store', headers: {Accept: 'application/json'}, signal: controller.signal});
       if (response.status === 401) {
         roomsElement.replaceChildren();
         login.hidden = false;

@@ -37,21 +37,15 @@
     },
     {
       id: "house",
-      href:
-        LEGACY_WORLD_ORIGIN
-        + "/house/",
+      href: "/house/",
       label: "自宅",
-      detail: "HOUSE / LOLIPOP LEGACY",
-      legacy: true
+      detail: "HOUSE"
     },
     {
       id: "brain",
-      href:
-        LEGACY_WORLD_ORIGIN
-        + "/brain/",
+      href: "/brain/",
       label: "GitHub Brain",
-      detail: "BRAIN / LOLIPOP LEGACY",
-      legacy: true
+      detail: "BRAIN"
     },
     {
       id: "chat",

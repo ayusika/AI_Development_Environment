@@ -82,6 +82,18 @@ if (
         $returnUrl,
         '/kohaku-work/'
     )
+    && !str_starts_with(
+        $returnUrl,
+        '/house/'
+    )
+    && !str_starts_with(
+        $returnUrl,
+        '/brain/'
+    )
+    && !str_starts_with(
+        $returnUrl,
+        '/chat/'
+    )
 ) {
     $returnUrl =
         '/work/';
@@ -128,6 +140,18 @@ if (
         && !str_starts_with(
             $postedReturnUrl,
             '/kohaku-work/'
+        )
+        && !str_starts_with(
+            $postedReturnUrl,
+            '/house/'
+        )
+        && !str_starts_with(
+            $postedReturnUrl,
+            '/brain/'
+        )
+        && !str_starts_with(
+            $postedReturnUrl,
+            '/chat/'
         )
     ) {
         $postedReturnUrl =

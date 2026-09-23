@@ -9,7 +9,7 @@ if (!in_array($method, ['GET', 'OPTIONS'], true)) {
     header('Allow: GET, OPTIONS');
     respondError('Method not allowed.', 405);
 }
-require __DIR__ . '/bootstrap.php';
+require __DIR__ . '/private-auth-bootstrap.php';
 require_once __DIR__ . '/../../core/koppyos-database.php';
 header('Access-Control-Allow-Methods: GET, OPTIONS');
 header('Cache-Control: no-store');
