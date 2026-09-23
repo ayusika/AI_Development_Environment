@@ -264,16 +264,13 @@
   position:fixed;
   inset:0;
 
-  z-index:2147483180;
+  z-index:2147482500;
 
   background:
-    rgba(0,8,22,.38);
+    rgba(0,8,22,.08);
 
-  backdrop-filter:
-    blur(3px);
-
-  -webkit-backdrop-filter:
-    blur(3px);
+  backdrop-filter:none;
+  -webkit-backdrop-filter:none;
 }
 
 
@@ -285,6 +282,10 @@
 
 .kgh-menu{
   position:fixed;
+
+  isolation:isolate;
+  opacity:1;
+  filter:none;
 
   top:
     calc(

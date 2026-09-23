@@ -12,14 +12,14 @@
   const STYLE_URL =
     "/assets/css/koppy-global-header.css";
 
-  const WORLD_ORIGIN =
+  const LEGACY_WORLD_ORIGIN =
     "https://koppy.miki-piano.com";
 
 
   const ROUTES = [
     {
       id: "world",
-      href: WORLD_ORIGIN + "/",
+      href: "/",
       label: "Koppy World",
       detail: "WORLD HOME"
     },
@@ -37,27 +37,39 @@
     },
     {
       id: "house",
-      href: WORLD_ORIGIN + "/house/",
+      href:
+        LEGACY_WORLD_ORIGIN
+        + "/house/",
       label: "自宅",
-      detail: "HOUSE"
+      detail: "HOUSE / LOLIPOP LEGACY",
+      legacy: true
     },
     {
       id: "brain",
-      href: WORLD_ORIGIN + "/brain/",
+      href:
+        LEGACY_WORLD_ORIGIN
+        + "/brain/",
       label: "GitHub Brain",
-      detail: "BRAIN"
+      detail: "BRAIN / LOLIPOP LEGACY",
+      legacy: true
     },
     {
       id: "chat",
-      href: WORLD_ORIGIN + "/chat/",
+      href:
+        LEGACY_WORLD_ORIGIN
+        + "/chat/",
       label: "Koppy Chat",
-      detail: "CHAT"
+      detail: "CHAT / LOLIPOP LEGACY",
+      legacy: true
     },
     {
       id: "writer",
-      href: WORLD_ORIGIN + "/writer/",
+      href:
+        LEGACY_WORLD_ORIGIN
+        + "/writer/",
       label: "GitHub Writer",
-      detail: "WRITER"
+      detail: "WRITER / LOLIPOP LEGACY",
+      legacy: true
     },
     {
       id: "system",
@@ -274,7 +286,7 @@
       );
 
     brand.href =
-      WORLD_ORIGIN + "/";
+      "/";
 
     brand.className =
       "kgh-brand";
@@ -559,7 +571,9 @@
           "kgh-menu-arrow";
 
         arrow.textContent =
-          "→";
+          route.legacy
+            ? "↗"
+            : "→";
 
 
         link.append(
