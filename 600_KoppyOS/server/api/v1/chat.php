@@ -2,7 +2,39 @@
 
 declare(strict_types=1);
 
-require __DIR__ . '/bootstrap.php';
+require_once __DIR__
+    . '/private-auth-bootstrap.php';
+
+require_once __DIR__
+    . '/../../core/runtime-path.php';
+
+
+$chatConfigPath =
+    koppyResolveRuntimePath(
+        'KOPPY_CHAT_CONFIG_PATH',
+        '/opt/local/etc/koppy/private/chat-config.php'
+    );
+
+
+if (!is_file($chatConfigPath)) {
+    respondError(
+        'Koppy Chat configuration was not found.',
+        503
+    );
+}
+
+
+$config =
+    require $chatConfigPath;
+
+
+if (!is_array($config)) {
+    respondError(
+        'Koppy Chat configuration is invalid.',
+        500
+    );
+}
+
 
 $requestMethod = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 

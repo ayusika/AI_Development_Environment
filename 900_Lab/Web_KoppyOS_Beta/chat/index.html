@@ -37,6 +37,7 @@
     id="authGate"
     class="auth-gate"
     aria-live="polite"
+    hidden
   >
     <div class="auth-gate-card">
 
@@ -69,7 +70,7 @@
       <a
         id="authLoginButton"
         class="auth-login-button"
-        href="https://koppy.miki-piano.com/api/v1/auth/login.php"
+        href="/auth/login.php?return=/chat/"
         hidden
       >
         <span aria-hidden="true">
@@ -87,7 +88,7 @@
 
   <main
     id="koppyWorld"
-    class="world chat-shell auth-pending"
+    class="world chat-shell"
   >
 
     <nav class="chat-nav">
@@ -290,7 +291,6 @@
   </main>
 
 
-  <script src="../assets/js/auth.js"></script>
   <script src="../assets/js/chat.js"></script>
 
 

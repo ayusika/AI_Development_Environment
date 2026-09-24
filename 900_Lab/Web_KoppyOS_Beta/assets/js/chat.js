@@ -2,7 +2,7 @@
   "use strict";
 
   const koppyChatApiUrl =
-    "https://koppy.miki-piano.com/api/v1/chat.php";
+    "/api/v1/chat.php";
 
   const chatForm =
     document.getElementById(
@@ -274,7 +274,7 @@
             "POST",
 
           credentials:
-            "include",
+            "same-origin",
 
           headers: {
             "Content-Type":

@@ -49,12 +49,9 @@
     },
     {
       id: "chat",
-      href:
-        LEGACY_WORLD_ORIGIN
-        + "/chat/",
+      href: "/chat/",
       label: "Koppy Chat",
-      detail: "CHAT / LOLIPOP LEGACY",
-      legacy: true
+      detail: "CHAT"
     },
     {
       id: "system",
