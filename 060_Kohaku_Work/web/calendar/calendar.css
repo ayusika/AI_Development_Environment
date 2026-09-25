@@ -157,93 +157,6 @@ button {
 }
 
 
-.calendar-source-links {
-  display:
-    flex;
-
-  align-items:
-    center;
-
-  justify-content:
-    flex-end;
-
-  flex-wrap:
-    wrap;
-
-  gap:
-    8px;
-
-  margin-left:
-    auto;
-}
-
-
-.calendar-source-link {
-  display:
-    inline-flex;
-
-  align-items:
-    center;
-
-  justify-content:
-    center;
-
-  min-height:
-    36px;
-
-  padding:
-    0 12px;
-
-  border:
-    1px solid
-    rgba(125, 205, 239, 0.48);
-
-  border-radius:
-    999px;
-
-  background:
-    rgba(238, 250, 255, 0.92);
-
-  color:
-    #32677f;
-
-  font-size:
-    12px;
-
-  font-weight:
-    800;
-
-  line-height:
-    1;
-
-  text-decoration:
-    none;
-
-  white-space:
-    nowrap;
-
-  box-shadow:
-    0 3px 10px
-    rgba(70, 126, 153, 0.08);
-
-  transition:
-    transform 0.15s ease,
-    background 0.15s ease;
-}
-
-
-.calendar-source-link:hover {
-  background:
-    #dff5ff;
-}
-
-
-.calendar-source-link:active {
-  transform:
-    scale(0.96);
-}
-
-
 .calendar-header-actions {
   display:
     flex;
@@ -3732,27 +3645,6 @@ button[data-calendar-today] {
 
     white-space:
       nowrap;
-  }
-
-
-  .calendar-source-links {
-    flex-wrap:
-      nowrap;
-
-    gap:
-      4px;
-  }
-
-
-  .calendar-source-link {
-    min-height:
-      32px;
-
-    padding:
-      0 8px;
-
-    font-size:
-      10px;
   }
 
 

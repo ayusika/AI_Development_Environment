@@ -119,14 +119,6 @@ const ownerFilterButtons =
     ),
   ];
 
-const sourceLinkElements =
-  [
-    ...document.querySelectorAll(
-      '[data-calendar-source-link]'
-    ),
-  ];
-
-
 function calendarOwnerIsVisible(
   ownerCode
 ) {
@@ -215,6 +207,14 @@ function syncCalendarOwnerFilterButtons() {
 
 function syncCalendarSourceLinks() {
 
+  const sourceLinkElements =
+    [
+      ...document.querySelectorAll(
+        '[data-calendar-source-link]'
+      ),
+    ];
+
+
   sourceLinkElements.forEach(
     (link) => {
 
@@ -257,6 +257,12 @@ function syncCalendarSourceLinks() {
     }
   );
 }
+
+
+document.addEventListener(
+  'koppy-global-header-mounted',
+  syncCalendarSourceLinks
+);
 
 
 function captureCalendarAnchor() {

@@ -393,9 +393,92 @@
       + "<strong>共有カレンダー</strong>";
 
 
+    const calendarSourceLinks =
+      [];
+
+
+    if (
+      currentRoute?.id
+      === "calendar"
+    ) {
+
+      [
+        [
+          "shii",
+          "しい店舗"
+        ],
+        [
+          "ui",
+          "うい店舗"
+        ]
+      ].forEach(
+        ([
+          workerCode,
+          label
+        ]) => {
+
+          const link =
+            document.createElement(
+              "a"
+            );
+
+          link.className =
+            "kgh-quick-link "
+            + "kgh-quick-link--source";
+
+          link.dataset
+            .calendarSourceLink =
+              workerCode;
+
+          link.target =
+            "_blank";
+
+          link.rel =
+            "noopener noreferrer";
+
+          link.title =
+            `${label}スケジュールを開く`;
+
+          link.hidden =
+            true;
+
+
+          const icon =
+            document.createElement(
+              "span"
+            );
+
+          icon.textContent =
+            "↗";
+
+
+          const text =
+            document.createElement(
+              "strong"
+            );
+
+          text.textContent =
+            label;
+
+
+          link.append(
+            icon,
+            text
+          );
+
+
+          calendarSourceLinks.push(
+            link
+          );
+        }
+      );
+    }
+
+
     quick.append(
       work,
-      calendar
+      calendar,
+      ...calendarSourceLinks
     );
 
 
@@ -760,6 +843,13 @@
           );
         }
     };
+
+
+    document.dispatchEvent(
+      new CustomEvent(
+        "koppy-global-header-mounted"
+      )
+    );
   };
 
 

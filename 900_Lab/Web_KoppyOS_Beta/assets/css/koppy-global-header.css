@@ -216,6 +216,32 @@
 }
 
 
+.kgh-quick-link[hidden]{
+  display:none !important;
+}
+
+
+.kgh-quick-link--source{
+  padding:
+    0 9px;
+
+  border-color:
+    rgba(130,220,255,.24);
+
+  background:
+    rgba(130,220,255,.06);
+
+  color:
+    var(--kgh-text);
+}
+
+
+.kgh-quick-link--source span{
+  font-size:
+    11px;
+}
+
+
 .kgh-menu-button,
 .kgh-menu-close{
   appearance:none;
@@ -624,6 +650,12 @@
     padding:0 8px;
 
     font-size:9px;
+  }
+
+
+  .kgh-quick-link--source{
+    padding:
+      0 7px;
   }
 
 
