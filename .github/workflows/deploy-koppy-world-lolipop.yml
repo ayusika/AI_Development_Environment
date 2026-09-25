@@ -146,6 +146,8 @@ jobs:
 
           publish_deploy_status "running"
 
+          if [ "$RETIRE_LEGACY_ONLY" != "true" ]; then
+
           SOURCE_FILE="900_Lab/Web_KoppyOS_Beta/index.html"
           REMOTE_FILE="/home/users/2/her.jp-mikipiano/web/koppy/index.html"
 
@@ -246,6 +248,8 @@ jobs:
             -C "$DEPLOY_PACKAGE_DIR" \
             -czf "$DEPLOY_ARCHIVE" \
             .
+
+          fi
 
           retry_command() {
             local attempt=1
