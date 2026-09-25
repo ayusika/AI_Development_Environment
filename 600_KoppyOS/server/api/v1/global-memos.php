@@ -658,6 +658,186 @@ try {
         }
 
 
+        if (
+            $action
+            === 'reorder_pages'
+        ) {
+
+            $buttonId =
+                globalMemoId(
+                    $body['button_id']
+                    ?? null,
+                    'button_id'
+                );
+
+
+            $rawPageIds =
+                $body['page_ids']
+                ?? null;
+
+
+            if (
+                !is_array(
+                    $rawPageIds
+                )
+                || count(
+                    $rawPageIds
+                ) < 1
+                || count(
+                    $rawPageIds
+                ) > 20
+            ) {
+                throw new RuntimeException(
+                    'Invalid memo page order.'
+                );
+            }
+
+
+            $pageIds = [];
+
+
+            foreach (
+                $rawPageIds
+                as $rawPageId
+            ) {
+                $pageIds[] =
+                    globalMemoId(
+                        $rawPageId,
+                        'page_id'
+                    );
+            }
+
+
+            if (
+                count(
+                    array_unique(
+                        $pageIds
+                    )
+                )
+                !== count(
+                    $pageIds
+                )
+            ) {
+                throw new RuntimeException(
+                    'Duplicate memo page id.'
+                );
+            }
+
+
+            $statement =
+                $pdo->prepare(
+                    '
+                    SELECT
+                        id
+
+                    FROM
+                        koppy_global_memo_pages
+
+                    WHERE
+                        button_id = ?
+
+                    ORDER BY
+                        sort_order ASC,
+                        id ASC
+                    '
+                );
+
+
+            $statement->execute([
+                $buttonId,
+            ]);
+
+
+            $existingPageIds =
+                array_map(
+                    'intval',
+                    $statement->fetchAll(
+                        PDO::FETCH_COLUMN
+                    )
+                );
+
+
+            $expectedPageIds =
+                $existingPageIds;
+
+            $receivedPageIds =
+                $pageIds;
+
+
+            sort(
+                $expectedPageIds,
+                SORT_NUMERIC
+            );
+
+            sort(
+                $receivedPageIds,
+                SORT_NUMERIC
+            );
+
+
+            if (
+                $expectedPageIds
+                !== $receivedPageIds
+            ) {
+                throw new RuntimeException(
+                    'Memo page order does not match button pages.'
+                );
+            }
+
+
+            $pdo->beginTransaction();
+
+
+            $statement =
+                $pdo->prepare(
+                    '
+                    UPDATE
+                        koppy_global_memo_pages
+
+                    SET
+                        sort_order = ?,
+                        updated_at = CURRENT_TIMESTAMP
+
+                    WHERE
+                        id = ?
+                        AND button_id = ?
+                    '
+                );
+
+
+            foreach (
+                $pageIds
+                as $sortOrder
+                => $pageId
+            ) {
+
+                $statement->execute([
+                    $sortOrder,
+                    $pageId,
+                    $buttonId,
+                ]);
+            }
+
+
+            $pdo->commit();
+
+
+            globalMemoResponse([
+                'success' =>
+                    true,
+
+                'button_id' =>
+                    $buttonId,
+
+                'page_ids' =>
+                    $pageIds,
+
+                'error' =>
+                    null,
+            ]);
+        }
+
+
         throw new RuntimeException(
             'Unknown memo action.'
         );

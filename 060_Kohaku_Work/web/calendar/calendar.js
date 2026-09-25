@@ -32,6 +32,7 @@ const calendarState = {
   listingChecks: {
     byKey: {},
     workerStatus: {},
+    sourceUrls: {},
   },
 
   ownerFilter:
@@ -118,6 +119,13 @@ const ownerFilterButtons =
     ),
   ];
 
+const sourceLinkElements =
+  [
+    ...document.querySelectorAll(
+      '[data-calendar-source-link]'
+    ),
+  ];
+
 
 function calendarOwnerIsVisible(
   ownerCode
@@ -200,6 +208,52 @@ function syncCalendarOwnerFilterButtons() {
           ? 'true'
           : 'false'
       );
+    }
+  );
+}
+
+
+function syncCalendarSourceLinks() {
+
+  sourceLinkElements.forEach(
+    (link) => {
+
+      const workerCode =
+        String(
+          link.dataset
+            .calendarSourceLink
+          || ''
+        );
+
+      const sourceUrl =
+        String(
+          calendarState
+            .listingChecks
+            .sourceUrls[
+              workerCode
+            ]
+          || ''
+        );
+
+
+      if (sourceUrl === '') {
+
+        link.hidden =
+          true;
+
+        link.removeAttribute(
+          'href'
+        );
+
+        return;
+      }
+
+
+      link.href =
+        sourceUrl;
+
+      link.hidden =
+        false;
     }
   );
 }
@@ -2572,6 +2626,7 @@ function resetShiftListingChecks() {
   calendarState.listingChecks = {
     byKey: {},
     workerStatus: {},
+    sourceUrls: {},
   };
 }
 
@@ -2617,6 +2672,17 @@ function applyShiftListingCheckData(
           workerCode
         ] =
           sourceStatus;
+
+
+      calendarState
+        .listingChecks
+        .sourceUrls[
+          workerCode
+        ] =
+          String(
+            worker?.source_url
+            || ''
+          );
 
 
       if (
@@ -2667,6 +2733,9 @@ function applyShiftListingCheckData(
       );
     }
   );
+
+
+  syncCalendarSourceLinks();
 }
 
 
@@ -2802,23 +2871,10 @@ function getShiftListingStatus(
 function createShiftListingStatusElement(
   listingStatus
 ) {
-  const sourceUrl =
-    String(
-      listingStatus?.sourceUrl
-      || ''
-    );
-
-  const isMismatchLink =
-    listingStatus?.kind
-      === 'mismatch'
-    && sourceUrl !== '';
-
 
   const statusElement =
     document.createElement(
-      isMismatchLink
-        ? 'a'
-        : 'span'
+      'span'
     );
 
 
@@ -2834,24 +2890,6 @@ function createShiftListingStatusElement(
   statusElement.dataset
     .comparison =
       listingStatus.comparison;
-
-
-  if (isMismatchLink) {
-
-    statusElement.href =
-      sourceUrl;
-
-    statusElement.target =
-      '_blank';
-
-    statusElement.rel =
-      'noopener noreferrer';
-
-    statusElement.setAttribute(
-      'aria-label',
-      'Heavenと差異あり。照合したHeavenページを開く'
-    );
-  }
 
 
   if (listingStatus.symbol) {

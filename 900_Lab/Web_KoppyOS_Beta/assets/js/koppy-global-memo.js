@@ -37,7 +37,8 @@
     dirtyPages: new Set(),
     saveTimers: new Map(),
     versions: new Map(),
-    launchers: new Map()
+    launchers: new Map(),
+    panelResizeObserver: null
   };
 
 
@@ -279,6 +280,423 @@
       Array.isArray(buttons)
         ? buttons
         : [];
+  };
+
+
+  const savePageOrder = async (
+    button,
+    orderedPageIds,
+    previousPages
+  ) => {
+
+    try {
+
+      await api(
+        "POST",
+        {
+          action:
+            "reorder_pages",
+
+          button_id:
+            button.id,
+
+          page_ids:
+            orderedPageIds
+        }
+      );
+
+
+      setStatus(
+        "並べ替え保存済み",
+        "saved"
+      );
+
+    } catch (error) {
+
+      button.pages =
+        previousPages;
+
+      renderPanel();
+
+      setStatus(
+        "並べ替え失敗",
+        "error"
+      );
+
+      console.error(
+        "Koppy global memo reorder failed.",
+        error
+      );
+    }
+  };
+
+
+  const wirePageTabReorder = (
+    tabs,
+    button
+  ) => {
+
+    if (
+      !tabs
+      || !button
+      || !Array.isArray(
+        button.pages
+      )
+      || button.pages.length <= 1
+    ) {
+      return;
+    }
+
+
+    let drag =
+      null;
+
+
+    const finish = (
+      event
+    ) => {
+
+      if (
+        !drag
+        || event.pointerId
+          !== drag.pointerId
+      ) {
+        return;
+      }
+
+
+      const current =
+        drag;
+
+      drag =
+        null;
+
+
+      try {
+        current.tab
+          .releasePointerCapture(
+            event.pointerId
+          );
+      } catch {
+        // Pointer capture is optional.
+      }
+
+
+      current.tab
+        .classList.remove(
+          "is-dragging"
+        );
+
+      tabs.classList.remove(
+        "is-reordering"
+      );
+
+
+      if (!current.moved) {
+        return;
+      }
+
+
+      current.tab.dataset
+        .kgmSuppressClick =
+          "1";
+
+
+      window.setTimeout(
+        () => {
+          delete current.tab.dataset
+            .kgmSuppressClick;
+        },
+        250
+      );
+
+
+      const orderedPageIds =
+        [
+          ...tabs.querySelectorAll(
+            ".kgm-page-tab"
+          ),
+        ]
+        .map(
+          tab =>
+            Number(
+              tab.dataset
+                .kgmPageId
+            )
+        );
+
+
+      const previousPageIds =
+        current.previousPages
+          .map(
+            page =>
+              Number(
+                page.id
+              )
+          );
+
+
+      if (
+        orderedPageIds.length
+          !== previousPageIds.length
+        || orderedPageIds.some(
+          pageId =>
+            !Number.isFinite(
+              pageId
+            )
+        )
+      ) {
+
+        renderPanel();
+
+        return;
+      }
+
+
+      const changed =
+        orderedPageIds.some(
+          (
+            pageId,
+            index
+          ) =>
+            pageId
+            !== previousPageIds[
+              index
+            ]
+        );
+
+
+      if (!changed) {
+        return;
+      }
+
+
+      const pageMap =
+        new Map(
+          current.previousPages
+            .map(
+              page => [
+                Number(
+                  page.id
+                ),
+                page
+              ]
+            )
+        );
+
+
+      const reorderedPages =
+        orderedPageIds.map(
+          pageId =>
+            pageMap.get(
+              pageId
+            )
+        );
+
+
+      if (
+        reorderedPages.some(
+          page =>
+            !page
+        )
+      ) {
+
+        renderPanel();
+
+        return;
+      }
+
+
+      button.pages =
+        reorderedPages;
+
+
+      void savePageOrder(
+        button,
+        orderedPageIds,
+        current.previousPages
+      );
+    };
+
+
+    tabs.addEventListener(
+      "pointerdown",
+      event => {
+
+        const tab =
+          event.target.closest(
+            ".kgm-page-tab"
+          );
+
+
+        if (
+          !tab
+          || !tabs.contains(
+            tab
+          )
+        ) {
+          return;
+        }
+
+
+        if (
+          event.pointerType
+            === "mouse"
+          && event.button
+            !== 0
+        ) {
+          return;
+        }
+
+
+        drag = {
+          pointerId:
+            event.pointerId,
+
+          tab,
+
+          startX:
+            event.clientX,
+
+          startY:
+            event.clientY,
+
+          moved:
+            false,
+
+          previousPages:
+            [
+              ...button.pages,
+            ]
+        };
+
+
+        try {
+          tab.setPointerCapture(
+            event.pointerId
+          );
+        } catch {
+          // Pointer capture is optional.
+        }
+      }
+    );
+
+
+    tabs.addEventListener(
+      "pointermove",
+      event => {
+
+        if (
+          !drag
+          || event.pointerId
+            !== drag.pointerId
+        ) {
+          return;
+        }
+
+
+        const dx =
+          event.clientX
+          - drag.startX;
+
+        const dy =
+          event.clientY
+          - drag.startY;
+
+
+        if (!drag.moved) {
+
+          if (
+            Math.hypot(
+              dx,
+              dy
+            )
+            < DRAG_THRESHOLD
+          ) {
+            return;
+          }
+
+
+          if (
+            Math.abs(dy)
+            > Math.abs(dx)
+          ) {
+            return;
+          }
+
+
+          drag.moved =
+            true;
+
+          drag.tab.classList.add(
+            "is-dragging"
+          );
+
+          tabs.classList.add(
+            "is-reordering"
+          );
+        }
+
+
+        event.preventDefault();
+
+
+        const candidates =
+          [
+            ...tabs.querySelectorAll(
+              ".kgm-page-tab"
+            ),
+          ]
+          .filter(
+            candidate =>
+              candidate
+              !== drag.tab
+          );
+
+
+        const before =
+          candidates.find(
+            candidate => {
+
+              const rect =
+                candidate
+                  .getBoundingClientRect();
+
+              return (
+                event.clientX
+                < rect.left
+                  + (
+                    rect.width
+                    / 2
+                  )
+              );
+            }
+          );
+
+
+        if (before) {
+          tabs.insertBefore(
+            drag.tab,
+            before
+          );
+        } else {
+          tabs.appendChild(
+            drag.tab
+          );
+        }
+      }
+    );
+
+
+    tabs.addEventListener(
+      "pointerup",
+      finish
+    );
+
+    tabs.addEventListener(
+      "pointercancel",
+      finish
+    );
   };
 
 
@@ -873,6 +1291,71 @@
   };
 
 
+  const clampPanelToViewport = () => {
+
+    if (
+      !state.panel
+      || state.panel.hidden
+    ) {
+      return;
+    }
+
+
+    const view =
+      viewport();
+
+    const rect =
+      state.panel
+        .getBoundingClientRect();
+
+
+    const minLeft =
+      view.left
+      + EDGE;
+
+    const minTop =
+      view.top
+      + EDGE;
+
+    const maxLeft =
+      Math.max(
+        minLeft,
+        view.left
+        + view.width
+        - rect.width
+        - EDGE
+      );
+
+    const maxTop =
+      Math.max(
+        minTop,
+        view.top
+        + view.height
+        - rect.height
+        - EDGE
+      );
+
+
+    state.panel.style.left =
+      `${
+        clamp(
+          rect.left,
+          minLeft,
+          maxLeft
+        )
+      }px`;
+
+    state.panel.style.top =
+      `${
+        clamp(
+          rect.top,
+          minTop,
+          maxTop
+        )
+      }px`;
+  };
+
+
   const activePageFor = (
     button
   ) => {
@@ -1056,7 +1539,7 @@
       "kgm-panel-action";
 
     close.textContent =
-      "×";
+      "閉じる";
 
     close.title =
       "閉じる";
@@ -1100,6 +1583,17 @@
           tab.className =
             "kgm-page-tab";
 
+          tab.dataset.kgmPageId =
+            String(
+              memoPage.id
+            );
+
+          tab.title =
+            button.pages.length > 1
+              ? "ドラッグで並べ替え"
+              : "";
+
+
           if (
             page
             && Number(
@@ -1122,7 +1616,17 @@
 
           tab.addEventListener(
             "click",
-            () => {
+            event => {
+
+              if (
+                tab.dataset
+                  .kgmSuppressClick
+                === "1"
+              ) {
+                event.preventDefault();
+                return;
+              }
+
 
               state.activePages[
                 button.id
@@ -1142,6 +1646,12 @@
           );
         }
       );
+
+
+    wirePageTabReorder(
+      tabs,
+      button
+    );
 
 
     const editor =
@@ -2314,6 +2824,28 @@
         "resize",
         reflow
       );
+
+
+    if (
+      typeof ResizeObserver
+      === "function"
+    ) {
+
+      state.panelResizeObserver =
+        new ResizeObserver(
+          () => {
+            window.requestAnimationFrame(
+              clampPanelToViewport
+            );
+          }
+        );
+
+
+      state.panelResizeObserver
+        .observe(
+          state.panel
+        );
+    }
 
 
     window.addEventListener(
