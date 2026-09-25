@@ -31,6 +31,12 @@ on:
         type: boolean
         default: false
 
+      retire_legacy_only:
+        description: "Retire legacy House / Brain / Chat on Lolipop only"
+        required: false
+        type: boolean
+        default: false
+
 permissions:
   contents: read
 
@@ -66,6 +72,7 @@ jobs:
           SSH_PASSWORD: ${{ secrets.LOLIPOP_SSH_PASSWORD }}
           SSH_PORT: ${{ secrets.LOLIPOP_SSH_PORT }}
           RUN_MIGRATIONS: ${{ github.event_name == 'workflow_dispatch' && inputs.run_migrations }}
+          RETIRE_LEGACY_ONLY: ${{ github.event_name == 'workflow_dispatch' && inputs.retire_legacy_only }}
 
         run: |
           set -euo pipefail
@@ -256,6 +263,102 @@ jobs:
               sleep 5
             done
           }
+
+          if [ "$RETIRE_LEGACY_ONLY" = "true" ]; then
+
+            LEGACY_PACKAGE_DIR="$RUNNER_TEMP/koppy-legacy-retirement"
+            LEGACY_ARCHIVE="$RUNNER_TEMP/koppy-legacy-retirement.tar.gz"
+            REMOTE_LEGACY_ARCHIVE="koppy-legacy-retirement.tar.gz"
+            LEGACY_REMOTE_ROOT="/home/users/2/her.jp-mikipiano/web/koppy"
+
+            rm -rf "$LEGACY_PACKAGE_DIR"
+            rm -f "$LEGACY_ARCHIVE"
+
+            mkdir -p \
+              "$LEGACY_PACKAGE_DIR/house" \
+              "$LEGACY_PACKAGE_DIR/brain" \
+              "$LEGACY_PACKAGE_DIR/chat" \
+              "$LEGACY_PACKAGE_DIR/api/v1/brain"
+
+            cp \
+              "900_Lab/Web_KoppyOS_Beta/legacy-retired.html" \
+              "$LEGACY_PACKAGE_DIR/legacy-retired.html"
+
+            cp \
+              "900_Lab/Web_KoppyOS_Beta/house/.htaccess" \
+              "$LEGACY_PACKAGE_DIR/house/.htaccess"
+
+            cp \
+              "900_Lab/Web_KoppyOS_Beta/brain/.htaccess" \
+              "$LEGACY_PACKAGE_DIR/brain/.htaccess"
+
+            cp \
+              "900_Lab/Web_KoppyOS_Beta/chat/.htaccess" \
+              "$LEGACY_PACKAGE_DIR/chat/.htaccess"
+
+            cp \
+              "600_KoppyOS/server/api/v1/.htaccess" \
+              "$LEGACY_PACKAGE_DIR/api/v1/.htaccess"
+
+            cp \
+              "600_KoppyOS/server/api/v1/brain/.htaccess" \
+              "$LEGACY_PACKAGE_DIR/api/v1/brain/.htaccess"
+
+            tar \
+              -C "$LEGACY_PACKAGE_DIR" \
+              -czf "$LEGACY_ARCHIVE" \
+              .
+
+            retry_command \
+              sshpass -p "$SSH_PASSWORD" \
+              scp \
+              -P "$SSH_PORT" \
+              -O \
+              -o StrictHostKeyChecking=accept-new \
+              -o UpdateHostKeys=no \
+              -o ConnectTimeout=20 \
+              -o ServerAliveInterval=15 \
+              -o ServerAliveCountMax=3 \
+              "$LEGACY_ARCHIVE" \
+              "$SSH_USER@$SSH_HOST:$REMOTE_LEGACY_ARCHIVE"
+
+            retry_command \
+              sshpass -p "$SSH_PASSWORD" \
+              ssh \
+              -p "$SSH_PORT" \
+              -o StrictHostKeyChecking=accept-new \
+              -o UpdateHostKeys=no \
+              -o ConnectTimeout=20 \
+              -o ServerAliveInterval=15 \
+              -o ServerAliveCountMax=3 \
+              "$SSH_USER@$SSH_HOST" \
+              "set -e
+
+              for target in \
+                '$LEGACY_REMOTE_ROOT/legacy-retired.html' \
+                '$LEGACY_REMOTE_ROOT/house/.htaccess' \
+                '$LEGACY_REMOTE_ROOT/brain/.htaccess' \
+                '$LEGACY_REMOTE_ROOT/chat/.htaccess' \
+                '$LEGACY_REMOTE_ROOT/api/v1/.htaccess' \
+                '$LEGACY_REMOTE_ROOT/api/v1/brain/.htaccess'
+              do
+                if [ -e \"\$target\" ]; then
+                  echo \"STOP: retirement target already exists: \$target\"
+                  exit 1
+                fi
+              done
+
+              mkdir -p '$LEGACY_REMOTE_ROOT'
+              tar -xzf '$REMOTE_LEGACY_ARCHIVE' -C '$LEGACY_REMOTE_ROOT'
+              rm -f '$REMOTE_LEGACY_ARCHIVE'"
+
+            rm -rf "$LEGACY_PACKAGE_DIR"
+            rm -f "$LEGACY_ARCHIVE"
+
+            echo "Legacy House / Brain / Chat retired on Lolipop."
+
+            exit 0
+          fi
 
           retry_command \
             sshpass -p "$SSH_PASSWORD" \

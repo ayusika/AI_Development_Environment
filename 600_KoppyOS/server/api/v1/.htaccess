@@ -1,0 +1,5 @@
+RewriteEngine On
+
+# Retired Lolipop-only Koppy World APIs.
+# Other v1 APIs are intentionally unaffected.
+RewriteRule ^(?:home|chat)\.php$ - [G,L]

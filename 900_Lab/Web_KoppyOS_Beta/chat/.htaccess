@@ -1,0 +1,5 @@
+RewriteEngine On
+
+# Lolipop legacy retirement only.
+# Pro production uses nginx and ignores this file.
+RewriteRule ^(?:index\.(?:html|php))?$ /legacy-retired.html?node=chat [R=302,L,NE]

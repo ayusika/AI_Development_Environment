@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  >
+  <title>Koppy World / Legacy Retired</title>
+
+  <style>
+    :root{
+      color-scheme:dark;
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+    }
+
+    *{
+      box-sizing:border-box;
+    }
+
+    body{
+      min-height:100vh;
+      margin:0;
+
+      display:grid;
+      place-items:center;
+
+      padding:24px;
+
+      color:#edfaff;
+
+      background:
+        radial-gradient(
+          circle at 20% 10%,
+          rgba(86,190,235,.16),
+          transparent 38%
+        ),
+        linear-gradient(
+          160deg,
+          #06172c,
+          #03101f
+        );
+    }
+
+    .card{
+      width:min(560px,100%);
+
+      padding:34px;
+
+      border:
+        1px solid
+        rgba(130,220,255,.28);
+
+      border-radius:26px;
+
+      background:
+        rgba(9,31,57,.88);
+
+      box-shadow:
+        0 28px 80px
+        rgba(0,5,20,.46);
+    }
+
+    .mark{
+      margin:0 0 8px;
+
+      color:#82dcff;
+
+      font-size:12px;
+      font-weight:900;
+      letter-spacing:.16em;
+    }
+
+    h1{
+      margin:0 0 18px;
+
+      font-size:
+        clamp(
+          28px,
+          7vw,
+          42px
+        );
+    }
+
+    .node{
+      display:inline-flex;
+
+      margin:0 0 18px;
+
+      padding:
+        7px 11px;
+
+      border:
+        1px solid
+        rgba(130,220,255,.24);
+
+      border-radius:999px;
+
+      color:#a9e7ff;
+
+      background:
+        rgba(130,220,255,.07);
+
+      font-size:11px;
+      font-weight:900;
+      letter-spacing:.08em;
+    }
+
+    p{
+      color:#a8bfcd;
+
+      line-height:1.8;
+    }
+
+    a{
+      min-height:50px;
+
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+
+      margin-top:12px;
+
+      padding:0 18px;
+
+      border:
+        1px solid
+        rgba(130,220,255,.40);
+
+      border-radius:14px;
+
+      color:#effbff;
+
+      background:
+        rgba(130,220,255,.10);
+
+      text-decoration:none;
+      font-weight:850;
+    }
+
+    small{
+      display:block;
+
+      margin-top:20px;
+
+      color:#6f92a6;
+
+      line-height:1.6;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="card">
+    <p class="mark">
+      ◇K KOPPY WORLD
+    </p>
+
+    <div
+      id="node"
+      class="node"
+    >
+      LEGACY NODE
+    </div>
+
+    <h1>
+      この旧環境は退役しました。
+    </h1>
+
+    <p>
+      このKoppy Worldノードは
+      Koppy Base Serverへ移行済みです。
+      Lolipop側の旧機能は安全のため停止しています。
+    </p>
+
+    <a
+      id="currentLink"
+      href="https://koppy-worker-pro.local/"
+    >
+      現在のKoppy Worldを開く →
+    </a>
+
+    <small>
+      自宅LANでは .local の現在環境を利用してください。
+      外出先ではTailscale経由のKoppy Worldを利用します。
+    </small>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const params =
+        new URLSearchParams(
+          window.location.search
+        );
+
+      const node =
+        params.get("node")
+        || "legacy";
+
+      const labels = {
+        house:
+          "HOUSE / RETIRED",
+
+        brain:
+          "BRAIN / RETIRED",
+
+        chat:
+          "CHAT / RETIRED",
+      };
+
+      const paths = {
+        house:
+          "/house/",
+
+        brain:
+          "/brain/",
+
+        chat:
+          "/chat/",
+      };
+
+      const label =
+        document.getElementById(
+          "node"
+        );
+
+      const link =
+        document.getElementById(
+          "currentLink"
+        );
+
+      if (label) {
+        label.textContent =
+          labels[node]
+          || "LEGACY NODE / RETIRED";
+      }
+
+      if (
+        link
+        && paths[node]
+      ) {
+        link.href =
+          "https://koppy-worker-pro.local"
+          + paths[node];
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+RewriteEngine On
+
+# Retired Lolipop-only Brain read endpoint.
+# Writer proposal / approval / executor endpoints remain untouched.
+RewriteRule ^github\.php$ - [G,L]
