@@ -7,7 +7,7 @@
 'use strict';
 
 window.KOPPY_HOME_LAYOUT = {
-  version: '2026-09-25.1',
+  version: '2026-09-26.1',
 
   source: {
     label: 'ユーザー提供図面 / 2号室タイプ',
@@ -31,6 +31,14 @@ window.KOPPY_HOME_LAYOUT = {
       label: 'LDK',
       size: '16.6帖',
       kind: 'shared',
+      measurements: {
+        width_cm: 600,
+        depth_cm: 330,
+        scope: 'LDKメイン領域の長方形部分。キッチン側の張り出しは含まない。',
+        source: 'user_hand_measurement',
+        measured_on: '2026-09-26',
+        status: 'confirmed',
+      },
       current_room_code: 'living',
       current_room_label: 'リビング・キッチン',
     },
@@ -39,6 +47,13 @@ window.KOPPY_HOME_LAYOUT = {
       label: '洋室',
       size: '5.6帖',
       kind: 'private',
+      measurements: {
+        width_cm: 280,
+        depth_cm: 305,
+        source: 'user_hand_measurement',
+        measured_on: '2026-09-26',
+        status: 'measured',
+      },
       current_room_code: null,
       current_room_label: null,
     },
@@ -47,6 +62,13 @@ window.KOPPY_HOME_LAYOUT = {
       label: '洋室',
       size: '5.4帖',
       kind: 'private',
+      measurements: {
+        width_cm: 320,
+        depth_cm: 240,
+        source: 'user_hand_measurement',
+        measured_on: '2026-09-26',
+        status: 'measured',
+      },
       current_room_code: null,
       current_room_label: null,
     },
@@ -55,6 +77,13 @@ window.KOPPY_HOME_LAYOUT = {
       label: '洋室',
       size: '5.7帖',
       kind: 'private',
+      measurements: {
+        width_cm: 310,
+        depth_cm: 245,
+        source: 'user_hand_measurement',
+        measured_on: '2026-09-26',
+        status: 'measured',
+      },
       current_room_code: null,
       current_room_label: null,
     },
@@ -71,6 +100,15 @@ window.KOPPY_HOME_LAYOUT = {
       label: '廊下',
       size: null,
       kind: 'service',
+      measurements: {
+        recorded_span_cm: 250,
+        recorded_label: '寸法チェック用紙 No.13',
+        semantic_dimension: null,
+        source: 'user_hand_measurement',
+        measured_on: '2026-09-26',
+        status: 'needs_remap',
+        note: '印刷用チェックシートの間取り表現に差異があったため、幅としては未確定。',
+      },
       current_room_code: 'hallway',
       current_room_label: '廊下',
     },
