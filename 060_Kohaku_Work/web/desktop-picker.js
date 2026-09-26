@@ -8,6 +8,11 @@
   const SOURCE_SELECTOR =
     'input[type="date"], input[type="time"]';
 
+  const TIME_SELECTOR =
+    'input[type="time"]';
+
+  const TIME_STEP_SECONDS = 300;
+
   const WHEEL_ITEM_HEIGHT = 52;
 
   let activePanel = null;
@@ -19,6 +24,75 @@
 
   function isDesktop() {
     return DESKTOP_MEDIA.matches;
+  }
+
+  function applyTimeStep(root) {
+    const apply = (input) => {
+      if (
+        !(input instanceof HTMLInputElement)
+        || !input.matches(TIME_SELECTOR)
+      ) {
+        return;
+      }
+
+      if (
+        input.step
+        !== String(TIME_STEP_SECONDS)
+      ) {
+        input.step =
+          String(TIME_STEP_SECONDS);
+      }
+    };
+
+    if (
+      root instanceof HTMLInputElement
+      && root.matches(TIME_SELECTOR)
+    ) {
+      apply(root);
+    }
+
+    if (
+      root instanceof Element
+      || root instanceof Document
+    ) {
+      root
+        .querySelectorAll(
+          TIME_SELECTOR
+        )
+        .forEach(
+          apply
+        );
+    }
+  }
+
+  function snapTimeToFive(
+    hour,
+    minute
+  ) {
+    const total =
+      Number(hour) * 60
+      + Number(minute);
+
+    const snapped =
+      Math.max(
+        0,
+        Math.min(
+          23 * 60 + 55,
+          Math.round(
+            total / 5
+          ) * 5
+        )
+      );
+
+    return {
+      hour:
+        Math.floor(
+          snapped / 60
+        ),
+
+      minute:
+        snapped % 60,
+    };
   }
 
   function dateToIso(date) {
@@ -671,14 +745,21 @@
     const parsed =
       parseTime(input.value);
 
-    const state = {
-      hour:
+    const initial =
+      snapTimeToFive(
         parsed?.hour
         ?? now.getHours(),
 
-      minute:
         parsed?.minute
-        ?? now.getMinutes(),
+        ?? now.getMinutes()
+      );
+
+    const state = {
+      hour:
+        initial.hour,
+
+      minute:
+        initial.minute,
     };
 
     const panel =
@@ -742,14 +823,18 @@
             ${Array
               .from(
                 {
-                  length: 60,
+                  length: 12,
                 },
-                (_, index) =>
-                  `<button
+                (_, index) => {
+                  const minute =
+                    index * 5;
+
+                  return `<button
                     type="button"
                     class="kdp-wheel-option"
-                    data-kdp-wheel-value="${index}"
-                  >${pad(index)}</button>`
+                    data-kdp-wheel-value="${minute}"
+                  >${pad(minute)}</button>`;
+                }
               )
               .join("")}
           </div>
@@ -828,10 +913,10 @@
       const key =
         wheel.dataset.kdpWheel;
 
-      const max =
+      const maxIndex =
         key === "hour"
           ? 23
-          : 59;
+          : 11;
 
       let frame = 0;
 
@@ -849,7 +934,7 @@
                   Math.max(
                     0,
                     Math.min(
-                      max,
+                      maxIndex,
                       Math.round(
                         wheel.scrollTop
                         / WHEEL_ITEM_HEIGHT
@@ -858,7 +943,9 @@
                   );
 
                 state[key] =
-                  index;
+                  key === "minute"
+                    ? index * 5
+                    : index;
 
                 updateView();
               }
@@ -886,9 +973,14 @@
                 state[key] =
                   value;
 
+                const wheelIndex =
+                  key === "minute"
+                    ? value / 5
+                    : value;
+
                 wheel.scrollTo({
                   top:
-                    value
+                    wheelIndex
                     * WHEEL_ITEM_HEIGHT,
                   behavior: "smooth",
                 });
@@ -971,7 +1063,9 @@
 
         if (minuteWheel) {
           minuteWheel.scrollTop =
-            state.minute
+            (
+              state.minute / 5
+            )
             * WHEEL_ITEM_HEIGHT;
         }
 
@@ -1170,10 +1264,6 @@
   const observer =
     new MutationObserver(
       (records) => {
-        if (!isDesktop()) {
-          return;
-        }
-
         for (
           const record
           of records
@@ -1182,11 +1272,17 @@
             const node
             of record.addedNodes
           ) {
-            scan(node);
+            applyTimeStep(node);
+
+            if (isDesktop()) {
+              scan(node);
+            }
           }
         }
 
-        syncAll();
+        if (isDesktop()) {
+          syncAll();
+        }
       }
     );
 
@@ -1194,6 +1290,8 @@
     if (!document.body) {
       return;
     }
+
+    applyTimeStep(document);
 
     scan(document);
 
