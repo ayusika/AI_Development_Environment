@@ -8,7 +8,7 @@ const S=window.KohakuWorkNextSchedule;
 const V=document.getElementById("view-schedule");
 if(!S||!V)return;
 const stores=[[1,"札幌"],[2,"千葉"],[3,"東京"],[4,"名古屋"]];
-let master=null,customerId=null,timer=null;
+let master=null,customerId=null,timer=null,searchToken=0;
 
 const esc=v=>String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;");
 const money=v=>`¥${Number(v||0).toLocaleString("ja-JP")}`;
@@ -40,10 +40,86 @@ function modal(){
   document.body.appendChild(el);
 }
 function customerUI(){
-  const a=document.getElementById("ncrCustomer"),s=document.getElementById("ncrStatus")?.value;customerId=null;if(!a)return;
-  if(s==="new"||s==="repeat_unknown_id"){a.innerHTML=`<b>${s==="new"?"新規顧客":"ID不明リピ顧客"}</b><div class="ncr-grid gap"><label>名前<input id="ncrNewName"></label><label>かしこい名<input id="ncrKashikoi"></label></div>`;return}
-  a.innerHTML=`<b>${s==="repeat"?"リピ顧客を検索・選択":"既存顧客検索（任意）"}</b><input id="ncrSearch" class="ncr-wide" type="search" placeholder="名前・特徴・日付など"><div id="ncrResults"></div>`;
+  const a=
+    document.getElementById(
+      "ncrCustomer"
+    );
+
+  const s=
+    document.getElementById(
+      "ncrStatus"
+    )?.value;
+
+  customerId=null;
+  searchToken+=1;
+
+  if(!a)return;
+
+  if(
+    s==="new"
+    ||s==="repeat_unknown_id"
+  ){
+    a.innerHTML=`
+      <b>${
+        s==="new"
+          ?"新規顧客"
+          :"ID不明リピ顧客"
+      }</b>
+
+      <div class="ncr-grid gap">
+        <label>
+          名前
+          <input id="ncrNewName">
+        </label>
+
+        <label>
+          かしこい名
+          <input id="ncrKashikoi">
+        </label>
+      </div>
+    `;
+
+    return;
+  }
+
+  a.innerHTML=`
+    <b>${
+      s==="repeat"
+        ?"リピ顧客を検索・選択"
+        :"既存顧客検索（任意）"
+    }</b>
+
+    <div class="ncr-repeat-search-grid">
+      <label>
+        名前
+
+        <input
+          id="ncrSearch"
+          type="search"
+          placeholder="名前を入力"
+          autocomplete="off"
+        >
+      </label>
+
+      <label>
+        過去の来店日
+
+        <input
+          id="ncrSearchDate"
+          type="date"
+        >
+      </label>
+    </div>
+
+    <small class="ncr-repeat-search-hint">
+      日付を入れると名前とのAND検索。
+      完全一致は緑、前後1日は赤で表示します。
+    </small>
+
+    <div id="ncrResults"></div>
+  `;
 }
+
 function labelCourse(c){const m=Number(c.course_minutes||0),f=c.pricing_category==="foreign"?"外国人 ":"",n=String(c.course_name||"").trim(),norm=n.replace(/\s+/g,""),red=new Set([`${m}分`,String(m),`外${m}分`,`外国人${m}分`,`外国人${m}`]);return `${f}${m}分${n&&!red.has(norm)?` / ${n}`:""} / 手取り ${money(c.take_home)}`}
 async function loadMaster(){
   const st=+document.getElementById("ncrStore")?.value,d=document.getElementById("ncrDate")?.value,t=document.getElementById("ncrTime")?.value;if(!st||!d||!t)return;
@@ -149,13 +225,237 @@ function repeatHistoryHtml(visits){
   `;
 }
 
-async function search(k){
-  const r=document.getElementById("ncrResults");
+function parseSearchDate(value){
+  const parts=
+    String(value||"")
+      .split("-")
+      .map(Number);
+
+  if(
+    parts.length!==3
+    ||parts.some(
+      value=>!Number.isInteger(value)
+    )
+  ){
+    return null;
+  }
+
+  const date=
+    new Date(
+      parts[0],
+      parts[1]-1,
+      parts[2],
+      12,
+      0,
+      0,
+      0
+    );
+
+  if(
+    Number.isNaN(
+      date.getTime()
+    )
+  ){
+    return null;
+  }
+
+  return date;
+}
+
+
+function searchDateText(date){
+  return [
+    date.getFullYear(),
+    String(
+      date.getMonth()+1
+    ).padStart(2,"0"),
+    String(
+      date.getDate()
+    ).padStart(2,"0"),
+  ].join("-");
+}
+
+
+function addSearchDays(
+  value,
+  offset
+){
+  const date=
+    parseSearchDate(
+      value
+    );
+
+  if(!date)return "";
+
+  date.setDate(
+    date.getDate()
+    +offset
+  );
+
+  return searchDateText(
+    date
+  );
+}
+
+
+function visitBusinessDateForSearch(
+  value
+){
+  const text=
+    String(value||"");
+
+  const date=
+    parseSearchDate(
+      text.slice(0,10)
+    );
+
+  if(!date)return "";
+
+  const hour=
+    Number(
+      text.slice(11,13)
+    );
+
+  if(
+    Number.isFinite(hour)
+    &&hour>=0
+    &&hour<3
+  ){
+    date.setDate(
+      date.getDate()-1
+    );
+  }
+
+  return searchDateText(
+    date
+  );
+}
+
+
+function searchDayDistance(
+  requested,
+  actual
+){
+  const requestedDate=
+    parseSearchDate(
+      requested
+    );
+
+  const actualDate=
+    parseSearchDate(
+      actual
+    );
+
+  if(
+    !requestedDate
+    ||!actualDate
+  ){
+    return null;
+  }
+
+  return Math.round(
+    (
+      actualDate.getTime()
+      -requestedDate.getTime()
+    )
+    /86400000
+  );
+}
+
+
+async function identitySearch(
+  params
+){
+  const query=
+    new URLSearchParams(
+      params
+    );
+
+  return req(
+    `${SEARCH}?${query}`,
+    {
+      method:"GET",
+    }
+  );
+}
+
+
+function searchDateHitHtml(
+  distance,
+  date
+){
+  if(
+    !Number.isInteger(
+      distance
+    )
+  ){
+    return "";
+  }
+
+  const exact=
+    distance===0;
+
+  const label=
+    exact
+      ?"指定日一致"
+      :(
+        distance<0
+          ?"前日一致"
+          :"翌日一致"
+      );
+
+  return `
+    <span
+      class="ncr-date-match ${
+        exact
+          ?"is-exact"
+          :"is-near"
+      }"
+    >
+      ${esc(label)}
+      ${esc(
+        String(date||"")
+          .replaceAll("-","/")
+      )}
+    </span>
+  `;
+}
+
+
+async function search(){
+  const r=
+    document.getElementById(
+      "ncrResults"
+    );
 
   if(!r)return;
 
-  if(!k.trim()){
-    r.innerHTML="";
+  const name=
+    document.getElementById(
+      "ncrSearch"
+    )?.value?.trim()
+    ||"";
+
+  const requestedDate=
+    document.getElementById(
+      "ncrSearchDate"
+    )?.value
+    ||"";
+
+  const token=
+    ++searchToken;
+
+  if(!name){
+    r.innerHTML=
+      requestedDate
+        ?`
+          <p class="ncr-msg">
+            名前を入力すると
+            日付とのAND検索をします。
+          </p>
+        `
+        :"";
+
     return;
   }
 
@@ -166,26 +466,162 @@ async function search(k){
   `;
 
   try{
-    const q=new URLSearchParams({
-      keyword:k.trim(),
-    });
+    let hits=[];
 
-    const d=await req(
-      `${SEARCH}?${q}`,
-      {
-        method:"GET",
+    if(requestedDate){
+      /*
+       * 0〜2時台の予約は前営業日扱いなので、
+       * 生の日付を -1〜+2 日まで取得してから
+       * 営業日ベースで ±1 日へ絞る。
+       */
+      const rawDates=
+        [-1,0,1,2]
+          .map(offset=>
+            addSearchDays(
+              requestedDate,
+              offset
+            )
+          );
+
+      const responses=
+        await Promise.all(
+          rawDates.map(
+            visitDate=>
+              identitySearch({
+                customer_name:name,
+                visit_date:visitDate,
+              })
+          )
+        );
+
+      if(
+        token!==searchToken
+      ){
+        return;
       }
-    );
 
-    const customerMap=new Map();
+      const visitMap=
+        new Map();
 
-    (d.data?.visits||[]).forEach(v=>{
-      const id=Number(v.customer_id||0);
+      responses
+        .flatMap(
+          data=>
+            Array.isArray(
+              data.data?.visits
+            )
+              ?data.data.visits
+              :[]
+        )
+        .forEach(visit=>{
+          const id=
+            Number(
+              visit.id||0
+            );
+
+          if(
+            id
+            &&!visitMap.has(id)
+          ){
+            visitMap.set(
+              id,
+              visit
+            );
+          }
+        });
+
+      hits=
+        [...visitMap.values()]
+          .map(visit=>{
+            const businessDate=
+              visitBusinessDateForSearch(
+                visit.started_at
+              );
+
+            const distance=
+              searchDayDistance(
+                requestedDate,
+                businessDate
+              );
+
+            return {
+              visit,
+              distance,
+              businessDate,
+            };
+          })
+          .filter(item=>
+            Number.isInteger(
+              item.distance
+            )
+            &&Math.abs(
+              item.distance
+            )<=1
+          )
+          .sort((a,b)=>
+            Math.abs(a.distance)
+            -Math.abs(b.distance)
+            ||String(
+              b.visit.started_at||""
+            ).localeCompare(
+              String(
+                a.visit.started_at||""
+              )
+            )
+          );
+
+    }else{
+      const data=
+        await identitySearch({
+          keyword:name,
+        });
+
+      if(
+        token!==searchToken
+      ){
+        return;
+      }
+
+      hits=
+        (
+          Array.isArray(
+            data.data?.visits
+          )
+            ?data.data.visits
+            :[]
+        )
+          .map(visit=>({
+            visit,
+            distance:null,
+            businessDate:"",
+          }));
+    }
+
+    const customerMap=
+      new Map();
+
+    hits.forEach(item=>{
+      const id=
+        Number(
+          item.visit
+            ?.customer_id
+          ||0
+        );
 
       if(!id)return;
 
-      if(!customerMap.has(id)){
-        customerMap.set(id,v);
+      /*
+       * hits は
+       * exact → ±1日 → 新しい予約
+       * の順なので、
+       * 顧客ごとの最良候補を残す。
+       */
+      if(
+        !customerMap.has(id)
+      ){
+        customerMap.set(
+          id,
+          item
+        );
       }
     });
 
@@ -196,36 +632,59 @@ async function search(k){
     if(!customers.length){
       r.innerHTML=`
         <p class="ncr-msg">
-          該当顧客なし
+          ${
+            requestedDate
+              ?"名前＋指定日（前後1日を含む）で該当なし"
+              :"該当顧客なし"
+          }
         </p>
       `;
+
       return;
     }
 
     const ids=
-      customers.map(v=>
-        Number(v.customer_id)
+      customers.map(
+        item=>
+          Number(
+            item.visit.customer_id
+          )
       );
 
-    const hq=new URLSearchParams({
-      customer_ids:ids.join(","),
-    });
+    const historyQuery=
+      new URLSearchParams({
+        customer_ids:
+          ids.join(","),
+      });
 
-    const historyData=await req(
-      `${HISTORY}?${hq}`,
-      {
-        method:"GET",
-      }
-    );
+    const historyData=
+      await req(
+        `${HISTORY}?${historyQuery}`,
+        {
+          method:"GET",
+        }
+      );
+
+    if(
+      token!==searchToken
+    ){
+      return;
+    }
 
     const histories=
-      historyData.histories||{};
+      historyData.histories
+      ||{};
 
     r.innerHTML=
       customers
-        .map(v=>{
+        .map(item=>{
+          const v=
+            item.visit;
+
           const id=
-            Number(v.customer_id);
+            Number(
+              v.customer_id
+            );
 
           const history=
             histories[String(id)]
@@ -241,16 +700,33 @@ async function search(k){
             Number(customerId)
             ===id;
 
+          const hitClass=
+            item.distance===0
+              ?" is-date-exact"
+              :(
+                Number.isInteger(
+                  item.distance
+                )
+                  ?" is-date-near"
+                  :""
+              );
+
           return `
             <button
               type="button"
-              class="ncr-customer ${selected?"is-selected":""}"
+              class="ncr-customer ${
+                selected
+                  ?"is-selected"
+                  :""
+              }${hitClass}"
               data-ncr-customer="${id}"
             >
               <span class="ncr-customer-head">
                 <strong>
                   ${esc(
-                    repeatCustomerDisplayName(v)
+                    repeatCustomerDisplayName(
+                      v
+                    )
                   )}
                 </strong>
 
@@ -264,13 +740,26 @@ async function search(k){
                 ・過去予約 ${pastCount}件
               </small>
 
-              ${repeatHistoryHtml(history)}
+              ${searchDateHitHtml(
+                item.distance,
+                item.businessDate
+              )}
+
+              ${repeatHistoryHtml(
+                history
+              )}
             </button>
           `;
         })
         .join("");
 
   }catch(e){
+    if(
+      token!==searchToken
+    ){
+      return;
+    }
+
     r.innerHTML=`
       <p class="ncr-msg is-error">
         ${esc(e.message)}
@@ -278,6 +767,7 @@ async function search(k){
     `;
   }
 }
+
 function intv(id,min=null,fb=0){const raw=document.getElementById(id)?.value?.trim()??"";if(raw==="")return fb;const v=Number(raw);if(!Number.isSafeInteger(v)||min!==null&&v<min)throw Error("金額・回数の入力を確認してね。");return v}
 async function save(){
   if(!master)throw Error("料金マスタの読込が完了していません。");
@@ -382,7 +872,22 @@ function mount(){
 }
 document.addEventListener("click",e=>{if(e.target.closest("[data-ncr-open]"))return open();if(e.target.closest("[data-ncr-close]"))return close();const c=e.target.closest("[data-ncr-customer]");if(c){customerId=+c.dataset.ncrCustomer;document.querySelectorAll("[data-ncr-customer]").forEach(x=>x.classList.toggle("is-selected",x===c))}});
 document.addEventListener("change",e=>{if(!e.target.closest("#nextCreateModal"))return;if(e.target.matches("#ncrStatus"))return customerUI();if(e.target.matches("#ncrStore,#ncrDate,#ncrTime"))return void loadMaster();if(e.target.matches("#ncrCourseSelect")){document.getElementById("ncrCustomWrap").hidden=e.target.value!=="custom"}if(e.target.matches("[data-ncr-ex]")){const q=document.querySelector(`[data-ncr-qty="${e.target.value}"]`);if(q)q.disabled=!e.target.checked}});
-document.addEventListener("input",e=>{if(!e.target.matches("#ncrSearch"))return;clearTimeout(timer);timer=setTimeout(()=>search(e.target.value),120)});
+document.addEventListener("input",e=>{
+  if(
+    !e.target.matches(
+      "#ncrSearch,#ncrSearchDate"
+    )
+  ){
+    return;
+  }
+
+  clearTimeout(timer);
+
+  timer=setTimeout(
+    ()=>search(),
+    120
+  );
+});
 document.addEventListener("submit",e=>{if(e.target.id!=="nextCreateForm")return;e.preventDefault();void save()});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.getElementById("nextCreateModal")?.classList.contains("is-open"))close()});
 mount();

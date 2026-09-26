@@ -276,6 +276,16 @@ try {
         );
 
 
+    $customerName =
+        trim(
+            (string)
+            (
+                $_GET['customer_name']
+                ?? ''
+            )
+        );
+
+
     $kashikoiName =
         trim(
             (string)
@@ -369,6 +379,26 @@ try {
 
         $parameters[] =
             $storeId;
+    }
+
+
+    if ($customerName !== '') {
+
+        $whereConditions[] =
+            "
+            EXISTS (
+                SELECT 1
+
+                FROM customer_names cn_exact
+
+                WHERE
+                    cn_exact.customer_id = v.customer_id
+                    AND cn_exact.name = ?
+            )
+            ";
+
+        $parameters[] =
+            $customerName;
     }
 
 
@@ -694,6 +724,9 @@ try {
                 'filters' => [
                     'keyword' =>
                         $keyword,
+
+                    'customer_name' =>
+                        $customerName,
 
                     'kashikoi_name' =>
                         $kashikoiName,

@@ -97,7 +97,11 @@
       start.setDate(start.getDate() + (day === 0 ? -6 : 1 - day));
       days = 7;
     } else if (state.view === "two-weeks") {
-      days = 14;
+      start.setDate(
+        start.getDate() - 14
+      );
+
+      days = 29;
     }
 
     const dates = [];

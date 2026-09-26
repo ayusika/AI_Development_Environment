@@ -85,7 +85,7 @@ body:has(#view-schedule.is-active) .work-next-bottom-nav{
 
 .next-schedule-grid[data-view="day"]{min-width:100%;}
 .next-schedule-grid[data-view="week"]{min-width:860px;}
-.next-schedule-grid[data-view="two-weeks"]{min-width:1450px;}
+.next-schedule-grid[data-view="two-weeks"]{min-width:3000px;}
 
 .next-schedule-grid-header{
   position:sticky;
@@ -1095,7 +1095,7 @@ body.next-schedule-detail-open{overflow:hidden;}
   }
 
   .next-schedule-grid[data-view="two-weeks"]{
-    min-width:1200px;
+    min-width:2480px;
   }
 
   .next-schedule-grid-header{
