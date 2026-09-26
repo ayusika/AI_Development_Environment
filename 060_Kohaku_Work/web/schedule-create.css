@@ -452,3 +452,103 @@
     font-size:6.5px;
   }
 }
+
+
+/* =========================================================
+   NEW RESERVATION / RESPONSIVE UI V4
+========================================================= */
+
+/* Desktop:
+   Store / customer status / course should be much larger
+   and visually closer to the large customer-name fields. */
+@media(min-width:421px){
+  #nextCreateModal #ncrStore,
+  #nextCreateModal #ncrStatus,
+  #nextCreateModal #ncrCourseSelect{
+    min-height:76px;
+    padding:17px 16px;
+    border-radius:14px;
+    font-size:15px;
+    font-weight:850;
+  }
+}
+
+
+/* Mobile:
+   Fix overlap in the upper paired fields and keep each label
+   strictly inside its own grid cell. */
+@media(max-width:420px){
+  #nextCreateModal
+  #nextCreateForm
+  > .ncr-grid,
+  #nextCreateModal
+  #ncrCustomer
+  .ncr-grid{
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+    column-gap:10px;
+    row-gap:8px;
+    align-items:start;
+  }
+
+  #nextCreateModal
+  #nextCreateForm
+  > .ncr-grid > label,
+  #nextCreateModal
+  #ncrCustomer
+  .ncr-grid > label{
+    min-width:0;
+    display:flex;
+    flex-direction:column;
+    overflow:hidden;
+  }
+
+  #nextCreateModal
+  #nextCreateForm
+  > .ncr-grid > label > input,
+  #nextCreateModal
+  #nextCreateForm
+  > .ncr-grid > label > select,
+  #nextCreateModal
+  #ncrCustomer
+  .ncr-grid > label > input,
+  #nextCreateModal
+  #ncrCustomer
+  .ncr-grid > label > select{
+    width:100%;
+    min-width:0;
+    max-width:100%;
+    box-sizing:border-box;
+  }
+
+  #nextCreateModal
+  #nextCreateForm
+  > .ncr-grid > label,
+  #nextCreateModal
+  #ncrCustomer
+  .ncr-grid > label,
+  #nextCreateModal
+  .ncr-grid.ncr-mobile-pair > label{
+    font-size:8px;
+    line-height:1.25;
+  }
+
+  #nextCreateModal
+  #nextCreateForm
+  > .ncr-grid > label > input,
+  #nextCreateModal
+  #nextCreateForm
+  > .ncr-grid > label > select,
+  #nextCreateModal
+  #ncrCustomer
+  .ncr-grid > label > input,
+  #nextCreateModal
+  #ncrCustomer
+  .ncr-grid > label > select,
+  #nextCreateModal
+  .ncr-grid.ncr-mobile-pair input{
+    min-height:36px;
+    margin-top:3px;
+    padding:5px 7px;
+  }
+}
