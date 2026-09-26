@@ -32,8 +32,8 @@ function modal(){
   <section class="ncr-sec"><b>コース</b><div id="ncrCourse">読込中…</div></section>
   <section class="ncr-sec"><b>延長</b><div id="ncrExtensions"></div></section>
   <section class="ncr-sec"><b>OP</b><div class="ncr-checks" id="ncrOptions"></div>
-  <div class="ncr-grid gap"><label>その他OP名<input id="ncrCustomOption"></label><label>その他OP手取り<input id="ncrCustomAmount" type="number" min="0"></label></div></section>
-  <section class="ncr-sec"><div class="ncr-grid"><label>チップ<input id="ncrTip" type="number" min="0" value="0"></label><label>調整分<input id="ncrAdjustment" type="number" value="0"></label></div></section>
+  <div class="ncr-grid gap ncr-mobile-pair"><label>その他OP名<input id="ncrCustomOption"></label><label>その他OP手取り<input id="ncrCustomAmount" type="number" min="0"></label></div></section>
+  <section class="ncr-sec"><div class="ncr-grid ncr-mobile-pair"><label>チップ<input id="ncrTip" type="number" min="0" value="0"></label><label>調整分<input id="ncrAdjustment" type="number" value="0"></label></div></section>
   <p id="nextCreateMsg" class="ncr-msg"></p>
   <div class="ncr-actions"><button type="button" data-ncr-close>キャンセル</button><button id="ncrSave" type="submit">本番DBへ予約作成</button></div>
   </form></section>`;

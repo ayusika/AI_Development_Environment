@@ -189,3 +189,86 @@
     font-size:16px;
   }
 }
+
+
+/* =========================================================
+   NEW RESERVATION / RESPONSIVE UI V2
+========================================================= */
+
+/* Drawer itself scrolls vertically only.
+   Prevent the form from wobbling sideways on touch devices. */
+.ncr-panel{
+  overflow-y:auto;
+  overflow-x:hidden;
+  overscroll-behavior-x:none;
+  touch-action:pan-y;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* Desktop:
+   Customer status and course are high-priority selectors,
+   so give them a larger hit area and clearer text. */
+@media(min-width:421px){
+  #nextCreateModal #ncrStatus,
+  #nextCreateModal #ncrCourseSelect{
+    min-height:52px;
+    padding:11px 12px;
+    font-size:12px;
+    font-weight:800;
+  }
+}
+
+/* Mobile:
+   Keep dense option areas compact without collapsing
+   unrelated date/customer grids into two columns. */
+@media(max-width:420px){
+  #nextCreateModal .ncr-panel{
+    width:100%;
+    max-width:100vw;
+    overflow-x:hidden;
+    touch-action:pan-y;
+  }
+
+  #nextCreateModal #nextCreateForm{
+    min-width:0;
+    max-width:100%;
+    overflow-x:hidden;
+  }
+
+  #nextCreateModal #ncrOptions{
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+    gap:6px;
+  }
+
+  #nextCreateModal #ncrOptions
+  .ncr-check{
+    min-width:0;
+    padding:7px;
+    gap:6px;
+  }
+
+  #nextCreateModal #ncrOptions
+  .ncr-check span{
+    min-width:0;
+    overflow-wrap:anywhere;
+  }
+
+  #nextCreateModal
+  .ncr-grid.ncr-mobile-pair{
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+    gap:7px;
+  }
+
+  #nextCreateModal
+  .ncr-mobile-pair label{
+    min-width:0;
+  }
+
+  #nextCreateModal
+  .ncr-mobile-pair input{
+    width:100%;
+    min-width:0;
+  }
+}
