@@ -5,6 +5,8 @@
   const roomsElement = document.getElementById('houseRooms');
   const retry = document.getElementById('houseRetry');
   const login = document.getElementById('houseLogin');
+  const layoutElement = document.getElementById('houseLayout');
+  const layoutData = window.KOPPY_HOME_LAYOUT ?? null;
   let pending = false;
   function node(tag, text, className) {
     const element = document.createElement(tag);
@@ -17,6 +19,201 @@
     const number = Number(value);
     if (!Number.isFinite(number)) return null;
     return String(Number(number.toFixed(3)));
+  }
+
+
+  function renderLayout() {
+    if (!layoutElement) return;
+
+    if (
+      !layoutData
+      || !Array.isArray(layoutData.spaces)
+    ) {
+      layoutElement.replaceChildren(
+        node(
+          'p',
+          '間取りマスターを読み込めませんでした。',
+          'house-layout-loading'
+        )
+      );
+      return;
+    }
+
+    const heading = node(
+      'div',
+      null,
+      'house-layout-heading'
+    );
+
+    heading.append(
+      node(
+        'p',
+        'PHYSICAL HOME MASTER',
+        'eyebrow wf-eyebrow'
+      )
+    );
+
+    const title = node(
+      'h2',
+      '間取りマスター',
+      'wf-panel-title'
+    );
+
+    title.id = 'houseLayoutTitle';
+
+    heading.append(title);
+
+    heading.append(
+      node(
+        'p',
+        `${layoutData.unit.type} / ${layoutData.unit.area_sqm}㎡ / ${layoutData.source.verification}`,
+        'house-layout-summary'
+      )
+    );
+
+    const tags = node(
+      'div',
+      null,
+      'house-layout-tags'
+    );
+
+    for (const label of [
+      '2号室タイプ',
+      layoutData.unit.type,
+      `${layoutData.unit.area_sqm}㎡`,
+      '図面一致確認済み',
+    ]) {
+      tags.append(
+        node(
+          'span',
+          label,
+          'house-layout-tag'
+        )
+      );
+    }
+
+    heading.append(tags);
+
+    const grid = node(
+      'div',
+      null,
+      'house-layout-grid'
+    );
+
+    const figure = node(
+      'figure',
+      null,
+      'house-floorplan'
+    );
+
+    const image = document.createElement('img');
+
+    image.src = layoutData.floorplan.src;
+    image.alt = layoutData.floorplan.alt;
+    image.loading = 'lazy';
+    image.decoding = 'async';
+
+    figure.append(image);
+
+    figure.append(
+      node(
+        'figcaption',
+        '住所などの識別情報を除いた2号室タイプ図面',
+        'house-floorplan-caption'
+      )
+    );
+
+    grid.append(figure);
+
+    const master = node(
+      'div',
+      null,
+      'house-layout-master'
+    );
+
+    master.append(
+      node(
+        'h3',
+        '物理空間ID'
+      )
+    );
+
+    const spaces = node(
+      'div',
+      null,
+      'house-layout-spaces'
+    );
+
+    for (const space of layoutData.spaces) {
+      const card = node(
+        'article',
+        null,
+        'house-layout-space'
+      );
+
+      card.dataset.layoutSpace = space.id;
+
+      if (!space.current_room_code) {
+        card.classList.add('is-unmapped');
+      }
+
+      const top = node(
+        'div',
+        null,
+        'house-layout-space-top'
+      );
+
+      top.append(
+        node(
+          'strong',
+          [space.label, space.size]
+            .filter(Boolean)
+            .join(' ')
+        )
+      );
+
+      top.append(
+        node(
+          'code',
+          space.id
+        )
+      );
+
+      card.append(top);
+
+      card.append(
+        node(
+          'p',
+          space.current_room_label
+            ? `現在のHome: ${space.current_room_label}`
+            : '生活用途: 未紐付け',
+          'house-layout-space-map'
+        )
+      );
+
+      spaces.append(card);
+    }
+
+    master.append(spaces);
+    grid.append(master);
+
+    const note = node(
+      'div',
+      null,
+      'house-layout-note'
+    );
+
+    for (const text of layoutData.notes) {
+      note.append(
+        node('p', text)
+      );
+    }
+
+    layoutElement.replaceChildren(
+      heading,
+      grid,
+      note
+    );
   }
 
   function deviceList(
@@ -277,6 +474,7 @@
       window.clearTimeout(timeout); pending = false; retry.disabled = false;
     }
   }
+  renderLayout();
   retry.addEventListener('click', load);
   load();
 })();

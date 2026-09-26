@@ -533,3 +533,422 @@
       20px;
   }
 }
+
+/* WRITER:HOME_LAYOUT_UI:START */
+
+/* ---------------------------------------------------------
+   PHYSICAL FLOOR PLAN MASTER
+--------------------------------------------------------- */
+
+.house-layout-panel{
+  margin-bottom:
+    24px;
+
+  padding:
+    24px;
+}
+
+.house-layout-heading{
+  display:
+    grid;
+
+  gap:
+    10px;
+}
+
+.house-layout-heading .wf-eyebrow{
+  margin:
+    0;
+}
+
+.house-layout-heading .wf-panel-title{
+  margin:
+    0;
+
+  font-size:
+    clamp(
+      1.55rem,
+      3vw,
+      2.25rem
+    );
+}
+
+.house-layout-summary{
+  margin:
+    0;
+
+  color:
+    var(
+      --wf-text-soft,
+      #b5cfe6
+    );
+
+  line-height:
+    1.65;
+}
+
+.house-layout-tags{
+  display:
+    flex;
+
+  flex-wrap:
+    wrap;
+
+  gap:
+    8px;
+}
+
+.house-layout-tag{
+  display:
+    inline-flex;
+
+  align-items:
+    center;
+
+  min-height:
+    30px;
+
+  padding:
+    5px 10px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 30%,
+      transparent
+    );
+
+  border-radius:
+    999px;
+
+  background:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 9%,
+      transparent
+    );
+
+  color:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 82%,
+      white
+    );
+
+  font-family:
+    var(--wf-font-mono);
+
+  font-size:
+    .78rem;
+}
+
+.house-layout-grid{
+  display:
+    grid;
+
+  grid-template-columns:
+    minmax(
+      0,
+      1.05fr
+    )
+    minmax(
+      300px,
+      .95fr
+    );
+
+  gap:
+    22px;
+
+  margin-top:
+    22px;
+}
+
+.house-floorplan{
+  min-width:
+    0;
+
+  margin:
+    0;
+
+  padding:
+    12px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 24%,
+      transparent
+    );
+
+  border-radius:
+    20px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      .94
+    );
+
+  box-shadow:
+    inset 0 1px 0
+    rgba(
+      255,
+      255,
+      255,
+      .55
+    ),
+    0 18px 45px
+    rgba(
+      0,
+      13,
+      34,
+      .18
+    );
+
+  overflow:
+    hidden;
+}
+
+.house-floorplan img{
+  display:
+    block;
+
+  width:
+    100%;
+
+  height:
+    auto;
+
+  border-radius:
+    10px;
+}
+
+.house-floorplan-caption{
+  margin-top:
+    10px;
+
+  color:
+    #486579;
+
+  font-family:
+    var(--wf-font-mono);
+
+  font-size:
+    .72rem;
+
+  line-height:
+    1.5;
+}
+
+.house-layout-master{
+  min-width:
+    0;
+}
+
+.house-layout-master h3{
+  margin:
+    0 0 12px;
+
+  color:
+    var(
+      --wf-text,
+      #edf8ff
+    );
+}
+
+.house-layout-spaces{
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      minmax(
+        0,
+        1fr
+      )
+    );
+
+  gap:
+    10px;
+}
+
+.house-layout-space{
+  min-width:
+    0;
+
+  padding:
+    12px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 22%,
+      transparent
+    );
+
+  border-radius:
+    14px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      .045
+    );
+}
+
+.house-layout-space.is-unmapped{
+  border-style:
+    dashed;
+}
+
+.house-layout-space-top{
+  display:
+    flex;
+
+  align-items:
+    baseline;
+
+  justify-content:
+    space-between;
+
+  gap:
+    8px;
+}
+
+.house-layout-space strong{
+  color:
+    var(
+      --wf-text,
+      #edf8ff
+    );
+
+  font-size:
+    .95rem;
+}
+
+.house-layout-space code{
+  color:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 78%,
+      white
+    );
+
+  font-family:
+    var(--wf-font-mono);
+
+  font-size:
+    .7rem;
+
+  overflow-wrap:
+    anywhere;
+}
+
+.house-layout-space-map{
+  margin:
+    7px 0 0;
+
+  color:
+    var(
+      --wf-text-soft,
+      #b5cfe6
+    );
+
+  font-size:
+    .78rem;
+
+  line-height:
+    1.5;
+}
+
+.house-layout-space.is-unmapped
+.house-layout-space-map{
+  color:
+    #ffd3a1;
+}
+
+.house-layout-note{
+  display:
+    grid;
+
+  gap:
+    4px;
+
+  margin-top:
+    18px;
+
+  padding:
+    13px 14px;
+
+  border-left:
+    2px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 62%,
+      transparent
+    );
+
+  background:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 5%,
+      transparent
+    );
+}
+
+.house-layout-note p{
+  margin:
+    0;
+
+  color:
+    var(
+      --wf-text-soft,
+      #b5cfe6
+    );
+
+  font-size:
+    .82rem;
+
+  line-height:
+    1.6;
+}
+
+.house-layout-loading{
+  margin:
+    0;
+
+  color:
+    var(
+      --wf-text-soft,
+      #b5cfe6
+    );
+}
+
+@media (max-width: 860px){
+  .house-layout-grid{
+    grid-template-columns:
+      1fr;
+  }
+}
+
+@media (max-width: 560px){
+  .house-layout-panel{
+    padding:
+      18px;
+  }
+
+  .house-layout-spaces{
+    grid-template-columns:
+      1fr;
+  }
+}
+
+/* WRITER:HOME_LAYOUT_UI:END */
