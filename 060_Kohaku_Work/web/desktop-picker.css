@@ -1,0 +1,389 @@
+/* =========================================================
+   KOPPY DESKTOP DATE / TIME PICKER
+   Desktop only. Mobile keeps native controls.
+========================================================= */
+
+.kdp-host{
+  position:relative !important;
+}
+
+.kdp-source{
+  pointer-events:none !important;
+  opacity:0 !important;
+}
+
+.kdp-proxy{
+  position:absolute;
+  z-index:2;
+  left:0;
+  right:0;
+  bottom:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  box-sizing:border-box;
+  width:100%;
+  min-width:0;
+  height:var(--kdp-source-height,40px);
+  padding-left:var(--kdp-padding-left,9px);
+  padding-right:var(--kdp-padding-right,9px);
+  border:var(--kdp-border,1px solid rgba(255,255,255,.09));
+  border-radius:var(--kdp-radius,10px);
+  color:var(--kdp-color,#eef8ff);
+  background:var(--kdp-background,#10273a);
+  font-family:inherit;
+  font-size:var(--kdp-font-size,13px);
+  font-weight:var(--kdp-font-weight,700);
+  line-height:1;
+  text-align:left;
+  cursor:pointer;
+}
+
+.kdp-proxy:hover{
+  filter:brightness(1.08);
+}
+
+.kdp-proxy:focus-visible{
+  outline:2px solid #55cfff;
+  outline-offset:2px;
+}
+
+.kdp-proxy-value{
+  min-width:0;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.kdp-proxy-icon{
+  flex:0 0 auto;
+  opacity:.72;
+  font-size:.9em;
+}
+
+
+/* ---------------------------------------------------------
+   Floating picker
+--------------------------------------------------------- */
+
+.kdp-popover{
+  position:fixed;
+  z-index:99999;
+  box-sizing:border-box;
+  border:1px solid rgba(105,210,255,.30);
+  border-radius:22px;
+  color:#effaff;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(11,39,61,.985),
+      rgba(5,24,42,.995)
+    );
+  box-shadow:
+    0 28px 80px rgba(0,0,0,.48),
+    0 0 0 1px rgba(255,255,255,.035) inset;
+  overflow:hidden;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+}
+
+.kdp-date-popover{
+  width:min(520px,calc(100vw - 24px));
+  padding:20px;
+}
+
+.kdp-time-popover{
+  width:min(430px,calc(100vw - 24px));
+  padding:20px;
+}
+
+.kdp-picker-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  margin-bottom:16px;
+}
+
+.kdp-picker-title{
+  min-width:0;
+  flex:1;
+  text-align:center;
+  font-size:20px;
+  font-weight:900;
+  letter-spacing:.02em;
+}
+
+.kdp-nav-button{
+  display:grid;
+  place-items:center;
+  width:52px;
+  height:52px;
+  padding:0;
+  border:1px solid rgba(255,255,255,.11);
+  border-radius:15px;
+  color:#eefaff;
+  background:rgba(255,255,255,.055);
+  font-size:27px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.kdp-nav-button:hover{
+  background:rgba(91,205,255,.13);
+}
+
+
+/* ---------------------------------------------------------
+   Large calendar
+--------------------------------------------------------- */
+
+.kdp-weekdays,
+.kdp-days{
+  display:grid;
+  grid-template-columns:
+    repeat(7,minmax(0,1fr));
+  gap:6px;
+}
+
+.kdp-weekdays{
+  margin-bottom:7px;
+}
+
+.kdp-weekday{
+  display:grid;
+  place-items:center;
+  min-height:30px;
+  color:rgba(229,244,255,.66);
+  font-size:13px;
+  font-weight:900;
+}
+
+.kdp-weekday:first-child{
+  color:#ff9caf;
+}
+
+.kdp-weekday:last-child{
+  color:#87c9ff;
+}
+
+.kdp-day{
+  display:grid;
+  place-items:center;
+  min-width:0;
+  min-height:58px;
+  padding:0;
+  border:1px solid rgba(255,255,255,.065);
+  border-radius:14px;
+  color:#edf9ff;
+  background:rgba(255,255,255,.035);
+  font-size:16px;
+  font-weight:800;
+  cursor:pointer;
+}
+
+.kdp-day:hover{
+  border-color:rgba(91,205,255,.44);
+  background:rgba(91,205,255,.10);
+}
+
+.kdp-day.is-outside{
+  opacity:.34;
+}
+
+.kdp-day.is-today{
+  border-color:rgba(91,205,255,.70);
+  box-shadow:
+    inset 0 0 0 1px
+    rgba(91,205,255,.20);
+}
+
+.kdp-day.is-selected{
+  border-color:#6bd6ff;
+  color:#031522;
+  background:#78dcff;
+  box-shadow:
+    0 8px 24px
+    rgba(74,196,255,.24);
+}
+
+.kdp-day.is-selected.is-outside{
+  opacity:1;
+}
+
+
+/* ---------------------------------------------------------
+   Time wheel
+--------------------------------------------------------- */
+
+.kdp-time-preview{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-height:64px;
+  margin:-2px 0 14px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;
+  background:rgba(255,255,255,.035);
+  font-size:30px;
+  font-weight:900;
+  letter-spacing:.08em;
+}
+
+.kdp-wheels{
+  position:relative;
+  display:grid;
+  grid-template-columns:1fr 34px 1fr;
+  align-items:center;
+  gap:4px;
+}
+
+.kdp-wheel-separator{
+  display:grid;
+  place-items:center;
+  font-size:28px;
+  font-weight:900;
+  opacity:.72;
+}
+
+.kdp-wheel-wrap{
+  min-width:0;
+}
+
+.kdp-wheel-label{
+  display:block;
+  margin-bottom:7px;
+  color:rgba(229,244,255,.64);
+  text-align:center;
+  font-size:12px;
+  font-weight:900;
+}
+
+.kdp-wheel{
+  position:relative;
+  height:260px;
+  overflow-x:hidden;
+  overflow-y:auto;
+  padding-block:104px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:17px;
+  background:rgba(255,255,255,.025);
+  scroll-snap-type:y mandatory;
+  scrollbar-width:none;
+  overscroll-behavior:contain;
+}
+
+.kdp-wheel::-webkit-scrollbar{
+  display:none;
+}
+
+.kdp-wheel::before,
+.kdp-wheel::after{
+  content:"";
+  position:sticky;
+  z-index:3;
+  left:0;
+  right:0;
+  display:block;
+  pointer-events:none;
+}
+
+.kdp-wheel::before{
+  top:0;
+  height:1px;
+}
+
+.kdp-wheel::after{
+  bottom:0;
+  height:1px;
+}
+
+.kdp-wheel-option{
+  display:grid;
+  place-items:center;
+  width:100%;
+  height:52px;
+  padding:0;
+  border:0;
+  color:rgba(235,248,255,.48);
+  background:transparent;
+  font-size:18px;
+  font-weight:800;
+  scroll-snap-align:center;
+  cursor:pointer;
+  transition:
+    color .12s ease,
+    transform .12s ease,
+    background .12s ease;
+}
+
+.kdp-wheel-option.is-selected{
+  color:#f4fcff;
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(91,205,255,.15),
+      transparent
+    );
+  font-size:24px;
+  transform:scale(1.05);
+}
+
+
+/* ---------------------------------------------------------
+   Footer
+--------------------------------------------------------- */
+
+.kdp-picker-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:9px;
+  margin-top:16px;
+}
+
+.kdp-picker-footer-group{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.kdp-picker-button{
+  min-height:45px;
+  padding:0 15px;
+  border:1px solid rgba(255,255,255,.10);
+  border-radius:13px;
+  color:#edf9ff;
+  background:rgba(255,255,255,.055);
+  font-size:13px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.kdp-picker-button:hover{
+  background:rgba(91,205,255,.12);
+}
+
+.kdp-picker-button.is-primary{
+  border-color:rgba(91,205,255,.50);
+  color:#031522;
+  background:#78dcff;
+}
+
+
+/* Mobile never uses the custom picker. */
+@media(
+  max-width:720px
+),
+(
+  pointer:coarse
+){
+  .kdp-popover{
+    display:none !important;
+  }
+}
