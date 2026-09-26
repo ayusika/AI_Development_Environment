@@ -650,6 +650,75 @@
   margin:0;
 }
 
+.next-memo-mode-switch{
+  display:grid;
+  grid-template-columns:
+    repeat(2,minmax(0,1fr));
+  gap:6px;
+  margin:0 0 7px;
+}
+
+.next-memo-mode-switch button{
+  min-width:0;
+  min-height:38px;
+  padding:7px 8px;
+  border:1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 22%,
+      transparent
+    );
+  border-radius:10px;
+  color:var(--wf-text-soft);
+  background:rgba(255,255,255,.025);
+  font:inherit;
+  font-size:8px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.next-memo-mode-switch button.is-active{
+  border-color:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 62%,
+      transparent
+    );
+  color:var(--wf-text);
+  background:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 12%,
+      transparent
+    );
+}
+
+.next-memo-mode-help{
+  display:block;
+  margin:0 0 9px;
+  color:var(--wf-text-dim);
+  font-size:7.5px;
+  line-height:1.45;
+}
+
+.next-customer-panel
+[data-next-memo-common][hidden]{
+  display:none !important;
+}
+
+.next-customer-panel
+#nextVisitNotesEditor{
+  margin-top:0;
+  padding-top:0;
+  border-top:0;
+}
+
+.next-customer-panel
+#nextVisitNotesEditor
+.next-notes-write-actions{
+  display:none !important;
+}
+
 /* 過去予約 + 日記 + その回のメモ */
 .next-customer-past-visits{
   margin-top:2px;

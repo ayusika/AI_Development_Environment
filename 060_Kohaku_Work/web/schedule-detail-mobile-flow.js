@@ -1602,6 +1602,211 @@
     return panel;
   }
 
+  function syncMemoMode(
+    panel,
+    mode = "common"
+  ) {
+    if (!panel) return;
+
+    const nextMode =
+      mode === "visit"
+        ? "visit"
+        : "common";
+
+    panel.dataset.nextMemoMode =
+      nextMode;
+
+    const commonField =
+      panel.querySelector(
+        "[data-next-memo-common]"
+      );
+
+    const visitEditor =
+      panel.querySelector(
+        "#nextVisitNotesEditor"
+      );
+
+    if (commonField) {
+      commonField.hidden =
+        nextMode !== "common";
+    }
+
+    if (visitEditor) {
+      visitEditor.hidden =
+        nextMode !== "visit";
+    }
+
+    panel
+      .querySelectorAll(
+        "[data-next-memo-mode]"
+      )
+      .forEach(button => {
+        const active =
+          button.dataset.nextMemoMode
+          === nextMode;
+
+        button.classList.toggle(
+          "is-active",
+          active
+        );
+
+        button.setAttribute(
+          "aria-pressed",
+          active
+            ? "true"
+            : "false"
+        );
+      });
+
+    const help =
+      panel.querySelector(
+        "[data-next-memo-mode-help]"
+      );
+
+    if (help) {
+      const nextHelpText =
+        nextMode === "visit"
+          ? "今回の予約だけに保存するメモです。"
+          : "次回以降もこの顧客に引き継ぐメモです。";
+
+      if (
+        help.textContent
+        !== nextHelpText
+      ) {
+        help.textContent =
+          nextHelpText;
+      }
+    }
+  }
+
+  function mountUnifiedMemoEditor(
+    notesPanel,
+    source
+  ) {
+    if (
+      !notesPanel
+      || !source
+      || source.disabled
+    ) {
+      return;
+    }
+
+    const generalNotes =
+      document.getElementById(
+        "nextCustomerGeneralNotes"
+      );
+
+    const commonField =
+      generalNotes?.closest(
+        ".next-notes-write-field"
+      );
+
+    if (commonField) {
+      commonField.dataset
+        .nextMemoCommon =
+        "true";
+    }
+
+    let switcher =
+      notesPanel.querySelector(
+        "[data-next-memo-mode-switch]"
+      );
+
+    if (!switcher) {
+      switcher =
+        document.createElement(
+          "div"
+        );
+
+      switcher.className =
+        "next-memo-mode-switch";
+
+      switcher.dataset
+        .nextMemoModeSwitch =
+        "true";
+
+      switcher.innerHTML = `
+        <button
+          type="button"
+          data-next-memo-mode="common"
+          aria-pressed="true"
+        >
+          共通メモ
+        </button>
+
+        <button
+          type="button"
+          data-next-memo-mode="visit"
+          aria-pressed="false"
+        >
+          個別メモ
+        </button>
+      `;
+
+      notesPanel.prepend(
+        switcher
+      );
+    }
+
+    let help =
+      notesPanel.querySelector(
+        "[data-next-memo-mode-help]"
+      );
+
+    if (!help) {
+      help =
+        document.createElement(
+          "small"
+        );
+
+      help.className =
+        "next-memo-mode-help";
+
+      help.dataset
+        .nextMemoModeHelp =
+        "true";
+
+      switcher.insertAdjacentElement(
+        "afterend",
+        help
+      );
+    }
+
+    const visitEditor =
+      document.getElementById(
+        "nextVisitNotesEditor"
+      );
+
+    if (visitEditor) {
+      const visitCard =
+        visitEditor.closest(
+          ".next-notes-write-card.is-visit-scope"
+        );
+
+      if (visitCard) {
+        visitCard.hidden = true;
+        visitCard.dataset
+          .nextUnifiedMemoSource =
+          "true";
+      }
+
+      if (
+        visitEditor.parentElement
+        !== notesPanel
+      ) {
+        notesPanel.append(
+          visitEditor
+        );
+      }
+    }
+
+    syncMemoMode(
+      notesPanel,
+      notesPanel.dataset.nextMemoMode
+      || "common"
+    );
+  }
+
   function syncCustomerPanelButtons(
     editor
   ) {
@@ -1750,6 +1955,11 @@
         "notes"
       );
 
+    mountUnifiedMemoEditor(
+      notesPanel,
+      source
+    );
+
     const featureForm =
       editor.querySelector(
         ".next-customer-feature-form"
@@ -1796,7 +2006,7 @@
           data-next-customer-panel-toggle="notes"
           aria-expanded="false"
         >
-          共通メモを編集
+          メモを編集
         </button>
 
         <button
@@ -3918,6 +4128,47 @@
       if (headerVisitNotes) {
         event.preventDefault();
 
+        const memoButton =
+          body.querySelector(
+            '[data-next-customer-panel-toggle="notes"]'
+          );
+
+        const customerSource =
+          body.querySelector(
+            "[data-next-customer-profile-open]"
+          );
+
+        if (
+          memoButton
+          && customerSource
+          && !customerSource.disabled
+        ) {
+          memoButton.click();
+
+          window.setTimeout(() => {
+            const panel =
+              body.querySelector(
+                '[data-next-customer-panel="notes"]'
+              );
+
+            if (!panel) {
+              return;
+            }
+
+            syncMemoMode(
+              panel,
+              "visit"
+            );
+
+            panel.scrollIntoView({
+              behavior:"smooth",
+              block:"center",
+            });
+          }, 30);
+
+          return;
+        }
+
         const source =
           body.querySelector(
             "[data-next-visit-notes-open]"
@@ -3946,6 +4197,33 @@
             block:"center",
           });
         }, 30);
+
+        return;
+      }
+
+      const memoModeButton =
+        event.target.closest(
+          "[data-next-memo-mode]"
+        );
+
+      if (memoModeButton) {
+        event.preventDefault();
+
+        const panel =
+          memoModeButton.closest(
+            '[data-next-customer-panel="notes"]'
+          );
+
+        if (!panel) {
+          return;
+        }
+
+        syncMemoMode(
+          panel,
+          memoModeButton.dataset
+            .nextMemoMode
+          || "common"
+        );
 
         return;
       }
@@ -4038,6 +4316,18 @@
           );
 
         editor.hidden = false;
+
+        if (key === "notes") {
+          const notesPanel =
+            editor.querySelector(
+              '[data-next-customer-panel="notes"]'
+            );
+
+          syncMemoMode(
+            notesPanel,
+            "common"
+          );
+        }
 
         void ensureProfile()
           .then(() => {
