@@ -376,14 +376,16 @@
 }
 
 
-/* Mobile never uses the custom picker. */
+/* Mobile keeps the native date picker.
+   Time uses the custom 5-minute wheel. */
 @media(
   max-width:720px
 ),
 (
   pointer:coarse
 ){
-  .kdp-popover{
-    display:none !important;
+  .kdp-time-popover .kdp-wheel{
+    touch-action:pan-y;
+    -webkit-overflow-scrolling:touch;
   }
 }

@@ -1081,16 +1081,16 @@
     input,
     proxy
   ) {
-    if (!isDesktop()) {
-      return;
-    }
-
     syncProxy(input);
 
     if (
       input.dataset.kdpType
       === "date"
     ) {
+      if (!isDesktop()) {
+        return;
+      }
+
       openDatePicker(
         input,
         proxy
@@ -1109,8 +1109,7 @@
     input
   ) {
     if (
-      !isDesktop()
-      || !(input instanceof HTMLInputElement)
+      !(input instanceof HTMLInputElement)
       || input.dataset.kdpEnhanced === "1"
     ) {
       return;
@@ -1122,6 +1121,13 @@
     if (
       type !== "date"
       && type !== "time"
+    ) {
+      return;
+    }
+
+    if (
+      type === "date"
+      && !isDesktop()
     ) {
       return;
     }
@@ -1207,7 +1213,11 @@
     input.addEventListener(
       "invalid",
       (event) => {
-        if (!isDesktop()) {
+        if (
+          input.dataset.kdpType
+          === "date"
+          && !isDesktop()
+        ) {
           return;
         }
 
@@ -1224,10 +1234,6 @@
   }
 
   function scan(root) {
-    if (!isDesktop()) {
-      return;
-    }
-
     if (
       root instanceof HTMLInputElement
       && root.matches(
@@ -1273,16 +1279,11 @@
             of record.addedNodes
           ) {
             applyTimeStep(node);
-
-            if (isDesktop()) {
-              scan(node);
-            }
+            scan(node);
           }
         }
 
-        if (isDesktop()) {
-          syncAll();
-        }
+        syncAll();
       }
     );
 
