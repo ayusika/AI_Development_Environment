@@ -134,15 +134,74 @@ function renderMaster(){
 }
 function repeatCustomerDisplayName(v){
   const parts=[];
-  const normal=String(v.customer_name||"").trim();
-  const kashikoi=String(v.customer_kashikoi_name||"").trim();
+  const seen=new Set();
 
-  if(normal)parts.push(normal);
-  if(kashikoi&&kashikoi!==normal)parts.push(`カ:${kashikoi}`);
+  const names=
+    Array.isArray(v.customer_names)
+      ?v.customer_names
+      :[];
+
+  names.forEach(item=>{
+    const name=
+      String(
+        item?.name||""
+      ).trim();
+
+    const type=
+      String(
+        item?.name_type||""
+      ).trim();
+
+    if(
+      !name
+      ||seen.has(name)
+    ){
+      return;
+    }
+
+    seen.add(name);
+
+    parts.push(
+      type==="kashikoi"
+        ?`カ:${name}`
+        :name
+    );
+  });
+
+  /*
+   * 旧レスポンスとの互換用 fallback。
+   * customer_names が未提供でも
+   * 従来どおり表示できる。
+   */
+  if(!parts.length){
+    const normal=
+      String(
+        v.customer_name||""
+      ).trim();
+
+    const kashikoi=
+      String(
+        v.customer_kashikoi_name||""
+      ).trim();
+
+    if(normal){
+      parts.push(normal);
+      seen.add(normal);
+    }
+
+    if(
+      kashikoi
+      &&!seen.has(kashikoi)
+    ){
+      parts.push(
+        `カ:${kashikoi}`
+      );
+    }
+  }
 
   return parts.length
-    ? parts.join(" / ")
-    : `顧客 #${Number(v.customer_id||0)}`;
+    ?parts.join(" / ")
+    :`顧客 #${Number(v.customer_id||0)}`;
 }
 
 function repeatPastHistory(visits){

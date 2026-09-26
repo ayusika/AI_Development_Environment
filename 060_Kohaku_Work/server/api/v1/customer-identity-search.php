@@ -230,6 +230,103 @@ function fetchIdentityFeaturesByCustomerIds(
 }
 
 
+function fetchCustomerNamesByCustomerIds(
+    PDO $pdo,
+    array $customerIds
+): array {
+
+    if ($customerIds === []) {
+        return [];
+    }
+
+
+    $placeholders =
+        implode(
+            ',',
+            array_fill(
+                0,
+                count($customerIds),
+                '?'
+            )
+        );
+
+
+    $statement =
+        $pdo->prepare(
+            "
+            SELECT
+                id,
+                customer_id,
+                name_type,
+                name,
+                store_id,
+                is_primary,
+                note
+
+            FROM customer_names
+
+            WHERE customer_id IN ({$placeholders})
+
+            ORDER BY
+                customer_id ASC,
+                is_primary DESC,
+                id ASC
+            "
+        );
+
+
+    $statement->execute(
+        $customerIds
+    );
+
+
+    $namesByCustomer =
+        [];
+
+
+    foreach (
+        $statement->fetchAll()
+        as $name
+    ) {
+
+        $customerId =
+            (int)
+            (
+                $name['customer_id']
+                ?? 0
+            );
+
+
+        if ($customerId <= 0) {
+            continue;
+        }
+
+
+        if (
+            !isset(
+                $namesByCustomer[
+                    $customerId
+                ]
+            )
+        ) {
+            $namesByCustomer[
+                $customerId
+            ] = [];
+        }
+
+
+        $namesByCustomer[
+            $customerId
+        ][] =
+            $name;
+    }
+
+
+    return
+        $namesByCustomer;
+}
+
+
 /* =========================================================
    MAIN
 ========================================================= */
@@ -678,6 +775,13 @@ try {
         );
 
 
+    $namesByCustomer =
+        fetchCustomerNamesByCustomerIds(
+            $pdo,
+            $customerIds
+        );
+
+
     foreach (
         $visits
         as &$visit
@@ -693,6 +797,17 @@ try {
                 $visit['customer_id']
                 ?? 0
             );
+
+
+        $visit['customer_names'] =
+            $customerId > 0
+                ? (
+                    $namesByCustomer[
+                        $customerId
+                    ]
+                    ?? []
+                )
+                : [];
 
 
         $visit['identity_features'] =
