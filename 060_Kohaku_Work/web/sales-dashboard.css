@@ -1,0 +1,409 @@
+/* =========================================================
+   KOHaku WORK / SALES DASHBOARD
+   Production read-only dashboard.
+========================================================= */
+
+.next-sales-status-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
+
+.next-sales-status-copy{
+  color:var(--wf-text-dim);
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:.05em;
+}
+
+.next-sales-summary-panel,
+.next-sales-filter-panel,
+.next-sales-visits-panel{
+  margin-bottom:16px;
+  padding:22px;
+}
+
+.next-sales-section-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:16px;
+}
+
+.next-sales-section-head h2{
+  margin:3px 0 0;
+  color:var(--wf-text);
+  font-size:20px;
+}
+
+.next-sales-period-label{
+  margin:0;
+  color:var(--wf-accent);
+  font-family:var(--wf-font-mono);
+  font-size:10px;
+  font-weight:900;
+  letter-spacing:.10em;
+}
+
+.next-sales-metrics{
+  display:grid;
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+  gap:10px;
+}
+
+.next-sales-metric{
+  min-width:0;
+  padding:16px;
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 17%,
+      transparent
+    );
+  border-radius:16px;
+  background:rgba(255,255,255,.035);
+}
+
+.next-sales-metric span,
+.next-sales-metric strong{
+  display:block;
+}
+
+.next-sales-metric span{
+  color:var(--wf-text-dim);
+  font-size:10px;
+  font-weight:850;
+}
+
+.next-sales-metric strong{
+  margin-top:8px;
+  overflow-wrap:anywhere;
+  color:var(--wf-text);
+  font-size:20px;
+  line-height:1.25;
+}
+
+.next-sales-metric.is-primary{
+  border-color:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 44%,
+      transparent
+    );
+  background:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 8%,
+      transparent
+    );
+}
+
+.next-sales-metric.is-primary strong{
+  color:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 84%,
+      white
+    );
+  font-size:25px;
+}
+
+#nextSalesUnentered.is-warning{
+  color:#ffd27d;
+}
+
+.next-sales-period-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:14px;
+}
+
+.next-sales-period-button,
+.next-sales-day-button{
+  min-height:42px;
+  padding:8px 14px;
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 24%,
+      transparent
+    );
+  border-radius:13px;
+  color:var(--wf-text);
+  background:rgba(255,255,255,.045);
+  font:inherit;
+  font-size:11px;
+  font-weight:900;
+  cursor:pointer;
+  touch-action:manipulation;
+}
+
+.next-sales-period-button:hover,
+.next-sales-day-button:hover{
+  background:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 10%,
+      transparent
+    );
+}
+
+.next-sales-period-button.is-active{
+  border-color:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 55%,
+      transparent
+    );
+  color:#031522;
+  background:var(--wf-accent);
+}
+
+.next-sales-filter-grid{
+  display:grid;
+  grid-template-columns:
+    minmax(0,1fr)
+    minmax(0,1fr);
+  gap:10px;
+}
+
+.next-sales-field{
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  color:var(--wf-text-dim);
+  font-size:10px;
+  font-weight:850;
+}
+
+.next-sales-field input,
+.next-sales-field select{
+  width:100%;
+  min-width:0;
+  min-height:46px;
+  box-sizing:border-box;
+  padding:9px 11px;
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 20%,
+      transparent
+    );
+  border-radius:13px;
+  outline:none;
+  color:var(--wf-text);
+  background:rgba(4,20,36,.76);
+  font:inherit;
+  font-size:13px;
+  font-weight:800;
+}
+
+.next-sales-field input:focus,
+.next-sales-field select:focus{
+  border-color:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 62%,
+      transparent
+    );
+  box-shadow:
+    0 0 0 3px
+    color-mix(
+      in srgb,
+      var(--wf-accent) 12%,
+      transparent
+    );
+}
+
+.next-sales-day-nav{
+  display:grid;
+  grid-template-columns:
+    minmax(0,1fr)
+    auto
+    minmax(0,1fr);
+  align-items:center;
+  gap:8px;
+  margin-top:12px;
+}
+
+.next-sales-day-nav[hidden]{
+  display:none;
+}
+
+.next-sales-day-label{
+  min-width:74px;
+  color:var(--wf-text);
+  font-family:var(--wf-font-mono);
+  font-size:13px;
+  font-weight:900;
+  text-align:center;
+}
+
+.next-sales-visit-list{
+  display:grid;
+  gap:8px;
+}
+
+.next-sales-loading,
+.next-sales-empty,
+.next-sales-error{
+  margin:0;
+  padding:18px;
+  border:
+    1px solid
+    rgba(255,255,255,.06);
+  border-radius:14px;
+  color:var(--wf-text-dim);
+  background:rgba(0,10,24,.18);
+  font-size:11px;
+  text-align:center;
+}
+
+.next-sales-error{
+  color:#ff9caf;
+}
+
+.next-sales-visit{
+  display:grid;
+  grid-template-columns:
+    minmax(0,1fr)
+    auto;
+  align-items:center;
+  gap:14px;
+  padding:13px 14px;
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 14%,
+      transparent
+    );
+  border-radius:14px;
+  background:rgba(0,10,24,.24);
+}
+
+.next-sales-visit-main,
+.next-sales-visit-side{
+  min-width:0;
+}
+
+.next-sales-visit-main strong,
+.next-sales-visit-main small,
+.next-sales-visit-side strong,
+.next-sales-visit-side small{
+  display:block;
+}
+
+.next-sales-visit-main strong{
+  overflow:hidden;
+  color:var(--wf-text);
+  font-size:13px;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.next-sales-visit-main small{
+  margin-top:4px;
+  color:var(--wf-text-dim);
+  font-size:10px;
+  line-height:1.45;
+}
+
+.next-sales-visit-side{
+  text-align:right;
+}
+
+.next-sales-visit-side strong{
+  color:var(--wf-text);
+  font-size:14px;
+}
+
+.next-sales-visit-side small{
+  margin-top:4px;
+  color:var(--wf-text-dim);
+  font-size:9px;
+  font-weight:900;
+}
+
+.next-sales-visit.is-unentered{
+  border-color:rgba(255,210,125,.20);
+}
+
+.next-sales-visit.is-unentered
+.next-sales-visit-side small{
+  color:#ffd27d;
+}
+
+@media(max-width:760px){
+
+  .next-sales-summary-panel,
+  .next-sales-filter-panel,
+  .next-sales-visits-panel{
+    padding:16px;
+  }
+
+  .next-sales-metrics{
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+  }
+
+  .next-sales-metric{
+    padding:13px;
+  }
+
+  .next-sales-metric strong{
+    font-size:17px;
+  }
+
+  .next-sales-metric.is-primary strong{
+    font-size:21px;
+  }
+}
+
+@media(max-width:520px){
+
+  .next-sales-status-row{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .next-sales-filter-grid{
+    grid-template-columns:1fr;
+  }
+
+  .next-sales-day-nav{
+    grid-template-columns:
+      minmax(0,1fr)
+      auto
+      minmax(0,1fr);
+  }
+
+  .next-sales-day-button{
+    padding:8px 9px;
+  }
+
+  .next-sales-visit{
+    grid-template-columns:
+      minmax(0,1fr)
+      auto;
+    gap:9px;
+    padding:11px;
+  }
+
+  .next-sales-visit-main strong{
+    font-size:12px;
+  }
+
+  .next-sales-visit-side strong{
+    font-size:12px;
+  }
+}

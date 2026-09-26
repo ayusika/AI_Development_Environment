@@ -39,6 +39,7 @@
   <link rel="stylesheet" href="./schedule-detail-ux.css">
   <link rel="stylesheet" href="./schedule-detail-mobile-flow.css">
   <link rel="stylesheet" href="./desktop-picker.css">
+  <link rel="stylesheet" href="./sales-dashboard.css">
 </head>
 
 <body
@@ -1703,6 +1704,8 @@
 
         </section>
 
+        <!-- WRITER:NEXT_WORK_SALES_VIEW:START -->
+
         <section
           class="work-next-view"
           data-view="sales"
@@ -1719,16 +1722,189 @@
           </div>
 
 
-          <article class="work-next-panel" data-wf-panel data-wf-panel-surface>
-            <span class="work-next-phase">PHASE 1</span>
-            <h2 class="wf-panel-title">View移植済み</h2>
-            <p class="wf-panel-copy">
-              現在は画面構造だけを移植済み。
-              API・本番DBへの接続は次の段階で行います。
-            </p>
+          <div class="next-sales-status-row">
+            <span
+              class="work-next-live-status"
+              id="nextSalesStatus"
+            >
+              READY
+            </span>
+
+            <span class="next-sales-status-copy">
+              PRODUCTION READ ONLY
+            </span>
+          </div>
+
+
+          <article
+            class="work-next-panel next-sales-summary-panel"
+            data-wf-panel
+            data-wf-panel-surface
+          >
+
+            <div class="next-sales-section-head">
+              <div>
+                <p
+                  class="next-sales-period-label"
+                  id="nextSalesPeriodLabel"
+                >
+                  THIS MONTH
+                </p>
+
+                <h2 id="nextSalesSummaryTitle">
+                  今月の手取り
+                </h2>
+              </div>
+            </div>
+
+
+            <div class="next-sales-metrics">
+
+              <div class="next-sales-metric is-primary">
+                <span>手取り</span>
+                <strong id="nextSalesTakeHome">¥ −</strong>
+              </div>
+
+              <div class="next-sales-metric">
+                <span>接客</span>
+                <strong id="nextSalesVisits">−件</strong>
+              </div>
+
+              <div class="next-sales-metric">
+                <span>売上未入力</span>
+                <strong id="nextSalesUnentered">−件</strong>
+              </div>
+
+              <div class="next-sales-metric">
+                <span>日次手数料</span>
+                <strong id="nextSalesDailyFee">¥ −</strong>
+              </div>
+
+            </div>
+
+          </article>
+
+
+          <article
+            class="work-next-panel next-sales-filter-panel"
+            data-wf-panel
+            data-wf-panel-surface
+          >
+
+            <div class="next-sales-section-head">
+              <div>
+                <p class="wf-eyebrow">FILTER</p>
+                <h2>表示条件</h2>
+              </div>
+            </div>
+
+
+            <div class="next-sales-period-actions">
+
+              <button
+                type="button"
+                class="next-sales-period-button"
+                data-next-sales-period="today"
+              >
+                今日
+              </button>
+
+              <button
+                type="button"
+                class="next-sales-period-button is-active"
+                data-next-sales-period="month"
+              >
+                今月
+              </button>
+
+            </div>
+
+
+            <div class="next-sales-filter-grid">
+
+              <label class="next-sales-field">
+                <span>日付を指定</span>
+
+                <input
+                  id="nextSalesDate"
+                  type="date"
+                >
+              </label>
+
+
+              <label class="next-sales-field">
+                <span>店舗</span>
+
+                <select id="nextSalesStore">
+                  <option value="">全店舗</option>
+                </select>
+              </label>
+
+            </div>
+
+
+            <div
+              class="next-sales-day-nav"
+              id="nextSalesDayNav"
+              hidden
+            >
+
+              <button
+                type="button"
+                class="next-sales-day-button"
+                data-next-sales-day-step="-1"
+              >
+                ← 前日
+              </button>
+
+              <strong
+                class="next-sales-day-label"
+                id="nextSalesDayLabel"
+              >
+                --/--
+              </strong>
+
+              <button
+                type="button"
+                class="next-sales-day-button"
+                data-next-sales-day-step="1"
+              >
+                翌日 →
+              </button>
+
+            </div>
+
+          </article>
+
+
+          <article
+            class="work-next-panel next-sales-visits-panel"
+            data-wf-panel
+            data-wf-panel-surface
+          >
+
+            <div class="next-sales-section-head">
+              <div>
+                <p class="wf-eyebrow">VISITS</p>
+                <h2>接客別売上</h2>
+              </div>
+            </div>
+
+
+            <div
+              class="next-sales-visit-list"
+              id="nextSalesVisitList"
+            >
+              <p class="next-sales-loading">
+                売上データを読み込む準備中
+              </p>
+            </div>
+
           </article>
 
         </section>
+
+        <!-- WRITER:NEXT_WORK_SALES_VIEW:END -->
 
         <section
           class="work-next-view"
@@ -1829,5 +2005,6 @@
   <script src="./schedule-progress-jump.js"></script>
   <script src="./schedule-detail-mobile-flow.js"></script>
   <script src="./desktop-picker.js"></script>
+  <script src="./sales-dashboard.js"></script>
 </body>
 </html>
