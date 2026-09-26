@@ -2700,9 +2700,17 @@
       );
 
     if (general) {
-      general.textContent =
+      const nextGeneralText =
         profile.general_notes
         || "顧客共通メモなし";
+
+      if (
+        general.textContent
+        !== nextGeneralText
+      ) {
+        general.textContent =
+          nextGeneralText;
+      }
     }
 
     const list =
@@ -2803,9 +2811,34 @@
           </p>
         `;
 
-    list.innerHTML =
-      missingDaysOffHtml
-      + featureHtml;
+    const featureRenderKey =
+      JSON.stringify(
+        features.map(feature => [
+          feature?.id ?? null,
+          feature?.feature_type ?? "",
+          feature?.feature_value ?? "",
+          feature?.note ?? "",
+        ])
+      )
+      + `|daysOffMissing:${
+        daysOffMissing
+          ? "1"
+          : "0"
+      }`;
+
+    if (
+      list.dataset
+        .nextMobileSummaryRenderKey
+      !== featureRenderKey
+    ) {
+      list.innerHTML =
+        missingDaysOffHtml
+        + featureHtml;
+
+      list.dataset
+        .nextMobileSummaryRenderKey =
+        featureRenderKey;
+    }
 
     moveVisitorQuickToCustomerSummary();
     syncRequiredCustomerFields();
