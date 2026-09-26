@@ -2356,6 +2356,51 @@ try {
         }
 
 
+        $servicePlace =
+            array_key_exists(
+                'service_place',
+                $payload
+            )
+                ? (
+                    $payload['service_place'] === null
+                    || $payload['service_place'] === ''
+
+                        ? null
+                        : trim(
+                            (string)
+                            $payload['service_place']
+                        )
+                )
+                : (
+                    $currentVisit['service_place'] === null
+
+                        ? null
+                        : (string)
+                            $currentVisit['service_place']
+                );
+
+
+        $allowedServicePlaces = [
+            'hotel',
+            'room',
+            'home',
+        ];
+
+
+        if (
+            $servicePlace !== null
+            && !in_array(
+                $servicePlace,
+                $allowedServicePlaces,
+                true
+            )
+        ) {
+            throw new RuntimeException(
+                'Invalid service_place.'
+            );
+        }
+
+
         $customerRequestedChange =
             filter_var(
                 $payload['customer_requested_change']
@@ -2960,6 +3005,7 @@ try {
                     nomination_fee_amount = ?,
                     customer_features = ?,
                     visitor_type = ?,
+                    service_place = ?,
                     status = ?,
                     cancelled_at = ?,
                     cancel_reason = ?,
@@ -2986,6 +3032,7 @@ try {
             $nominationFeeAmount,
             $customerFeatures,
             $visitorType,
+            $servicePlace,
             $status,
             $cancelledAt,
             $cancelReason,

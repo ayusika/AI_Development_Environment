@@ -186,12 +186,33 @@
 
     if (!target) return;
 
+    /*
+     * Mobile flow may relocate the visitor-type card
+     * into this summary.
+     *
+     * Preserve the actual DOM node while the legacy
+     * summary renderer refreshes its own contents.
+     */
+    const visitorQuick =
+      target.querySelector(
+        ".next-detail-visitor-quick"
+      );
+
+    visitorQuick?.remove();
+
     if (!customerProfile) {
       target.innerHTML = `
         <p class="next-customer-feature-empty">
           顧客プロフィールを読み込めませんでした。
         </p>
       `;
+
+      if (visitorQuick) {
+        target.append(
+          visitorQuick
+        );
+      }
+
       return;
     }
 
@@ -209,6 +230,24 @@
         )}
       </div>
     `;
+
+    if (visitorQuick) {
+      const featureList =
+        target.querySelector(
+          ".next-customer-feature-list"
+        );
+
+      if (featureList) {
+        featureList.insertAdjacentElement(
+          "beforebegin",
+          visitorQuick
+        );
+      } else {
+        target.append(
+          visitorQuick
+        );
+      }
+    }
   }
 
   function mountTools() {

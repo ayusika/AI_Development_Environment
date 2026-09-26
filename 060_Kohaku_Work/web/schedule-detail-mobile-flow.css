@@ -1222,3 +1222,134 @@
   color:var(--wf-text-dim);
   font-size:7px;
 }
+
+/* =========================================================
+   KOHaku WORK NEXT / CUSTOMER REQUIRED + PAST PLACE V1
+========================================================= */
+
+.next-customer-profile-summary
+> .next-detail-visitor-quick{
+  width:100%;
+  box-sizing:border-box;
+  margin:10px 0;
+}
+
+.next-detail-area-note.is-required-missing,
+.next-customer-feature-item.is-required-missing,
+.next-feature-batch-field.is-required-missing{
+  animation:
+    nextCustomerRequiredPulse
+    1.25s ease-in-out infinite;
+}
+
+.next-detail-area-note.is-required-missing{
+  border-color:
+    rgba(255,116,143,.72);
+  box-shadow:
+    0 0 0 1px
+    rgba(255,116,143,.18);
+}
+
+.next-customer-feature-item.is-required-missing,
+.next-feature-batch-field.is-required-missing{
+  border-color:
+    rgba(255,116,143,.66);
+  background:
+    rgba(255,116,143,.07);
+}
+
+.next-customer-feature-item.is-required-missing
+span,
+.next-customer-feature-item.is-required-missing
+small{
+  color:#ffc4d0;
+}
+
+@keyframes nextCustomerRequiredPulse{
+  0%,
+  100%{
+    box-shadow:
+      0 0 0 0
+      rgba(255,116,143,.08);
+  }
+
+  50%{
+    box-shadow:
+      0 0 0 3px
+      rgba(255,116,143,.26);
+  }
+}
+
+.next-past-service-place-actions{
+  display:grid;
+  grid-template-columns:
+    repeat(3,minmax(0,1fr));
+  gap:6px;
+  margin-top:8px;
+}
+
+.next-past-service-place-actions button{
+  min-height:34px;
+  padding:6px 5px;
+  border:1px solid
+    rgba(120,207,255,.28);
+  border-radius:9px;
+  color:var(--wf-text-soft);
+  background:
+    rgba(120,207,255,.06);
+  font:inherit;
+  font-size:8px;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.next-past-service-place-actions button:hover,
+.next-past-service-place-actions button:focus-visible{
+  border-color:
+    rgba(120,207,255,.58);
+  background:
+    rgba(120,207,255,.12);
+}
+
+.next-past-service-place-actions button:disabled{
+  opacity:.5;
+  cursor:wait;
+}
+
+.next-past-service-place-status{
+  display:block;
+  margin-top:6px;
+  color:var(--wf-text-dim);
+  font-size:7px;
+  line-height:1.4;
+}
+
+@media(prefers-reduced-motion:reduce){
+  .next-detail-area-note.is-required-missing,
+  .next-customer-feature-item.is-required-missing,
+  .next-feature-batch-field.is-required-missing{
+    animation:none;
+  }
+}
+
+/* =========================================================
+   CUSTOMER EDITOR DIRECTLY BELOW CLICKED BUTTON V1
+========================================================= */
+
+.next-customer-panel-actions{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+
+.next-customer-panel-actions
+> button{
+  width:100%;
+}
+
+.next-customer-panel-actions
+> #nextCustomerProfileEditor{
+  width:100%;
+  box-sizing:border-box;
+  margin:0 0 4px;
+}

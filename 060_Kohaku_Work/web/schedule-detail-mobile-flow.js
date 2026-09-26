@@ -7,6 +7,9 @@
   const VISIT_NOTES_API =
     "/api/v1/visit-notes.php";
 
+  const SCHEDULE_API =
+    "/api/v1/schedule.php";
+
   const scheduleApi =
     window.KohakuWorkNextSchedule;
 
@@ -1262,6 +1265,10 @@
     const customerId =
       currentCustomerId();
 
+    host.classList.remove(
+      "is-required-missing"
+    );
+
     if (!customerId) {
       input.disabled = true;
       input.value = "";
@@ -1288,19 +1295,122 @@
 
     if (
       input.dataset.seededCustomer
-      === String(customerId)
+      !== String(customerId)
+    ) {
+      input.value =
+        recordForType("area")
+          ?.feature_value
+        || "";
+
+      input.dataset.seededCustomer =
+        String(customerId);
+    }
+
+    syncRequiredCustomerFields();
+  }
+
+
+  function syncRequiredCustomerFields() {
+    const customerId =
+      currentCustomerId();
+
+    const ready =
+      Boolean(
+        customerId
+        && profile
+        && profileCustomerId
+          === customerId
+      );
+
+    const areaInput =
+      body.querySelector(
+        "[data-next-customer-area-input]"
+      );
+
+    const areaHost =
+      areaInput?.closest(
+        "[data-next-area-note]"
+      )
+      || null;
+
+    const areaValue =
+      String(
+        areaInput?.value
+        ?? recordForType("area")
+          ?.feature_value
+        ?? ""
+      ).trim();
+
+    areaHost?.classList.toggle(
+      "is-required-missing",
+      ready
+      && areaValue === ""
+    );
+
+    const daysOffInput =
+      body.querySelector(
+        '[data-next-batch-feature-type="days_off"]'
+      );
+
+    const daysOffValue =
+      String(
+        daysOffInput?.value
+        ?? recordForType("days_off")
+          ?.feature_value
+        ?? ""
+      ).trim();
+
+    daysOffInput
+      ?.closest(
+        ".next-feature-batch-field"
+      )
+      ?.classList.toggle(
+        "is-required-missing",
+        ready
+        && daysOffValue === ""
+      );
+  }
+
+
+  function moveVisitorQuickToCustomerSummary() {
+    const visitorCard =
+      body.querySelector(
+        ".next-detail-visitor-quick"
+      );
+
+    const summary =
+      document.getElementById(
+        "nextCustomerProfileSummary"
+      );
+
+    const featureList =
+      summary?.querySelector(
+        ".next-customer-feature-list"
+      );
+
+    if (
+      !visitorCard
+      || !summary
+      || !featureList
     ) {
       return;
     }
 
-    input.value =
-      recordForType("area")
-        ?.feature_value
-      || "";
+    if (
+      visitorCard.parentElement
+        === summary
+      && visitorCard.nextElementSibling
+        === featureList
+    ) {
+      return;
+    }
 
-    input.dataset.seededCustomer =
-      String(customerId);
+    featureList.insertAdjacentElement(
+      "beforebegin",
+      visitorCard
+    );
   }
+
 
   function featureFieldHtml(
     type,
@@ -1891,6 +2001,18 @@
     };
   }
 
+  function pastVisitHasDiary(visit) {
+    return Boolean(
+      String(
+        visit?.heaven_diary_body
+        || visit?.diary_body
+        || visit?.diary_note_body
+        || ""
+      ).trim()
+    );
+  }
+
+
   function pastVisitDiaryText(visit) {
     const diary =
       String(
@@ -2094,6 +2216,12 @@
                   visit
                 );
 
+              const canBackfillServicePlace =
+                servicePlace.isHistoricalGap
+                && pastVisitHasDiary(
+                  visit
+                );
+
               const cancelled =
                 Boolean(
                   visit.status
@@ -2234,6 +2362,50 @@
                           servicePlace.label
                         )}
                       </p>
+
+                      ${
+                        canBackfillServicePlace
+                          ? `
+                            <div
+                              class="next-past-service-place-actions"
+                              role="group"
+                              aria-label="過去予約の接客場所"
+                            >
+                              <button
+                                type="button"
+                                data-next-past-service-place-visit="${Number(visit.id)}"
+                                data-next-past-service-place-value="hotel"
+                              >
+                                ホテル
+                              </button>
+
+                              <button
+                                type="button"
+                                data-next-past-service-place-visit="${Number(visit.id)}"
+                                data-next-past-service-place-value="room"
+                              >
+                                ルーム
+                              </button>
+
+                              <button
+                                type="button"
+                                data-next-past-service-place-visit="${Number(visit.id)}"
+                                data-next-past-service-place-value="home"
+                              >
+                                自宅
+                              </button>
+                            </div>
+
+                            <small
+                              class="next-past-service-place-status"
+                              data-next-past-service-place-status="${Number(visit.id)}"
+                              aria-live="polite"
+                            >
+                              日記を確認して選択
+                            </small>
+                          `
+                          : ""
+                      }
                     </article>
 
                     <article>
@@ -2290,6 +2462,154 @@
       );
     }
   }
+
+  async function savePastVisitServicePlace(
+    visitId,
+    value
+  ) {
+    const allowed =
+      new Set([
+        "hotel",
+        "room",
+        "home",
+      ]);
+
+    if (
+      !Number.isInteger(visitId)
+      || visitId <= 0
+      || !allowed.has(value)
+    ) {
+      return;
+    }
+
+    const sourceVisit =
+      (
+        Array.isArray(
+          profile?.visits
+        )
+          ? profile.visits
+          : []
+      )
+      .find(
+        visit =>
+          Number(visit.id)
+          === visitId
+      )
+      || null;
+
+    if (
+      !sourceVisit
+      || !pastVisitHasDiary(
+        sourceVisit
+      )
+      || !pastVisitServicePlace(
+        sourceVisit
+      ).isHistoricalGap
+    ) {
+      return;
+    }
+
+    const buttons =
+      Array.from(
+        body.querySelectorAll(
+          `[data-next-past-service-place-visit="${visitId}"]`
+        )
+      );
+
+    const status =
+      body.querySelector(
+        `[data-next-past-service-place-status="${visitId}"]`
+      );
+
+    buttons.forEach(button => {
+      button.disabled = true;
+    });
+
+    if (status) {
+      status.textContent =
+        "保存中…";
+    }
+
+    setWriteStatus(
+      "PRODUCTION DB / WRITING",
+      "writing"
+    );
+
+    try {
+      const data =
+        await requestJson(
+          SCHEDULE_API,
+          {
+            method:"PATCH",
+            headers:{
+              "Content-Type":
+                "application/json",
+            },
+            body:JSON.stringify({
+              id:visitId,
+              service_place:value,
+            }),
+          }
+        );
+
+      const updated =
+        data.visit
+        || {};
+
+      Object.assign(
+        sourceVisit,
+        updated
+      );
+
+      sourceVisit.service_place =
+        value;
+
+      const scheduleIndex =
+        scheduleApi.state.visits
+          .findIndex(
+            visit =>
+              Number(visit.id)
+              === visitId
+          );
+
+      if (scheduleIndex >= 0) {
+        scheduleApi.state.visits[
+          scheduleIndex
+        ] = {
+          ...scheduleApi.state.visits[
+            scheduleIndex
+          ],
+          ...updated,
+          service_place:value,
+        };
+      }
+
+      renderPastVisitHistory();
+
+      setWriteStatus(
+        "✓ SAVED / PRODUCTION",
+        "saved"
+      );
+
+    } catch (error) {
+      buttons.forEach(button => {
+        button.disabled = false;
+      });
+
+      if (status) {
+        status.textContent =
+          error.message
+          || "保存できませんでした。";
+      }
+
+      setWriteStatus(
+        error.message
+        || "接客場所を保存できませんでした。",
+        "error"
+      );
+    }
+  }
+
 
   function seedGeneralNotes() {
     const textarea =
@@ -2406,54 +2726,91 @@
           !== "area"
       );
 
-    if (!features.length) {
-      list.innerHTML = `
-        <p class="next-customer-feature-empty">
-          顧客特徴はまだ登録されていません。
-        </p>
-      `;
-      return;
-    }
+    const daysOff =
+      features.find(
+        feature =>
+          feature?.feature_type
+          === "days_off"
+      )
+      || null;
+
+    const daysOffMissing =
+      String(
+        daysOff?.feature_value
+        || ""
+      ).trim() === "";
+
+    const missingDaysOffHtml =
+      daysOffMissing
+        ? `
+          <article
+            class="next-customer-feature-item is-required-missing"
+            data-next-required-field="days_off"
+          >
+            <div>
+              <strong>休日</strong>
+              <span>未入力</span>
+              <small>
+                次回予約の確認用に入力してね
+              </small>
+            </div>
+          </article>
+        `
+        : "";
+
+    const featureHtml =
+      features.length
+        ? features
+            .map(feature => {
+              const label =
+                FEATURE_TYPES.find(
+                  ([type]) =>
+                    type
+                    === feature.feature_type
+                )?.[1]
+                || feature.feature_type
+                || "特徴";
+
+              return `
+                <article class="next-customer-feature-item">
+                  <div>
+                    <strong>
+                      ${escapeHtml(label)}
+                    </strong>
+                    <span>
+                      ${escapeHtml(
+                        feature.feature_value
+                        || ""
+                      )}
+                    </span>
+                    ${
+                      feature.note
+                        ? `
+                          <small>
+                            ${escapeHtml(feature.note)}
+                          </small>
+                        `
+                        : ""
+                    }
+                  </div>
+                </article>
+              `;
+            })
+            .join("")
+        : `
+          <p class="next-customer-feature-empty">
+            顧客特徴はまだ登録されていません。
+          </p>
+        `;
 
     list.innerHTML =
-      features
-        .map(feature => {
-          const label =
-            FEATURE_TYPES.find(
-              ([type]) =>
-                type
-                === feature.feature_type
-            )?.[1]
-            || feature.feature_type
-            || "特徴";
+      missingDaysOffHtml
+      + featureHtml;
 
-          return `
-            <article class="next-customer-feature-item">
-              <div>
-                <strong>
-                  ${escapeHtml(label)}
-                </strong>
-                <span>
-                  ${escapeHtml(
-                    feature.feature_value
-                    || ""
-                  )}
-                </span>
-                ${
-                  feature.note
-                    ? `
-                      <small>
-                        ${escapeHtml(feature.note)}
-                      </small>
-                    `
-                    : ""
-                }
-              </div>
-            </article>
-          `;
-        })
-        .join("");
+    moveVisitorQuickToCustomerSummary();
+    syncRequiredCustomerFields();
   }
+
 
   async function saveVisitNotes(
     visit
@@ -3292,6 +3649,7 @@
       ) {
         renderProfileSummary();
         mountAreaInput();
+        syncRequiredCustomerFields();
 
         setWriteStatus(
           "✓ AUTO SAVED / PRODUCTION",
@@ -3423,6 +3781,9 @@
     mountAreaInput();
     hideLegacyAreaSummary();
     mountCustomerPanels();
+    renderProfileSummary();
+    moveVisitorQuickToCustomerSummary();
+    syncRequiredCustomerFields();
     renderPastVisitHistory();
 
     const customerId =
@@ -3442,6 +3803,9 @@
           seedGeneralNotes();
           mountBatchFeatureEditor();
           mountCustomerPanels();
+          renderProfileSummary();
+          moveVisitorQuickToCustomerSummary();
+          syncRequiredCustomerFields();
           renderPastVisitHistory();
           hideLegacyAreaSummary();
         })
@@ -3472,6 +3836,34 @@
   document.addEventListener(
     "click",
     event => {
+      const pastServicePlace =
+        event.target.closest(
+          "[data-next-past-service-place-value]"
+        );
+
+      if (pastServicePlace) {
+        event.preventDefault();
+
+        const visitId =
+          Number(
+            pastServicePlace.dataset
+              .nextPastServicePlaceVisit
+            || 0
+          );
+
+        const value =
+          pastServicePlace.dataset
+            .nextPastServicePlaceValue
+          || "";
+
+        void savePastVisitServicePlace(
+          visitId,
+          value
+        );
+
+        return;
+      }
+
       const reservation =
         event.target.closest(
           '[data-next-detail-heading="reservation"]'
@@ -3555,6 +3947,8 @@
             panel.hidden = true;
           });
 
+        editor.hidden = true;
+
         syncCustomerPanelButtons(
           editor
         );
@@ -3604,11 +3998,22 @@
 
         mountCustomerPanels();
 
+        customerPanelToggle
+          .insertAdjacentElement(
+            "afterend",
+            editor
+          );
+
+        editor.hidden = false;
+
         void ensureProfile()
           .then(() => {
             seedGeneralNotes();
             mountBatchFeatureEditor();
             mountCustomerPanels();
+            renderProfileSummary();
+            moveVisitorQuickToCustomerSummary();
+            syncRequiredCustomerFields();
           })
           .catch(error => {
             console.error(
@@ -3679,6 +4084,21 @@
             mountBatchFeatureEditor();
             mountCustomerPanels();
 
+            const featuresButton =
+              body.querySelector(
+                '[data-next-customer-panel-toggle="features"]'
+              );
+
+            if (featuresButton) {
+              featuresButton
+                .insertAdjacentElement(
+                  "afterend",
+                  editor
+                );
+            }
+
+            editor.hidden = false;
+
             toggleCustomerPanel(
               "features",
               true
@@ -3727,6 +4147,15 @@
     event => {
       if (event.isComposing) {
         return;
+      }
+
+      if (
+        event.target.matches(
+          "[data-next-customer-area-input],"
+          + '[data-next-batch-feature-type="days_off"]'
+        )
+      ) {
+        syncRequiredCustomerFields();
       }
 
       queueAutosaveForTarget(
