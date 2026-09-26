@@ -272,3 +272,183 @@
     min-width:0;
   }
 }
+
+
+/* =========================================================
+   NEW RESERVATION / RESPONSIVE UI V3
+========================================================= */
+
+/* Desktop:
+   Make the two important selectors visually comparable
+   to the larger customer-name fields. */
+@media(min-width:421px){
+  #nextCreateModal #ncrStatus,
+  #nextCreateModal #ncrCourseSelect{
+    min-height:60px;
+    padding:13px 14px;
+    border-radius:12px;
+    font-size:14px;
+    font-weight:850;
+  }
+}
+
+
+/* Mobile:
+   Compact the upper half into paired fields and reduce
+   vertical whitespace while keeping touch targets usable. */
+@media(max-width:420px){
+
+  #nextCreateModal .ncr-panel{
+    padding:
+      12px
+      12px
+      calc(
+        20px
+        + env(safe-area-inset-bottom)
+      );
+  }
+
+  #nextCreateModal .ncr-note{
+    margin-top:8px;
+    margin-bottom:8px;
+    padding:8px 9px;
+  }
+
+  /* Main reservation information:
+     date/time, booked date/time, store/status */
+  #nextCreateModal
+  #nextCreateForm
+  > .ncr-grid{
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+    gap:7px;
+  }
+
+  /* New customer:
+     name / kashikoi name */
+  #nextCreateModal
+  #ncrCustomer
+  .ncr-grid{
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+    gap:7px;
+  }
+
+  #nextCreateModal
+  .ncr-grid label,
+  #nextCreateModal
+  .ncr-sec label{
+    font-size:8px;
+  }
+
+  #nextCreateModal
+  .ncr-grid input,
+  #nextCreateModal
+  .ncr-grid select,
+  #nextCreateModal
+  .ncr-sec > input,
+  #nextCreateModal
+  .ncr-sec select{
+    min-height:38px;
+    margin-top:4px;
+    padding:6px 8px;
+  }
+
+  #nextCreateModal
+  .ncr-sec{
+    margin-top:10px;
+    padding-top:10px;
+  }
+
+  #nextCreateModal
+  .ncr-sec > b{
+    margin-bottom:5px;
+    font-size:8px;
+  }
+
+  /* OP cards */
+  #nextCreateModal
+  #ncrOptions{
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+    gap:5px;
+  }
+
+  #nextCreateModal
+  #ncrOptions
+  .ncr-check{
+    min-height:42px;
+    box-sizing:border-box;
+    padding:6px;
+    gap:5px;
+  }
+
+  #nextCreateModal
+  #ncrOptions
+  .ncr-check span{
+    font-size:8px;
+    line-height:1.25;
+  }
+
+  #nextCreateModal
+  #ncrOptions
+  .ncr-check small{
+    margin-top:1px;
+    font-size:7px;
+    line-height:1.2;
+  }
+
+  /* Keep the two explicitly paired rows compact. */
+  #nextCreateModal
+  .ncr-grid.ncr-mobile-pair{
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+    gap:6px;
+  }
+
+  #nextCreateModal
+  .ncr-grid.gap{
+    margin-top:6px;
+  }
+
+  /* Extension row also gets slightly tighter. */
+  #nextCreateModal
+  .ncr-ext{
+    gap:6px;
+    margin-bottom:5px;
+  }
+
+  #nextCreateModal
+  .ncr-actions{
+    margin-top:9px;
+  }
+}
+
+
+/* Modern iPhone-sized widths:
+   three OP cards per row. */
+@media(min-width:390px) and (max-width:420px){
+  #nextCreateModal
+  #ncrOptions{
+    grid-template-columns:
+      repeat(3,minmax(0,1fr));
+  }
+
+  #nextCreateModal
+  #ncrOptions
+  .ncr-check{
+    padding:6px 5px;
+  }
+
+  #nextCreateModal
+  #ncrOptions
+  .ncr-check span{
+    font-size:7.5px;
+  }
+
+  #nextCreateModal
+  #ncrOptions
+  .ncr-check small{
+    font-size:6.5px;
+  }
+}
