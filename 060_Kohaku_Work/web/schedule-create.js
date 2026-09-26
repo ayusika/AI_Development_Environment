@@ -112,8 +112,8 @@ function customerUI(){
     </div>
 
     <small class="ncr-repeat-search-hint">
-      日付を入れると名前とのAND検索。
-      完全一致は緑、前後1日は赤で表示します。
+      名前だけ・日付だけでも検索できます。
+      名前＋日付では完全一致を緑、前後1日を赤で表示します。
     </small>
 
     <div id="ncrResults"></div>
@@ -445,17 +445,11 @@ async function search(){
   const token=
     ++searchToken;
 
-  if(!name){
-    r.innerHTML=
-      requestedDate
-        ?`
-          <p class="ncr-msg">
-            名前を入力すると
-            日付とのAND検索をします。
-          </p>
-        `
-        :"";
-
+  if(
+    !name
+    &&!requestedDate
+  ){
+    r.innerHTML="";
     return;
   }
 
@@ -468,7 +462,10 @@ async function search(){
   try{
     let hits=[];
 
-    if(requestedDate){
+    if(
+      requestedDate
+      &&name
+    ){
       /*
        * 0〜2時台の予約は前営業日扱いなので、
        * 生の日付を -1〜+2 日まで取得してから
@@ -569,6 +566,102 @@ async function search(){
             )
           );
 
+    }else if(requestedDate){
+      /*
+       * 日付だけ検索では、
+       * 選択した営業日の顧客を表示する。
+       *
+       * 0〜2時台は前営業日扱いなので、
+       * 指定日と翌暦日を取得してから
+       * 営業日が指定日と一致する予約だけ残す。
+       */
+      const rawDates=
+        [0,1]
+          .map(offset=>
+            addSearchDays(
+              requestedDate,
+              offset
+            )
+          );
+
+      const responses=
+        await Promise.all(
+          rawDates.map(
+            visitDate=>
+              identitySearch({
+                visit_date:visitDate,
+              })
+          )
+        );
+
+      if(
+        token!==searchToken
+      ){
+        return;
+      }
+
+      const visitMap=
+        new Map();
+
+      responses
+        .flatMap(
+          data=>
+            Array.isArray(
+              data.data?.visits
+            )
+              ?data.data.visits
+              :[]
+        )
+        .forEach(visit=>{
+          const id=
+            Number(
+              visit.id||0
+            );
+
+          if(
+            id
+            &&!visitMap.has(id)
+          ){
+            visitMap.set(
+              id,
+              visit
+            );
+          }
+        });
+
+      hits=
+        [...visitMap.values()]
+          .map(visit=>{
+            const businessDate=
+              visitBusinessDateForSearch(
+                visit.started_at
+              );
+
+            const distance=
+              searchDayDistance(
+                requestedDate,
+                businessDate
+              );
+
+            return {
+              visit,
+              distance,
+              businessDate,
+            };
+          })
+          .filter(item=>
+            item.distance===0
+          )
+          .sort((a,b)=>
+            String(
+              a.visit.started_at||""
+            ).localeCompare(
+              String(
+                b.visit.started_at||""
+              )
+            )
+          );
+
     }else{
       const data=
         await identitySearch({
@@ -634,7 +727,11 @@ async function search(){
         <p class="ncr-msg">
           ${
             requestedDate
-              ?"名前＋指定日（前後1日を含む）で該当なし"
+              ?(
+                name
+                  ?"名前＋指定日（前後1日を含む）で該当なし"
+                  :"指定日に該当顧客なし"
+              )
               :"該当顧客なし"
           }
         </p>
