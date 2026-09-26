@@ -2,12 +2,12 @@
  * Source: user-provided unit-02 recruitment drawing.
  * Privacy: exact address and building-identifying metadata are intentionally
  * omitted from this web payload.
- * Private-room lifestyle mapping remains unassigned until explicitly confirmed.
+ * Private-room lifestyle mapping was explicitly confirmed on 2026-09-26.
  */
 'use strict';
 
 window.KOPPY_HOME_LAYOUT = {
-  version: '2026-09-26.1',
+  version: '2026-09-26.2',
 
   source: {
     label: 'ユーザー提供図面 / 2号室タイプ',
@@ -22,7 +22,7 @@ window.KOPPY_HOME_LAYOUT = {
   floorplan: {
     src: 'assets/floorplan-unit-02.png',
     alt:
-      '自宅の2号室タイプ間取り図。LDK16.6帖と洋室5.6帖、5.4帖、5.7帖を含む。',
+      '自宅の2号室タイプ間取り図。LDK16.6帖、ゲーム部屋5.6帖、寝室5.4帖、化粧部屋5.7帖と実測寸法矢印を含む。',
   },
 
   spaces: [
@@ -54,8 +54,8 @@ window.KOPPY_HOME_LAYOUT = {
         measured_on: '2026-09-26',
         status: 'measured',
       },
-      current_room_code: null,
-      current_room_label: null,
+      current_room_code: 'gaming',
+      current_room_label: '第三部屋・ゲーム部屋',
     },
     {
       id: 'private-center',
@@ -69,8 +69,8 @@ window.KOPPY_HOME_LAYOUT = {
         measured_on: '2026-09-26',
         status: 'measured',
       },
-      current_room_code: null,
-      current_room_label: null,
+      current_room_code: 'bedroom',
+      current_room_label: '第二部屋・寝室',
     },
     {
       id: 'private-right',
@@ -84,8 +84,8 @@ window.KOPPY_HOME_LAYOUT = {
         measured_on: '2026-09-26',
         status: 'measured',
       },
-      current_room_code: null,
-      current_room_label: null,
+      current_room_code: 'dressing',
+      current_room_label: '第一部屋・化粧部屋',
     },
     {
       id: 'entrance',
@@ -147,8 +147,8 @@ window.KOPPY_HOME_LAYOUT = {
   ],
 
   notes: [
-    '3つの洋室は物理部屋IDだけを先に固定しています。',
-    '化粧部屋・寝室・ゲーム部屋との対応は、確認できるまで推測で割り当てません。',
+    '洋室5.6帖はゲーム部屋、5.4帖は寝室、5.7帖は化粧部屋として確認済みです。',
+    '間取り画像には確認済みの実測寸法を縦横の矢印で表示しています。',
     'CLなどの収納は、次段階で座標付き配置へ拡張します。',
   ],
 };
