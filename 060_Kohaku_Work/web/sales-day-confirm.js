@@ -7,6 +7,13 @@
   const VISIT_PREVIEW_API =
     "/api/v1/visit-sales.php";
 
+  /*
+   * First production rollout:
+   * preview is live, DB write stays locked.
+   */
+  const WRITE_ENABLED =
+    false;
+
   const view =
     document.getElementById(
       "view-sales"
@@ -792,14 +799,23 @@
       };
 
       submit.disabled =
-        !ready;
+        !ready
+        || !WRITE_ENABLED;
 
       setMessage(
         ready
-          ? "全件の料金確認OK。確定ボタンを押すと、もう一度対象を照合してから書き込みます。"
+          ? (
+              WRITE_ENABLED
+                ? "全件の料金確認OK。確定ボタンを押すと、もう一度対象を照合してから書き込みます。"
+                : "全件の料金確認OK。本番確定は初回確認のため現在ロック中です。DBへの書き込みは行いません。"
+            )
           : "「要確認」の接客があります。料金を確認するまで一括確定できません。",
         ready
-          ? "is-ok"
+          ? (
+              WRITE_ENABLED
+                ? "is-ok"
+                : "is-warning"
+            )
           : "is-warning"
       );
 
@@ -845,6 +861,15 @@
   }
 
   async function confirmDay() {
+    if (!WRITE_ENABLED) {
+      setMessage(
+        "本番確定は現在ロック中です。DBへの書き込みは行いません。",
+        "is-warning"
+      );
+
+      return;
+    }
+
     if (
       confirmState.writeBusy
     ) {
