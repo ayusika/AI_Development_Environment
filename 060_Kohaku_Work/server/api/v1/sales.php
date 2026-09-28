@@ -440,6 +440,177 @@ try {
         $statement->fetchAll();
 
 
+    $visitIds =
+        array_values(
+            array_map(
+                static fn (array $record): int =>
+                    (int) $record['id'],
+                $records
+            )
+        );
+
+
+    $customerIds =
+        array_values(
+            array_unique(
+                array_map(
+                    'intval',
+                    array_filter(
+                        array_column(
+                            $records,
+                            'customer_id'
+                        ),
+                        static fn ($value): bool =>
+                            $value !== null
+                            && $value !== ''
+                    )
+                )
+            )
+        );
+
+
+    $customerNamesByCustomer =
+        [];
+
+    $optionsByVisit =
+        [];
+
+
+    if ($customerIds) {
+
+        $customerPlaceholders =
+            implode(
+                ', ',
+                array_fill(
+                    0,
+                    count($customerIds),
+                    '?'
+                )
+            );
+
+
+        $namesStatement =
+            $pdo->prepare(
+                "
+                SELECT
+                    customer_id,
+                    name_type,
+                    name,
+                    is_primary,
+                    id
+
+                FROM customer_names
+
+                WHERE customer_id IN (
+                    $customerPlaceholders
+                )
+
+                ORDER BY
+                    customer_id ASC,
+                    is_primary DESC,
+                    id ASC
+                "
+            );
+
+
+        $namesStatement->execute(
+            $customerIds
+        );
+
+
+        foreach (
+            $namesStatement->fetchAll()
+            as $customerName
+        ) {
+
+            $customerNamesByCustomer[
+                (int) $customerName[
+                    'customer_id'
+                ]
+            ][] = [
+                'name_type' =>
+                    $customerName['name_type'],
+
+                'name' =>
+                    $customerName['name'],
+
+                'is_primary' =>
+                    $customerName['is_primary'],
+            ];
+        }
+    }
+
+
+    if ($visitIds) {
+
+        $visitPlaceholders =
+            implode(
+                ', ',
+                array_fill(
+                    0,
+                    count($visitIds),
+                    '?'
+                )
+            );
+
+
+        $optionsStatement =
+            $pdo->prepare(
+                "
+                SELECT
+                    vo.visit_id,
+                    vo.option_id,
+                    o.name,
+                    vo.custom_name,
+                    vo.income_amount
+
+                FROM visit_options AS vo
+
+                LEFT JOIN options AS o
+                    ON o.id =
+                        vo.option_id
+
+                WHERE vo.visit_id IN (
+                    $visitPlaceholders
+                )
+
+                ORDER BY
+                    vo.visit_id ASC,
+                    o.sort_order ASC,
+                    vo.id ASC
+                "
+            );
+
+
+        $optionsStatement->execute(
+            $visitIds
+        );
+
+
+        foreach (
+            $optionsStatement->fetchAll()
+            as $option
+        ) {
+
+            $visitId =
+                (int) $option[
+                    'visit_id'
+                ];
+
+
+            unset(
+                $option['visit_id']
+            );
+
+
+            $optionsByVisit[
+                $visitId
+            ][] =
+                $option;
+        }
+    }
+
+
     $visits =
         [];
 
@@ -523,6 +694,25 @@ try {
                             'customer_name'
                         ]
                     : null,
+
+            'customer_names' =>
+                $record['customer_id']
+                    !== null
+                    ? (
+                        $customerNamesByCustomer[
+                            (int) $record[
+                                'customer_id'
+                            ]
+                        ]
+                        ?? []
+                    )
+                    : [],
+
+            'options' =>
+                $optionsByVisit[
+                    (int) $record['id']
+                ]
+                ?? [],
 
             'started_at' =>
                 (string)

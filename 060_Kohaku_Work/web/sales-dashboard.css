@@ -304,11 +304,11 @@
 }
 
 .next-sales-visit-main strong{
-  overflow:hidden;
   color:var(--wf-text);
   font-size:13px;
-  text-overflow:ellipsis;
-  white-space:nowrap;
+  line-height:1.4;
+  overflow-wrap:anywhere;
+  white-space:normal;
 }
 
 .next-sales-visit-main small{

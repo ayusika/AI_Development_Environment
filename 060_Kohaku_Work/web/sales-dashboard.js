@@ -426,6 +426,86 @@
       .join(" · ");
   }
 
+  function customerLabel(
+    visit
+  ) {
+    const prefixes = {
+      nickname:"",
+      kashikoi:"カ:",
+      okini_talk:"オ:",
+      line:"L:",
+      x:"X:",
+      instagram:"I:",
+    };
+
+    const names =
+      Array.isArray(
+        visit?.customer_names
+      )
+        ? visit.customer_names
+        : [];
+
+    const labels =
+      names
+        .filter(
+          record =>
+            record?.name
+        )
+        .map(
+          record =>
+            `${
+              prefixes[
+                record.name_type
+              ]
+              || ""
+            }${
+              String(
+                record.name
+              )
+            }`
+        )
+        .filter(
+          (label, index, list) =>
+            list.indexOf(label)
+            === index
+        );
+
+    return labels.length
+      ? labels.join(" / ")
+      : (
+          visit?.customer_name
+          || "お客様"
+        );
+  }
+
+  function optionLabel(
+    visit
+  ) {
+    const names =
+      (
+        Array.isArray(
+          visit?.options
+        )
+          ? visit.options
+          : []
+      )
+        .map(
+          option =>
+            String(
+              option?.name
+              || option?.custom_name
+              || ""
+            ).trim()
+        )
+        .filter(Boolean);
+
+    return names.length
+      ? `OP: ${
+          names.join("・")
+        }`
+      : "OP: なし";
+  }
+
   function renderVisits(
     visits
   ) {
@@ -492,8 +572,9 @@
           );
 
         name.textContent =
-          visit.customer_name
-          || "お客様";
+          customerLabel(
+            visit
+          );
 
         const detail =
           document.createElement(
@@ -503,9 +584,20 @@
         detail.textContent =
           visitDetail(visit);
 
+        const options =
+          document.createElement(
+            "small"
+          );
+
+        options.textContent =
+          optionLabel(
+            visit
+          );
+
         main.append(
           name,
-          detail
+          detail,
+          options
         );
 
         const side =
