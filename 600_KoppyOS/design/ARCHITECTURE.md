@@ -7,8 +7,8 @@
 Kohaku Workの現行production:
 
 ```text
-GitHub = source of truth
-Air = development / command center
+GitHub = durable canonical source of truth
+Air = development / command center / Remote MCP gateway
 Pro = Koppy Base Server / Kohaku Work production
 iPhone = Tailscale private client
 Lolipop Kohaku DB = mode 0444 rollback-only legacy
@@ -25,6 +25,21 @@ Kohaku Workについては`070_Koppy_AI_Base/CURRENT_STATUS.md`と
 `070_Koppy_AI_Base/01_Overview/Architecture.md`を優先する。
 
 Koppy World本体 / OAuth / KoppyOS DBのPro移行は別phase。
+
+2026-09-29以降、Remote Desktop Commander RemoteをChatGPTへ接続し、
+KoppyからAirのfilesystem / terminalを直接観測できるDirect Remote MCP経路を採用する。
+Airから既存SSH alias `koppy-worker` を使用することで、Pro development repositoryの未commit / 未push状態も直接観測できる。
+
+```text
+Koppy / ChatGPT
+→ Remote Desktop Commander Remote
+→ Air: shiinoMacBook-Air.local
+→ optional: ssh koppy-worker
+→ Pro development repository
+```
+
+Active Working Treeは現在作業中のmutable state、GitHub remote branchはcommit / push後のdurable canonical source、Productionはimmutable releaseとして分離する。
+Remote MCPで直接見えることは、write / commit / push / deployの自動許可を意味しない。
 
 ---
 

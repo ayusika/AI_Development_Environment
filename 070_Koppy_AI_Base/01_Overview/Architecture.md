@@ -72,7 +72,7 @@ Lolipop旧Kohaku DBはmode 0444のrollback-only legacy。
 ## 4本柱の役割
 
 ### 1. MacBook Air
-**役割:** Koppy Command Center / 設計脳 / メイン開発端末
+**役割:** Koppy Command Center / 設計脳 / メイン開発端末 / Remote MCP Gateway
 
 - Koppyとの会話
 - 設計判断
@@ -80,6 +80,9 @@ Lolipop旧Kohaku DBはmode 0444のrollback-only legacy。
 - GitHub・設計書確認
 - コード編集・検証
 - 全体統括
+- Remote Desktop Commander RemoteによるKoppyからの直接filesystem / terminal observation
+- `shiinoMacBook-Air.local` をRemote MCP deviceとして利用
+- Airから `ssh koppy-worker` を実行し、Proのworking tree / terminalをKoppyが直接観測できるGatewayとして利用
 
 ### 2. MacBook Pro 2018
 **役割:** Koppy Base Server
@@ -97,6 +100,7 @@ Lolipop旧Kohaku DBはmode 0444のrollback-only legacy。
 - tmux常駐
 - SSH / 画面共有
 - AirとのThunderbolt Bridge直結
+- AirのRemote Desktop Commander Remote + `ssh koppy-worker` 経由で、未commit / 未pushを含むPro working treeをKoppyが直接観測可能
 - Qwen 7B / Aiderは実験用として休眠
 
 #### Storage
@@ -148,7 +152,54 @@ Lolipop旧Kohaku DBはmode 0444のrollback-only legacy。
    - Deterministic / Safe Write Executor
    - 確定済み変更の安全な反映
 
-MacBook Pro 2018は開発Executorから外し、Koppy Base ServerとしてInfrastructureを担当する。
+MacBook Pro 2018は通常時のPrimary開発Executorから外し、Koppy Base ServerとしてInfrastructureを担当する。
+
+ただし、server-adjacentな変更やPro runtimeとの即時確認が有利な作業では、
+そのSessionに限ってPro repositoryをActive Working Treeとして選択できる。
+この場合もProductionの `/opt/local/libexec/koppy/current` / `releases/` を直接編集せず、
+`/Users/kwpro/Development/AI_Development_Environment` を開発対象とする。
+
+### Remote Workspace Observation Layer
+
+Remote Desktop Commander RemoteをChatGPTへ接続し、
+AirをRemote MCP deviceとして利用する。
+
+基本経路：
+
+```text
+Koppy / ChatGPT
+→ Remote Desktop Commander Remote
+→ Air: shiinoMacBook-Air.local
+→ Air local filesystem / terminal
+
+必要時:
+→ ssh koppy-worker
+→ Pro development repository / terminal
+```
+
+この経路により、KoppyはGitHubへpushされていない変更も含め、
+選択されたworking treeの実状態を直接確認できる。
+
+Source of Truthの扱いは分離する。
+
+```text
+Active Working Tree
+= 現在作業中のmutable state
+= 未commit / 未push変更を含み得る
+
+GitHub remote branch
+= commit / push後のdurable canonical source
+
+Production
+= immutable release + current symlink
+```
+
+Remote MCPで直接観測できることは、
+ファイル変更・commit・push・deployの自動許可を意味しない。
+書き込みはExecutor Selection / FILE_EDIT_PROTOCOL / production deploy ruleに従う。
+
+Remote MCPがoffline・未接続・利用不可の場合は、
+既存のKoppy Local CLI Bridge / `kclip` にfallbackする。
 
 ### 画像AIレーン
 - 主司令: Air

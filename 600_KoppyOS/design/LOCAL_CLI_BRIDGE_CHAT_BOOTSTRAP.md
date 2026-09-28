@@ -1,6 +1,6 @@
 # Koppy Local CLI Bridge Chat Bootstrap
 
-Version: v0.1.6
+Version: v0.2.0
 Status: ACTIVE
 
 ## Purpose
@@ -26,16 +26,27 @@ Koppy Local CLI Bridgeの前提を短く復元するためのBootstrapである�
 - 必要に応じて 600_KoppyOS/protocols/FILE_EDIT_PROTOCOL.md
 - ZIP / Packageを扱う場合は 600_KoppyOS/protocols/PACKAGE_SAFETY_PROTOCOL.md
 
-ローカル状態の確認では、既存の koppy / kclip コマンドで取得できる情報を、
-毎回ad-hoc CMDで再構築しないでください。
+ローカル状態の確認では、Remote Desktop Commander Remoteがonlineかつ利用可能なら、
+Koppy自身がAuthorized Deviceへ直接アクセスするDirect Remote MCP Modeを優先してください。
+ユーザーへ毎回 kclip Outputの貼り付けを要求しないでください。
+
+Airのverified deviceは `shiinoMacBook-Air.local` です。
+ProはAirから既存SSH alias `koppy-worker` で到達できます。
+Pro working treeを使う場合は、作業前にbranch / HEAD / upstream / staged / unstaged / untrackedを直接確認してください。
+
+Remote MCPが利用できない場合は、既存の koppy / kclip コマンドへfallbackしてください。
+その場合も、Bridgeで取得できる情報を毎回ad-hoc CMDで再構築しないでください。
 
 ユーザーはCLIコマンドを覚える前提ではありません。
-必要なときに、その時点で実行すべき短いCMDを提示してください。
+必要なときだけ、その時点で実行すべき短いCMDを提示してください。
 
 安全ルール:
 - 書き込み系作業の前にローカルGit状態を確認する
 - worktreeが想定外にdirtyなら勝手にrestore/resetせずSTOPして差分確認する
 - GitHub remoteが先に進んでいる場合、clean確認後に git pull --ff-only を使う
+- Direct Remote MCP Modeでもwrite / commit / push / deployを自動許可しない
+- Active Working Treeは現在の作業状態、GitHub remoteはcommit / push後のdurable canonical sourceとして区別する
+- Proで開発する場合も `/opt/local/libexec/koppy/current` / `releases/` は直接編集しない
 - force pushしない
 - conflictを勝手に解決しない
 - ZIPやpackageをrepoへ直接無検証展開しない
@@ -73,8 +84,11 @@ Package Utility Runtime v0.5.0では
 このBootstrapを読んだチャットは、以下を前提にする。
 
 - Koppyが必要な観測内容を決める
-- ユーザーはTerminal BridgeとしてCMDを実行する
+- Remote Desktop Commander Remoteが利用可能なら、KoppyがAuthorized Deviceを直接Observation / Inspectionする
+- Remote MCPが利用できない場合のみ、ユーザーがTerminal BridgeとしてCMDを実行する
 - Bridgeは主にObservation / Inspection / Verification / Context Transferを担当する
+- AirはRemote MCP GatewayとしてProへ `ssh koppy-worker` でRelayできる
+- 未commit / 未push状態もActive Working Treeの現在状態として直接レビューできる
 - 実ファイル変更はExecutor SelectionとFile Edit Protocolに従う
 - Bridgeで取得できる情報はBridgeを優先し、長いShell Pipelineを毎回再生成しない
 - 未実装Commandを存在するものとして案内しない
@@ -118,7 +132,10 @@ Package Utility Runtime v0.5.0では
 ### 運用ルールとして確定済み
 
 - dirty worktreeで無条件にpull / overwriteしない
+- Direct Remote MCP Modeでも作業開始時にActive Working Treeをpreflightする
 - Remote-first write後はclean確認 → `git pull --ff-only`
+- GitHubへpushする前の未commit / 未push変更はActive Working Treeのmutable stateとして扱う
+- Production immutable releaseはworking treeとして直接編集しない
 - force push禁止
 - conflictの勝手な解決禁止
 - secret / tokenを出力しない

@@ -1,11 +1,14 @@
 # Koppy Local CLI Bridge Architecture
 
-Version: v0.2.8
+Version: v0.3.0
 Status: ACTIVE
 
 ## 1. Purpose
 
-Koppy Local CLI Bridgeは、通常のChatGPTチャットからMacローカル環境へ直接アクセスできない場合でも、短い標準CMDをユーザーが実行することで、Koppyがローカル状態を正確かつ一貫した形式で観測するためのBridgeである。
+Koppy Local CLI Bridgeは、Macローカル状態を正確かつ一貫した形式でKoppyへ渡すためのObservation / Inspection Bridgeである。
+
+Remote Desktop Commander Remoteによる直接アクセスが利用できる場合は、KoppyがAuthorized Device上のfilesystem / terminalを直接観測する。
+直接アクセスが利用できない場合は、従来どおり短い標準CMDをユーザーが実行してOutputを返すClipboard Bridgeへfallbackする。
 
 主な目的：
 
@@ -28,7 +31,19 @@ Koppy Local CLI BridgeはExecutorではない。
 - Verification
 - Context Transfer
 
-基本フロー：
+基本フローは2系統を持つ。
+
+Direct Remote MCP Mode：
+
+Koppy
+→ 必要な観測内容を判断
+→ Remote Desktop Commander Remote
+→ Authorized Device上で直接Observation / Inspection
+→ Koppyが判断・設計
+→ Executor Selection
+→ WRITER / CODEX / VSCODE_AGENT / selected local working tree
+
+Clipboard Fallback Mode：
 
 Koppy
 → 必要な観測内容を判断
@@ -39,7 +54,7 @@ Koppy
 → Executor Selection
 → WRITER / CODEX / VSCODE_AGENT
 
-ファイル変更・削除・移動・commit・push等の実作業は、既存のExecutor Selectionに従う。
+ファイル変更・削除・移動・commit・push等の実作業は、Remote MCPの有無にかかわらず既存のExecutor SelectionとFile Edit Protocolに従う。
 
 ## 3. Source of Truth and Runtime
 
@@ -149,6 +164,13 @@ HTTP GETによるread-only inspectionを行う。
 
 ## 7. Standard Workflow
 
+Remote Desktop Commander RemoteがonlineかつChatGPT Pluginから利用可能な場合は、Koppyが必要なObservation / Inspection CommandをAuthorized Device上で直接実行するDirect Remote MCP Modeを優先する。
+
+Direct Modeでは、ユーザーへ毎回 `kclip` Outputの貼り付けを要求しない。
+必要に応じて既存の `koppy` CommandをKoppy自身がRemote terminalから実行し、同じSafety Contractを再利用する。
+
+Remote MCPが利用できない場合は、以下のClipboard Bridgeへfallbackする。
+
 開発開始前：`kclip preflight`
 
 環境異常調査：`kclip doctor`
@@ -195,10 +217,11 @@ Bridgeで同等処理が可能な場合、Koppyは原則として毎回 `git sta
 
 ## 10. Safety Boundary
 
-Current v0.2はObservation、Inspection、Verification、Context Transferを中心とする。
+Current v0.3はObservation、Inspection、Verification、Context Transferを中心とし、Remote Desktop Commander RemoteによるDirect Remote MCP Modeを正式な観測経路として扱う。
 
-Bridgeの存在だけを理由に、managed fileの書き換え、delete、rename / move、package展開による上書き、commit、push、force push、dependency install、macOS設定変更、secret変更、production変更を自動許可しない。
+BridgeまたはRemote Desktop Commander Remoteの存在だけを理由に、managed fileの書き換え、delete、rename / move、package展開による上書き、commit、push、force push、dependency install、macOS設定変更、secret変更、production変更を自動許可しない。
 
+Remote MCPで直接terminal / filesystemへ到達できることは、Write権限の自動承認を意味しない。
 これらは既存のExecutor Selection、FILE_EDIT_PROTOCOL、Project固有ルールに従う。
 
 ## 11. ZIP / Package Handling
@@ -323,7 +346,7 @@ Bridge仕様をConversation Memoryだけへ依存させない。
 
 Command Contractまたは重要な挙動を変更した場合はVersionを更新する。
 
-Current：`v0.2.8`
+Current：`v0.3.0`
 
 実戦で不足が確認された機能のみ追加する。機能数を増やすこと自体を目的としない。
 
@@ -426,3 +449,108 @@ GitHub正本へアクセスできない場合は、
 
 BootstrapはArchitectureの代替ではない。
 詳細仕様とSafety Boundaryの正本は本Architectureと関連Protocolである。
+
+## 17. Remote Desktop Commander Direct Access Layer
+
+### 17.1 Verified Device
+
+2026-09-29時点で、Remote Desktop Commander RemoteをChatGPTへ接続し、以下を実機確認済みとする。
+
+```text
+Device Name:
+shiinoMacBook-Air.local
+
+Capabilities:
+- filesystem observation
+- terminal command execution
+- local Git inspection
+- Airから既存SSH alias `koppy-worker` を使用したPro inspection
+```
+
+この経路では、Koppyがユーザーのcopy / pasteを介さずにAirのworking treeを直接確認できる。
+またAirのterminalから `ssh koppy-worker` を使用することで、Pro上のdevelopment repositoryも直接確認できる。
+
+### 17.2 Working Tree Visibility
+
+Direct Remote MCP Modeでは、GitHubへpushされていない状態も観測対象に含める。
+
+```text
+untracked
+unstaged
+staged
+local commit
+unpushed commit
+```
+
+したがって、active development中はGitHub remoteだけを見て現在の作業状態を判断してはならない。
+Koppyは作業開始時に、どのworking treeをActive Working Treeとして扱うかを明確にし、その実状態を直接preflightする。
+
+### 17.3 Source of Truth Layers
+
+Direct local access導入後も、GitHubをdurable canonical sourceとする原則は維持する。
+
+役割は以下のように分離する。
+
+```text
+Active Working Tree
+= 現在の作業状態
+= 未commit / 未push変更を含み得る
+
+GitHub remote branch
+= commit / push後の共有・永続正本
+
+Production release
+= GitHub commitから生成されたimmutable runtime snapshot
+```
+
+Active Working TreeがGitHubより先行していることは正常な開発状態であり、GitHub正本原則との矛盾ではない。
+ただし未push状態を永続正本として扱ってはならない。
+
+### 17.4 Air → Pro Relay
+
+ProへRemote Desktop Commander Remoteを個別導入していない場合でも、Airがonlineであり既存SSH経路が有効なら、以下を標準Relayとして利用できる。
+
+```text
+Koppy
+→ Remote Desktop Commander Remote
+→ Air
+→ ssh koppy-worker
+→ /Users/kwpro/Development/AI_Development_Environment
+```
+
+Pro working treeを利用する前には、必ずbranch / HEAD / upstream / staged / unstaged / untracked / remote差分を確認する。
+ProがGitHub remoteよりbehindしている場合は、作業開始前に同期方針を決める。
+cleanでない状態へ無条件にpull / reset / overwriteしてはならない。
+
+### 17.5 Pro Active Working Tree Mode
+
+通常のPrimary開発端末はAirとする。
+ただしserver-adjacentな作業では、Session単位でPro development repositoryをActive Working Treeとして選択できる。
+
+その場合の基本Flow：
+
+```text
+Koppy direct inspection
+→ Pro development working tree
+→ local edit / test / review
+→ user visual verification
+→ commit
+→ push
+→ Airは必要時 `git pull --ff-only`
+→ immutable production deploy
+```
+
+Productionの以下はActive Working Treeとして扱わない。
+
+```text
+/opt/local/libexec/koppy/current
+/opt/local/libexec/koppy/releases/*
+```
+
+これらはimmutable production領域であり、直接編集禁止を維持する。
+
+### 17.6 Fallback
+
+Remote Desktop Commander Remoteがoffline、Plugin未接続、device unavailable、またはtool failureの場合は、既存の `koppy` / `kclip` Clipboard Bridgeへfallbackする。
+
+Direct Modeの導入によりClipboard Bridgeを廃止しない。
