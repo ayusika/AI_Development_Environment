@@ -42,6 +42,36 @@ try {
     }
 
 
+    /*
+     * First production rollout.
+     *
+     * The confirmation preview is live,
+     * but DB writes remain server-locked
+     * until production preview verification
+     * is completed.
+     */
+    $writeEnabled =
+        false;
+
+
+    if (!$writeEnabled) {
+
+        http_response_code(423);
+
+        echo json_encode(
+            [
+                'success' => false,
+                'error' =>
+                    'Daily sales confirmation is temporarily locked for preview verification.',
+            ],
+            JSON_UNESCAPED_UNICODE
+            | JSON_PRETTY_PRINT
+        );
+
+        exit;
+    }
+
+
     $rawBody =
         file_get_contents(
             'php://input'
