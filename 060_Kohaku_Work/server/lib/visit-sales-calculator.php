@@ -257,6 +257,58 @@ function koppyCalculateVisitSales(
     }
 
 
+    $customerNames =
+        [];
+
+
+    if (
+        $visit['customer_id']
+        !== null
+    ) {
+
+        $customerNamesStatement =
+            $pdo->prepare(
+                "
+                SELECT
+                    name_type,
+                    name,
+                    is_primary
+
+                FROM customer_names
+
+                WHERE customer_id = ?
+
+                ORDER BY
+                    is_primary DESC,
+                    id ASC
+                "
+            );
+
+
+        $customerNamesStatement->execute([
+            (int) $visit['customer_id'],
+        ]);
+
+
+        foreach (
+            $customerNamesStatement->fetchAll()
+            as $customerName
+        ) {
+
+            $customerNames[] = [
+                'name_type' =>
+                    $customerName['name_type'],
+
+                'name' =>
+                    $customerName['name'],
+
+                'is_primary' =>
+                    $customerName['is_primary'],
+            ];
+        }
+    }
+
+
     $storeId =
         (int) $visit['store_id'];
 
@@ -1338,6 +1390,9 @@ function koppyCalculateVisitSales(
                             'customer_name'
                         ]
                     : null,
+
+            'customer_names' =>
+                $customerNames,
 
             'started_at' =>
                 $startedAt,

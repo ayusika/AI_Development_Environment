@@ -380,6 +380,81 @@
       .join(" · ");
   }
 
+  function customerLabel(
+    visit
+  ) {
+    const prefixes = {
+      nickname:"",
+      kashikoi:"カ:",
+      okini_talk:"オ:",
+      line:"L:",
+      x:"X:",
+      instagram:"I:",
+    };
+
+    const names =
+      Array.isArray(
+        visit?.customer_names
+      )
+        ? visit.customer_names
+        : [];
+
+    const labels =
+      names
+        .filter(
+          record =>
+            record?.name
+        )
+        .map(
+          record =>
+            `${
+              prefixes[
+                record.name_type
+              ]
+              || ""
+            }${
+              String(
+                record.name
+              )
+            }`
+        );
+
+    return labels.length
+      ? labels.join(" / ")
+      : (
+          visit?.customer_name
+          || "お客様"
+        );
+  }
+
+  function optionLabel(
+    visit
+  ) {
+    const names =
+      (
+        Array.isArray(
+          visit?.options
+        )
+          ? visit.options
+          : []
+      )
+        .map(
+          option =>
+            String(
+              option?.name
+              || option?.custom_name
+              || ""
+            ).trim()
+        )
+        .filter(Boolean);
+
+    return names.length
+      ? `OP: ${
+          names.join("・")
+        }`
+      : "OP: なし";
+  }
+
   function renderPreviewRow(
     item
   ) {
@@ -404,8 +479,9 @@
       );
 
     name.textContent =
-      item.visit.customer_name
-      || "お客様";
+      customerLabel(
+        item.visit
+      );
 
     const detail =
       document.createElement(
@@ -417,9 +493,20 @@
         item.visit
       );
 
+    const options =
+      document.createElement(
+        "small"
+      );
+
+    options.textContent =
+      optionLabel(
+        item.visit
+      );
+
     main.append(
       name,
-      detail
+      detail,
+      options
     );
 
     const side =
@@ -506,8 +593,39 @@
           Number(takeHome)
         );
 
+      const previewVisit = {
+        ...visit,
+        ...(
+          result?.visit
+          || {}
+        ),
+        customer_names:
+          Array.isArray(
+            result?.visit
+              ?.customer_names
+          )
+            ? result.visit
+                .customer_names
+            : (
+                Array.isArray(
+                  visit
+                    ?.customer_names
+                )
+                  ? visit
+                      .customer_names
+                  : []
+              ),
+        options:
+          Array.isArray(
+            result?.options
+          )
+            ? result.options
+            : [],
+      };
+
       return {
-        visit,
+        visit:
+          previewVisit,
         ready,
         takeHome:
           ready
