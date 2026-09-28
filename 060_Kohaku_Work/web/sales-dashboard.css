@@ -407,3 +407,70 @@
     font-size:12px;
   }
 }
+
+/* =========================================================
+   SALES / MOBILE OVERFLOW FIX
+========================================================= */
+
+/*
+   Mobile sales view should use the available viewport width.
+   Keep the fix scoped to Sales only.
+*/
+@media(max-width:720px){
+
+  #view-sales{
+    width:calc(100vw - 24px);
+    max-width:calc(100vw - 24px);
+    min-width:0;
+
+    box-sizing:border-box;
+    overflow-x:hidden;
+  }
+
+  #view-sales
+  .next-sales-summary-panel,
+
+  #view-sales
+  .next-sales-filter-panel,
+
+  #view-sales
+  .next-sales-visits-panel{
+    width:100%;
+    max-width:100%;
+    min-width:0;
+
+    box-sizing:border-box;
+  }
+
+  #view-sales
+  .next-sales-metrics,
+
+  #view-sales
+  .next-sales-filter-grid,
+
+  #view-sales
+  .next-sales-visit-list,
+
+  #view-sales
+  .next-sales-visit{
+    min-width:0;
+    max-width:100%;
+
+    box-sizing:border-box;
+  }
+
+  #view-sales
+  .next-sales-filter-grid{
+    grid-template-columns:1fr;
+  }
+
+  #view-sales
+  input,
+
+  #view-sales
+  select{
+    max-width:100%;
+    min-width:0;
+    box-sizing:border-box;
+  }
+}
