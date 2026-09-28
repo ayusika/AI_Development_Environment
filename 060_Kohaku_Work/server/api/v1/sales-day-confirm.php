@@ -179,6 +179,316 @@ try {
     }
 
 
+    /*
+     * Optional confirmation fingerprint.
+     *
+     * New Kohaku Work sends:
+     *
+     * - expected_visit_ids
+     * - expected_take_home_by_visit
+     *
+     * If the target set or any take-home amount changed
+     * after preview, this request must fail before writes.
+     *
+     * These fields remain optional so legacy clients
+     * keep working during migration.
+     */
+    $expectedVisitIds =
+        null;
+
+
+    if (
+        array_key_exists(
+            'expected_visit_ids',
+            $payload
+        )
+    ) {
+
+        if (
+            !is_array(
+                $payload[
+                    'expected_visit_ids'
+                ]
+            )
+        ) {
+
+            throw new RuntimeException(
+                'expected_visit_ids must be an array.'
+            );
+        }
+
+
+        $normalizedExpectedVisitIds =
+            [];
+
+
+        foreach (
+            $payload[
+                'expected_visit_ids'
+            ]
+            as $rawExpectedVisitId
+        ) {
+
+            if (
+                is_int(
+                    $rawExpectedVisitId
+                )
+            ) {
+
+                $expectedVisitId =
+                    $rawExpectedVisitId;
+
+            } elseif (
+                is_string(
+                    $rawExpectedVisitId
+                )
+                && preg_match(
+                    '/^\d+$/',
+                    $rawExpectedVisitId
+                )
+            ) {
+
+                $expectedVisitId =
+                    (int)
+                    $rawExpectedVisitId;
+
+            } else {
+
+                throw new RuntimeException(
+                    'expected_visit_ids contains an invalid value.'
+                );
+            }
+
+
+            if (
+                $expectedVisitId
+                <= 0
+            ) {
+
+                throw new RuntimeException(
+                    'expected_visit_ids must contain positive integers.'
+                );
+            }
+
+
+            $normalizedExpectedVisitIds[] =
+                $expectedVisitId;
+        }
+
+
+        $normalizedExpectedVisitIds =
+            array_values(
+                array_unique(
+                    $normalizedExpectedVisitIds
+                )
+            );
+
+
+        sort(
+            $normalizedExpectedVisitIds,
+            SORT_NUMERIC
+        );
+
+
+        if (
+            count(
+                $normalizedExpectedVisitIds
+            ) === 0
+        ) {
+
+            throw new RuntimeException(
+                'expected_visit_ids must not be empty.'
+            );
+        }
+
+
+        $expectedVisitIds =
+            $normalizedExpectedVisitIds;
+    }
+
+
+    $expectedTakeHomeByVisit =
+        null;
+
+
+    if (
+        array_key_exists(
+            'expected_take_home_by_visit',
+            $payload
+        )
+    ) {
+
+        if (
+            !is_array(
+                $payload[
+                    'expected_take_home_by_visit'
+                ]
+            )
+        ) {
+
+            throw new RuntimeException(
+                'expected_take_home_by_visit must be an object.'
+            );
+        }
+
+
+        $normalizedExpectedTakeHome =
+            [];
+
+
+        foreach (
+            $payload[
+                'expected_take_home_by_visit'
+            ]
+            as $rawVisitId
+            => $rawTakeHome
+        ) {
+
+            $visitId =
+                is_int(
+                    $rawVisitId
+                )
+                    ? $rawVisitId
+                    : (
+                        preg_match(
+                            '/^\d+$/',
+                            (string)
+                            $rawVisitId
+                        )
+                            ? (int)
+                                $rawVisitId
+                            : 0
+                    );
+
+
+            if ($visitId <= 0) {
+
+                throw new RuntimeException(
+                    'expected_take_home_by_visit contains an invalid visit id.'
+                );
+            }
+
+
+            if (
+                is_int(
+                    $rawTakeHome
+                )
+            ) {
+
+                $takeHome =
+                    $rawTakeHome;
+
+            } elseif (
+                is_string(
+                    $rawTakeHome
+                )
+                && preg_match(
+                    '/^-?\d+$/',
+                    $rawTakeHome
+                )
+            ) {
+
+                $takeHome =
+                    (int)
+                    $rawTakeHome;
+
+            } else {
+
+                throw new RuntimeException(
+                    'expected_take_home_by_visit contains an invalid amount.'
+                );
+            }
+
+
+            $normalizedExpectedTakeHome[
+                $visitId
+            ] =
+                $takeHome;
+        }
+
+
+        if (
+            count(
+                $normalizedExpectedTakeHome
+            ) === 0
+        ) {
+
+            throw new RuntimeException(
+                'expected_take_home_by_visit must not be empty.'
+            );
+        }
+
+
+        ksort(
+            $normalizedExpectedTakeHome,
+            SORT_NUMERIC
+        );
+
+
+        $expectedTakeHomeByVisit =
+            $normalizedExpectedTakeHome;
+
+
+        $amountVisitIds =
+            array_map(
+                'intval',
+                array_keys(
+                    $expectedTakeHomeByVisit
+                )
+            );
+
+
+        sort(
+            $amountVisitIds,
+            SORT_NUMERIC
+        );
+
+
+        if (
+            $expectedVisitIds
+            === null
+        ) {
+
+            $expectedVisitIds =
+                $amountVisitIds;
+
+        } elseif (
+            $expectedVisitIds
+            !== $amountVisitIds
+        ) {
+
+            throw new RuntimeException(
+                'Confirmation fingerprint visit ids do not match.'
+            );
+        }
+    }
+
+
+    $hasExpectedVisitIds =
+        array_key_exists(
+            'expected_visit_ids',
+            $payload
+        );
+
+
+    $hasExpectedTakeHomeByVisit =
+        array_key_exists(
+            'expected_take_home_by_visit',
+            $payload
+        );
+
+
+    if (
+        $hasExpectedVisitIds
+        !== $hasExpectedTakeHomeByVisit
+    ) {
+
+        throw new RuntimeException(
+            'Confirmation fingerprint is incomplete. Reopen the confirmation screen.'
+        );
+    }
+
+
     $startAt =
         $dateObject
             ->setTime(
@@ -311,6 +621,33 @@ try {
         );
 
 
+    if (
+        $expectedVisitIds
+        !== null
+    ) {
+
+        $actualVisitIds =
+            $visitIds;
+
+
+        sort(
+            $actualVisitIds,
+            SORT_NUMERIC
+        );
+
+
+        if (
+            $actualVisitIds
+            !== $expectedVisitIds
+        ) {
+
+            throw new RuntimeException(
+                '売上確定対象が確認時から変更されました。確認画面を開き直してください。'
+            );
+        }
+    }
+
+
     /*
      * まず全件を検証する。
      *
@@ -371,6 +708,39 @@ try {
                 $customerName
                 . ' の手取り料金が未設定のため、一括確定できません。'
             );
+        }
+
+
+        if (
+            $expectedTakeHomeByVisit
+            !== null
+        ) {
+
+            if (
+                !array_key_exists(
+                    $visitId,
+                    $expectedTakeHomeByVisit
+                )
+            ) {
+
+                throw new RuntimeException(
+                    '売上確定対象の金額確認情報が不足しています。確認画面を開き直してください。'
+                );
+            }
+
+
+            if (
+                (int) $takeHome
+                !== (int)
+                    $expectedTakeHomeByVisit[
+                        $visitId
+                    ]
+            ) {
+
+                throw new RuntimeException(
+                    '手取り金額が確認時から変更されました。確認画面を開き直してください。'
+                );
+            }
         }
 
 

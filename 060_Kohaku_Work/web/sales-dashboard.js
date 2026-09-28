@@ -712,8 +712,19 @@
         result.visits
       );
 
+      view.dispatchEvent(
+        new CustomEvent(
+          "koppy:sales-loaded",
+          {
+            detail:{
+              result,
+            },
+          }
+        )
+      );
+
       setStatus(
-        "READ ONLY",
+        "LIVE",
         "is-ok"
       );
 

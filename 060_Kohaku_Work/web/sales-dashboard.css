@@ -409,6 +409,321 @@
 }
 
 /* =========================================================
+   SALES / GUARDED DAILY CONFIRM
+========================================================= */
+
+.next-sales-confirm-trigger{
+  width:100%;
+  min-height:48px;
+  margin:0 0 14px;
+  padding:10px 16px;
+
+  border:
+    1px solid
+    color-mix(
+      in srgb,
+      var(--wf-accent) 52%,
+      transparent
+    );
+
+  border-radius:14px;
+
+  color:#031522;
+
+  background:
+    var(--wf-accent);
+
+  font:inherit;
+  font-size:12px;
+  font-weight:950;
+
+  cursor:pointer;
+  touch-action:manipulation;
+}
+
+.next-sales-confirm-trigger[hidden],
+.next-sales-confirm-panel[hidden]{
+  display:none !important;
+}
+
+.next-sales-confirm-panel{
+  margin-top:16px;
+  padding:18px;
+
+  border:
+    1px solid
+    rgba(255,210,125,.30);
+
+  border-radius:18px;
+
+  background:
+    linear-gradient(
+      160deg,
+      rgba(44,45,48,.38),
+      rgba(7,25,48,.72)
+    );
+}
+
+.next-sales-confirm-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:14px;
+}
+
+.next-sales-confirm-head h3{
+  margin:3px 0 0;
+  color:var(--wf-text);
+  font-size:18px;
+}
+
+.next-sales-confirm-close{
+  min-height:38px;
+  padding:7px 11px;
+
+  border:
+    1px solid
+    rgba(255,255,255,.12);
+
+  border-radius:11px;
+
+  color:var(--wf-text-soft);
+  background:rgba(255,255,255,.04);
+
+  font:inherit;
+  font-size:10px;
+  font-weight:900;
+
+  cursor:pointer;
+}
+
+.next-sales-confirm-metrics{
+  display:grid;
+  grid-template-columns:
+    repeat(4,minmax(0,1fr));
+  gap:8px;
+  margin-bottom:12px;
+}
+
+.next-sales-confirm-metrics > div{
+  min-width:0;
+  padding:12px;
+
+  border:
+    1px solid
+    rgba(255,255,255,.08);
+
+  border-radius:13px;
+  background:rgba(0,10,24,.24);
+}
+
+.next-sales-confirm-metrics span,
+.next-sales-confirm-metrics strong{
+  display:block;
+}
+
+.next-sales-confirm-metrics span{
+  color:var(--wf-text-dim);
+  font-size:9px;
+  font-weight:850;
+}
+
+.next-sales-confirm-metrics strong{
+  margin-top:6px;
+  overflow-wrap:anywhere;
+  color:var(--wf-text);
+  font-size:15px;
+}
+
+.next-sales-confirm-metrics
+.is-primary{
+  border-color:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 35%,
+      transparent
+    );
+}
+
+.next-sales-confirm-metrics
+.is-primary strong{
+  color:
+    color-mix(
+      in srgb,
+      var(--wf-accent) 84%,
+      white
+    );
+}
+
+.next-sales-confirm-list{
+  display:grid;
+  gap:7px;
+}
+
+.next-sales-confirm-row{
+  display:grid;
+  grid-template-columns:
+    minmax(0,1fr)
+    auto;
+
+  align-items:center;
+  gap:10px;
+
+  padding:11px 12px;
+
+  border:
+    1px solid
+    rgba(100,255,185,.16);
+
+  border-radius:12px;
+  background:rgba(0,10,24,.25);
+}
+
+.next-sales-confirm-row.is-error{
+  border-color:
+    rgba(255,120,150,.28);
+}
+
+.next-sales-confirm-row > div{
+  min-width:0;
+}
+
+.next-sales-confirm-row > div:last-child{
+  text-align:right;
+}
+
+.next-sales-confirm-row strong,
+.next-sales-confirm-row small{
+  display:block;
+}
+
+.next-sales-confirm-row strong{
+  color:var(--wf-text);
+  font-size:12px;
+}
+
+.next-sales-confirm-row small{
+  margin-top:3px;
+  color:var(--wf-text-dim);
+  font-size:9px;
+  line-height:1.4;
+}
+
+.next-sales-confirm-row.is-error
+> div:last-child small{
+  color:#ff9caf;
+}
+
+.next-sales-confirm-message{
+  margin:12px 0 0;
+  padding:11px 12px;
+
+  border:
+    1px solid
+    rgba(255,255,255,.08);
+
+  border-radius:11px;
+
+  color:var(--wf-text-soft);
+  background:rgba(0,10,24,.25);
+
+  font-size:10px;
+  line-height:1.55;
+}
+
+.next-sales-confirm-message.is-ok{
+  color:#8effc1;
+  border-color:rgba(100,255,185,.20);
+}
+
+.next-sales-confirm-message.is-warning{
+  color:#ffd27d;
+  border-color:rgba(255,210,125,.20);
+}
+
+.next-sales-confirm-message.is-error{
+  color:#ff9caf;
+  border-color:rgba(255,120,150,.24);
+}
+
+.next-sales-confirm-submit{
+  width:100%;
+  min-height:50px;
+
+  margin-top:12px;
+  padding:10px 15px;
+
+  border:
+    1px solid
+    rgba(255,118,145,.52);
+
+  border-radius:14px;
+
+  color:#fff3f6;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(188,50,80,.84),
+      rgba(118,28,55,.84)
+    );
+
+  font:inherit;
+  font-size:11px;
+  font-weight:950;
+
+  cursor:pointer;
+  touch-action:manipulation;
+}
+
+.next-sales-confirm-submit:disabled{
+  opacity:.38;
+  cursor:not-allowed;
+}
+
+.next-sales-confirm-safety{
+  margin:9px 2px 0;
+
+  color:var(--wf-text-dim);
+
+  font-size:8px;
+  line-height:1.55;
+}
+
+
+@media(max-width:720px){
+
+  .next-sales-confirm-panel{
+    padding:14px;
+  }
+
+  .next-sales-confirm-metrics{
+    grid-template-columns:
+      repeat(2,minmax(0,1fr));
+  }
+}
+
+
+@media(max-width:420px){
+
+  .next-sales-confirm-head{
+    align-items:stretch;
+    flex-direction:column;
+  }
+
+  .next-sales-confirm-close{
+    align-self:flex-end;
+  }
+
+  .next-sales-confirm-row{
+    gap:7px;
+    padding:10px;
+  }
+}
+
+
+/* =========================================================
    SALES / MOBILE OVERFLOW FIX
 ========================================================= */
 

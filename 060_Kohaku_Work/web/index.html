@@ -1731,7 +1731,7 @@
             </span>
 
             <span class="next-sales-status-copy">
-              PRODUCTION READ ONLY
+              PRODUCTION · DAILY CONFIRM
             </span>
           </div>
 
@@ -1891,6 +1891,17 @@
             </div>
 
 
+            <button
+              type="button"
+              class="next-sales-confirm-trigger"
+              id="nextSalesDayConfirmOpen"
+              data-next-sales-confirm-action="open"
+              hidden
+            >
+              この日の売上をまとめて確認
+            </button>
+
+
             <div
               class="next-sales-visit-list"
               id="nextSalesVisitList"
@@ -1899,6 +1910,98 @@
                 売上データを読み込む準備中
               </p>
             </div>
+
+
+            <section
+              class="next-sales-confirm-panel"
+              id="nextSalesDayConfirmPanel"
+              hidden
+            >
+
+              <div class="next-sales-confirm-head">
+
+                <div>
+                  <p class="wf-eyebrow">
+                    DAILY SALES CHECK
+                  </p>
+
+                  <h3 id="nextSalesDayConfirmTitle">
+                    この日の売上確認
+                  </h3>
+                </div>
+
+
+                <button
+                  type="button"
+                  class="next-sales-confirm-close"
+                  data-next-sales-confirm-action="close"
+                >
+                  閉じる
+                </button>
+
+              </div>
+
+
+              <div class="next-sales-confirm-metrics">
+
+                <div>
+                  <span>未確定</span>
+                  <strong id="nextSalesDayConfirmCount">−件</strong>
+                </div>
+
+                <div>
+                  <span>今回確定分</span>
+                  <strong id="nextSalesDayConfirmAmount">¥ −</strong>
+                </div>
+
+                <div>
+                  <span>確定後日次手数料</span>
+                  <strong id="nextSalesDayConfirmFee">¥ −</strong>
+                </div>
+
+                <div class="is-primary">
+                  <span>確定後手取り</span>
+                  <strong id="nextSalesDayConfirmNet">¥ −</strong>
+                </div>
+
+              </div>
+
+
+              <div
+                class="next-sales-confirm-list"
+                id="nextSalesDayConfirmList"
+              >
+                <p class="next-sales-loading">
+                  売上確認データを読み込む準備中
+                </p>
+              </div>
+
+
+              <p
+                class="next-sales-confirm-message"
+                id="nextSalesDayConfirmMessage"
+                hidden
+              ></p>
+
+
+              <button
+                type="button"
+                class="next-sales-confirm-submit"
+                id="nextSalesDayConfirmSubmit"
+                data-next-sales-confirm-action="submit"
+                disabled
+              >
+                この日の未確定売上をまとめて確定
+              </button>
+
+
+              <p class="next-sales-confirm-safety">
+                確定直前に対象の接客ID・手取り額を再照合します。
+                内容が変わっていた場合は書き込まず停止します。
+                API側は全件成功時だけCOMMITします。
+              </p>
+
+            </section>
 
           </article>
 
@@ -2006,5 +2109,6 @@
   <script src="./schedule-detail-mobile-flow.js"></script>
   <script src="./desktop-picker.js"></script>
   <script src="./sales-dashboard.js"></script>
+  <script src="./sales-day-confirm.js"></script>
 </body>
 </html>
